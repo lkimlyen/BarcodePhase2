@@ -1,6 +1,8 @@
 package com.demo.architect.data.repository.base.remote;
 
 
+import com.demo.architect.data.model.BaseResponse;
+
 import rx.Observable;
 
 /**
@@ -8,5 +10,4 @@ import rx.Observable;
  */
 
 public interface RemoteRepository {
-//    Observable<BaseResponse<LinkContactEntity>> linkContact();
 }

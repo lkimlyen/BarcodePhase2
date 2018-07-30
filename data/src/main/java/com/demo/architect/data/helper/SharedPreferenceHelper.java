@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.demo.architect.data.model.UserResponse;
 import com.google.gson.Gson;
+
+import io.realm.RealmConfiguration;
 
 /**
  * Created by uyminhduc on 4/5/17.
@@ -15,8 +18,6 @@ public class SharedPreferenceHelper {
     private static final String MY_PREFERENCE = "com.demo.uyminhduc.MAIN.MY_PREFERENCE";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String USER = "USER";
-    private static final String CONTACT = "CONTACT";
-    private static final String SAVE_LOGIN = "SAVE_LOGIN";
     private static final String WAS_STARTED = "WAS_STARTED";
     private SharedPreferences sharedPreferences;
 
@@ -61,65 +62,27 @@ public class SharedPreferenceHelper {
         return sharedPreferences.contains(key);
     }
 
-//    public void pushUserObject(UserEntity object) {
-//        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
-//        String json = "";
-//        if (object != null) {
-//            Gson gson = new Gson();
-//            json = gson.toJson(object);
-//        }
-//        prefsEditor.putString(USER, json);
-//        prefsEditor.commit();
-//    }
-//
-//    public void pushListContactObject(LinkContactEntity object) {
-//        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
-//        String json = "";
-//        if (object != null) {
-//            Gson gson = new Gson();
-//            json = gson.toJson(object);
-//        }
-//        prefsEditor.putString(CONTACT, json);
-//        prefsEditor.commit();
-//    }
-//
-//    public UserEntity getUserObject() {
-//        Gson gson = new Gson();
-//        String json = sharedPreferences.getString(USER, "");
-//        UserEntity obj = null;
-//        if (!TextUtils.isEmpty(json)) {
-//            obj = gson.fromJson(json, UserEntity.class);
-//        }
-//        return obj;
-//    }
-//    public LinkContactEntity getListContactObject() {
-//        Gson gson = new Gson();
-//        String json = sharedPreferences.getString(CONTACT, "");
-//        LinkContactEntity obj = null;
-//        if (!TextUtils.isEmpty(json)) {
-//            obj = gson.fromJson(json, LinkContactEntity.class);
-//        }
-//        return obj;
-//    }
-//
-//    public UserLogin getUserLoginObject() {
-//        Gson gson = new Gson();
-//        String json = sharedPreferences.getString(SAVE_LOGIN, "");
-//        UserLogin obj = null;
-//        if (!TextUtils.isEmpty(json)) {
-//            obj = gson.fromJson(json, UserLogin.class);
-//        }
-//        return obj;
-//    }
-//
-//    public void pushUserLoginObject(UserLogin object) {
-//        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
-//        String json = "";
-//        if (object != null) {
-//            Gson gson = new Gson();
-//            json = gson.toJson(object);
-//        }
-//        prefsEditor.putString(SAVE_LOGIN, json);
-//        prefsEditor.commit();
-//    }
+    public void pushUserObject(UserResponse object) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        String json = "";
+        if (object != null) {
+            Gson gson = new Gson();
+            json = gson.toJson(object);
+        }
+        prefsEditor.putString(USER, json);
+        prefsEditor.commit();
+    }
+
+
+    public UserResponse getUserObject() {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(USER, "");
+        UserResponse obj = null;
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson(json, UserResponse.class);
+        }
+        return obj;
+    }
+
+
 }

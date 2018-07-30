@@ -23,7 +23,6 @@ android {
 dependencies {
 
     def appDependencies = rootProject.ext.appDependencies
-
     compile appDependencies.rxJava
     compile appDependencies.rxAndroid
     compile appDependencies.retrofitRxJava

@@ -21,14 +21,16 @@ repositories {
 }
 
 android {
-
+    aaptOptions {
+        cruncherEnabled = false
+    }
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
     compileSdkVersion globalConfiguration.androidCompileSdkVersion
     buildToolsVersion globalConfiguration.androidBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.demo.merchandisemot"
+        applicationId "com.demo.barcode"
         minSdkVersion globalConfiguration.androidMinSdkVersion
         targetSdkVersion globalConfiguration.androidTargetSdkVersion
         versionCode globalConfiguration.androidVersionCode
@@ -103,12 +105,17 @@ configurations {
 dependencies {
     def appDependencies = rootProject.ext.appDependencies
 
-    compile 'com.google.android.gms:play-services-maps:10.0.1'
+    compile 'com.google.android.gms:play-services-maps:11.6.0'
     compile 'com.android.support:appcompat-v7:25.+'
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'com.makeramen:roundedimageview:2.3.0'
     compile 'cn.pedant.sweetalert:library:1.3'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'io.realm:android-adapters:2.1.1'
+    compile 'com.google.firebase:firebase-storage:11.6.0'
+    compile 'com.google.firebase:firebase-messaging:11.6.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
     apt appDependencies.daggerCompiler
 
     compile appDependencies.dagger
@@ -137,7 +144,6 @@ dependencies {
     compile appDependencies.androidCustomtabs
 
     compile appDependencies.androidMultidex
-
     //firebase
     compile appDependencies.firebaseMessaging
     compile appDependencies.firebaseCrash
@@ -168,7 +174,19 @@ dependencies {
 
     prodReleaseCompile project(path: ':thirdparty', configuration: 'prodRelease')
 
-
+    compile 'com.journeyapps:zxing-android-embedded:3.6.0'
+    compile 'com.thefinestartist:finestwebview:1.2.7'
+    compile 'com.android.support:support-v4:26.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.0'
+            }
+        }
+    }
+}
