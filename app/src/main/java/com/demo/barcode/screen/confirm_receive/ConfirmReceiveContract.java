@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.create_code_package;
+package com.demo.barcode.screen.confirm_receive;
 
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by MSI on 26/11/2017.
  */
 
-public interface CreateCodePackageContract {
+public interface ConfirmReceiveContract {
     interface View extends BaseView<Presenter> {
         void showError(String message);
 

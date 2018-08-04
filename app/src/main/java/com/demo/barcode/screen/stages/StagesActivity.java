@@ -1,13 +1,10 @@
-package com.demo.barcode.screen.import_works;
+package com.demo.barcode.screen.stages;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -20,14 +17,14 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class ImportWorksActivity extends BaseActivity {
+public class StagesActivity extends BaseActivity {
     @Inject
-    ImportWorksPresenter ImportWorksPresenter;
+    StagesPresenter StagesPresenter;
 
-    ImportWorksFragment fragment;
+    StagesFragment fragment;
 
     public static void start(Context context) {
-        Intent intent = new Intent(context, ImportWorksActivity.class);
+        Intent intent = new Intent(context, StagesActivity.class);
         context.startActivity(intent);
     }
 
@@ -40,7 +37,7 @@ public class ImportWorksActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new ImportWorksModule(fragment))
+                .plus(new StagesModule(fragment))
                 .inject(this);
 
 //        Window w = getWindow(); // in Activity's onCreate() for instance
@@ -51,25 +48,37 @@ public class ImportWorksActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (ImportWorksFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (StagesFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = ImportWorksFragment.newInstance();
+            fragment = StagesFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(ImportWorksFragment fragment, int frameId) {
+    private void addFragmentToBackStack(StagesFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    @Override
+    public void onBackPressed() {
+        fragment.back();
+        // super.onBackPressed();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        fragment.onActivityResult(requestCode,resultCode, data);
+        fragment.onActivityResult(requestCode, resultCode, data);
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

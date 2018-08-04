@@ -48,12 +48,6 @@ public class DashboardActivity extends BaseActivity implements GoogleApiClient.C
         CoreApplication.getInstance().getApplicationComponent()
                 .plus(new DashboardModule(fragment))
                 .inject(this);
-//
-//        Window w = getWindow(); // in Activity's onCreate() for instance
-//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-//        }
 
     }
 

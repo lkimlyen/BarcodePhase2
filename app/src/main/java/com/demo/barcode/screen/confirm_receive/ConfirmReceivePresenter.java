@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.create_code_package;
+package com.demo.barcode.screen.confirm_receive;
 
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -33,19 +33,19 @@ import rx.functions.Action1;
  * Created by MSI on 26/11/2017.
  */
 
-public class CreateCodePackagePresenter implements CreateCodePackageContract.Presenter {
+public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter {
 
-    private final String TAG = CreateCodePackagePresenter.class.getName();
-    private final CreateCodePackageContract.View view;
+    private final String TAG = ConfirmReceivePresenter.class.getName();
+    private final ConfirmReceiveContract.View view;
     private final GetAllSOACRUsecase getAllSOACRUsecase;
     private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    CreateCodePackagePresenter(@NonNull CreateCodePackageContract.View view,
-                               GetAllSOACRUsecase getAllSOACRUsecase,
-                               GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
+    ConfirmReceivePresenter(@NonNull ConfirmReceiveContract.View view,
+                            GetAllSOACRUsecase getAllSOACRUsecase,
+                            GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
         this.view = view;
         this.getAllSOACRUsecase = getAllSOACRUsecase;
         this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;

@@ -5,7 +5,7 @@
     <string name="text_ok">OK</string>
     <string name="text_username_null">Vui lòng nhập tên đăng nhập</string>
     <string name="text_password_null">Vui lòng nhập mật khẩu</string>
-    <string name="text_create_code_package">Quét tạo mã gói</string>
+    <string name="text_create_temp_packaging">Quét tạo tem bao bì</string>
     <string name="text_history_create_code">Lịch sử tạo mã gói</string>
     <string name="text_scan_warehouse">Quét nhập kho ACRYLIC</string>
     <string name="text_scan_delivery">Quét giao hàng</string>
@@ -56,7 +56,7 @@
     <string name="text_number_bigger_zero">Số lượng nhập vào phải khác 0!</string>
     <string name="text_quantity_input_bigger_quantity_rest">Số lượng nhập vào không được vượt quá số lượng cho phép.</string>
     <string name="text_code_scan" >Mã quét:</string>
-    <string name="text_date_scan">Ngày quét mã:</string>
+    <string name="text_date_scan">Ngày quét</string>
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
     <string name="text_not_done_pack_current_refresh">Chưa hoàn thành gói hiện tại!Bạn có muốn hủy không?</string>
     <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
@@ -71,7 +71,7 @@
     <string name="text_total">Tổng cộng:</string>
     <string name="text_serial_pack">STT Kiện:</string>
     <string name="text_date_create">Ngày đóng gói: </string>
-    <string name="text_confirm_create_pack">Xác nhận tạo mã gói</string>
+    <string name="text_confirm_print_temp_packinging">Xác nhận in tem bao bì</string>
     <string name="text_no_connect_printer">Không có kết nối vs máy In! Không thể IN!!!</string>
     <string name="text_print_success">In thành công.</string>
     <string name="text_no_ip_address">Vui lòng nhập địa chỉ IP để kết nối máy in.</string>
@@ -120,6 +120,20 @@
     <string name="text_error_network">Lỗi kết nối mạng. Vui lòng kiểm tra lại mạng</string>
     <string name="text_error_network_host">Unable to resolve host</string>
     <string name="text_port_null">Vui lòng nhập số port!</string>
+    <string name="text_floor_or_apartment">Căn/Tầng</string>
+    <string name="text_serial_module">STT module</string>
+    <string name="text_serial_module_print">STT module:</string>
+    <string name="text_package">Kiện</string>
+    <string name="text_date_print">Ngày in:</string>
+    <string name="text_code_pack">Mã gói/ SP:</string>
+    <string name="text_choose_code_so">Chọn mã SO</string>
+    <string name="text_choose_floor">Chọn căn/tầng</string>
+    <string name="text_choose_serial_module">Chọn STT module</string>
+    <string name="text_serial_package">STT Kiện</string>
+    <string name="text_choose_serial_package">Chọn STT kiện</string>
+    <string name="text_receiving_department">Bộ phận nhận</string>
+    <string name="text_choose_receiving_department">Chọn bộ phận nhận</string>
+    <string name="text_delivery_date">Ngày giao</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

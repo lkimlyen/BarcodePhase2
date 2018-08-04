@@ -1,7 +1,6 @@
 package com.demo.barcode.app.di.component;
 
 
-
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseActivity;
 import com.demo.barcode.app.base.BaseFragment;
@@ -11,28 +10,25 @@ import com.demo.barcode.app.di.module.RepositoryModule;
 import com.demo.barcode.app.di.module.UseCaseModule;
 import com.demo.barcode.screen.chang_password.ChangePasswordComponent;
 import com.demo.barcode.screen.chang_password.ChangePasswordModule;
-import com.demo.barcode.screen.confirm_delivery.ConfirmDeliveryComponent;
-import com.demo.barcode.screen.confirm_delivery.ConfirmDeliveryModule;
-import com.demo.barcode.screen.create_code_package.CreateCodePackageComponent;
-import com.demo.barcode.screen.create_code_package.CreateCodePackageModule;
+import com.demo.barcode.screen.confirm_receive.ConfirmReceiveComponent;
+import com.demo.barcode.screen.confirm_receive.ConfirmReceiveModule;
+import com.demo.barcode.screen.create_packaging.CreatePackagingComponent;
+import com.demo.barcode.screen.create_packaging.CreatePackagingModule;
 import com.demo.barcode.screen.dashboard.DashboardComponent;
 import com.demo.barcode.screen.dashboard.DashboardModule;
 import com.demo.barcode.screen.detail_package.DetailPackageComponent;
 import com.demo.barcode.screen.detail_package.DetailPackageModule;
 import com.demo.barcode.screen.history_pack.HistoryPackageComponent;
 import com.demo.barcode.screen.history_pack.HistoryPackageModule;
-import com.demo.barcode.screen.import_works.ImportWorksComponent;
-import com.demo.barcode.screen.import_works.ImportWorksModule;
 import com.demo.barcode.screen.login.LoginComponent;
 import com.demo.barcode.screen.login.LoginModule;
 import com.demo.barcode.screen.print_stemp.PrintStempComponent;
 import com.demo.barcode.screen.print_stemp.PrintStempModule;
-import com.demo.barcode.screen.scan_delivery.ScanDeliveryComponent;
-import com.demo.barcode.screen.scan_delivery.ScanDeliveryModule;
-import com.demo.barcode.screen.scan_warehousing.ScanWarehousingComponent;
-import com.demo.barcode.screen.scan_warehousing.ScanWarehousingModule;
 import com.demo.barcode.screen.setting.SettingComponent;
 import com.demo.barcode.screen.setting.SettingModule;
+import com.demo.barcode.screen.stages.StagesComponent;
+import com.demo.barcode.screen.stages.StagesModule;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -56,7 +52,7 @@ public interface ApplicationComponent {
 
     LoginComponent plus(LoginModule module);
 
-    CreateCodePackageComponent plus(CreateCodePackageModule module);
+    CreatePackagingComponent plus(CreatePackagingModule module);
 
     DashboardComponent plus(DashboardModule module);
 
@@ -70,12 +66,8 @@ public interface ApplicationComponent {
 
     DetailPackageComponent plus(DetailPackageModule module);
 
-    ScanWarehousingComponent plus(ScanWarehousingModule module);
+    StagesComponent plus(StagesModule module);
 
-    ScanDeliveryComponent plus(ScanDeliveryModule module);
-
-    ConfirmDeliveryComponent plus(ConfirmDeliveryModule module);
-
-    ImportWorksComponent plus(ImportWorksModule module);
+    ConfirmReceiveComponent plus(ConfirmReceiveModule module);
 
 }

@@ -15,7 +15,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.screen.confirm_delivery.ConfirmDeliveryActivity;
-import com.demo.barcode.screen.create_code_package.CreateCodePackageActivity;
+import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
 import com.demo.barcode.screen.import_works.ImportWorksActivity;
 import com.demo.barcode.screen.login.LoginActivity;
@@ -211,7 +211,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_create_package)
     public void createPackage() {
-        CreateCodePackageActivity.start(getContext());
+        CreatePackagingActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_history_pack)

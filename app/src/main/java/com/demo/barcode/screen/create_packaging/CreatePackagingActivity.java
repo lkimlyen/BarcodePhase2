@@ -1,6 +1,5 @@
-package com.demo.barcode.screen.create_code_package;
+package com.demo.barcode.screen.create_packaging;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseActivity;
 import com.demo.barcode.app.di.Precondition;
-import com.demo.barcode.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
 
@@ -19,14 +17,14 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class CreateCodePackageActivity extends BaseActivity {
+public class CreatePackagingActivity extends BaseActivity {
     @Inject
-    CreateCodePackagePresenter CreateCodePackagePresenter;
+    CreatePackagingPresenter CreatePackagingPresenter;
 
-    CreateCodePackageFragment fragment;
+    CreatePackagingFragment fragment;
 
     public static void start(Context context) {
-        Intent intent = new Intent(context, CreateCodePackageActivity.class);
+        Intent intent = new Intent(context, CreatePackagingActivity.class);
         context.startActivity(intent);
     }
 
@@ -39,7 +37,7 @@ public class CreateCodePackageActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new CreateCodePackageModule(fragment))
+                .plus(new CreatePackagingModule(fragment))
                 .inject(this);
 
 //        Window w = getWindow(); // in Activity's onCreate() for instance
@@ -50,14 +48,14 @@ public class CreateCodePackageActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (CreateCodePackageFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (CreatePackagingFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = CreateCodePackageFragment.newInstance();
+            fragment = CreatePackagingFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(CreateCodePackageFragment fragment, int frameId) {
+    private void addFragmentToBackStack(CreatePackagingFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);

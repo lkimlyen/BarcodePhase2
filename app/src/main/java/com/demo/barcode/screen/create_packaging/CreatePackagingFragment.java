@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.create_code_package;
+package com.demo.barcode.screen.create_packaging;
 
 import android.Manifest;
 import android.app.Activity;
@@ -58,16 +58,16 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
  * Created by MSI on 26/11/2017.
  */
 
-public class CreateCodePackageFragment extends BaseFragment implements CreateCodePackageContract.View {
+public class CreatePackagingFragment extends BaseFragment implements CreatePackagingContract.View {
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
-    private final String TAG = CreateCodePackageFragment.class.getName();
-    private CreateCodePackageContract.Presenter mPresenter;
+    private final String TAG = CreatePackagingFragment.class.getName();
+    private CreatePackagingContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
     private CreateCodePackAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
-    @Bind(R.id.ss_produce)
-    SearchableSpinner ssProduce;
+    @Bind(R.id.ss_code_so)
+    SearchableSpinner ssCodeSO;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -86,13 +86,13 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
-    public CreateCodePackageFragment() {
+    public CreatePackagingFragment() {
         // Required empty public constructor
     }
 
 
-    public static CreateCodePackageFragment newInstance() {
-        CreateCodePackageFragment fragment = new CreateCodePackageFragment();
+    public static CreatePackagingFragment newInstance() {
+        CreatePackagingFragment fragment = new CreatePackagingFragment();
         return fragment;
     }
 
@@ -135,7 +135,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_code_pack, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_temp_packaging, container, false);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
@@ -147,10 +147,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
-        ssProduce.setTitle(getString(R.string.text_choose_request_produce));
+        ssCodeSO.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
-        ssProduce.setPrompt(getString(R.string.text_choose_request_produce));
-        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+        ssCodeSO.setPrompt(getString(R.string.text_choose_request_produce));
+        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
                 if (mPresenter.countListScan(orderId) > 0) {
@@ -163,13 +163,13 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         List<String> list = new ArrayList<>();
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssProduce.setAdapter(adapter);
+        ssCodeSO.setAdapter(adapter);
         mPresenter.getData();
     }
 
 
     @Override
-    public void setPresenter(CreateCodePackageContract.Presenter presenter) {
+    public void setPresenter(CreatePackagingContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 
@@ -241,11 +241,11 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         txtCustomerName.setText("");
         ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssProduce.setAdapter(adapter);
-        ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+                if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
                     return;
                 }
                 txtCodeSO.setText(list.get(position).getCodeSO());
@@ -368,7 +368,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
             return;
         }
         checkPermissionLocation();
@@ -479,7 +479,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
             showError(getString(R.string.text_order_id_null));
             return;
         }
