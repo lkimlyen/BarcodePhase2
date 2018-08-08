@@ -3,50 +3,37 @@ package com.demo.architect.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by uyminhduc on 10/23/16.
  */
 
-public class BaseResponse {
+public class BaseResponse<T>{
 
-    @SerializedName("ID")
-    @Expose
-    private int ID;
 
-    @SerializedName("Number")
+    @SerializedName("Data")
     @Expose
-    private int Number;
-
-    @SerializedName("CodeScan")
-    @Expose
-    private String CodeScan;
+    private List<T> data;
 
     @SerializedName("Status")
     @Expose
-    private int Status;
+    private int status;
 
     @SerializedName("Description")
     @Expose
-    private String Description;
+    private String description;
 
+
+    public List<T> getData() {
+        return data;
+    }
 
     public int getStatus() {
-        return Status;
+        return status;
     }
 
     public String getDescription() {
-        return Description;
-    }
-
-    public int getNumber() {
-        return Number;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    public String getCodeScan() {
-        return CodeScan;
+        return description;
     }
 }

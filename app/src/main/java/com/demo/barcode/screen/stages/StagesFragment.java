@@ -25,6 +25,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
@@ -72,14 +74,15 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSO;
-
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
     @Bind(R.id.lv_code)
     ListView rvCode;
+
+    @Bind(R.id.ss_receiving_department)
+    SearchableSpinner ssDepartment;
+
     private Vibrator vibrate;
     private int orderId = 0;
     private Location mLocation;
@@ -115,7 +118,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
                 mPresenter.checkBarcode(barcode, orderId, mLocation != null ? mLocation.getLatitude() : 0,
-                        mLocation != null ? mLocation.getLongitude():0);
+                        mLocation != null ? mLocation.getLongitude() : 0);
             }
         }
 
@@ -135,7 +138,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_temp_packaging, container, false);
+        View view = inflater.inflate(R.layout.fragment_stages, container, false);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
@@ -146,25 +149,17 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-
-        ssCodeSO.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
-        ssCodeSO.setPrompt(getString(R.string.text_choose_request_produce));
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListScan(orderId) > 0) {
-                    return true;
-                }
+//                if (mPresenter.countListScan(orderId) > 0) {
+//                    return true;
+//                }
                 return false;
             }
         });
 
-        List<String> list = new ArrayList<>();
-        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssCodeSO.setAdapter(adapter);
-        mPresenter.getData();
     }
 
 
@@ -198,15 +193,13 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void onStop() {
         super.onStop();
-
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (!isClick) {
-            mPresenter.deleteAllItemLog();
+            // mPresenter.deleteAllItemLog();
         }
     }
 
@@ -230,30 +223,22 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
+
+
     @Override
     public void showSuccess(String message) {
         showToast(message);
     }
 
     @Override
-    public void showRequestProduction(List<OrderModel> list) {
-        txtCodeSO.setText("");
-        txtCustomerName.setText("");
-        ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
+    public void showListDepartment(List<DepartmentEntity> list) {
+        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ssDepartment.setAdapter(adapter);
+        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
-                    return;
-                }
-                txtCodeSO.setText(list.get(position).getCodeSO());
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                mPresenter.getProduct(list.get(position).getId());
-                orderId = list.get(position).getId();
-                mPresenter.getListCreateCode(orderId);
-                edtBarcode.setText("");
+                mPresenter.getListProduct(orderId, list.get(position).getId());
             }
 
             @Override
@@ -262,6 +247,26 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         });
     }
+
+    @Override
+    public void showListSO(List<SOEntity> list) {
+        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCustomerName.setText(list.get(position).getCustomerName());
+                orderId = list.get(position).getOrderId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
 
     @Override
     public void showLogScanCreatePack(LogScanCreatePackList list) {
@@ -327,34 +332,58 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }
     }
 
+    @Override
+    public void showCheckResidual(int times) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(String.format(getString(R.string.text_number_residual), times))
+                .setConfirmText(getString(R.string.text_yes))
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
     @OnClick(R.id.ic_refresh)
     public void refresh() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog();
-                            sweetAlertDialog.dismiss();
-                            mPresenter.getData();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .show();
-
-        } else {
-
-            mPresenter.getData();
-        }
+//        if (mPresenter.countListScan(orderId) > 0) {
+//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+//                    .setTitleText(getString(R.string.text_title_noti))
+//                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
+//                    .setConfirmText(getString(R.string.text_yes))
+//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            mPresenter.deleteAllItemLog();
+//                            sweetAlertDialog.dismiss();
+//                            mPresenter.getData();
+//                        }
+//                    })
+//                    .setCancelText(getString(R.string.text_no))
+//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            sweetAlertDialog.dismiss();
+//                        }
+//                    })
+//                    .show();
+//
+//        } else {
+//
+//            mPresenter.getData();
+//        }
     }
 
     public void showToast(String message) {
@@ -368,7 +397,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_code_so))) {
+            return;
+        }
+
+        if (ssDepartment.getSelectedItem().toString().equals(getString(R.string.text_choose_receiving_department))) {
             return;
         }
         checkPermissionLocation();
@@ -381,7 +414,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), orderId,
                                 mLocation != null ? mLocation.getLatitude() : 0,
-                                mLocation != null ? mLocation.getLongitude():0);
+                                mLocation != null ? mLocation.getLongitude() : 0);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -440,46 +473,40 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog();
-                            sweetAlertDialog.dismiss();
-                            getActivity().finish();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .show();
-
-        } else {
-            getActivity().finish();
-        }
+//        if (mPresenter.countListScan(orderId) > 0) {
+//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+//                    .setTitleText(getString(R.string.text_title_noti))
+//                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
+//                    .setConfirmText(getString(R.string.text_yes))
+//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            mPresenter.deleteAllItemLog();
+//                            sweetAlertDialog.dismiss();
+//                            getActivity().finish();
+//                        }
+//                    })
+//                    .setCancelText(getString(R.string.text_no))
+//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            sweetAlertDialog.dismiss();
+//                        }
+//                    })
+//                    .show();
+//
+//        } else {
+//            getActivity().finish();
+//        }
     }
 
-    @OnClick(R.id.img_print)
-    public void print() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            isClick = true;
-            PrintStempActivity.start(getActivity(), orderId);
-        } else {
-            showNotification(getString(R.string.text_no_data), SweetAlertDialog.WARNING_TYPE);
-        }
+    @OnClick(R.id.img_upload)
+    public void upload() {
     }
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_code_so))) {
             showError(getString(R.string.text_order_id_null));
             return;
         }

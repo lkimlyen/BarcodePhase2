@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;
@@ -28,9 +28,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
     }
 
-    private void handleProductResponse(Call<BaseListResponse<ProductEntity>> call, Subscriber subscriber) {
+    private void handleProductResponse(Call<BaseResponse<ProductEntity>> call, Subscriber subscriber) {
         try {
-            BaseListResponse<ProductEntity> response = call.execute().body();
+            BaseResponse<ProductEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -48,14 +48,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ProductEntity>> getAllDetailForSOACR(final int requestId) {
+    public Observable<BaseResponse<ProductEntity>> getInputForProductDetail(final int orderId, final int departmentId) {
 
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<ProductEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseListResponse<ProductEntity>> subscriber) {
-                handleProductResponse(mRemoteApiInterface.getAllDetailForSOACR(
-                        server+"/WS/api/GetAllDetailForSOACR",requestId), subscriber);
+            public void call(Subscriber<? super BaseResponse<ProductEntity>> subscriber) {
+                handleProductResponse(mRemoteApiInterface.getInputForProductDetail(
+                        server+"/WS/api/GD2GetInputForProductDetail",orderId, departmentId), subscriber);
             }
         });
     }

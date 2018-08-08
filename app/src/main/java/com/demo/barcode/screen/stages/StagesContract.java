@@ -1,5 +1,7 @@
 package com.demo.barcode.screen.stages;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
@@ -18,35 +20,26 @@ public interface StagesContract {
 
         void showSuccess(String message);
 
-        void showRequestProduction(List<OrderModel> list);
+        void showListDepartment(List<DepartmentEntity> list);
 
-        void showLogScanCreatePack(LogScanCreatePackList list);
+        void showListSO(List<SOEntity> list);
 
         void startMusicError();
 
         void startMusicSuccess();
 
         void turnOnVibrator();
+
+        void showCheckResidual(int times);
     }
 
     interface Presenter extends BasePresenter {
-        void getData();
+        void getListDepartment();
 
-        void getRequestProduction();
+        void getListSO();
 
-        void getProduct(int orderId);
+        void getListProduct(int orderId, int deparmentId);
 
-        void checkBarcode(String barcode, int orderId, double latitude, double longitude);
-
-        void getListCreateCode(int orderId);
-
-        void deleteItemLog(LogScanCreatePack item);
-
-        void updateNumberInput(int id, int number, int serial, int currentNumber);
-
-        void deleteAllItemLog();
-
-        int countListScan(int orderId);
-
+        void checkBarcode(String barcode, int orderId, int departmentId, double latitude, double longitude);
     }
 }

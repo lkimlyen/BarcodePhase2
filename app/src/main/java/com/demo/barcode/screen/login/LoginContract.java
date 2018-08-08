@@ -10,12 +10,16 @@ import com.demo.barcode.app.base.BaseView;
 public interface LoginContract {
     interface View extends BaseView<Presenter> {
         void loginError(String content);
+
         void startDashboardActivity();
     }
 
     interface Presenter extends BasePresenter {
         void login(String phone, String password);
+
         void saveServer(String server);
+
+        void getListDepartment();
 
     }
 }

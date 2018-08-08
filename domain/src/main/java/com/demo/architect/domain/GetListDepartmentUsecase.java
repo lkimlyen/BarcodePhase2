@@ -2,30 +2,33 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
+import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
+import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public class GetAllPackageUsecase extends BaseUseCase {
-    private static final String TAG = GetAllPackageUsecase.class.getSimpleName();
-    private final OrderRepository remoteRepository;
+public class GetListDepartmentUsecase extends BaseUseCase {
+    private static final String TAG = GetListDepartmentUsecase.class.getSimpleName();
+    private final OtherRepository remoteRepository;
 
-    public GetAllPackageUsecase(OrderRepository remoteRepository) {
+    public GetListDepartmentUsecase(OtherRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-        return remoteRepository.getAllPackage();
+        return remoteRepository.getListDepartment();
     }
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseListResponse<PackageEntity>>() {
+        return new Subscriber<BaseResponse<DepartmentEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -40,10 +43,10 @@ public class GetAllPackageUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseListResponse<PackageEntity> data) {
+            public void onNext(BaseResponse<DepartmentEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    List<PackageEntity> result = data.getList();
+                    List<DepartmentEntity> result = data.getData();
                     if (result != null && data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
@@ -59,13 +62,13 @@ public class GetAllPackageUsecase extends BaseUseCase {
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private List<PackageEntity> entity;
+        private List<DepartmentEntity> entity;
 
-        public ResponseValue( List<PackageEntity> entity) {
+        public ResponseValue( List<DepartmentEntity> entity) {
             this.entity = entity;
         }
 
-        public  List<PackageEntity> getEntity() {
+        public  List<DepartmentEntity> getEntity() {
             return entity;
         }
     }

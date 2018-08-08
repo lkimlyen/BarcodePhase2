@@ -10,10 +10,12 @@ import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
@@ -31,16 +33,17 @@ public class LoginPresenter implements LoginContract.Presenter {
     private final LoginContract.View view;
     private final LoginUsecase loginUsecase;
     private final UpdateSoftUsecase updateSoftUsecase;
-
+    private final GetListDepartmentUsecase getListDepartmentUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     LoginPresenter(@NonNull LoginContract.View view,
-                   LoginUsecase loginUsecase, UpdateSoftUsecase updateSoftUsecase) {
+                   LoginUsecase loginUsecase, UpdateSoftUsecase updateSoftUsecase, GetListDepartmentUsecase getListDepartmentUsecase) {
         this.view = view;
         this.loginUsecase = loginUsecase;
         this.updateSoftUsecase = updateSoftUsecase;
+        this.getListDepartmentUsecase = getListDepartmentUsecase;
     }
 
     @Inject
@@ -52,8 +55,6 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-
-
     }
 
     @Override
@@ -73,13 +74,13 @@ public class LoginPresenter implements LoginContract.Presenter {
                 Log.d(TAG, new Gson().toJson(successResponse.getEntity()));
                 //Save user entity to shared preferences
                 UserManager.getInstance().setUser(successResponse.getEntity());
-               boolean aBoolean =  SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getBoolean(Constants.KEY_UPLOAD, false);
-               if (!aBoolean){
-                   uploadVersionApp();
-               }else {
-                   view.hideProgressBar();
-                   view.startDashboardActivity();
-               }
+                boolean aBoolean = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getBoolean(Constants.KEY_UPLOAD, false);
+                if (!aBoolean) {
+                    uploadVersionApp();
+                } else {
+                    view.hideProgressBar();
+                    view.startDashboardActivity();
+                }
 
             }
 
@@ -87,10 +88,10 @@ public class LoginPresenter implements LoginContract.Presenter {
             public void onError(LoginUsecase.ErrorValue errorResponse) {
                 view.hideProgressBar();
                 String error = "";
-                if(errorResponse.getDescription().contains(
-                        CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                if (errorResponse.getDescription().contains(
+                        CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                     error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                }else {
+                } else {
                     error = errorResponse.getDescription();
                 }
                 view.loginError(error);
@@ -101,6 +102,26 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void saveServer(String server) {
         ServerManager.getInstance().setServer(server);
+    }
+
+    @Override
+    public void getListDepartment() {
+        getListDepartmentUsecase.executeIO(new GetListDepartmentUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetListDepartmentUsecase.ResponseValue,
+                        GetListDepartmentUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListDepartmentUsecase.ResponseValue successResponse) {
+                        ListDepartmentManager.getInstance().setListDepartment(successResponse.getEntity());
+                        view.hideProgressBar();
+                        view.startDashboardActivity();
+                    }
+
+                    @Override
+                    public void onError(GetListDepartmentUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.startDashboardActivity();
+                    }
+                });
     }
 
     private void uploadVersionApp() {
@@ -122,16 +143,13 @@ public class LoginPresenter implements LoginContract.Presenter {
                 new BaseUseCase.UseCaseCallback<UpdateSoftUsecase.ResponseValue, UpdateSoftUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(UpdateSoftUsecase.ResponseValue successResponse) {
+                        getListDepartment();
                         SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).pushBoolean(Constants.KEY_UPLOAD, true);
-                        view.hideProgressBar();
-                        view.startDashboardActivity();
-
                     }
 
                     @Override
                     public void onError(UpdateSoftUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        view.startDashboardActivity();
+                        getListDepartment();
                     }
                 });
     }

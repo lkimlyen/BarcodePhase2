@@ -12,7 +12,7 @@ import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
-import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
+import com.demo.architect.domain.GetInputForProductDetail;
 import com.demo.architect.domain.GetAllPackageForRequestUsecase;
 import com.demo.architect.domain.GetAllPackageUsecase;
 import com.demo.architect.domain.GetAllRequestACRInUsecase;
@@ -71,8 +71,8 @@ public class UseCaseModule {
     }
 
     @Provides
-    GetAllDetailForSOACRUsecase provideGetAllDetailForSOACRUsecase(ProductRepository remoteRepository) {
-        return new GetAllDetailForSOACRUsecase(remoteRepository);
+    GetInputForProductDetail provideGetAllDetailForSOACRUsecase(ProductRepository remoteRepository) {
+        return new GetInputForProductDetail(remoteRepository);
     }
 
     @Provides

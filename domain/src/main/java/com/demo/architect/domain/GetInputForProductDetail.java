@@ -2,7 +2,7 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 
@@ -11,23 +11,24 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 
-public class GetAllDetailForSOACRUsecase extends BaseUseCase {
-    private static final String TAG = GetAllDetailForSOACRUsecase.class.getSimpleName();
+public class GetInputForProductDetail extends BaseUseCase {
+    private static final String TAG = GetInputForProductDetail.class.getSimpleName();
     private final ProductRepository remoteRepository;
 
-    public GetAllDetailForSOACRUsecase(ProductRepository remoteRepository) {
+    public GetInputForProductDetail(ProductRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int requestId = ((RequestValue) requestValues).requestId;
-        return remoteRepository.getAllDetailForSOACR(requestId);
+        int orderId = ((RequestValue) requestValues).orderId;
+        int departmentId = ((RequestValue) requestValues).departmentId;
+        return remoteRepository.getInputForProductDetail(orderId, departmentId);
     }
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseListResponse<ProductEntity>>() {
+        return new Subscriber<BaseResponse<ProductEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -42,10 +43,10 @@ public class GetAllDetailForSOACRUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseListResponse<ProductEntity> data) {
+            public void onNext(BaseResponse<ProductEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    List<ProductEntity> result = data.getList();
+                    List<ProductEntity> result = data.getData();
                     if (result != null && data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
@@ -57,10 +58,12 @@ public class GetAllDetailForSOACRUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int requestId;
+        private final int orderId;
+        private final int departmentId;
 
-        public RequestValue(int requestId) {
-            this.requestId = requestId;
+        public RequestValue(int orderId, int departmentId) {
+            this.orderId = orderId;
+            this.departmentId = departmentId;
         }
     }
 

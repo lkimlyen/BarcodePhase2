@@ -6,6 +6,8 @@
     <string name="text_username_null">Vui lòng nhập tên đăng nhập</string>
     <string name="text_password_null">Vui lòng nhập mật khẩu</string>
     <string name="text_create_temp_packaging">Quét tạo tem bao bì</string>
+
+    <string name="text_scan_stages">Quét công đoạn giao</string>
     <string name="text_history_create_code">Lịch sử tạo mã gói</string>
     <string name="text_scan_warehouse">Quét nhập kho ACRYLIC</string>
     <string name="text_scan_delivery">Quét giao hàng</string>
@@ -46,7 +48,7 @@
     <string name="text_barcode_error_type">Mã quét loại này không đúng! Xin chọn mã khác!</string>
     <string name="text_barcode_error_lenght">Độ dài mã quét không đúng, Hãy kiểm tra lại!</string>
     <string name="text_product_empty">Không có SP nào trong Lệnh SX, Vui lòng tải lại!</string>
-    <string name="text_barcode_no_exist">Mã quét không tồn tại trong Lệnh SX! Vui lòng thử mã khác!</string>
+    <string name="text_barcode_no_exist">Mã quét không tồn tại trong SO này! Vui lòng thử mã khác!</string>
     <string name="text_save_barcode_success">Hợp lệ! Lưu Thành Công</string>
     <string name="text_add">Thêm</string>
     <string name="text_request_produce">Lệnh SX</string>
@@ -77,7 +79,7 @@
     <string name="text_no_ip_address">Vui lòng nhập địa chỉ IP để kết nối máy in.</string>
     <string name="text_no_data">Không có dữ liệu</string>
     <string name="text_search">Tìm</string>
-    <string name="text_order_id_null">Bạn chưa chọn lệnh sản xuất</string>
+    <string name="text_order_id_null">Bạn chưa chọn mã SO</string>
     <string name="text_detail_package">Chi tiết mã gói</string>
     <string name="text_done">Hoàn tất</string>
     <string name="text_print_again">In lại gói này</string>
@@ -134,9 +136,14 @@
     <string name="text_receiving_department">Bộ phận nhận</string>
     <string name="text_choose_receiving_department">Chọn bộ phận nhận</string>
     <string name="text_delivery_date">Ngày giao</string>
+    <string name="text_choose_stages">Chọn bộ phận</string>
+    <string name="text_type_product">Loại hàng</string>
+    <string name="text_choose_type_product">Chọn loại hàng</string>
+    <string name="text_number_residual" formatted="true">Số lượng nhập vào đã đủ. Bạn có muốn quét lần %d không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
         <item>@string/text_test_address</item>
     </string-array>
+
 </resources>

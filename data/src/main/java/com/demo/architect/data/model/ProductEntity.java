@@ -4,91 +4,150 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ProductEntity {
-    @SerializedName("ProductID")
+    @SerializedName("OrderID")
     @Expose
-    private int productID;
+    private int orderId;
 
-    @SerializedName("STT")
+    @SerializedName("DepartmentID")
     @Expose
-    private int stt;
+    private int departmentID;
 
-    @SerializedName("CodeColor")
+    @SerializedName("ProductDetailID")
     @Expose
-    private String codeColor;
+    private int productDetailID;
 
-    @SerializedName("Lengh")
+    @SerializedName("ProductDetailName")
     @Expose
-    private int length;
+    private String productDetailName;
 
-    @SerializedName("Wide")
+    @SerializedName("Module")
     @Expose
-    private int wide;
+    private String module;
 
-    @SerializedName("Deep")
+    @SerializedName("Barcode")
     @Expose
-    private int deep;
+    private String barcode;
 
-    @SerializedName("Grain")
+    @SerializedName("NumberTotal")
     @Expose
-    private String grain;
+    private int numberTotal;
 
-    @SerializedName("Number")
+    @SerializedName("NumberSuccess")
     @Expose
-    private int number;
+    private int numberSuccess;
 
-    @SerializedName("Current")
+    @SerializedName("NumberWaitting")
     @Expose
-    private int numScaned;
+    private int numberWaitting;
 
-    @SerializedName("IsFull")
+    @SerializedName("TimesOutput")
     @Expose
-    private boolean isFull;
+    private int timesOutput;
 
-    public int getProductID() {
-        return productID;
+    @SerializedName("Cat")
+    @Expose
+    private boolean cat;
+
+    @SerializedName("ChiMay")
+    @Expose
+    private boolean chimay;
+
+    @SerializedName("ChiTay")
+    @Expose
+    private boolean chitay;
+
+    @SerializedName("Son")
+    @Expose
+    private boolean son;
+
+    @SerializedName("LapRap")
+    @Expose
+    private boolean laprap;
+
+    @SerializedName("Nguoi")
+    @Expose
+    private boolean nguoi;
+
+    @SerializedName("Da")
+    @Expose
+    private boolean da;
+
+    @SerializedName("BaoBi")
+    @Expose
+    private boolean baobi;
+
+    public ProductEntity() {
     }
 
-    public int getStt() {
-        return stt;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public String getCodeColor() {
-        return codeColor;
+    public int getDepartmentID() {
+        return departmentID;
     }
 
-    public int getLength() {
-        return length;
+    public int getProductDetailID() {
+        return productDetailID;
     }
 
-    public int getWide() {
-        return wide;
+    public String getProductDetailName() {
+        return productDetailName;
     }
 
-    public int getDeep() {
-        return deep;
+    public String getModule() {
+        return module;
     }
 
-    public String getGrain() {
-        return grain;
+    public String getBarcode() {
+        return barcode;
     }
 
-    public int getNumber() {
-        return number;
+    public int getNumberTotal() {
+        return numberTotal;
     }
 
-    public int getNumScaned() {
-        return numScaned;
+    public int getNumberSuccess() {
+        return numberSuccess;
     }
 
-    public boolean isFull() {
-        return isFull;
+    public int getNumberWaitting() {
+        return numberWaitting;
     }
 
-    public void setNumScaned(int numScaned) {
-        this.numScaned = numScaned;
+    public int getTimesOutput() {
+        return timesOutput;
     }
 
-    public void setFull(boolean full) {
-        isFull = full;
+    public boolean isCat() {
+        return cat;
+    }
+
+    public boolean isChimay() {
+        return chimay;
+    }
+
+    public boolean isChitay() {
+        return chitay;
+    }
+
+    public boolean isSon() {
+        return son;
+    }
+
+    public boolean isLaprap() {
+        return laprap;
+    }
+
+    public boolean isNguoi() {
+        return nguoi;
+    }
+
+    public boolean isDa() {
+        return da;
+    }
+
+    public boolean isBaobi() {
+        return baobi;
     }
 }

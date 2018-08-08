@@ -1,13 +1,12 @@
-package com.demo.architect.data.repository.base.order.remote;
+package com.demo.architect.data.repository.base.other.remote;
 
 
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ResultEntity;
-import com.demo.architect.data.model.SOEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -21,8 +20,8 @@ import retrofit2.http.Url;
  * Created by Skull on 04/01/2018.
  */
 
-public interface OrderApiInterface {
+public interface OtherApiInterface {
     @GET
-    Call<BaseResponse<SOEntity>> getListSO(@Url String url,@Field("pOrderType") int orderType);
+    Call<BaseResponse<DepartmentEntity>> getListDepartment(@Url String url);
 
 }

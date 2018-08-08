@@ -1,16 +1,16 @@
-package com.demo.architect.data.repository.base.order.remote;
+package com.demo.architect.data.repository.base.other.remote;
 
 import android.content.Context;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ResultEntity;
-import com.demo.architect.data.model.SOEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -20,21 +20,21 @@ import rx.Subscriber;
  * Created by Skull on 04/01/2018.
  */
 
-public class OrderRepositoryImpl implements OrderRepository {
-    private final static String TAG = OrderRepositoryImpl.class.getName();
+public class OtherRepositoryImpl implements OtherRepository {
+    private final static String TAG = OtherRepositoryImpl.class.getName();
 
-    private OrderApiInterface mRemoteApiInterface;
+    private OtherApiInterface mRemoteApiInterface;
     private Context context;
     private String server;
 
-    public OrderRepositoryImpl(OrderApiInterface mRemoteApiInterface, Context context) {
+    public OtherRepositoryImpl(OtherApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
         this.context = context;
     }
 
-    private void handleSOResponse(Call<BaseResponse<SOEntity>> call, Subscriber subscriber) {
+    private void handleDepartmentResponse(Call<BaseResponse<DepartmentEntity>> call, Subscriber subscriber) {
         try {
-            BaseResponse<SOEntity> response = call.execute().body();
+            BaseResponse<DepartmentEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -51,16 +51,14 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-
-
     @Override
-    public Observable<BaseResponse<SOEntity>> getListSO(final int orderType) {
+    public Observable<BaseResponse<DepartmentEntity>> getListDepartment() {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse<SOEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<DepartmentEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseResponse<SOEntity>> subscriber) {
-                handleSOResponse(mRemoteApiInterface.getListSO(
-                        server + "/WS/api/GD2GetListSO", orderType), subscriber);
+            public void call(Subscriber<? super BaseResponse<DepartmentEntity>> subscriber) {
+                handleDepartmentResponse(mRemoteApiInterface.getListDepartment(
+                        server + "/WS/api/GD2GetListDepartment"), subscriber);
             }
         });
     }

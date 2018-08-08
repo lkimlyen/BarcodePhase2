@@ -18,7 +18,7 @@ import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
-import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
+import com.demo.architect.domain.GetInputForProductDetail;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -45,7 +45,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     private final DetailPackageContract.View view;
     private final DeletePackageDetailUsecase deletePackageDetailUsecase;
     private final DeletePackageUsecase deletePackageUsecase;
-    private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
+    private final GetInputForProductDetail getInputForProductDetail;
     private final AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase;
     @Inject
     LocalRepository localRepository;
@@ -54,12 +54,12 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     DetailPackagePresenter(@NonNull DetailPackageContract.View view, DeletePackageDetailUsecase deletePackageDetailUsecase,
                            DeletePackageUsecase deletePackageUsecase,
                            GetDateServerUsecase getDateServerUsecase,
-                           GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase,
+                           GetInputForProductDetail getInputForProductDetail,
                            AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase) {
         this.view = view;
         this.deletePackageDetailUsecase = deletePackageDetailUsecase;
         this.deletePackageUsecase = deletePackageUsecase;
-        this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
+        this.getInputForProductDetail = getInputForProductDetail;
         this.addPackageACRbyJsonUsecase = addPackageACRbyJsonUsecase;
     }
 
@@ -429,11 +429,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
     public void getProduct(int orderId) {
         view.showProgressBar();
-        getAllDetailForSOACRUsecase.executeIO(new GetAllDetailForSOACRUsecase.RequestValue(orderId),
-                new BaseUseCase.UseCaseCallback<GetAllDetailForSOACRUsecase.ResponseValue,
-                        GetAllDetailForSOACRUsecase.ErrorValue>() {
+        getInputForProductDetail.executeIO(new GetInputForProductDetail.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetInputForProductDetail.ResponseValue,
+                        GetInputForProductDetail.ErrorValue>() {
                     @Override
-                    public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
+                    public void onSuccess(GetInputForProductDetail.ResponseValue successResponse) {
                         view.hideProgressBar();
 //                        localRepository.deleteProduct().subscribe();
 //                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
@@ -447,7 +447,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     }
 
                     @Override
-                    public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
+                    public void onError(GetInputForProductDetail.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                     }

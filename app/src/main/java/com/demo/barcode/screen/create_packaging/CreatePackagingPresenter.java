@@ -12,7 +12,7 @@ import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
-import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
+import com.demo.architect.domain.GetInputForProductDetail;
 import com.demo.architect.domain.GetAllSOACRUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -38,17 +38,17 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     private final String TAG = CreatePackagingPresenter.class.getName();
     private final CreatePackagingContract.View view;
     private final GetAllSOACRUsecase getAllSOACRUsecase;
-    private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
+    private final GetInputForProductDetail getInputForProductDetail;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     CreatePackagingPresenter(@NonNull CreatePackagingContract.View view,
                              GetAllSOACRUsecase getAllSOACRUsecase,
-                             GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
+                             GetInputForProductDetail getInputForProductDetail) {
         this.view = view;
         this.getAllSOACRUsecase = getAllSOACRUsecase;
-        this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
+        this.getInputForProductDetail = getInputForProductDetail;
     }
 
     @Inject
@@ -120,11 +120,11 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     @Override
     public void getProduct(int orderId) {
         view.showProgressBar();
-        getAllDetailForSOACRUsecase.executeIO(new GetAllDetailForSOACRUsecase.RequestValue(orderId),
-                new BaseUseCase.UseCaseCallback<GetAllDetailForSOACRUsecase.ResponseValue,
-                        GetAllDetailForSOACRUsecase.ErrorValue>() {
+        getInputForProductDetail.executeIO(new GetInputForProductDetail.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetInputForProductDetail.ResponseValue,
+                        GetInputForProductDetail.ErrorValue>() {
                     @Override
-                    public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
+                    public void onSuccess(GetInputForProductDetail.ResponseValue successResponse) {
                         view.hideProgressBar();
                         // localRepository.deleteProduct().subscribe();
                         if (successResponse.getEntity().size() == 0) {
@@ -147,7 +147,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     }
 
                     @Override
-                    public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
+                    public void onError(GetInputForProductDetail.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                     }
