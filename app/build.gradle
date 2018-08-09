@@ -163,7 +163,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.2.0'
 
 
-    compile project(path: ':utils')
+
     compile project(path: ':domain')
 
     devDebugCompile project(path: ':thirdparty', configuration: 'devDebug')

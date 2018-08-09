@@ -26,12 +26,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
+import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.CreateCodePackAdapter;
+import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
@@ -65,7 +70,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private final String TAG = StagesFragment.class.getName();
     private StagesContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
-    private CreateCodePackAdapter adapter;
+    private StagesAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -83,8 +88,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.ss_receiving_department)
     SearchableSpinner ssDepartment;
 
+    @Bind(R.id.txt_delivery_date)
+    TextView txtDateScan;
+
     private Vibrator vibrate;
     private int orderId = 0;
+    private int departmentId = 0;
     private Location mLocation;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
@@ -122,16 +131,16 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         }
 
-        if (requestCode == PrintStempActivity.REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                showSuccess(getString(R.string.text_print_success));
-                mPresenter.getProduct(orderId);
-            } else {
-                isClick = false;
-            }
-
-
-        }
+//        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+//            if (resultCode == Activity.RESULT_OK) {
+//               showSuccess(getString(R.string.text_print_success));
+//                mPresenter.getProduct(orderId);
+//            } else {
+//                isClick = false;
+//            }
+//
+//
+//        }
     }
 
     @Override
@@ -147,15 +156,26 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     private void initView() {
+        txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         checkPermissionLocation();
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-//                if (mPresenter.countListScan(orderId) > 0) {
-//                    return true;
-//                }
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
                 return false;
             }
         });
@@ -224,7 +244,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
 
-
     @Override
     public void showSuccess(String message) {
         showToast(message);
@@ -238,7 +257,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListProduct(orderId, list.get(position).getId());
+                departmentId = list.get(position).getId();
+
             }
 
             @Override
@@ -249,31 +269,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showListSO(List<SOEntity> list) {
-        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void showListLogScanStages(LogListScanStages parent) {
+        adapter = new StagesAdapter(parent.getList(), new StagesAdapter.OnItemClearListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                orderId = list.get(position).getOrderId();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-
-    @Override
-    public void showLogScanCreatePack(LogScanCreatePackList list) {
-
-        adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
-            @Override
-            public void onItemClick(LogScanCreatePack item) {
+            public void onItemClick(LogScanStages item) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_code))
@@ -282,7 +281,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.deleteItemLog(item);
+                                // mPresenter.deleteItemLog(item);
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -295,12 +294,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         .show();
 
             }
-        }, new CreateCodePackAdapter.OnEditTextChangeListener() {
+        }, new StagesAdapter.OnEditTextChangeListener() {
             @Override
-            public void onEditTextChange(LogScanCreatePack item, int number) {
-                mPresenter.updateNumberInput(item.getId(), number, item.getSerial(), item.getNumInput());
+            public void onEditTextChange(LogScanStages item, int number) {
+                //    mPresenter.updateNumberInput(item.getId(), number, item.getSerial(), item.getNumInput());
             }
-        }, new CreateCodePackAdapter.onErrorListener() {
+        }, new StagesAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
@@ -311,6 +310,29 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         rvCode.setAdapter(adapter);
 
     }
+
+
+    @Override
+    public void showListSO(List<SOEntity> list) {
+        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCustomerName.setText(list.get(position).getCustomerName());
+                orderId = list.get(position).getOrderId();
+                mPresenter.getListProduct(orderId);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
 
     @Override
     public void startMusicError() {
@@ -353,6 +375,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     }
                 })
                 .show();
+
+    }
+
+    @Override
+    public void showChooseTimes(List<NumberInput> list) {
 
     }
 
@@ -473,31 +500,33 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-//        if (mPresenter.countListScan(orderId) > 0) {
-//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                    .setTitleText(getString(R.string.text_title_noti))
-//                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
-//                    .setConfirmText(getString(R.string.text_yes))
-//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            mPresenter.deleteAllItemLog();
-//                            sweetAlertDialog.dismiss();
-//                            getActivity().finish();
-//                        }
-//                    })
-//                    .setCancelText(getString(R.string.text_no))
-//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            sweetAlertDialog.dismiss();
-//                        }
-//                    })
-//                    .show();
-//
-//        } else {
-//            getActivity().finish();
-//        }
+        if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_back_have_detail_waiting))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            // mPresenter.deleteAllItemLog();
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+
+                        }
+                    })
+                    .show();
+
+        } else {
+            getActivity().finish();
+        }
     }
 
     @OnClick(R.id.img_upload)

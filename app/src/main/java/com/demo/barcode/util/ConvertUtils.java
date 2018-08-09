@@ -28,18 +28,6 @@ public class ConvertUtils {
 
     public static final String APP_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
 
-    public static int ConvertStringMoneyToInt(String s) {
-        if (s.toString().trim().equals("")) {
-            return 0;
-        } else {
-            String result = "";
-            String[] listSp = s.split("\\.");
-            for (String item : listSp) {
-                result = result + item;
-            }
-            return Integer.parseInt(result);
-        }
-    }
 
     public static String ConvertStringToShortDate(String s) {
         Date date = null;

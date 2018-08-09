@@ -28,4 +28,5 @@ dependencies {
     compile appDependencies.retrofitRxJava
     compile appDependencies.retrofitConverter
     compile appDependencies.retrofit
+    compile project(path: ':utils')
 }

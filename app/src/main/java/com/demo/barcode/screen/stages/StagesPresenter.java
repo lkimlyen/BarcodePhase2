@@ -4,25 +4,23 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetInputForProductDetail;
-import com.demo.architect.domain.GetAllSOACRUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
-import com.demo.barcode.manager.ListOrderManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -71,15 +69,11 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void checkBarcode(String barcode, int orderId, int departmentId, double latitude, double longitude) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
-            view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            view.startMusicError();
-            view.turnOnVibrator();
+            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
         if (barcode.length() < 10 || barcode.length() > 13) {
-            view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
-            view.startMusicError();
-            view.turnOnVibrator();
+            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             return;
         }
 
@@ -87,9 +81,8 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
         if (list.size() == 0) {
-            view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-            view.startMusicError();
-            view.turnOnVibrator();
+            showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
+
             return;
         }
 
@@ -98,14 +91,31 @@ public class StagesPresenter implements StagesContract.Presenter {
         for (ProductEntity model : list) {
             if (model.getBarcode().equals(barcode)) {
                 checkBarcode++;
-                if (model.getNumberWaitting() + model.getNumberSuccess() == model.getNumberTotal()) {
-                    saveBarcode(latitude,
-                            longitude, barcode, model, orderId);
+                if (model.getListDepartmentID().contains(departmentId)) {
+                    if (model.getListInput().size() > 1) {
+                        List<NumberInput> listTimes = new ArrayList<>();
+                        for (int i = 0; i < model.getListInput().size(); i++) {
+                            NumberInput input = model.getListInput().get(i);
+                            if (input.getNumberWaitting() > 1) {
+                                listTimes.add(input);
+                            }
+                        }
+                        if (listTimes.size() > 1) {
+                            view.showChooseTimes(listTimes);
+                        } else {
+                            for (NumberInput numberInput : listTimes) {
+                                saveBarcode(numberInput, barcode, orderId, departmentId, latitude, longitude);
+                            }
+                        }
+
+                    } else {
+                        NumberInput numberInput = model.getListInput().get(0);
+                        saveBarcode(numberInput, barcode, orderId, departmentId, latitude, longitude);
+                    }
+
 
                 } else {
-                    view.showCheckResidual(model.getTimesOutput());
-                    view.startMusicError();
-                    view.turnOnVibrator();
+                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
                 }
 
                 return;
@@ -113,13 +123,42 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
 
         if (checkBarcode == 0) {
-            view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+        }
+    }
+
+    public void showError(String error) {
+        view.showError(error);
+        view.startMusicError();
+        view.turnOnVibrator();
+    }
+
+    private int count = 0;
+
+    @Override
+    public int countLogScanStages(int orderId, int departmentId) {
+        localRepository.countLogScanStages(orderId, departmentId).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                count = integer;
+            }
+        });
+        return count;
+    }
+
+    @Override
+    public void saveBarcode(NumberInput numberInput, String barcode, int orderId, int departmentId, double latitude, double longitude) {
+
+        if (numberInput.getNumberWaitting() + numberInput.getNumberSuccess() == numberInput.getNumberTotalInput()) {
+            saveBarcodeToDataBase(numberInput, barcode, orderId, departmentId, latitude, longitude);
+        } else {
+            view.showCheckResidual(numberInput.getTimesInput());
             view.startMusicError();
             view.turnOnVibrator();
         }
     }
 
-    public void saveBarcode(double latitude, double longitude, String barcode, ProductEntity product, int orderId) {
+    public void saveBarcodeToDataBase(NumberInput numberInput, String barcode, int orderId, int departmentId, double latitude, double longitude) {
         view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
@@ -173,9 +212,9 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void getListProduct(int orderId, int deparmentId) {
+    public void getListProduct(int orderId) {
         view.showProgressBar();
-        getInputForProductDetail.executeIO(new GetInputForProductDetail.RequestValue(orderId, deparmentId),
+        getInputForProductDetail.executeIO(new GetInputForProductDetail.RequestValue(orderId, UserManager.getInstance().getUser().getUserId()),
                 new BaseUseCase.UseCaseCallback<GetInputForProductDetail.ResponseValue,
                         GetInputForProductDetail.ErrorValue>() {
                     @Override
