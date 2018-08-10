@@ -25,4 +25,7 @@ public interface OrderApiInterface {
     @GET
     Call<BaseResponse<SOEntity>> getListSO(@Url String url,@Field("pOrderType") int orderType);
 
+    @POST
+    Call<BaseResponse> scanProductDetailOut(@Url String url,@Field("pJsonProductDetailOut") String jsonProductDetailOut);
+
 }

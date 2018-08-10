@@ -16,6 +16,6 @@ import rx.Observable;
 
 public interface OrderRepository {
     Observable<BaseResponse<SOEntity>> getListSO(int orderType);
-
+    Observable<BaseResponse> scanProductDetailOut(String json);
 
 }

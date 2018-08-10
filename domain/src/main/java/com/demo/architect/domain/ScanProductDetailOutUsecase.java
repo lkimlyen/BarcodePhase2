@@ -3,24 +3,26 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
+
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public class AddPackageACRbyJsonUsecase extends BaseUseCase {
-    private static final String TAG = AddPackageACRbyJsonUsecase.class.getSimpleName();
+public class ScanProductDetailOutUsecase extends BaseUseCase {
+    private static final String TAG = ScanProductDetailOutUsecase.class.getSimpleName();
     private final OrderRepository remoteRepository;
 
-    public AddPackageACRbyJsonUsecase(OrderRepository remoteRepository) {
+    public ScanProductDetailOutUsecase(OrderRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-        String listDetail = ((RequestValue) requestValues).listDetail;
-
-        return remoteRepository.addPackageACRByJSON(listDetail);
+        String json = ((RequestValue) requestValues).json;
+        return remoteRepository.scanProductDetailOut(json);
     }
 
     @Override
@@ -43,9 +45,8 @@ public class AddPackageACRbyJsonUsecase extends BaseUseCase {
             public void onNext(BaseResponse data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    int result = data.getID();
                     if (data.getStatus() == 1) {
-                        useCaseCallback.onSuccess(new ResponseValue(result));
+                        useCaseCallback.onSuccess(new ResponseValue(data.getDescription()));
                     } else {
                         useCaseCallback.onError(new ErrorValue(data.getDescription()));
                     }
@@ -55,24 +56,24 @@ public class AddPackageACRbyJsonUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final String listDetail;
+        private final String json;
 
-        public RequestValue(String listDetail) {
-            this.listDetail = listDetail;
+        public RequestValue(String json) {
+            this.json = json;
         }
+
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private int id;
+        private String description;
 
-        public ResponseValue(int id) {
-            this.id = id;
+        public ResponseValue(String description) {
+            this.description = description;
         }
 
-        public int getId() {
-            return id;
+        public String getDescription() {
+            return description;
         }
-
     }
 
     public static final class ErrorValue implements ErrorValues {

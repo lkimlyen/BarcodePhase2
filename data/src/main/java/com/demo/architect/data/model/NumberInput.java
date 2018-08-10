@@ -35,4 +35,6 @@ public class NumberInput {
     public int getTimesInput() {
         return timesInput;
     }
+
+
 }

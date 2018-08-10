@@ -11,8 +11,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.NumberInputModel;
+import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.util.ConvertUtils;
@@ -40,7 +41,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         HistoryHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_scan_create_pack, parent, false);
+                    .inflate(R.layout.item_stages, parent, false);
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -56,6 +57,8 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
     }
 
     private void setDataToViews(HistoryHolder holder, LogScanStages item) {
+        final ProductDetail productDetail = item.getProductDetail();
+        final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -77,27 +80,27 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
                         return;
 
                     }
-                    if (numberInput - item.getNumberInput() > item.getNumberRest()) {
+                    if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
                         holder.edtNumberScan.setText(item.getNumberInput() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
                     }
-                    if (numberInput == item.getNumberRest()) {
+                    if (numberInput == numberInputModel.getNumberRest()) {
                         return;
                     }
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
-
 
                 } catch (Exception e) {
 
                 }
             }
         };
-        holder.txtRequestCode.setText(item.getBarcode());
-        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDateScan()));
-        holder.txtQuantityProduct.setText(item.getNumberTotal() + "");
-        holder.txtQuantityRest.setText(item.getNumberRest() + "");
-        holder.txtQuantityScan.setText(item.getNumberScanned() + "");
+        holder.txtBarcode.setText(item.getBarcode());
+        holder.txtModule.setText(item.getModule());
+        holder.txtTimes.setText(item.getTimes()+"");
+        holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
+        holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
+        holder.txtQuantityScan.setText(numberInputModel.getNumberScanned() + "");
         holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
 
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -123,22 +126,24 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
-        TextView txtRequestCode;
-        TextView txtDate;
+        TextView txtBarcode;
+        TextView txtModule;
         ImageView imgDelete;
         TextView txtQuantityProduct;
         TextView txtQuantityRest;
         TextView txtQuantityScan;
+        TextView txtTimes;
         EditText edtNumberScan;
 
         private HistoryHolder(View v) {
             super(v);
-            txtRequestCode = (TextView) v.findViewById(R.id.txt_request_code);
-            txtDate = (TextView) v.findViewById(R.id.txt_date);
+            txtBarcode = (TextView) v.findViewById(R.id.txt_request_code);
+            txtModule = (TextView) v.findViewById(R.id.txt_date);
             imgDelete = (ImageView) v.findViewById(R.id.img_delete);
             txtQuantityProduct = (TextView) v.findViewById(R.id.txt_quantity_product);
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
+            txtTimes = (TextView) v.findViewById(R.id.txt_times);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
         }
 

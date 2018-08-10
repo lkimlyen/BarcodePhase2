@@ -24,4 +24,7 @@ public interface OtherApiInterface {
     @GET
     Call<BaseResponse<DepartmentEntity>> getListDepartment(@Url String url);
 
+    @GET
+    Call<BaseResponse<DepartmentEntity>> getListDepartment(@Url String url);
+
 }

@@ -34,7 +34,7 @@
                         android:textSize="@dimen/text_14sp" />
 
                     <TextView
-                        android:id="@+id/txt_request_code"
+                        android:id="@+id/txt_barcode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/distance_5dp"

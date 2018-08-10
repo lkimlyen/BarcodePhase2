@@ -9,22 +9,16 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.PackageModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
-import com.demo.architect.domain.AddPackageACRUsecase;
-import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.BaseUseCase;
-import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.manager.ScanCreatePackManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;

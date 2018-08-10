@@ -26,7 +26,7 @@ public class ConvertUtils {
 
     public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
-    public static final String APP_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
+    public static final String APP_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 
     public static String ConvertStringToShortDate(String s) {

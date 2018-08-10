@@ -5,34 +5,21 @@ import android.content.Context;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.offline.ImportWorksModel;
-import com.demo.architect.data.model.offline.LogCompleteCreatePack;
-import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
-import com.demo.architect.data.model.offline.LogCompleteMainList;
-import com.demo.architect.data.model.offline.LogDeleteCreatePack;
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.architect.data.model.offline.ScanDeliveryList;
-import com.demo.architect.data.model.offline.ScanDeliveryModel;
-import com.demo.architect.data.model.offline.ScanWarehousingModel;
+import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.ProductDetail;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 public class DatabaseRealm {
     private Context context;
+    private int userId = -1;
 
     public DatabaseRealm() {
     }
@@ -60,6 +47,8 @@ public class DatabaseRealm {
                 RealmHelper.getInstance().initRealm(true);
 
             }
+
+            userId = SharedPreferenceHelper.getInstance(context).getUserObject().getUserId();
 
         }
         return Realm.getDefaultInstance();
@@ -123,8 +112,58 @@ public class DatabaseRealm {
     }
 
     public int countLogScanStagesWatingUpload(int orderId, int departmentId) {
+
         Realm realm = getRealmInstance();
-        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId);
+        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId);
         return count;
+    }
+
+    public List<LogScanStages> getListLogScanStagesUpload(int orderId) {
+        Realm realm = getRealmInstance();
+        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, userId);
+        return list;
+    }
+
+    public void addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.addLogScanStages(realm, model, productEntity);
+            }
+        });
+    }
+
+    public void updateNumberScanStages(final int stagesId, final int numberInput) {
+        Realm realm = getRealmInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.updateNumberInput(realm, stagesId, numberInput);
+            }
+        });
+    }
+
+    public void deleteScanStages(final int stagesId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.deleteScanStages(realm, stagesId);
+            }
+        });
+    }
+
+    public LogListScanStages getListScanStages(int orderId, int departmentId, int userId) {
+        Realm realm = getRealmInstance();
+        LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId);
+        return logListScanStages;
+    }
+
+    public ProductDetail getProductDetail(final ProductEntity productEntity) {
+        Realm realm = getRealmInstance();
+        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity);
+        return productDetail;
+
     }
 }

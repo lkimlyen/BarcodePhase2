@@ -18,10 +18,6 @@ public interface ConfirmReceiveContract {
 
         void showSuccess(String message);
 
-        void showRequestProduction(List<OrderModel> list);
-
-        void showLogScanCreatePack(LogScanCreatePackList list);
-
         void startMusicError();
 
         void startMusicSuccess();
@@ -30,23 +26,7 @@ public interface ConfirmReceiveContract {
     }
 
     interface Presenter extends BasePresenter {
-        void getData();
 
-        void getRequestProduction();
-
-        void getProduct(int orderId);
-
-        void checkBarcode(String barcode, int orderId, double latitude, double longitude);
-
-        void getListCreateCode(int orderId);
-
-        void deleteItemLog(LogScanCreatePack item);
-
-        void updateNumberInput(int id, int number, int serial, int currentNumber);
-
-        void deleteAllItemLog();
-
-        int countListScan(int orderId);
 
     }
 }

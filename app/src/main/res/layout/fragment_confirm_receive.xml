@@ -39,7 +39,7 @@
                 android:layout_marginStart="@dimen/distance_8dp"
                 android:layout_toRightOf="@+id/img_back"
                 android:gravity="center"
-                android:text="@string/text_create_temp_packaging"
+                android:text="@string/text_confirm_receive"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
@@ -49,20 +49,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/distance_5dp"
-                android:layout_toStartOf="@+id/img_print"
+                android:layout_toStartOf="@+id/img_upload"
                 android:padding="@dimen/distance_10dp"
                 android:src="@drawable/ic_refresh" />
 
 
             <ImageView
-                android:id="@+id/img_print"
+                android:id="@+id/img_upload"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:gravity="center"
                 android:padding="@dimen/distance_10dp"
-                android:src="@drawable/ic_print" />
+                android:src="@drawable/ic_upload" />
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
@@ -213,7 +213,12 @@
 
     </LinearLayout>
 
-
+    <com.evrencoskun.tableview.TableView
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

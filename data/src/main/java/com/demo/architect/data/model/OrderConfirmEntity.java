@@ -5,14 +5,22 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ProductEntity {
+public class OrderConfirmEntity {
+    @SerializedName("OutputProductDetailID")
+    @Expose
+    private int outputProductDetailID;
     @SerializedName("OrderID")
     @Expose
     private int orderId;
 
-    @SerializedName("DepartmentID")
+    @SerializedName("DepartmentIDIn")
     @Expose
-    private int departmentID;
+    private int departmentIDIn;
+
+    @SerializedName("DepartmentIDOut")
+    @Expose
+    private int departmentIDOut;
+
 
     @SerializedName("ProductDetailID")
     @Expose
@@ -49,53 +57,5 @@ public class ProductEntity {
     @SerializedName("ListDepartmentIDSuccess")
     @Expose
     private List<Integer> ListDepartmentID;
-
-    public ProductEntity() {
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public int getDepartmentID() {
-        return departmentID;
-    }
-
-    public int getProductDetailID() {
-        return productDetailID;
-    }
-
-    public String getProductDetailName() {
-        return productDetailName;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public int getNumberTotalOrder() {
-        return numberTotalOrder;
-    }
-
-    public int getTimesOutput() {
-        return timesOutput;
-    }
-
-    public List<NumberInput> getListInput() {
-        return listInput;
-    }
-
-    public List<Integer> getListDepartmentID() {
-        return ListDepartmentID;
-    }
-
-    public String getProductDetailCode() {
-        return productDetailCode;
-    }
-
 
 }
