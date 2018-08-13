@@ -9,12 +9,12 @@ import java.util.List;
  * Created by uyminhduc on 10/23/16.
  */
 
-public class BaseResponse<T>{
+public class BaseListResponse<T>{
 
 
     @SerializedName("Data")
     @Expose
-    private T data;
+    private List<T> data;
 
     @SerializedName("Status")
     @Expose
@@ -24,7 +24,8 @@ public class BaseResponse<T>{
     @Expose
     private String description;
 
-    public T getData() {
+
+    public List<T> getData() {
         return data;
     }
 

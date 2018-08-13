@@ -1,6 +1,5 @@
 package com.demo.barcode.screen.dashboard;
 
-import com.demo.architect.data.model.UserResponse;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 

@@ -12,18 +12,15 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.UserResponse;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.UpdateVersionUsecase;
-import com.demo.architect.utils.view.SendMailUtil;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.DownloadUtils;
-import com.google.firebase.storage.StorageReference;
 
 import javax.inject.Inject;
 

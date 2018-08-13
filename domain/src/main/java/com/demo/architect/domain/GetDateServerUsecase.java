@@ -3,7 +3,6 @@ package com.demo.architect.domain;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 
 import rx.Observable;

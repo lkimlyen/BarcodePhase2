@@ -16,6 +16,7 @@ public class LogScanStages extends RealmObject {
 
     @PrimaryKey
     private int id;
+
     @Expose
     @SerializedName("pOrderID")
     private int orderId;
@@ -172,7 +173,7 @@ public class LogScanStages extends RealmObject {
     }
 
 
-    public static void addLogScanStages(Realm realm, LogScanStages scanStages, ProductEntity productEntity) {
+    public static void addLogScanStages(Realm realm, LogScanStages scanStages) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
         if (mainParent == null) {
             mainParent = new LogListScanStagesMain(scanStages.getOrderId());

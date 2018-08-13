@@ -1,9 +1,10 @@
 package com.demo.architect.data.repository.base.account.remote;
 
 
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.UpdateAppResponse;
-import com.demo.architect.data.model.UserResponse;
+import com.demo.architect.data.model.UserEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -25,13 +26,12 @@ public interface AuthApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<UserResponse> login(@Url String url, @Field("pUserName") String username, @Field("pPassWord") String password,
-                             @Field("pUserType") String type);
+    Call<BaseResponse<UserEntity>> login(@Url String url, @Field("pKey") String key, @Field("pUserName") String username, @Field("pPassWord") String password);
 
     @FormUrlEncoded
     @POST
-    Call<BaseResponse> changePassWord(@Url String url, @Field("pUserID") String userId, @Field("pOldPass") String oldPass,
-                                      @Field("pNewPass") String newPass);
+    Call<BaseListResponse> changePassWord(@Url String url, @Field("pUserID") String userId, @Field("pOldPass") String oldPass,
+                                          @Field("pNewPass") String newPass);
 
     @GET
     Call<UpdateAppResponse> getUpdateVersionACR(@Url String url);
@@ -41,8 +41,8 @@ public interface AuthApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseResponse> updateSoft(@Url String url, @Field("pAppCode") String appCode, @Field("pUserID") int userId,
-                                  @Field("pVersion") String version, @Field("pNumberRecodeNotUpdate") int numNotUpdate,
-                                  @Field("pDateServer") String dateServer,
-                                  @Field("pDeviceIme") String imeDevice);
+    Call<BaseListResponse> updateSoft(@Url String url, @Field("pAppCode") String appCode, @Field("pUserID") int userId,
+                                      @Field("pVersion") String version, @Field("pNumberRecodeNotUpdate") int numNotUpdate,
+                                      @Field("pDateServer") String dateServer,
+                                      @Field("pDeviceIme") String imeDevice);
 }

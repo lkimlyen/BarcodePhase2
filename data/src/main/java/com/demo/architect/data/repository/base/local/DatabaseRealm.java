@@ -5,7 +5,9 @@ import android.content.Context;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
+import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -48,7 +51,7 @@ public class DatabaseRealm {
 
             }
 
-            userId = SharedPreferenceHelper.getInstance(context).getUserObject().getUserId();
+            userId = SharedPreferenceHelper.getInstance(context).getUserObject().getId();
 
         }
         return Realm.getDefaultInstance();
@@ -124,12 +127,12 @@ public class DatabaseRealm {
         return list;
     }
 
-    public void addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
+    public void addLogScanStagesAsync(final LogScanStages model) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addLogScanStages(realm, model, productEntity);
+                LogScanStages.addLogScanStages(realm, model);
             }
         });
     }
@@ -165,5 +168,23 @@ public class DatabaseRealm {
         final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity);
         return productDetail;
 
+    }
+
+    public void addOrderConfirm(final List<OrderConfirmEntity> list) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (OrderConfirmEntity orderConfirmEntity : list) {
+                    ConfirmInputModel.create(realm, orderConfirmEntity);
+                }
+            }
+        });
+    }
+
+    public RealmResults<ConfirmInputModel> getListConfirm(int times) {
+        Realm realm = getRealmInstance();
+        RealmResults<ConfirmInputModel> results = ConfirmInputModel.getListScanConfirm(realm, times);
+        return results;
     }
 }

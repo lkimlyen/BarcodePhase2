@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.RealmHelper;
-import com.demo.architect.data.model.UserResponse;
 import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.ServerManager;

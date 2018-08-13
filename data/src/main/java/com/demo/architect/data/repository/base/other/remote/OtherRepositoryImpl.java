@@ -4,13 +4,8 @@ import android.content.Context;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.ListCodeOutEntityResponse;
-import com.demo.architect.data.model.OrderACRResponse;
-import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ResultEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -32,9 +27,9 @@ public class OtherRepositoryImpl implements OtherRepository {
         this.context = context;
     }
 
-    private void handleDepartmentResponse(Call<BaseResponse<DepartmentEntity>> call, Subscriber subscriber) {
+    private void handleDepartmentResponse(Call<BaseListResponse<DepartmentEntity>> call, Subscriber subscriber) {
         try {
-            BaseResponse<DepartmentEntity> response = call.execute().body();
+            BaseListResponse<DepartmentEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -52,11 +47,11 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseResponse<DepartmentEntity>> getListDepartment() {
+    public Observable<BaseListResponse<DepartmentEntity>> getListDepartment() {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse<DepartmentEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<DepartmentEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseResponse<DepartmentEntity>> subscriber) {
+            public void call(Subscriber<? super BaseListResponse<DepartmentEntity>> subscriber) {
                 handleDepartmentResponse(mRemoteApiInterface.getListDepartment(
                         server + "/WS/api/GD2GetListDepartment"), subscriber);
             }

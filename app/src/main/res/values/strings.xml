@@ -143,10 +143,14 @@
     <string name="text_choose_type_product">Chọn loại hàng</string>
     <string name="text_number_residual" formatted="true">Số lượng nhập vào đã đủ. Bạn có muốn quét lần %d không?</string>
     <string name="text_name_detail">Tên chi tiết</string>
-    <string name="text_product_not_in_stages">Sản phẩm này không đi qua công đoạn này!</string>
+    <string name="text_product_not_in_stages">Sản phẩm không đi qua công đoạn này!</string>
     <string name="text_choose_times">Chọn số lần quét hiện tại của chi tiết</string>
     <string name="text_not_choose_times">Vui lòng chọn số lần quét để tiếp tục.</string>
     <string name="text_confirm_receive">Xác nhận nhận hàng</string>
+    <string name="text_times">Lần</string>
+    <string name="text_choose_times_scan">Chọn lần quét</string>
+    <string name="text_delivery_department">Bộ phận giao</string>
+    <string name="text_choose_delivery_department">Chọn bộ phận giao</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

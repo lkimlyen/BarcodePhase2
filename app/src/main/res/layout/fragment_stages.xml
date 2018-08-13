@@ -191,6 +191,32 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
+                android:text="@string/text_times"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/ss_times"
+                android:layout_width="0dp"
+                android:prompt="@string/text_choose_times_scan"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
                 android:text="@string/text_delivery_date"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"

@@ -4,9 +4,10 @@ import android.content.Context;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.UpdateAppResponse;
-import com.demo.architect.data.model.UserResponse;
+import com.demo.architect.data.model.UserEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -28,9 +29,9 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     }
 
-    private void handleLoginResponse(Call<UserResponse> call, Subscriber subscriber) {
+    private void handleLoginResponse(Call<BaseResponse<UserEntity>> call, Subscriber subscriber) {
         try {
-            UserResponse response = call.execute().body();
+            BaseResponse<UserEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -47,9 +48,9 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    private void handleBaseResponse(Call<BaseResponse> call, Subscriber subscriber) {
+    private void handleBaseResponse(Call<BaseListResponse> call, Subscriber subscriber) {
         try {
-            BaseResponse response = call.execute().body();
+            BaseListResponse response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -105,24 +106,24 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public Observable<UserResponse> login(final String username, final String password, final String type) {
+    public Observable<BaseResponse<UserEntity>> login(final String key, final String username, final String password) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<UserResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<UserEntity>>() {
             @Override
-            public void call(Subscriber<? super UserResponse> subscriber) {
+            public void call(Subscriber<? super BaseResponse<UserEntity>> subscriber) {
                 handleLoginResponse(mRemoteApiInterface.login(
-                        server + "/WS/api/LoginWS"
-                        , username, password, type), subscriber);
+                        server + "/WS/api/GD2Login"
+                        ,key, username, password), subscriber);
             }
         });
     }
 
     @Override
-    public Observable<BaseResponse> changePassword(final String userId, final String oldPass, final String newPass) {
+    public Observable<BaseListResponse> changePassword(final String userId, final String oldPass, final String newPass) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override
-            public void call(Subscriber<? super BaseResponse> subscriber) {
+            public void call(Subscriber<? super BaseListResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.changePassWord(
                         server + "/WS/api/ChangePassWord"
                         , userId, oldPass, newPass), subscriber);
@@ -131,11 +132,11 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public Observable<BaseResponse> updateSoft(final String appCode, final int userId, final String version, final int numNotUpdate, final String dateServer, final String ime) {
+    public Observable<BaseListResponse> updateSoft(final String appCode, final int userId, final String version, final int numNotUpdate, final String dateServer, final String ime) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override
-            public void call(Subscriber<? super BaseResponse> subscriber) {
+            public void call(Subscriber<? super BaseListResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.updateSoft(
                         server + "/WS/api/UpdateSoft"
                         ,appCode, userId, version,numNotUpdate, dateServer, ime), subscriber);

@@ -106,12 +106,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addLogScanStagesAsync(final LogScanStages model, final ProductEntity entity) {
+    public Observable<String> addLogScanStagesAsync(final LogScanStages model) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addLogScanStagesAsync(model, entity);
+                    databaseRealm.addLogScanStagesAsync(model);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

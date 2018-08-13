@@ -5,13 +5,11 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.UserResponse;
+import com.demo.architect.data.model.UserEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
-
-import io.realm.RealmConfiguration;
 
 /**
  * Created by uyminhduc on 4/5/17.
@@ -67,7 +65,7 @@ public class SharedPreferenceHelper {
         return sharedPreferences.contains(key);
     }
 
-    public void pushUserObject(UserResponse object) {
+    public void pushUserObject(UserEntity object) {
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
         String json = "";
         if (object != null) {
@@ -79,12 +77,12 @@ public class SharedPreferenceHelper {
     }
 
 
-    public UserResponse getUserObject() {
+    public UserEntity getUserObject() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(USER, "");
-        UserResponse obj = null;
+        UserEntity obj = null;
         if (!TextUtils.isEmpty(json)) {
-            obj = gson.fromJson(json, UserResponse.class);
+            obj = gson.fromJson(json, UserEntity.class);
         }
         return obj;
     }

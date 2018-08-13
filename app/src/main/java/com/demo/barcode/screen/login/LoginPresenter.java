@@ -138,7 +138,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        updateSoftUsecase.executeIO(new UpdateSoftUsecase.RequestValue(UserManager.getInstance().getUser().getUserId(),
+        updateSoftUsecase.executeIO(new UpdateSoftUsecase.RequestValue(UserManager.getInstance().getUser().getId(),
                         version, 0, ConvertUtils.getDateTimeCurrent(), phone),
                 new BaseUseCase.UseCaseCallback<UpdateSoftUsecase.ResponseValue, UpdateSoftUsecase.ErrorValue>() {
                     @Override

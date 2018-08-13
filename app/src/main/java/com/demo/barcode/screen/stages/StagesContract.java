@@ -38,7 +38,7 @@ public interface StagesContract {
 
         void showCheckResidual(int times);
 
-        void showChooseTimes(List<NumberInputModel> list, ProductEntity productEntity, String barcode);
+        void showListTimes(List<Integer> list);
     }
 
     interface Presenter extends BasePresenter {
@@ -48,11 +48,9 @@ public interface StagesContract {
 
         void getListProduct(int orderId);
 
-        void checkBarcode(String barcode, int departmentId);
+        void checkBarcode(String barcode, int departmentId, int times);
 
         int countLogScanStages(int orderId, int departmentId);
-
-        void saveBarcode(NumberInputModel numberInput, ProductEntity productEntity, String barcode, int departmentIde);
 
         void uploadData(int orderId);
 
@@ -61,5 +59,7 @@ public interface StagesContract {
         void updateNumberScanStages(int stagesId, int numberInput);
 
         void getListScanStages(int orderId, int departmentId);
+
+        void getListTimes(int orderId);
     }
 }

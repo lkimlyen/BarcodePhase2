@@ -2,7 +2,7 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 
@@ -28,7 +28,7 @@ public class GetInputForProductDetail extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseResponse<ProductEntity>>() {
+        return new Subscriber<BaseListResponse<ProductEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -43,7 +43,7 @@ public class GetInputForProductDetail extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseResponse<ProductEntity> data) {
+            public void onNext(BaseListResponse<ProductEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
                     List<ProductEntity> result = data.getData();

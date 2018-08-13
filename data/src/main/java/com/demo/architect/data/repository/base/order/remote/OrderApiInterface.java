@@ -1,20 +1,14 @@
 package com.demo.architect.data.repository.base.order.remote;
 
 
-import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.ListCodeOutEntityResponse;
-import com.demo.architect.data.model.OrderACRResponse;
-import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ResultEntity;
+import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.SOEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
@@ -23,9 +17,14 @@ import retrofit2.http.Url;
 
 public interface OrderApiInterface {
     @GET
-    Call<BaseResponse<SOEntity>> getListSO(@Url String url,@Field("pOrderType") int orderType);
+    Call<BaseListResponse<SOEntity>> getListSO(@Url String url, @Field("pOrderType") int orderType);
+
+    @GET
+    Call<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(@Url String url, @Field("pOrderID") int orderId,
+                                                                   @Field("pDepartmentIDIn") int departmentIDIn,
+                                                                   @Field("pDepartmentIDOut") int departmentIDOut);
 
     @POST
-    Call<BaseResponse> scanProductDetailOut(@Url String url,@Field("pJsonProductDetailOut") String jsonProductDetailOut);
+    Call<BaseListResponse> scanProductDetailOut(@Url String url, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
 
 }

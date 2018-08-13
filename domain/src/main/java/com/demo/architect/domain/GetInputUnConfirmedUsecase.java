@@ -3,31 +3,33 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseListResponse;
-import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.UserEntity;
-import com.demo.architect.data.repository.base.account.remote.AuthRepository;
+import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.repository.base.order.remote.OrderRepository;
+
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public class LoginUsecase extends BaseUseCase {
-    private static final String TAG = LoginUsecase.class.getSimpleName();
-    private final AuthRepository remoteRepository;
+public class GetInputUnConfirmedUsecase extends BaseUseCase {
+    private static final String TAG = GetInputUnConfirmedUsecase.class.getSimpleName();
+    private final OrderRepository remoteRepository;
 
-    public LoginUsecase(AuthRepository remoteRepository) {
+    public GetInputUnConfirmedUsecase(OrderRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
-        String userName = ((RequestValue) requestValues).userName;
-        String password = ((RequestValue) requestValues).password;
-        return remoteRepository.login("13AKby8uFhdlayHD6oPsaU90b8o00=",userName, password);
+        int orderId = ((RequestValue) requestValues).orderId;
+        int departmentIdIn = ((RequestValue) requestValues).departmentIdIn;
+        int departmentIdOut = ((RequestValue) requestValues).departmentIdOut;
+        return remoteRepository.getInputUnConfirmed(orderId, departmentIdIn, departmentIdOut);
     }
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseResponse<UserEntity>>() {
+        return new Subscriber<BaseListResponse<OrderConfirmEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -42,10 +44,10 @@ public class LoginUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseResponse<UserEntity> data) {
+            public void onNext(BaseListResponse<OrderConfirmEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                   UserEntity result = data.getData();
+                    List<OrderConfirmEntity> result = data.getData();
                     if (result != null && data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
@@ -57,30 +59,34 @@ public class LoginUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        public final String userName;
-        public final String password;
+        private final int orderId;
+        private final int departmentIdIn;
+        private final int departmentIdOut;
 
-        public RequestValue(String userName, String password) {
-            this.userName = userName;
-            this.password = password;
+        public RequestValue(int orderId, int departmentIdIn, int departmentIdOut) {
+            this.orderId = orderId;
+            this.departmentIdIn = departmentIdIn;
+            this.departmentIdOut = departmentIdOut;
         }
+
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private UserEntity entity;
+        private List<OrderConfirmEntity> entity;
 
-        public ResponseValue(UserEntity entity) {
+        public ResponseValue(List<OrderConfirmEntity> entity) {
             this.entity = entity;
         }
 
-        public UserEntity getEntity() {
+        public List<OrderConfirmEntity> getEntity() {
             return entity;
         }
     }
 
     public static final class ErrorValue implements ErrorValues {
         private String description;
-        public ErrorValue(String description){
+
+        public ErrorValue(String description) {
             this.description = description;
         }
 

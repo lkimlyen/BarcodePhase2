@@ -1,5 +1,8 @@
 package com.demo.barcode.screen.confirm_receive;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
@@ -23,10 +26,23 @@ public interface ConfirmReceiveContract {
         void startMusicSuccess();
 
         void turnOnVibrator();
+
+        void showListSO(List<SOEntity> list);
+
+        void showListTimes(List<Integer> list);
+
+        void showListDepartment(List<DepartmentEntity> list);
+
+        void showListConfirm(List<OrderConfirmEntity> list);
     }
 
     interface Presenter extends BasePresenter {
+        void getListSO(int orderType);
 
+        void getListTimes(int orderId);
 
+        void getListConfirm(int orderId, int departmentIdIn, int departmentIdOut);
+
+        void getListDepartment();
     }
 }

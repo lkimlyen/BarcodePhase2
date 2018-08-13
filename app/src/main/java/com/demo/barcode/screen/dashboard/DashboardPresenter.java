@@ -3,7 +3,6 @@ package com.demo.barcode.screen.dashboard;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.UserResponse;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.barcode.manager.UserManager;
 

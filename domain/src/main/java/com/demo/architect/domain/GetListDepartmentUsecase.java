@@ -2,10 +2,8 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class GetListDepartmentUsecase extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseResponse<DepartmentEntity>>() {
+        return new Subscriber<BaseListResponse<DepartmentEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -43,7 +41,7 @@ public class GetListDepartmentUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseResponse<DepartmentEntity> data) {
+            public void onNext(BaseListResponse<DepartmentEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
                     List<DepartmentEntity> result = data.getData();

@@ -1,11 +1,11 @@
 package com.demo.barcode.manager;
 
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.UserResponse;
+import com.demo.architect.data.model.UserEntity;
 import com.demo.barcode.app.CoreApplication;
 
 public class UserManager {
-    private UserResponse userEntity;
+    private UserEntity userEntity;
     private static UserManager instance;
 
     public static UserManager getInstance() {
@@ -15,12 +15,12 @@ public class UserManager {
         return instance;
     }
 
-    public void setUser(UserResponse user) {
+    public void setUser(UserEntity user) {
         userEntity = user;
         SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).pushUserObject(userEntity);
     }
 
-    public UserResponse getUser() {
+    public UserEntity getUser() {
         if (userEntity == null) {
             userEntity = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getUserObject();
         }

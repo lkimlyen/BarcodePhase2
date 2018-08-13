@@ -2,11 +2,8 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
-
-import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -27,7 +24,7 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseResponse>() {
+        return new Subscriber<BaseListResponse>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -42,7 +39,7 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseResponse data) {
+            public void onNext(BaseListResponse data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
                     if (data.getStatus() == 1) {

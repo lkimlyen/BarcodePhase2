@@ -1,11 +1,7 @@
 package com.demo.architect.data.repository.base.order.remote;
 
-import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.ListCodeOutEntityResponse;
-import com.demo.architect.data.model.OrderACRResponse;
-import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ResultEntity;
+import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.SOEntity;
 
 import rx.Observable;
@@ -15,7 +11,8 @@ import rx.Observable;
  */
 
 public interface OrderRepository {
-    Observable<BaseResponse<SOEntity>> getListSO(int orderType);
-    Observable<BaseResponse> scanProductDetailOut(String json);
+    Observable<BaseListResponse<SOEntity>> getListSO(int orderType);
+    Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(int orderId, int departmentIDIn, int departmentIDOut);
+    Observable<BaseListResponse> scanProductDetailOut(String json);
 
 }

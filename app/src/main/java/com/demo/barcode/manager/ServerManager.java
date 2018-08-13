@@ -1,7 +1,6 @@
 package com.demo.barcode.manager;
 
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.UserResponse;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.constants.Constants;
 

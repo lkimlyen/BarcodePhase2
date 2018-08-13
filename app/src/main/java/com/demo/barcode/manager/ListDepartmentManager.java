@@ -2,7 +2,6 @@ package com.demo.barcode.manager;
 
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.UserResponse;
 import com.demo.barcode.app.CoreApplication;
 
 import java.util.List;

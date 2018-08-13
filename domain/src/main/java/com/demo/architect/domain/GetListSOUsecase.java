@@ -2,9 +2,7 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.OrderACREntity;
-import com.demo.architect.data.model.OrderACRResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 
@@ -29,7 +27,7 @@ public class GetListSOUsecase extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseResponse<SOEntity>>() {
+        return new Subscriber<BaseListResponse<SOEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -44,7 +42,7 @@ public class GetListSOUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseResponse<SOEntity> data) {
+            public void onNext(BaseListResponse<SOEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
                     List<SOEntity> result = data.getData();

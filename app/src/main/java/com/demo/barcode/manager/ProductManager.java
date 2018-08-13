@@ -1,9 +1,6 @@
 package com.demo.barcode.manager;
 
-import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.UserResponse;
 import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.barcode.app.CoreApplication;
 
 public class ProductManager {
     private ProductModel productModel;

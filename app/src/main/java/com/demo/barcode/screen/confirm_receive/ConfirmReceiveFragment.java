@@ -22,9 +22,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
@@ -36,6 +40,7 @@ import com.demo.barcode.constants.Constants;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.print_stemp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
+import com.demo.barcode.widgets.legacytableview.LegacyTableView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -63,23 +68,27 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
+    private int departmentId = 0;
     private CreateCodePackAdapter adapter;
     public MediaPlayer mp1, mp2;
-    public boolean isClick = false;
+    private int times = 0;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
+
+    @Bind(R.id.ss_times)
+    Spinner spTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSO;
+    @Bind(R.id.ss_delivery_department)
+    SearchableSpinner ssDepartment;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
-    @Bind(R.id.lv_code)
-    ListView rvCode;
+    @Bind(R.id.tb_product)
+    LegacyTableView tbProduct;
     private Vibrator vibrate;
     private int orderId = 0;
     private Location mLocation;
@@ -134,16 +143,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-
-        ssCodeSO.setTitle(getString(R.string.text_choose_request_produce));
-        checkPermissionLocation();
-        ssCodeSO.setPrompt(getString(R.string.text_choose_request_produce));
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
                 return false;
             }
         });
+        LegacyTableView.insertLegacyTitle("STT Module", "Tên chi tiết", "SL giao", "SL quét", "Xác nhận");
+        tbProduct.setTitle(LegacyTableView.readLegacyTitle());
 
     }
 
@@ -178,8 +185,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Override
     public void onStop() {
         super.onStop();
-
-
     }
 
     @Override
@@ -231,6 +236,66 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             //deprecated in API 26
             vibrate.vibrate(500);
         }
+    }
+
+    @Override
+    public void showListSO(List<SOEntity> list) {
+        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCustomerName.setText(list.get(position).getCustomerName());
+                orderId = list.get(position).getOrderId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListTimes(List<Integer> list) {
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
+        spTimes.setAdapter(adapter);
+        spTimes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                times = list.get(position);
+            }
+        });
+    }
+
+    @Override
+    public void showListDepartment(List<DepartmentEntity> list) {
+        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssDepartment.setAdapter(adapter);
+        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                departmentId = list.get(position).getId();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListConfirm(List<OrderConfirmEntity> list) {
+
+        for (OrderConfirmEntity order : list) {
+            LegacyTableView.insertLegacyContent(order.getModule(),order.getProductDetailName(),
+                    String.valueOf(order.getNumberOut()), String.valueOf(0),String.valueOf(0));
+        }
+        tbProduct.setContent(LegacyTableView.readLegacyContent());
     }
 
     @OnClick(R.id.ic_refresh)
@@ -369,7 +434,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 //            getActivity().finish();
 //        }
     }
-
 
 
     @OnClick(R.id.btn_scan)

@@ -1,7 +1,6 @@
 package com.demo.barcode.screen.stages;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,30 +21,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.CreateCodePackAdapter;
 import com.demo.barcode.adapter.StagesAdapter;
-import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.screen.capture.ScanActivity;
-import com.demo.barcode.screen.print_stemp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -76,9 +69,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private FusedLocationProviderClient mFusedLocationClient;
     private StagesAdapter adapter;
     public MediaPlayer mp1, mp2;
-    public boolean isClick = false;
+    private int times = 0;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
+
+    @Bind(R.id.ss_times)
+    Spinner spTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -130,7 +126,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
-                mPresenter.checkBarcode(barcode, departmentId);
+                mPresenter.checkBarcode(barcode, departmentId, times);
             }
         }
 
@@ -342,6 +338,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListProduct(orderId);
 
+
             }
 
             @Override
@@ -398,37 +395,17 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     private int position = -1;
 
+
     @Override
-    public void showChooseTimes(List<NumberInputModel> list, ProductEntity productEntity, String barcode) {
-        position = -1;
-        List<Integer> timesList = new ArrayList<>();
-        for (NumberInputModel num : list) {
-            timesList.add(num.getTimes());
-        }
-
-
-        new MaterialDialog.Builder(getContext())
-                .title(R.string.text_choose_times)
-                .items(list)
-                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        position = which;
-                        return true;
-                    }
-                })
-                .positiveText(R.string.text_ok)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        if (position == -1) {
-                            Toast.makeText(getContext(), getString(R.string.text_not_choose_times), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        mPresenter.saveBarcode(list.get(position), productEntity, barcode, departmentId);
-                    }
-                })
-                .show();
+    public void showListTimes(List<Integer> list) {
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
+        spTimes.setAdapter(adapter);
+        spTimes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                times = list.get(position);
+            }
+        });
     }
 
     @OnClick(R.id.ic_refresh)
@@ -487,7 +464,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times);
                         sweetAlertDialog.dismiss();
                     }
                 })

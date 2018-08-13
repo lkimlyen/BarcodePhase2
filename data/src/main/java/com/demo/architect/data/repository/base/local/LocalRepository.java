@@ -34,7 +34,7 @@ public interface LocalRepository {
 
     Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId);
 
-    Observable<String> addLogScanStagesAsync(final LogScanStages model, final ProductEntity entity);
+    Observable<String> addLogScanStagesAsync(final LogScanStages model);
 
     Observable<ProductDetail> getProductDetail(ProductEntity productEntity);
 
