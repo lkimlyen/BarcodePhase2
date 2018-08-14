@@ -7,16 +7,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogCompleteMainList;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.HistoryCreatePackAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
@@ -39,7 +35,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class HistoryPackageFragment extends BaseFragment implements HistoryPackageContract.View {
     private final String TAG = HistoryPackageFragment.class.getName();
     private HistoryPackageContract.Presenter mPresenter;
-    private HistoryCreatePackAdapter adapter;
     private int orderId = 0;
     @Bind(R.id.ss_produce)
     SearchableSpinner ssProduce;
@@ -72,7 +67,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             if(resultCode == Activity.RESULT_OK){
                 if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DELETE){
                     showSuccess(getString(R.string.text_delete_success));
-                    mPresenter.getRequestProduce();
                 }
                 if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.PRINT){
                     showSuccess(getString(R.string.text_print_success));
@@ -113,7 +107,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
 
-        mPresenter.getRequestProduce();
 
     }
 
@@ -170,40 +163,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         showToast(message);
     }
 
-    @Override
-    public void showRequestProduction(List<OrderModel> list) {
-        ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssProduce.setAdapter(adapter);
-        ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))){
-                    return;
-                }
-                txtCodeSO.setText(list.get(position).getCodeSO());
-                orderId = list.get(position).getId();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        txtCodeSO.setText("");
-    }
-
-    @Override
-    public void showListHistory(LogCompleteMainList list) {
-        adapter = new HistoryCreatePackAdapter(list.getItemList());
-        lvCode.setAdapter(adapter);
-        lvCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailPackageActivity.start(getActivity(), list.getOrderId(), list.getItemList().get(position).getId());
-            }
-        });
-    }
-
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -224,7 +183,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             showError(getString(R.string.text_order_id_null));
             return;
         }
-        mPresenter.search(orderId);
     }
 
 

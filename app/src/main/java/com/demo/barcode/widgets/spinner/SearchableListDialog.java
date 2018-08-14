@@ -200,7 +200,7 @@ public class SearchableListDialog extends DialogFragment implements
 //                _listViewItems.clearTextFilter();
             ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(null);
         } else {
-           ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(s);
+            ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(s);
         }
         if (_onSearchTextChanged != null) {
             _onSearchTextChanged.onSearchTextChanged(s);

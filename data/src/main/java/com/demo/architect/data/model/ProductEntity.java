@@ -46,7 +46,7 @@ public class ProductEntity {
     @Expose
     private List<NumberInput> listInput;
 
-    @SerializedName("ListDepartmentIDSuccess")
+    @SerializedName("ListDepartmentID")
     @Expose
     private List<Integer> ListDepartmentID;
 

@@ -179,12 +179,12 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     }
 
     @Override
-    public void uploadFile(String path, int userId, String userName, String phone) {
+    public void uploadFile(String path, int userId, String userName) {
 
         hideProgressBar();
         UploadTask uploadTask;
         Uri file = Uri.fromFile(new File(path));
-        StorageReference riversRef = storageRef.child(userId + "_" + userName + "_" + phone + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
+        StorageReference riversRef = storageRef.child(userId + "_" + userName  + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
         uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails

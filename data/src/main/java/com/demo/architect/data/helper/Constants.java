@@ -10,8 +10,13 @@ public class Constants {
     public static final int SUCCESS = 1;
     public static final int FAIL = 0;
 
+    public static final int FULL = 1;
+    public static final int INCOMPLETE = 2;
+    public static final int RESIDUAL = 3;
+
+
     public static final int CONNECTED = 1;
-    public static final int NOCONNECT  = 0;
+    public static final int NOCONNECT = 0;
     public static final int DISCONNECT = 2;
 
     public static final String KEY_SERVER = "SERVER";

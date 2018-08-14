@@ -50,12 +50,13 @@
     <string name="text_product_empty">Không có SP nào trong SO này, Vui lòng tải lại!</string>
     <string name="text_barcode_no_exist">Mã quét không tồn tại trong SO này! Vui lòng thử mã khác!</string>
     <string name="text_save_barcode_success">Hợp lệ! Lưu Thành Công</string>
+    <string name="text_update_barcode_success">Chỉnh sửa Thành Công</string>
     <string name="text_add">Thêm</string>
     <string name="text_request_produce">Lệnh SX</string>
     <string name="text_code_so">Mã SO</string>
     <string name="text_customer_name">Tên KH</string>
     <string name="text_sum_detail">Tổng chi tiết:</string>
-    <string name="text_number_bigger_zero">Số lượng nhập vào phải khác 0!</string>
+    <string name="text_number_bigger_zero">Số lượng nhập vào phải lớn hơn 0!</string>
     <string name="text_quantity_input_bigger_quantity_rest">Số lượng nhập vào không được vượt quá số lượng cho phép.</string>
     <string name="text_code_scan" >Mã quét:</string>
     <string name="text_date_scan">Ngày quét</string>
@@ -113,6 +114,8 @@
     <string name="text_save_success">Lưu thành công</string>
     <string name="text_backup_fail">Sao lưu thất bại</string>
     <string name="text_get_package_success">Tải danh sách mã gói trong Yêu cầu thành công!</string>
+
+    <string name="text_get_list_confirm_success">Tải danh sách xác nhận thành công!</string>
     <string name="text_code_null">Không có mã nào trong yêu cầu này!!</string>
     <string name="text_confirm">Xác nhận</string>
     <string name="text_done_pack_success">Đã hoàn tất gói</string>
@@ -126,6 +129,7 @@
     <string name="text_port_null">Vui lòng nhập số port!</string>
     <string name="text_floor_or_apartment">Căn/Tầng</string>
     <string name="text_serial_module">STT module</string>
+    <string name="text_serial_module_break">STT \n module</string>
     <string name="text_serial_module_print">STT module:</string>
     <string name="text_package">Kiện</string>
     <string name="text_date_print">Ngày in:</string>
@@ -143,6 +147,7 @@
     <string name="text_choose_type_product">Chọn loại hàng</string>
     <string name="text_number_residual" formatted="true">Số lượng nhập vào đã đủ. Bạn có muốn quét lần %d không?</string>
     <string name="text_name_detail">Tên chi tiết</string>
+    <string name="text_name_detail_break">Tên \n chi tiết</string>
     <string name="text_product_not_in_stages">Sản phẩm không đi qua công đoạn này!</string>
     <string name="text_choose_times">Chọn số lần quét hiện tại của chi tiết</string>
     <string name="text_not_choose_times">Vui lòng chọn số lần quét để tiếp tục.</string>
@@ -151,6 +156,15 @@
     <string name="text_choose_times_scan">Chọn lần quét</string>
     <string name="text_delivery_department">Bộ phận giao</string>
     <string name="text_choose_delivery_department">Chọn bộ phận giao</string>
+    <string name="text_number_receive">SL \n nhận</string>
+    <string name="text_number_delivery">SL \n giao</string>
+    <string name="text_choose_all">Chọn tất cả</string>
+    <string name="text_incomplete">Thiếu</string>
+    <string name="text_full">Đủ</string>
+    <string name="text_residual">Dư</string>
+    <string name="text_department_id_null">Bạn chưa chọn bộ phận giao</string>
+    <string name="text_times_id_null">Bạn chưa chọn lần quét</string>
+    <string name="text_get_so_success">Lấy danh sách SO thành công</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

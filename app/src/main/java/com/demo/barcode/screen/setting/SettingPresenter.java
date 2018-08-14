@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
@@ -116,36 +117,35 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     @Override
     public void saveIPAddress(String ipAddress, int port) {
-        int userId = UserManager.getInstance().getUser().getUserId();
-        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
-        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
-            @Override
-            public void call(IPAddress address) {
-                view.showIPAddress(address);
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_success));
-            }
-        });
+//        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+//        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+//            @Override
+//            public void call(IPAddress address) {
+//                view.showIPAddress(address);
+//                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_success));
+//            }
+//        });
     }
 
     @Override
     public void getIPAddress() {
-        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
-            @Override
-            public void call(IPAddress address) {
-                view.showIPAddress(address);
-            }
-        });
+//        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
+//            @Override
+//            public void call(IPAddress address) {
+//                view.showIPAddress(address);
+//            }
+//        });
     }
 
     @Override
     public void cloneDataAndSendMail() {
         view.showProgressBar();
-        UserResponse user = UserManager.getInstance().getUser();
+        UserEntity user = UserManager.getInstance().getUser();
         String dataPath = ConvertUtils.exportRealmFile();
         if (!dataPath.equals("")) {
 //            SendMailUtil.sendMail(user.getUserId(), user.getUserName(), user.getPhone(), dataPath, getVersion(),
 //                    CoreApplication.getInstance().getString(R.string.text_name_database));
-            view.uploadFile(dataPath,user.getUserId(), user.getUserName(), user.getPhone());
+            view.uploadFile(dataPath,user.getId(), user.getName());
         }else {
 
             view.showError(CoreApplication.getInstance().getString(R.string.text_backup_fail));

@@ -85,7 +85,6 @@ public class ProductDetail extends RealmObject {
 
     public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity) {
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID()).findFirst();
-
         if (productDetail == null) {
             realm.beginTransaction();
             productDetail = ProductDetail.create(realm, productEntity);

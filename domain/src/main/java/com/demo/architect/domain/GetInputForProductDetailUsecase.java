@@ -11,11 +11,11 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 
-public class GetInputForProductDetail extends BaseUseCase {
-    private static final String TAG = GetInputForProductDetail.class.getSimpleName();
+public class GetInputForProductDetailUsecase extends BaseUseCase {
+    private static final String TAG = GetInputForProductDetailUsecase.class.getSimpleName();
     private final ProductRepository remoteRepository;
 
-    public GetInputForProductDetail(ProductRepository remoteRepository) {
+    public GetInputForProductDetailUsecase(ProductRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 

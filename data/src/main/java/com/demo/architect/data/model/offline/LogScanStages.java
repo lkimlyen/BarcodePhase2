@@ -196,7 +196,7 @@ public class LogScanStages extends RealmObject {
                 .equalTo("module", scanStages.getModule()).equalTo("times", scanStages.getTimes()).findFirst();
         if (logScanStages == null) {
             scanStages.setProductDetail(productDetail);
-            scanStages.setId(id(realm));
+            scanStages.setId(id(realm)+1);
             logScanStages = realm.copyToRealm(scanStages);
             parentList.add(logScanStages);
         } else {

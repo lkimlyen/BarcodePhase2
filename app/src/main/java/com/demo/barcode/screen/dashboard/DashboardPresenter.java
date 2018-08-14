@@ -3,6 +3,7 @@ package com.demo.barcode.screen.dashboard;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.barcode.manager.UserManager;
 
@@ -37,7 +38,6 @@ public class DashboardPresenter implements DashboardContract.Presenter {
     public void start() {
         Log.d(TAG, TAG + ".start() called");
         getUser();
-        countDeliveryNotComplete();
 
     }
 
@@ -49,7 +49,7 @@ public class DashboardPresenter implements DashboardContract.Presenter {
 
     @Override
     public void getUser() {
-        UserResponse user = UserManager.getInstance().getUser();
+        UserEntity user = UserManager.getInstance().getUser();
         view.showUser(user);
     }
 
@@ -58,15 +58,7 @@ public class DashboardPresenter implements DashboardContract.Presenter {
         UserManager.getInstance().setUser(null);
     }
 
-    @Override
-    public void countDeliveryNotComplete() {
-        localRepository.countDeliveryNotComplete().subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                view.showDeliveryNotComplete(integer);
-            }
-        });
-    }
+
 
 
 }

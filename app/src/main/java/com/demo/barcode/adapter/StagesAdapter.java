@@ -97,7 +97,6 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         };
         holder.txtBarcode.setText(item.getBarcode());
         holder.txtModule.setText(item.getModule());
-        holder.txtTimes.setText(item.getTimes()+"");
         holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
         holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
         holder.txtQuantityScan.setText(numberInputModel.getNumberScanned() + "");
@@ -132,18 +131,16 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         TextView txtQuantityProduct;
         TextView txtQuantityRest;
         TextView txtQuantityScan;
-        TextView txtTimes;
         EditText edtNumberScan;
 
         private HistoryHolder(View v) {
             super(v);
-            txtBarcode = (TextView) v.findViewById(R.id.txt_request_code);
-            txtModule = (TextView) v.findViewById(R.id.txt_date);
+            txtBarcode = (TextView) v.findViewById(R.id.txt_barcode);
+            txtModule = (TextView) v.findViewById(R.id.txt_module);
             imgDelete = (ImageView) v.findViewById(R.id.img_delete);
             txtQuantityProduct = (TextView) v.findViewById(R.id.txt_quantity_product);
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
-            txtTimes = (TextView) v.findViewById(R.id.txt_times);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
         }
 

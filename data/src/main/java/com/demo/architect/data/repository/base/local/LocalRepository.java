@@ -1,27 +1,17 @@
 package com.demo.architect.data.repository.base.local;
 
 import com.demo.architect.data.model.MessageModel;
+import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.offline.CustomerModel;
-import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.ImportWorksModel;
-import com.demo.architect.data.model.offline.LogCompleteCreatePack;
-import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
-import com.demo.architect.data.model.offline.LogCompleteMainList;
+import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
+import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductDetail;
-import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.architect.data.model.offline.ScanDeliveryList;
-import com.demo.architect.data.model.offline.ScanDeliveryModel;
-import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
-import java.util.HashMap;
 import java.util.List;
 
+import io.realm.RealmList;
 import rx.Observable;
 
 public interface LocalRepository {
@@ -43,4 +33,20 @@ public interface LocalRepository {
     Observable<String> deleteScanStages(final int stagesId);
 
     Observable<LogListScanStages> getListScanStagseByDepartment(final int orderId, int departmentId, int userId);
+
+    Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
+
+    Observable<RealmList<ConfirmInputModel>> getListConfirm(final int times);
+
+    Observable<List<LogScanConfirm>> getListLogScanConfirm();
+
+    Observable<String> addLogScanConfirm(final LogScanConfirm logScanConfirm);
+
+    Observable<ConfirmInputModel> findConfirmByBarcode(final String barcode);
+
+    Observable<String> updateNumnberLogConfirm(final int logId, final int numberScan);
+
+    Observable<String> updateStatusLogConfirm();
+
+
 }

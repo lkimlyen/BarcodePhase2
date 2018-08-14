@@ -1,14 +1,8 @@
 package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.NumberInput;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -44,7 +38,7 @@ public interface StagesContract {
     interface Presenter extends BasePresenter {
         void getListDepartment();
 
-        void getListSO();
+        void getListSO(int orderType);
 
         void getListProduct(int orderId);
 
@@ -61,5 +55,7 @@ public interface StagesContract {
         void getListScanStages(int orderId, int departmentId);
 
         void getListTimes(int orderId);
+
+
     }
 }

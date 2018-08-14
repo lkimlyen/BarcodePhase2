@@ -10,6 +10,8 @@ import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.local.LocalRepositoryImpl;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepositoryImpl;
+import com.demo.architect.data.repository.base.other.remote.OtherRepository;
+import com.demo.architect.data.repository.base.other.remote.OtherRepositoryImpl;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepositoryImpl;
 import com.demo.architect.data.repository.base.remote.RemoteRepository;
@@ -57,6 +59,11 @@ public class RepositoryModule {
     @Provides
     @Singleton
     ProductRepository provideProductRepository(ProductRepositoryImpl apiServiceImp) {
+        return apiServiceImp;
+    }
+    @Provides
+    @Singleton
+    OtherRepository provideOtherRepository(OtherRepositoryImpl apiServiceImp) {
         return apiServiceImp;
     }
 

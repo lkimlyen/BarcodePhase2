@@ -22,11 +22,37 @@ public class ListDepartmentManager {
         SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).pushListDepartmentObject(this.list);
     }
 
-    public List<DepartmentEntity> getListDepartment() {
+    public List<DepartmentEntity> getListDepartment(int role) {
         if (list == null) {
             list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
         }
+        int position = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId() == role) {
+                position = i;
+                break;
+            }
+        }
+        if (position > -1){
+            list.remove(position);
+        }
+
         return list;
+    }
+
+    public String getDepartmentByRole(int role) {
+        String name = "";
+        if (list == null) {
+            list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
+        }
+
+        for (DepartmentEntity entity : list) {
+            if (entity.getId() == role) {
+                name = entity.getName();
+                break;
+            }
+        }
+        return name;
     }
 
 }

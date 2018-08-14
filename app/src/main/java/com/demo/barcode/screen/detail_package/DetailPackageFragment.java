@@ -1,7 +1,6 @@
 package com.demo.barcode.screen.detail_package;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,22 +22,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.DetailPackAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
-import com.demo.barcode.dialogs.CreateBarcodeDialog;
 import com.demo.barcode.screen.capture.ScanActivity;
-import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -61,7 +52,6 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 public class DetailPackageFragment extends BaseFragment implements DetailPackageContract.View {
     private final String TAG = DetailPackageFragment.class.getName();
     private DetailPackageContract.Presenter mPresenter;
-    private DetailPackAdapter adapter;
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
     public MediaPlayer mp1, mp2;
@@ -121,11 +111,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                if (adapter.getCount() == 11) {
-                    showError(getString(R.string.text_list_had_enough));
-                } else {
-                    mPresenter.checkBarcode(barcode, orderId, logId);
-                }
+
 
             }
         }
@@ -201,8 +187,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     public void onResume() {
         super.onResume();
         mPresenter.start();
-        mPresenter.getOrder(orderId);
-        mPresenter.getListHistory(logId);
+
     }
 
     @Override
@@ -236,12 +221,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         showToast(message);
     }
 
-    @Override
-    public void showOrder(OrderModel model) {
-        txtCodeRequest.setText(model.getCodeProduction());
-        txtCodeSo.setText(model.getCodeSO());
-        txtCustomerName.setText(model.getCustomerName());
-    }
 
     @Override
     public void turnOnVibrator() {
@@ -253,67 +232,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         }
     }
 
-    @Override
-    public void showListCreatePack(LogCompleteCreatePackList list) {
-        adapter = new DetailPackAdapter(list.getItemList());
-        lvCodes.setAdapter(adapter);
-
-        lvCodes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_delete_code))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                mPresenter.deleteCode(list.getItemList().get(position).getId(), list.getItemList().get(position).getProductId(),
-                                        logId, list.getItemList().get(position).getSerial(),list.getItemList().get(position).getNumInput());
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public void showDetailPack(LogCompleteCreatePackList pack) {
-        txtDateCreate.setText(ConvertUtils.ConvertStringToShortDate(pack.getDateCreate()));
-        txtSerial.setText(String.valueOf(pack.getSerial()));
-        txtTotal.setText(String.valueOf(pack.getNumTotal()));
-    }
-
-
-    @Override
-    public void showNumTotal(int num) {
-        txtTotal.setText(String.valueOf(num));
-    }
-
-    @Override
-    public void showDialogNumber(final ProductEntity product, String barcode) {
-        CreateBarcodeDialog dialog = new CreateBarcodeDialog();
-        dialog.show(getActivity().getFragmentManager(), TAG);
-        dialog.setModel(product, barcode);
-        dialog.setListener(new CreateBarcodeDialog.OnItemSaveListener() {
-            @Override
-            public void onSave(int numberInput) {
-                checkPermissionLocation();
-                mPresenter.saveBarcode( mLocation != null ? mLocation.getLatitude() : 0,
-                        mLocation != null ? mLocation.getLongitude():0, barcode,
-                        logId, numberInput, product.getStt());
-            }
-        });
-    }
 
 
     public void showToast(String message) {
@@ -326,11 +244,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (mPresenter.countListScan(logId) > 0) {
-            showNotification(getString(R.string.text_not_complete), SweetAlertDialog.WARNING_TYPE);
-        } else {
-            getActivity().finish();
-        }
+
 
     }
 
@@ -353,7 +267,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
 
-                                mPresenter.deletePack(logId, orderId);
+
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -375,8 +289,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.updateData(logId, orderId, Integer.parseInt(txtSerial.getText().toString()),
-                                        false);
+
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -398,9 +311,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0,
-                                        logId);
-                            }
+                              }
                         })
                         .setCancelText(getString(R.string.text_no))
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -443,13 +354,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         }
     }
 
-    @Override
-    public void backToHistory(int request) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.KEY_RESULT, request);
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
-    }
 
     @Override
     public void startMusicError() {
@@ -471,9 +375,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     @Override
     public void onDestroy() {
         super.onDestroy();{
-            if (!isClick) {
-                mPresenter.deleteCodeNotComplete(logId);
-            }
+
         }
     }
 }

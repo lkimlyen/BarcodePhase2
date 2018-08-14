@@ -5,6 +5,7 @@ import android.content.Context;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.SOEntity;
 
@@ -121,5 +122,18 @@ public class OrderRepositoryImpl implements OrderRepository {
                         server + "/WS/api/GD2ScanProductDetailOut", json), subscriber);
             }
         });
+    }
+
+    @Override
+    public Observable<BaseListResponse> confirmInput(final int departmentId, final String json) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.confirmInput(
+                        server + "/WS/api/GD2ComfirmInput",departmentId, json), subscriber);
+            }
+        });
+
     }
 }

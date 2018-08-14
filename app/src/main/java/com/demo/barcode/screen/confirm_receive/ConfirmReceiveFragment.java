@@ -1,7 +1,6 @@
 package com.demo.barcode.screen.confirm_receive;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,20 +26,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.offline.ConfirmInputModel;
+import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.CreateCodePackAdapter;
-import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
-import com.demo.barcode.screen.print_stemp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.legacytableview.LegacyTableView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -49,13 +44,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmList;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -69,7 +64,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private ConfirmReceiveContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
     private int departmentId = 0;
-    private CreateCodePackAdapter adapter;
+    private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
     @Bind(R.id.ss_code_so)
@@ -87,8 +82,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
-    @Bind(R.id.tb_product)
-    LegacyTableView tbProduct;
+    @Bind(R.id.lv_confirm)
+    ListView lvConfirm;
+
+    @Bind(R.id.ss_type_product)
+    Spinner ssTypeProduct;
+
     private Vibrator vibrate;
     private int orderId = 0;
     private Location mLocation;
@@ -149,8 +148,24 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 return false;
             }
         });
-        LegacyTableView.insertLegacyTitle("STT Module", "Tên chi tiết", "SL giao", "SL quét", "Xác nhận");
-        tbProduct.setTitle(LegacyTableView.readLegacyTitle());
+
+        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
+                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        ssTypeProduct.setAdapter(adapter);
+
+
+        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
 
@@ -248,6 +263,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
+                mPresenter.getListTimes(orderId);
             }
 
             @Override
@@ -261,10 +277,16 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     public void showListTimes(List<Integer> list) {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
         spTimes.setAdapter(adapter);
-        spTimes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
+                mPresenter.getListConfirmByTimes(times);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -278,7 +300,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
-
+                mPresenter.getListConfirm(orderId, departmentId);
             }
 
             @Override
@@ -289,13 +311,21 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     }
 
     @Override
-    public void showListConfirm(List<OrderConfirmEntity> list) {
-
-        for (OrderConfirmEntity order : list) {
-            LegacyTableView.insertLegacyContent(order.getModule(),order.getProductDetailName(),
-                    String.valueOf(order.getNumberOut()), String.valueOf(0),String.valueOf(0));
-        }
-        tbProduct.setContent(LegacyTableView.readLegacyContent());
+    public void showListConfirm(RealmList<ConfirmInputModel> list) {
+        adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
+            @Override
+            public void onEditTextChange(LogScanConfirm item, int number) {
+                mPresenter.updateNumberConfirm(item.getId(), number);
+            }
+        }, new ConfirmInputAdapter.onErrorListener() {
+            @Override
+            public void errorListener(String message) {
+                showToast(message);
+                turnOnVibrator();
+                startMusicError();
+            }
+        });
+        lvConfirm.setAdapter(adapter);
     }
 
     @OnClick(R.id.ic_refresh)
@@ -339,7 +369,17 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+       if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (departmentId == 0) {
+            showError(getString(R.string.text_department_id_null));
+            return;
+        }
+        if (times == 0) {
+            showError(getString(R.string.text_times_id_null));
             return;
         }
         checkPermissionLocation();
@@ -350,7 +390,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-
+                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -438,8 +478,17 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (departmentId == 0) {
+            showError(getString(R.string.text_department_id_null));
+            return;
+        }
+        if (times == 0) {
+            showError(getString(R.string.text_times_id_null));
             return;
         }
         integrator = new IntentIntegrator(getActivity());

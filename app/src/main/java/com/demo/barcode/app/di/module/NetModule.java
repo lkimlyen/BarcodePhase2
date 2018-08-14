@@ -6,6 +6,8 @@ import com.demo.architect.data.repository.base.account.remote.AuthApiInterface;
 import com.demo.architect.data.repository.base.account.remote.AuthRepositoryImpl;
 import com.demo.architect.data.repository.base.order.remote.OrderApiInterface;
 import com.demo.architect.data.repository.base.order.remote.OrderRepositoryImpl;
+import com.demo.architect.data.repository.base.other.remote.OtherApiInterface;
+import com.demo.architect.data.repository.base.other.remote.OtherRepositoryImpl;
 import com.demo.architect.data.repository.base.product.remote.ProductApiInterface;
 import com.demo.architect.data.repository.base.product.remote.ProductRepositoryImpl;
 import com.demo.architect.data.repository.base.remote.RemoteRepositoryImpl;
@@ -107,6 +109,18 @@ public class NetModule {
                 .client(okHttpClient)
                 .build();
         return new OrderRepositoryImpl(retrofit.create(OrderApiInterface.class), CoreApplication.getInstance());
+    }
+
+    @Provides
+    @Singleton
+    OtherRepositoryImpl provideOtherRepositoryRetrofit(OkHttpClient okHttpClient, Gson gson, RxJavaCallAdapterFactory rxAdapterFactory) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(mBaseUrl)
+                .addCallAdapterFactory(rxAdapterFactory)
+                .addConverterFactory(RetrofitJsonConverter.create(gson))
+                .client(okHttpClient)
+                .build();
+        return new OtherRepositoryImpl(retrofit.create(OtherApiInterface.class), CoreApplication.getInstance());
     }
 
     @Provides

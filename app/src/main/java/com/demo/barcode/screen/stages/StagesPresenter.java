@@ -3,7 +3,6 @@ package com.demo.barcode.screen.stages;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
@@ -13,13 +12,12 @@ import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
-import com.demo.architect.domain.GetInputForProductDetail;
+import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
-import com.demo.barcode.manager.ListOrderManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
@@ -42,7 +40,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     private final String TAG = StagesPresenter.class.getName();
     private final StagesContract.View view;
-    private final GetInputForProductDetail getInputForProductDetail;
+    private final GetInputForProductDetailUsecase getInputForProductDetail;
     private final GetListSOUsecase getListSOUsecase;
     private final ScanProductDetailOutUsecase scanProductDetailOutUsecase;
 
@@ -51,7 +49,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Inject
     StagesPresenter(@NonNull StagesContract.View view,
-                    GetInputForProductDetail getInputForProductDetail, GetListSOUsecase getListSOUsecase, ScanProductDetailOutUsecase scanProductDetailOutUsecase) {
+                    GetInputForProductDetailUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase, ScanProductDetailOutUsecase scanProductDetailOutUsecase) {
         this.view = view;
         this.getInputForProductDetail = getInputForProductDetail;
         this.getListSOUsecase = getListSOUsecase;
@@ -67,8 +65,6 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-        getListSO();
-        getListDepartment();
     }
 
     @Override
@@ -253,6 +249,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
+                view.turnOnVibrator();
                 view.hideProgressBar();
             }
         });
@@ -262,13 +259,16 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getListDepartment() {
-        view.showListDepartment(ListDepartmentManager.getInstance().getListDepartment());
+
+        view.showListDepartment(ListDepartmentManager.getInstance().getListDepartment(
+                UserManager.getInstance().getUser().getRole()
+        ));
     }
 
     @Override
-    public void getListSO() {
+    public void getListSO(int orderType) {
         view.showProgressBar();
-        getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(1),
+        getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(orderType),
                 new BaseUseCase.UseCaseCallback<GetListSOUsecase.ResponseValue,
                         GetListSOUsecase.ErrorValue>() {
                     @Override
@@ -276,6 +276,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         view.showListSO(successResponse.getEntity());
                         ListSOManager.getInstance().setListSO(successResponse.getEntity());
                         view.hideProgressBar();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_so_success));
                     }
 
                     @Override
@@ -290,17 +291,17 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void getListProduct(int orderId) {
         view.showProgressBar();
-        getInputForProductDetail.executeIO(new GetInputForProductDetail.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
-                new BaseUseCase.UseCaseCallback<GetInputForProductDetail.ResponseValue,
-                        GetInputForProductDetail.ErrorValue>() {
+        getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
+                new BaseUseCase.UseCaseCallback<GetInputForProductDetailUsecase.ResponseValue,
+                        GetInputForProductDetailUsecase.ErrorValue>() {
                     @Override
-                    public void onSuccess(GetInputForProductDetail.ResponseValue successResponse) {
+                    public void onSuccess(GetInputForProductDetailUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListProductManager.getInstance().setListProduct(successResponse.getEntity());
                     }
 
                     @Override
-                    public void onError(GetInputForProductDetail.ErrorValue errorResponse) {
+                    public void onError(GetInputForProductDetailUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListProductManager.getInstance().setListProduct(new ArrayList<>());

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_toolbar"
@@ -36,12 +37,13 @@
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="@dimen/distance_16dp">
 
         <ImageView
@@ -52,8 +54,8 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="@dimen/distance_10dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -95,39 +97,42 @@
 
 
                 <Button
-                    android:id="@+id/btn_create_package"
+                    android:id="@+id/btn_scan_stages"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_createcode"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:gravity="left|center_vertical"
                     android:drawablePadding="@dimen/distance_16dp"
-                    android:text="@string/text_create_temp_packaging"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/distance_16dp"
+                    android:text="@string/text_scan_stages"
                     android:textAllCaps="false" />
 
                 <Button
-                    android:id="@+id/btn_history_pack"
+                    android:id="@+id/btn_confirm_receive"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_history_create_pack"
-                    android:text="@string/text_history_create_code"
-                    android:gravity="left|center_vertical"
                     android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
+
                     android:paddingLeft="@dimen/distance_16dp"
+                    android:text="@string/text_confirm_receive"
                     android:textAllCaps="false" />
+
                 <Button
                     android:id="@+id/btn_report_detail"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_report_detail"
-                    android:text="@string/text_report_detail_create_pack"
-                    android:gravity="left|center_vertical"
                     android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
                     android:paddingLeft="@dimen/distance_16dp"
-                    android:textAllCaps="false" />
+                    android:text="@string/text_report_detail_create_pack"
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btn_warehousing"
@@ -135,47 +140,12 @@
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_store_arc"
+                    android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/distance_16dp"
                     android:text="@string/text_scan_warehouse"
-                    android:gravity="left|center_vertical"
-                    android:drawablePadding="@dimen/distance_16dp"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:id="@+id/btn_delivery"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_60dp"
-                    android:background="@drawable/bg_button_stroke_white"
-                    android:drawableLeft="@drawable/ic_delivery"
-                    android:text="@string/text_scan_delivery"
-                    android:gravity="left|center_vertical"
-                    android:drawablePadding="@dimen/distance_16dp"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:id="@+id/btn_confirm_delivery"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_60dp"
-                    android:background="@drawable/bg_button_stroke_white"
-                    android:drawableLeft="@drawable/check"
-                    android:text="@string/text_check_code_scan"
-                    android:gravity="left|center_vertical"
-                    android:drawablePadding="@dimen/distance_16dp"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:id="@+id/btn_import_works"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_60dp"
-                    android:background="@drawable/bg_button_stroke_white"
-                    android:drawableLeft="@drawable/ic_in_stock"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:gravity="left|center_vertical"
-                    android:drawablePadding="@dimen/distance_16dp"
-                    android:text="@string/text_import_works"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
 
 
                 <Button
@@ -184,10 +154,10 @@
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_info"
-                    android:text="@string/text_setting"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:gravity="left|center_vertical"
                     android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/distance_16dp"
+                    android:text="@string/text_setting"
                     android:textAllCaps="false" />
 
                 <Button
@@ -196,10 +166,10 @@
                     android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_exit_24dp"
-                    android:text="@string/text_logout"
-                    android:paddingLeft="@dimen/distance_16dp"
-                    android:gravity="left|center_vertical"
                     android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/distance_16dp"
+                    android:text="@string/text_logout"
                     android:textAllCaps="false" />
 
                 <TextView
@@ -217,14 +187,14 @@
                 <Button
                     android:id="@+id/btn_link"
                     android:layout_width="match_parent"
-                    android:background="@android:color/white"
                     android:layout_height="wrap_content"
                     android:autoLink="web"
+                    android:background="@android:color/white"
                     android:gravity="left"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:padding="@dimen/distance_16dp"
                     android:textAllCaps="false"
-                    android:textSize="@dimen/text_14sp"
-                    android:padding="@dimen/distance_16dp" />
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/text_14sp" />
 
             </LinearLayout>
 

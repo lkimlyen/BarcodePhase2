@@ -1,13 +1,20 @@
 package com.demo.barcode.app.di.module;
 
 
+import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
+import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.ChangePasswordUsecase;
-import com.demo.architect.domain.GetInputForProductDetail;
+import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
+import com.demo.architect.domain.GetInputForProductDetailUsecase;
+import com.demo.architect.domain.GetInputUnConfirmedUsecase;
+import com.demo.architect.domain.GetListDepartmentUsecase;
+import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.LoginUsecase;
+import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
 
@@ -33,94 +40,10 @@ public class UseCaseModule {
         return new ChangePasswordUsecase(remoteRepository);
     }
 
-    @Provides
-    GetAllPackageUsecase provideGetAllPackageUsecase(OrderRepository remoteRepository) {
-        return new GetAllPackageUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetAllSOACRUsecase provideGetAllSOACRUsecase(OrderRepository remoteRepository) {
-        return new GetAllSOACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetAllRequestACRUsecase provideGetAllRequestACRUsecase(OrderRepository remoteRepository) {
-        return new GetAllRequestACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetAllPackageForRequestUsecase provideGetAllPackageForRequestUsecase(OrderRepository remoteRepository) {
-        return new GetAllPackageForRequestUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetInputForProductDetail provideGetAllDetailForSOACRUsecase(ProductRepository remoteRepository) {
-        return new GetInputForProductDetail(remoteRepository);
-    }
-
-    @Provides
-    GetMaxPackageForSOUsecase provideGetMaxPackageForSOUsecase(OrderRepository remoteRepository) {
-        return new GetMaxPackageForSOUsecase(remoteRepository);
-    }
-
-    @Provides
-    AddPackageACRUsecase provideAddPackageACRUsecase(OrderRepository remoteRepository) {
-        return new AddPackageACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    AddPackageACRbyJsonUsecase provideAddPackageACRbyJsonUsecase(OrderRepository remoteRepository) {
-        return new AddPackageACRbyJsonUsecase(remoteRepository);
-    }
-
-    @Provides
-    AddLogScanACRUsecase provideAddLogScanACRUsecase(OrderRepository remoteRepository) {
-        return new AddLogScanACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    AddLogScanbyJsonUsecase provideAddLogScanbyJsonUsecase(OrderRepository remoteRepository) {
-        return new AddLogScanbyJsonUsecase(remoteRepository);
-    }
-
-    @Provides
-    AddLogScanInStoreACRUsecase provideAddLogScanInStoreACRUsecase(OrderRepository remoteRepository) {
-        return new AddLogScanInStoreACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetMaxTimesACRUsecase provideGetMaxTimesACRUsecase(OrderRepository remoteRepository) {
-        return new GetMaxTimesACRUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetAllRequestACRInUsecase provideGetAllRequestACRInUsecase(OrderRepository remoteRepository) {
-        return new GetAllRequestACRInUsecase(remoteRepository);
-    }
 
     @Provides
     UpdateVersionUsecase provideUpdateVersionUsecase(AuthRepository remoteRepository) {
         return new UpdateVersionUsecase(remoteRepository);
-    }
-
-    @Provides
-    GetDateServerUsecase provideGetDateServerUsecase(AuthRepository authRepository) {
-        return new GetDateServerUsecase(authRepository);
-    }
-
-    @Provides
-    DeletePackageDetailUsecase provideDeletePackageDetailUsecase(OrderRepository authRepository) {
-        return new DeletePackageDetailUsecase(authRepository);
-    }
-
-    @Provides
-    DeletePackageUsecase provideDeletePackageUsecase(OrderRepository authRepository) {
-        return new DeletePackageUsecase(authRepository);
-    }
-
-    @Provides
-    GetAllScanTurnOutUsecase provideAllScanTurnOutUsecase(OrderRepository orderRepository) {
-        return new GetAllScanTurnOutUsecase(orderRepository);
     }
 
     @Provides
@@ -129,13 +52,35 @@ public class UseCaseModule {
     }
 
     @Provides
-    GetCodeSXForInStoreUseCase provideGetCodeSXForInStoreUseCase(OrderRepository authRepository) {
-        return new GetCodeSXForInStoreUseCase(authRepository);
+    ConfirmInputUsecase provideConfirmInputUsecase(OrderRepository orderRepository) {
+        return new ConfirmInputUsecase(orderRepository);
     }
 
     @Provides
-    GetPackageForInStoreUseCase provideGetPackageForInStoreUseCase(OrderRepository authRepository) {
-        return new GetPackageForInStoreUseCase(authRepository);
+    GetInputUnConfirmedUsecase provideGetInputUnConfirmedUsecase(OrderRepository orderRepository) {
+        return new GetInputUnConfirmedUsecase(orderRepository);
     }
+
+    @Provides
+    GetListDepartmentUsecase provideGetListDepartmentUsecase(OtherRepository otherRepository) {
+        return new GetListDepartmentUsecase(otherRepository);
+    }
+
+    @Provides
+    GetListSOUsecase provideGetListSOUsecase(OrderRepository orderRepository) {
+        return new GetListSOUsecase(orderRepository);
+    }
+
+    @Provides
+    ScanProductDetailOutUsecase provideScanProductDetailOutUsecase(OrderRepository orderRepository) {
+        return new ScanProductDetailOutUsecase(orderRepository);
+    }
+
+
+    @Provides
+    GetInputForProductDetailUsecase provideGetInputForProductDetailUsecase(ProductRepository productRepository) {
+        return new GetInputForProductDetailUsecase(productRepository);
+    }
+
 }
 

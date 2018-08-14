@@ -21,23 +21,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -48,7 +44,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -74,7 +69,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     SearchableSpinner ssCodeSO;
 
     @Bind(R.id.ss_times)
-    Spinner spTimes;
+    SearchableSpinner ssTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -84,6 +79,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Bind(R.id.lv_code)
     ListView rvCode;
+
+    @Bind(R.id.ss_type_product)
+    SearchableSpinner ssTypeProduct;
+
 
     @Bind(R.id.ss_receiving_department)
     SearchableSpinner ssDepartment;
@@ -165,6 +164,37 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 return checkCountData();
             }
         });
+        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ssTimes.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
+                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        ssTypeProduct.setAdapter(adapter);
+
+        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mPresenter.getListDepartment();
 
     }
 
@@ -271,7 +301,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
-
+                mPresenter.getListScanStages(orderId,departmentId);
             }
 
             @Override
@@ -337,7 +367,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListProduct(orderId);
-
+                mPresenter.getListTimes(orderId);
 
             }
 
@@ -399,11 +429,16 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void showListTimes(List<Integer> list) {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
-        spTimes.setAdapter(adapter);
-        spTimes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ssTimes.setAdapter(adapter);
+        ssTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }

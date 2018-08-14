@@ -81,6 +81,7 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
         }
     }
 
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (_searchableListDialog.isAdded()) {

@@ -118,26 +118,7 @@
                             android:textSize="@dimen/text_14sp" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/black"
-                            android:textSize="@dimen/text_14sp"
-                            android:text="Lần: " />
-
-                        <TextView
-                            android:id="@+id/txt_times"
-                            android:layout_width="wrap_content"
-                            android:textColor="@android:color/black"
-                            android:textSize="@dimen/text_14sp"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

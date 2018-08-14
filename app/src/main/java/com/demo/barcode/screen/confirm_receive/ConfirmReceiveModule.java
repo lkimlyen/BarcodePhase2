@@ -11,16 +11,16 @@ import dagger.Provides;
 
 @Module
 public class ConfirmReceiveModule {
-    private final ConfirmReceiveContract.View CreateCodePackageView;
+    private final ConfirmReceiveContract.View ConfirmReceiveView;
 
-    public ConfirmReceiveModule(ConfirmReceiveContract.View CreateCodePackageView) {
-        this.CreateCodePackageView = CreateCodePackageView;
+    public ConfirmReceiveModule(ConfirmReceiveContract.View ConfirmReceiveView) {
+        this.ConfirmReceiveView = ConfirmReceiveView;
     }
 
     @Provides
     @NonNull
-    ConfirmReceiveContract.View provideCreateCodePackageView() {
-        return this.CreateCodePackageView;
+    ConfirmReceiveContract.View provideConfirmReceiveView() {
+        return this.ConfirmReceiveView;
     }
 }
 

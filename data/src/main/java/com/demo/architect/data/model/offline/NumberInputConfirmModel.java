@@ -1,9 +1,6 @@
 package com.demo.architect.data.model.offline;
 
-import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.NumberInputConfirm;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -14,6 +11,7 @@ public class NumberInputConfirmModel extends RealmObject {
     private int id;
     private int numberConfirmed;
     private int timesInput;
+    private LogScanConfirm listScanConfirm;
 
     public NumberInputConfirmModel() {
     }
@@ -32,10 +30,12 @@ public class NumberInputConfirmModel extends RealmObject {
         return nextId;
     }
 
-    public static NumberInputConfirmModel create(Realm realm, NumberInputConfirm numberInput) {
-        NumberInputConfirmModel numberInputModel = new NumberInputConfirmModel(id(realm), numberInput.getNumberConfirmed(),
+    public static NumberInputConfirmModel create(Realm realm, NumberInputConfirm numberInput, int productDetailID, int userId, int departmentId) {
+        NumberInputConfirmModel numberInputModel = new NumberInputConfirmModel(id(realm)+1, numberInput.getNumberConfirmed(),
                 numberInput.getTimesInput());
         numberInputModel = realm.copyToRealm(numberInputModel);
+        numberInputModel.setListScanConfirm(LogScanConfirm.findLogWaitingUploadbyTimes(realm, productDetailID, userId, numberInputModel.getTimesInput(),
+                departmentId));
         return numberInputModel;
     }
 
@@ -49,5 +49,17 @@ public class NumberInputConfirmModel extends RealmObject {
 
     public int getTimesInput() {
         return timesInput;
+    }
+
+    public LogScanConfirm getListScanConfirm() {
+        return listScanConfirm;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setListScanConfirm(LogScanConfirm listScanConfirm) {
+        this.listScanConfirm = listScanConfirm;
     }
 }

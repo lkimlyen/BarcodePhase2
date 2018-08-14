@@ -18,18 +18,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.CreateCodePackAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
@@ -63,7 +58,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     private final String TAG = CreatePackagingFragment.class.getName();
     private CreatePackagingContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
-    private CreateCodePackAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -114,15 +108,13 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
-                mPresenter.checkBarcode(barcode, orderId, mLocation != null ? mLocation.getLatitude() : 0,
-                        mLocation != null ? mLocation.getLongitude():0);
             }
         }
 
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 showSuccess(getString(R.string.text_print_success));
-                mPresenter.getProduct(orderId);
+
             } else {
                 isClick = false;
             }
@@ -153,9 +145,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListScan(orderId) > 0) {
-                    return true;
-                }
+
                 return false;
             }
         });
@@ -164,7 +154,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssCodeSO.setAdapter(adapter);
-        mPresenter.getData();
+
     }
 
 
@@ -205,9 +195,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!isClick) {
-            mPresenter.deleteAllItemLog();
-        }
+
     }
 
     public void showNotification(String content, int type) {
@@ -235,77 +223,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         showToast(message);
     }
 
-    @Override
-    public void showRequestProduction(List<OrderModel> list) {
-        txtCodeSO.setText("");
-        txtCustomerName.setText("");
-        ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
-                    return;
-                }
-                txtCodeSO.setText(list.get(position).getCodeSO());
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                mPresenter.getProduct(list.get(position).getId());
-                orderId = list.get(position).getId();
-                mPresenter.getListCreateCode(orderId);
-                edtBarcode.setText("");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    @Override
-    public void showLogScanCreatePack(LogScanCreatePackList list) {
-
-        adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
-            @Override
-            public void onItemClick(LogScanCreatePack item) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_delete_code))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                mPresenter.deleteItemLog(item);
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
-
-            }
-        }, new CreateCodePackAdapter.OnEditTextChangeListener() {
-            @Override
-            public void onEditTextChange(LogScanCreatePack item, int number) {
-                mPresenter.updateNumberInput(item.getId(), number, item.getSerial(), item.getNumInput());
-            }
-        }, new CreateCodePackAdapter.onErrorListener() {
-            @Override
-            public void errorListener(String message) {
-                showToast(message);
-                turnOnVibrator();
-                startMusicError();
-            }
-        });
-        rvCode.setAdapter(adapter);
-
-    }
 
     @Override
     public void startMusicError() {
@@ -327,35 +245,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         }
     }
 
-    @OnClick(R.id.ic_refresh)
-    public void refresh() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog();
-                            sweetAlertDialog.dismiss();
-                            mPresenter.getData();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .show();
-
-        } else {
-
-            mPresenter.getData();
-        }
-    }
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -379,9 +268,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), orderId,
-                                mLocation != null ? mLocation.getLatitude() : 0,
-                                mLocation != null ? mLocation.getLongitude():0);
+
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -440,41 +327,12 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog();
-                            sweetAlertDialog.dismiss();
-                            getActivity().finish();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .show();
 
-        } else {
-            getActivity().finish();
-        }
     }
 
     @OnClick(R.id.img_print)
     public void print() {
-        if (mPresenter.countListScan(orderId) > 0) {
-            isClick = true;
-            PrintStempActivity.start(getActivity(), orderId);
-        } else {
-            showNotification(getString(R.string.text_no_data), SweetAlertDialog.WARNING_TYPE);
-        }
+
     }
 
     @OnClick(R.id.btn_scan)

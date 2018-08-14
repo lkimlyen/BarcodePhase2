@@ -1,15 +1,14 @@
 package com.demo.barcode.screen.confirm_receive;
 
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
+
+import io.realm.RealmList;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -33,7 +32,8 @@ public interface ConfirmReceiveContract {
 
         void showListDepartment(List<DepartmentEntity> list);
 
-        void showListConfirm(List<OrderConfirmEntity> list);
+        void showListConfirm(RealmList<ConfirmInputModel> list);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -41,8 +41,17 @@ public interface ConfirmReceiveContract {
 
         void getListTimes(int orderId);
 
-        void getListConfirm(int orderId, int departmentIdIn, int departmentIdOut);
+        void getListConfirm(int orderId, int departmentIdOut);
 
         void getListDepartment();
+
+        void getListConfirmByTimes(int times);
+
+        void checkBarcode(int orderId, String barcode, int departmentId, int times);
+
+        void updateNumberConfirm(int logId, int numberScan);
+
+        void uploadData();
+
     }
 }

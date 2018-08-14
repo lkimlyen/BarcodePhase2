@@ -3,10 +3,6 @@ package com.demo.architect.data.model.offline;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.NumberInputConfirm;
 import com.demo.architect.data.model.OrderConfirmEntity;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -29,8 +25,8 @@ public class ConfirmInputModel extends RealmObject {
     private RealmList<NumberInputConfirmModel> listInputConfirmed;
     private int numberOut;
     private String dateTimeScan;
-    @SuppressWarnings("unused")
-    private RealmList<LogScanConfirm> listScanConfirm;
+    private int status;
+
 
     public ConfirmInputModel() {
 
@@ -51,10 +47,10 @@ public class ConfirmInputModel extends RealmObject {
         this.dateTimeScan = dateTimeScan;
     }
 
-    public static void create(Realm realm, OrderConfirmEntity orderConfirmEntity) {
-        ConfirmInputModel parent = realm.where(ConfirmInputModel.class).equalTo("id", orderConfirmEntity.getProductDetailID()).findFirst();
+    public static void create(Realm realm, OrderConfirmEntity orderConfirmEntity, int userId) {
+        ConfirmInputModel parent = realm.where(ConfirmInputModel.class).equalTo("id", orderConfirmEntity.getOutputProductDetailID()).findFirst();
         if (parent == null) {
-            parent = new ConfirmInputModel(orderConfirmEntity.getProductDetailID(), orderConfirmEntity.getOrderId(),
+            parent = new ConfirmInputModel(orderConfirmEntity.getOutputProductDetailID(), orderConfirmEntity.getOrderId(),
                     orderConfirmEntity.getDepartmentIDIn(), orderConfirmEntity.getDepartmentIDOut(), orderConfirmEntity.getProductDetailName(),
                     orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(), orderConfirmEntity.getNumberTotalOrder(),
                     orderConfirmEntity.getTimesOutput(), orderConfirmEntity.getNumberOut(), orderConfirmEntity.getDateTimeScan());
@@ -62,16 +58,39 @@ public class ConfirmInputModel extends RealmObject {
         }
         RealmList<NumberInputConfirmModel> parentList = parent.getListInputConfirmed();
         for (NumberInputConfirm numberInputConfirm : orderConfirmEntity.getListInputConfirmed()) {
-            parentList.add(NumberInputConfirmModel.create(realm, numberInputConfirm));
+            parentList.add(NumberInputConfirmModel.create(realm, numberInputConfirm, orderConfirmEntity.getOutputProductDetailID(), userId,
+                    parent.getDepartmentIDOut()));
         }
-
+        int sum = LogScanConfirm.sumNumberScanLogWaitingUpload(realm, orderConfirmEntity.getOutputProductDetailID(),
+                userId, parent.getDepartmentIDOut());
+        if (sum > 0) {
+            if (parent.getNumberOut() > sum) {
+                parent.setStatus(Constants.INCOMPLETE);
+            } else if (parent.getNumberOut() == sum) {
+                parent.setStatus(Constants.FULL);
+            } else {
+                parent.setStatus(Constants.RESIDUAL);
+            }
+        } else {
+            parent.setStatus(-1);
+        }
     }
 
+    public static RealmList<ConfirmInputModel> getListScanConfirm(Realm realm, int times) {
+        RealmList<ConfirmInputModel> realmList = new RealmList<>();
+        RealmResults<ConfirmInputModel> list = realm.where(ConfirmInputModel.class).findAll();
+        for (ConfirmInputModel inputModel : list) {
+            NumberInputConfirmModel numberInputConfirmModel = inputModel.getListInputConfirmed().where().equalTo("timesInput", times).findFirst();
+            if (numberInputConfirmModel != null) {
+                realmList.add(inputModel);
+            }
+        }
+        return realmList;
+    }
 
-    public static RealmResults<ConfirmInputModel> getListScanConfirm(Realm realm, int times) {
-        RealmResults<NumberInputConfirm>
-        RealmResults<ConfirmInputModel> results = realm.where(ConfirmInputModel.class).findAll();
-        return results;
+    public static ConfirmInputModel findConfirmByBarcode(Realm realm, String barcode) {
+        ConfirmInputModel parent = realm.where(ConfirmInputModel.class).equalTo("barcode", barcode).findFirst();
+        return parent;
     }
 
     public int getId() {
@@ -122,7 +141,11 @@ public class ConfirmInputModel extends RealmObject {
         return dateTimeScan;
     }
 
-    public RealmList<LogScanConfirm> getListScanConfirm() {
-        return listScanConfirm;
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

@@ -56,4 +56,9 @@ public class SOEntity {
     public List<Integer> getListTimesOutput() {
         return listTimesOutput;
     }
+
+    @Override
+    public String toString() {
+        return codeSO;
+    }
 }

@@ -10,19 +10,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.RealmHelper;
+import com.demo.architect.data.model.UserEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.manager.ServerManager;
-import com.demo.barcode.screen.confirm_delivery.ConfirmDeliveryActivity;
+import com.demo.barcode.manager.ListDepartmentManager;
+import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
-import com.demo.barcode.screen.import_works.ImportWorksActivity;
 import com.demo.barcode.screen.login.LoginActivity;
-import com.demo.barcode.screen.scan_delivery.ScanDeliveryActivity;
-import com.demo.barcode.screen.scan_warehousing.ScanWarehousingActivity;
 import com.demo.barcode.screen.setting.SettingActivity;
+import com.demo.barcode.screen.stages.StagesActivity;
 import com.demo.barcode.util.Precondition;
-import com.thefinestartist.finestwebview.FinestWebView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,26 +43,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Bind(R.id.btn_link)
     Button btnLink;
 
-    @Bind(R.id.btn_confirm_delivery)
-    Button btnConfirmDelivery;
+    @Bind(R.id.btn_scan_stages)
+    Button btnScanStages;
 
-    @Bind(R.id.btn_create_package)
-    Button btnCreatePack;
-
-    @Bind(R.id.btn_report_detail)
-    Button btnReportDetail;
-
-    @Bind(R.id.btn_history_pack)
-    Button btnHistoryPack;
-
-    @Bind(R.id.btn_warehousing)
-    Button btnWarehousing;
-
-    @Bind(R.id.btn_delivery)
-    Button btnDelivery;
-
-    @Bind(R.id.btn_import_works)
-    Button btnImportWorks;
+    @Bind(R.id.btn_confirm_receive)
+    Button btnConfirmreceive;
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -98,13 +81,6 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     }
 
     private void initView() {
-        btnLink.setText(String.format(getString(R.string.text_web_report), ServerManager.getInstance().getServer()));
-        btnCreatePack.setVisibility(View.GONE);
-        btnHistoryPack.setVisibility(View.GONE);
-        btnWarehousing.setVisibility(View.GONE);
-        btnDelivery.setVisibility(View.GONE);
-        btnConfirmDelivery.setVisibility(View.GONE);
-        btnImportWorks.setVisibility(View.GONE);
     }
 
 
@@ -137,41 +113,15 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
 
     @Override
-    public void showUser(UserResponse user) {
-        txtName.setText(user.getFullName());
-        if (user.getUserRoleID() == 17) {
-            txtPosition.setText("Scan Tạo mã Gói");
-            btnHistoryPack.setVisibility(View.VISIBLE);
-            btnCreatePack.setVisibility(View.VISIBLE);
-        } else if (user.getUserRoleID() == 18) {
-            txtPosition.setText("Scan Nhập Kho");
-            btnWarehousing.setVisibility(View.VISIBLE);
-        } else if (user.getUserRoleID() == 19) {
-            txtPosition.setText("Scan Giao Hàng");
-            btnConfirmDelivery.setVisibility(View.VISIBLE);
-            btnConfirmDelivery.setVisibility(View.VISIBLE);
-        } else if (user.getUserRoleID() == 20) {
-            txtPosition.setText("Scan Nhập Công Trình");
-            btnImportWorks.setVisibility(View.VISIBLE);
-        } else {
-            txtPosition.setText("ADMIN APP");
-            btnCreatePack.setVisibility(View.VISIBLE);
-            btnHistoryPack.setVisibility(View.VISIBLE);
-            btnWarehousing.setVisibility(View.VISIBLE);
-            btnDelivery.setVisibility(View.VISIBLE);
-            btnConfirmDelivery.setVisibility(View.VISIBLE);
-            btnImportWorks.setVisibility(View.VISIBLE);
+    public void showUser(UserEntity user) {
+        txtName.setText(user.getName());
+        if (user.getRole() <= 5){
+            txtPosition.setText(ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
         }
+
+
     }
 
-    @Override
-    public void showDeliveryNotComplete(int count) {
-        if (count > 0) {
-            btnConfirmDelivery.setText(getString(R.string.text_check_code_scan) + " (" + count + ")");
-        } else {
-            btnConfirmDelivery.setText(getString(R.string.text_check_code_scan));
-        }
-    }
 
     @OnClick(R.id.btn_logout)
     public void logout() {
@@ -203,19 +153,14 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         SettingActivity.start(getContext());
     }
 
-    @OnClick(R.id.btn_report_detail)
-    public void reportDetailCreatePack() {
-        new FinestWebView.Builder(getActivity()).show(String.format(getString(R.string.text_url_report), ServerManager.getInstance().getServer()));
+    @OnClick(R.id.btn_scan_stages)
+    public void scanStages() {
+        StagesActivity.start(getContext());
     }
 
-    @OnClick(R.id.btn_create_package)
-    public void createPackage() {
-        CreatePackagingActivity.start(getContext());
-    }
-
-    @OnClick(R.id.btn_history_pack)
-    public void historyPack() {
-        HistoryPackageActivity.start(getContext());
+    @OnClick(R.id.btn_confirm_receive)
+    public void confirmReceive() {
+        ConfirmReceiveActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_link)
@@ -224,23 +169,4 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         startActivity(intent);
     }
 
-    @OnClick(R.id.btn_warehousing)
-    public void scanWarehousing() {
-        ScanWarehousingActivity.start(getActivity());
-    }
-
-    @OnClick(R.id.btn_delivery)
-    public void delivery() {
-        ScanDeliveryActivity.start(getContext());
-    }
-
-    @OnClick(R.id.btn_confirm_delivery)
-    public void confirmDelivery() {
-        ConfirmDeliveryActivity.start(getContext());
-    }
-
-    @OnClick(R.id.btn_import_works)
-    public void importWorks() {
-        ImportWorksActivity.start(getContext());
-    }
 }

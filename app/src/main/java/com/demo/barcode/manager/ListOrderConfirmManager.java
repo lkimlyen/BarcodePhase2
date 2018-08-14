@@ -1,7 +1,6 @@
 package com.demo.barcode.manager;
 
 import com.demo.architect.data.model.OrderConfirmEntity;
-import com.demo.architect.data.model.offline.OrderModel;
 
 import java.util.ArrayList;
 import java.util.List;

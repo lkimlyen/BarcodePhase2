@@ -1,6 +1,5 @@
 package com.demo.barcode.manager;
 
-import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 
 import java.util.ArrayList;

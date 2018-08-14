@@ -19,11 +19,6 @@ import retrofit2.http.Url;
 
 public interface AuthApiInterface {
 
-//    @FormUrlEncoded
-//    @POST("/WS/api/LoginWS")
-//    Call<UserResponse> login(@Field("pUserName") String username, @Field("pPassWord") String password,
-//                             @Field("pUserType") String type);
-
     @FormUrlEncoded
     @POST
     Call<BaseResponse<UserEntity>> login(@Url String url, @Field("pKey") String key, @Field("pUserName") String username, @Field("pPassWord") String password);

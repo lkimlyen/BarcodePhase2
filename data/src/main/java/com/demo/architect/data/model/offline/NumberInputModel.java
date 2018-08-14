@@ -34,7 +34,7 @@ public class NumberInputModel extends RealmObject {
     }
 
     public static NumberInputModel create(Realm realm, NumberInput numberInput) {
-        NumberInputModel numberInputModel = new NumberInputModel(id(realm), numberInput.getNumberTotalInput(),
+        NumberInputModel numberInputModel = new NumberInputModel(id(realm)+1, numberInput.getNumberTotalInput(),
                 numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), numberInput.getTimesInput());
         numberInputModel = realm.copyToRealm(numberInputModel);
         return numberInputModel;

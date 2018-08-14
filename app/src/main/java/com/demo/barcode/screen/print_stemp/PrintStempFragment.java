@@ -1,6 +1,5 @@
 package com.demo.barcode.screen.print_stemp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -11,21 +10,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
-import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.DetailPrintTempAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,7 +28,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public static final String ORDER_ID = "order_id";
     private final String TAG = PrintStempFragment.class.getName();
     private PrintStempContract.Presenter mPresenter;
-    private DetailPrintTempAdapter adapter;
     private int orderId;
     @Bind(R.id.lv_codes)
     ListView lvCode;
@@ -121,9 +108,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public void onResume() {
         super.onResume();
         mPresenter.start();
-        mPresenter.getMaxNumberOrder(orderId);
-        mPresenter.getListCreatePack(orderId);
-        mPresenter.getOrder(orderId);
     }
 
     @Override
@@ -157,49 +141,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         showToast(message);
     }
 
-    @Override
-    public void showSerialPack(int serial) {
-        txtSerial.setText(serial + "");
-    }
-
-    @Override
-    public void showOrder(OrderModel model) {
-        txtCodeSO.setText(model.getCodeSO());
-        txtCustomerName.setText(model.getCustomerName());
-        txtRequestCode.setText(model.getCodeProduction());
-    }
-
-    @Override
-    public void showListCreatePack(LogScanCreatePackList list) {
-
-        adapter = new DetailPrintTempAdapter(list.getItemList());
-        lvCode.setAdapter(adapter);
-    }
-
-    @Override
-    public void showSumPack(int sum) {
-        txtTotal.setText(sum + "");
-    }
-
-    @Override
-    public void backToCreatePack() {
-        Intent returnIntent = new Intent();
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
-    }
-
-    @Override
-    public void showDialogCreateIPAddress() {
-        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
-        dialog.show(getActivity().getFragmentManager(), TAG);
-        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
-            @Override
-            public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port,orderId, Integer.parseInt(txtSerial.getText().toString()), 0, Integer.parseInt(txtTotal.getText().toString()));
-                dialog.dismiss();
-            }
-        });
-    }
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -216,9 +157,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
-
-        mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0, Integer.parseInt(txtTotal.getText().toString()));
-    }
+   }
 
     @Override
     public void onStop() {
@@ -229,8 +168,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!isClick){
-            mPresenter.deleteAllLog();
-        }
+
     }
 }

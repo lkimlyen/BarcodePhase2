@@ -60,8 +60,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:gravity="center"
                 android:background="@android:color/transparent"
+                android:gravity="center"
                 android:padding="@dimen/distance_10dp"
                 android:src="@drawable/ic_upload" />
 
@@ -96,11 +96,13 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_type_product"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_type_product"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                android:spinnerMode="dialog"
+                app:hintText="@string/text_choose_type_product" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,9 +123,9 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_code_so"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_code_so"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_code_so" />
 
         </LinearLayout>
 
@@ -173,9 +175,9 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_receiving_department"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_receiving_department"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_receiving_department" />
 
         </LinearLayout>
 
@@ -196,12 +198,12 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <Spinner
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_times"
                 android:layout_width="0dp"
-                android:prompt="@string/text_choose_times_scan"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_times_scan" />
 
         </LinearLayout>
 
@@ -266,11 +268,11 @@
     </LinearLayout>
 
     <ListView
-    android:id="@+id/lv_code"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:background="#E6E6FA"
-    android:layout_weight="1" />
+        android:id="@+id/lv_code"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#E6E6FA" />
 
 
     <LinearLayout

@@ -73,8 +73,13 @@ public class LogListScanStages extends RealmObject {
 
     public static LogListScanStages getListScanStagesByDepartment(Realm realm, int orderId, int departmentId, int userId) {
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-        LogListScanStages logListScanStages = logListScanStagesMain.getList().where()
-                .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).findFirst();
+        LogListScanStages logListScanStages = null;
+        if (logListScanStagesMain != null) {
+            if (logListScanStagesMain.getList() != null) {
+                logListScanStages = logListScanStagesMain.getList().where()
+                        .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).findFirst();
+            }
+        }
 
         return logListScanStages;
     }

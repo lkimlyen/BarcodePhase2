@@ -72,9 +72,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:padding="@dimen/distance_8dp">
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_type_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/ss_type_product"
+                android:layout_width="0dp"
+                android:prompt="@string/text_choose_type_product"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5" />
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,9 +118,9 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_code_so"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_code_so"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_code_so" />
 
         </LinearLayout>
 
@@ -147,9 +170,9 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_delivery_department"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_delivery_department"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_delivery_department" />
 
         </LinearLayout>
 
@@ -173,11 +196,12 @@
             <Spinner
                 android:id="@+id/ss_times"
                 android:layout_width="0dp"
-                android:prompt="@string/text_choose_times_scan"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                android:prompt="@string/text_choose_times_scan" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -238,12 +262,106 @@
 
     </LinearLayout>
 
-    <com.demo.barcode.widgets.legacytableview.LegacyTableView
-        android:id="@+id/tb_product"
+    <!--<com.demo.barcode.widgets.legacytableview.LegacyTableView-->
+    <!--android:id="@+id/tb_product"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1"-->
+    <!--/>-->
+
+    <TableLayout
+        android:id="@+id/table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TableRow
+            android:id="@+id/table_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_serial_module_break"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_name_detail_break"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp" />
+
+            <TextView
+                android:id="@+id/position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_number_delivery"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_number_receive"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="serif"
+                    android:gravity="center"
+                    android:text="@string/text_confirm"
+                    android:textSize="@dimen/text_12sp"
+                    android:textColor="#000" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:text="@string/text_choose_all"
+                    android:textSize="@dimen/text_12sp" />
+
+            </LinearLayout>
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dip"
+            android:background="#ff0000" />
+    </TableLayout>
+
+    <ListView
+        android:id="@+id/lv_confirm"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
