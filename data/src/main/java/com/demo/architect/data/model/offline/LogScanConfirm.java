@@ -1,29 +1,42 @@
 package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.NumberInputConfirm;
+import com.demo.architect.data.model.OrderConfirmEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class LogScanConfirm extends RealmObject {
+
+
     @PrimaryKey
     private int id;
 
     @SerializedName("pOutputProductDetailID")
     @Expose
     private int productDetailID;
+    private int orderId;
 
-    private int departmentId;
+    private int departmentIDIn;
+    private int departmentIDOut;
+
+    private String productDetailName;
+    private String module;
+    private String barcode;
+    private int numberTotalOrder;
+    private int timesOutput;
 
     @SerializedName("pNumberComfirmed")
     @Expose
-    private int numberComfirmed;
+    private int numberConfirmed;
 
     @SerializedName("pUserID")
     @Expose
@@ -31,22 +44,37 @@ public class LogScanConfirm extends RealmObject {
 
     @SerializedName("pTimes")
     @Expose
-    private int times;
+    private int timesInput;
 
     private int status;
-
+    private int statusConfirm;
+    private int numberOut;
     private String dateScan;
+    private String dateConfirm;
 
     public LogScanConfirm() {
     }
 
-    public LogScanConfirm(int productDetailID, int departmentId, int numberComfirmed, int userId, int times, String dateScan) {
-
+    public LogScanConfirm(int id, int productDetailID, int orderId, int departmentIDIn, int departmentIDOut,
+                          String productDetailName, String module, String barcode,
+                          int numberTotalOrder, int timesOutput, int numberConfirmed,
+                          int userId, int timesInput,
+                          int numberOut, String dateScan, int status) {
+        this.id = id;
         this.productDetailID = productDetailID;
-        this.departmentId = departmentId;
-        this.numberComfirmed = numberComfirmed;
+        this.orderId = orderId;
+        this.departmentIDIn = departmentIDIn;
+        this.departmentIDOut = departmentIDOut;
+        this.productDetailName = productDetailName;
+        this.module = module;
+        this.barcode = barcode;
+        this.numberTotalOrder = numberTotalOrder;
+        this.timesOutput = timesOutput;
+        this.numberConfirmed = numberConfirmed;
         this.userId = userId;
-        this.times = times;
+        this.timesInput = timesInput;
+        this.status = status;
+        this.numberOut = numberOut;
         this.dateScan = dateScan;
     }
 
@@ -58,35 +86,42 @@ public class LogScanConfirm extends RealmObject {
         return nextId;
     }
 
-    public static void create(Realm realm, LogScanConfirm logScanConfirm) {
-        ConfirmInputModel parent = realm.where(ConfirmInputModel.class).equalTo("id", logScanConfirm.getProductDetailID()).findFirst();
-        NumberInputConfirmModel numberInputConfirm = parent.getListInputConfirmed().where().equalTo("timesInput", logScanConfirm.getTimes()).findFirst();
-        LogScanConfirm scanConfirm = realm.where(LogScanConfirm.class).equalTo("productDetailID", logScanConfirm.getProductDetailID())
-                .equalTo("pTimes", logScanConfirm.getTimes()).equalTo("status", Constants.WAITING_UPLOAD)
-                .equalTo("userId", logScanConfirm.getUserId()).findFirst();
-        if (scanConfirm == null) {
-            scanConfirm = new LogScanConfirm(logScanConfirm.getProductDetailID(),
-                    logScanConfirm.getDepartmentId(), logScanConfirm.getNumberComfirmed(), logScanConfirm.getUserId(), logScanConfirm.getTimes(), logScanConfirm.getDateScan());
-            scanConfirm.setId(id(realm)+1);
-            scanConfirm.setStatus(Constants.WAITING_UPLOAD);
-            scanConfirm = realm.copyToRealm(scanConfirm);
-            numberInputConfirm.setListScanConfirm(scanConfirm);
-        } else {
-            scanConfirm.setNumberComfirmed(logScanConfirm.getNumberComfirmed());
-        }
-        int sum = LogScanConfirm.sumNumberScanLogWaitingUpload(realm, logScanConfirm.getProductDetailID(),
-                logScanConfirm.getUserId(), parent.getDepartmentIDOut());
-        if (sum > 0) {
-            if (parent.getNumberOut() > sum) {
-                parent.setStatus(Constants.INCOMPLETE);
-            } else if (parent.getNumberOut() == sum) {
-                parent.setStatus(Constants.FULL);
+    public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, int userId) {
+        List<NumberInputConfirm> confirmList = orderConfirmEntity.getListInputConfirmed();
+        for (NumberInputConfirm input : confirmList) {
+            LogScanConfirm scanConfirm = realm.where(LogScanConfirm.class).equalTo("productDetailID", orderConfirmEntity.getOutputProductDetailID())
+                    .equalTo("orderId", orderConfirmEntity.getOrderId())
+                    .equalTo("departmentIDOut", orderConfirmEntity.getDepartmentIDOut())
+                    .equalTo("pTimes", input.getTimesInput()).equalTo("status", Constants.WAITING_UPLOAD)
+                    .equalTo("userId", userId).findFirst();
+            if (scanConfirm == null) {
+                scanConfirm = new LogScanConfirm(id(realm) + 1, orderConfirmEntity.getOutputProductDetailID(),
+                        orderConfirmEntity.getOrderId(), orderConfirmEntity.getDepartmentIDIn(), orderConfirmEntity.getDepartmentIDOut(),
+                        orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
+                        orderConfirmEntity.getNumberTotalOrder(), orderConfirmEntity.getTimesOutput(),
+                        0, userId, input.getTimesInput(), orderConfirmEntity.getNumberOut(),
+                        orderConfirmEntity.getDateTimeScan(), Constants.WAITING_UPLOAD);
+                scanConfirm = realm.copyToRealm(scanConfirm);
             } else {
-                parent.setStatus(Constants.RESIDUAL);
+                scanConfirm.setNumberOut(orderConfirmEntity.getNumberOut());
             }
-        } else {
-            parent.setStatus(-1);
+            int sum = LogScanConfirm.sumNumberScanLogWaitingUpload(realm, orderConfirmEntity.getOrderId(), orderConfirmEntity.getProductDetailID(),
+                    userId, orderConfirmEntity.getDepartmentIDOut());
+            if (sum > 0) {
+                if (scanConfirm.getNumberOut() > sum) {
+                    scanConfirm.setStatus(Constants.INCOMPLETE);
+                } else if (scanConfirm.getNumberOut() == sum) {
+                    scanConfirm.setStatus(Constants.FULL);
+                } else {
+                    scanConfirm.setStatus(Constants.RESIDUAL);
+                }
+            } else {
+                scanConfirm.setStatus(-1);
+            }
+
         }
+
+
     }
 
     public static LogScanConfirm findLogWaitingUploadbyTimes(Realm realm, int productDetailID, int userId, int times, int departmentId) {
@@ -106,35 +141,45 @@ public class LogScanConfirm extends RealmObject {
 
     }
 
-    public static int sumNumberScanLogWaitingUpload(Realm realm, int productDetailID, int userId, int departmentId) {
-        RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class).equalTo("productDetailID", productDetailID)
+    public static int sumNumberScanLogWaitingUpload(Realm realm, int orderId, int productDetailID, int userId, int departmentId) {
+        RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
+                .equalTo("orderId", orderId)
+                .equalTo("productDetailID", productDetailID)
                 .equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).equalTo("departmentId", departmentId).findAll();
         if (results == null) {
             return 0;
         } else {
-            int sum = results.sum("numberComfirmed").intValue();
+            int sum = results.sum("numberConfirmed").intValue();
             return sum;
         }
 
     }
 
-    public static void updateNumberScan(Realm realm, int logId, int numberScan) {
-        LogScanConfirm results = realm.where(LogScanConfirm.class).equalTo("id", logId).findFirst();
-        results.setNumberComfirmed(numberScan);
-        int sum = LogScanConfirm.sumNumberScanLogWaitingUpload(realm, results.getProductDetailID(),
-                results.getUserId(), results.getDepartmentId());
-        ConfirmInputModel parent = realm.where(ConfirmInputModel.class).equalTo("id", results.getProductDetailID()).findFirst();
+    public static void updateNumberScan(Realm realm, int orderId, int orderProductId, int departmentIdOut, int times, int numberScan, int userId, boolean scan) {
+        LogScanConfirm scanConfirm = realm.where(LogScanConfirm.class).equalTo("productDetailID", orderProductId)
+                .equalTo("departmentIDOut", departmentIdOut)
+                .equalTo("orderId", orderId)
+                .equalTo("pTimes", times).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("userId", userId).findFirst();
+        if (scan) {
+            scanConfirm.setNumberConfirmed(scanConfirm.getNumberConfirmed() + numberScan);
+        } else {
+            scanConfirm.setNumberConfirmed(numberScan);
+        }
+
+        int sum = LogScanConfirm.sumNumberScanLogWaitingUpload(realm, orderId, scanConfirm.getProductDetailID(),
+                scanConfirm.getUserId(), scanConfirm.getDepartmentIDOut());
         if (sum > 0) {
-            if (parent.getNumberOut() > sum) {
-                parent.setStatus(Constants.INCOMPLETE);
-            } else if (parent.getNumberOut() == sum) {
-                parent.setStatus(Constants.FULL);
+            if (scanConfirm.getNumberOut() > sum) {
+                scanConfirm.setStatus(Constants.INCOMPLETE);
+            } else if (scanConfirm.getNumberOut() == sum) {
+                scanConfirm.setStatus(Constants.FULL);
             } else {
-                parent.setStatus(Constants.RESIDUAL);
+                scanConfirm.setStatus(Constants.RESIDUAL);
             }
         } else {
-            parent.setStatus(-1);
+            scanConfirm.setStatus(-1);
         }
     }
 
@@ -147,63 +192,147 @@ public class LogScanConfirm extends RealmObject {
         }
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setProductDetailID(int productDetailID) {
-        this.productDetailID = productDetailID;
-    }
-
-    public void setNumberComfirmed(int numberComfirmed) {
-        this.numberComfirmed = numberComfirmed;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public void setTimes(int times) {
-        this.times = times;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
+    public static RealmResults<LogScanConfirm> getListScanConfirm(Realm realm, int orderId, int departmentIDOut, int times, int userId) {
+        RealmResults<LogScanConfirm> list = realm.where(LogScanConfirm.class).equalTo("orderId",orderId)
+                .equalTo("departmentIDOut",departmentIDOut)
+                .equalTo("userId",userId)
+                .equalTo("times",times).findAll();
+        return list;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getProductDetailID() {
         return productDetailID;
     }
 
-    public int getNumberComfirmed() {
-        return numberComfirmed;
+    public void setProductDetailID(int productDetailID) {
+        this.productDetailID = productDetailID;
+    }
+
+    public int getDepartmentIDIn() {
+        return departmentIDIn;
+    }
+
+    public void setDepartmentIDIn(int departmentIDIn) {
+        this.departmentIDIn = departmentIDIn;
+    }
+
+    public int getDepartmentIDOut() {
+        return departmentIDOut;
+    }
+
+    public void setDepartmentIDOut(int departmentIDOut) {
+        this.departmentIDOut = departmentIDOut;
+    }
+
+    public String getProductDetailName() {
+        return productDetailName;
+    }
+
+    public void setProductDetailName(String productDetailName) {
+        this.productDetailName = productDetailName;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public int getNumberTotalOrder() {
+        return numberTotalOrder;
+    }
+
+    public void setNumberTotalOrder(int numberTotalOrder) {
+        this.numberTotalOrder = numberTotalOrder;
+    }
+
+    public int getTimesOutput() {
+        return timesOutput;
+    }
+
+    public void setTimesOutput(int timesOutput) {
+        this.timesOutput = timesOutput;
+    }
+
+    public int getNumberConfirmed() {
+        return numberConfirmed;
+    }
+
+    public void setNumberConfirmed(int numberConfirmed) {
+        this.numberConfirmed = numberConfirmed;
     }
 
     public int getUserId() {
         return userId;
     }
 
-    public int getTimes() {
-        return times;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getTimesInput() {
+        return timesInput;
+    }
+
+    public void setTimesInput(int timesInput) {
+        this.timesInput = timesInput;
     }
 
     public int getStatus() {
         return status;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getStatusConfirm() {
+        return statusConfirm;
+    }
+
+    public void setStatusConfirm(int statusConfirm) {
+        this.statusConfirm = statusConfirm;
+    }
+
+    public int getNumberOut() {
+        return numberOut;
+    }
+
+    public void setNumberOut(int numberOut) {
+        this.numberOut = numberOut;
+    }
+
     public String getDateScan() {
         return dateScan;
     }
 
-    public int getDepartmentId() {
-        return departmentId;
+    public void setDateScan(String dateScan) {
+        this.dateScan = dateScan;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public String getDateConfirm() {
+        return dateConfirm;
+    }
+
+    public void setDateConfirm(String dateConfirm) {
+        this.dateConfirm = dateConfirm;
     }
 }

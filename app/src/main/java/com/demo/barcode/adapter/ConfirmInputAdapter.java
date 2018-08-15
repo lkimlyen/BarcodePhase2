@@ -11,21 +11,19 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogScanConfirm;
-import com.demo.architect.data.model.offline.NumberInputConfirmModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class ConfirmInputAdapter extends RealmBaseAdapter<ConfirmInputModel> implements ListAdapter {
+public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implements ListAdapter {
     private OnEditTextChangeListener onEditTextChangeListener;
     private int times;
     private onErrorListener onErrorListener;
 
-    public ConfirmInputAdapter(OrderedRealmCollection<ConfirmInputModel> realmResults, int times,
+    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
                                OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener) {
         super(realmResults);
         this.times = times;
@@ -47,16 +45,14 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<ConfirmInputModel> imp
         }
 
         if (adapterData != null) {
-            final ConfirmInputModel item = adapterData.get(position);
+            final LogScanConfirm item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, ConfirmInputModel item) {
-        NumberInputConfirmModel numberInputConfirmModel = item.getListInputConfirmed().where().equalTo("timesInput", times).findFirst();
-        LogScanConfirm logScanConfirm = numberInputConfirmModel.getListScanConfirm();
+    private void setDataToViews(HistoryHolder holder, LogScanConfirm item) {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -76,10 +72,10 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<ConfirmInputModel> imp
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
-                    if (numberInput == logScanConfirm.getNumberComfirmed()) {
+                    if (numberInput == item.getNumberConfirmed()) {
                         return;
                     }
-                    onEditTextChangeListener.onEditTextChange(logScanConfirm, numberInput);
+                    onEditTextChangeListener.onEditTextChange(item, numberInput);
 
 
                 } catch (Exception e) {
@@ -91,7 +87,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<ConfirmInputModel> imp
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.txtNumberDelivery.setText(String.valueOf(item.getNumberOut()));
-        holder.edtNumberReceive.setText(logScanConfirm == null ? String.valueOf(0) : String.valueOf(logScanConfirm.getNumberComfirmed()));
+        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
         switch (item.getStatus()) {
             case Constants.FULL:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_full));

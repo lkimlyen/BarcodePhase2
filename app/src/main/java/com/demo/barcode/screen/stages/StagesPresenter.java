@@ -110,14 +110,18 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     break;
                                 }
                             }
-
-                            if (numberInput.getNumberRest() + numberInput.getNumberScanned() == numberInput.getNumberTotal()) {
-                                saveBarcodeToDataBase(numberInput, model, barcode, departmentId);
-                            } else {
-                                view.showCheckResidual(numberInput.getTimes());
-                                view.startMusicError();
-                                view.turnOnVibrator();
+                            if (numberInput != null) {
+                                if (numberInput.getNumberRest() + numberInput.getNumberScanned() == numberInput.getNumberTotal()) {
+                                    saveBarcodeToDataBase(numberInput, model, barcode, departmentId);
+                                } else {
+                                    view.showCheckResidual(numberInput.getTimes());
+                                    view.startMusicError();
+                                    view.turnOnVibrator();
+                                }
+                            }else {
+                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                             }
+
 
                         }
 
@@ -170,7 +174,12 @@ public class StagesPresenter implements StagesContract.Presenter {
                             @Override
                             public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                 view.hideProgressBar();
-                                view.showSuccess(successResponse.getDescription());
+                                localRepository.updateStatusScanStagesByOrder(orderId).subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+                                        view.showSuccess(successResponse.getDescription());
+                                    }
+                                });
                             }
 
                             @Override
@@ -190,6 +199,7 @@ public class StagesPresenter implements StagesContract.Presenter {
         localRepository.deleteScanStages(stagesId).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
+                view.hideProgressBar();
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
             }
         });
@@ -212,8 +222,8 @@ public class StagesPresenter implements StagesContract.Presenter {
     private boolean listStagesIsNull = false;
 
     @Override
-    public void getListScanStages(int orderId, int departmentId) {
-        localRepository.getListScanStagseByDepartment(orderId, departmentId, UserManager.getInstance().getUser().getId())
+    public void getListScanStages(int orderId, int departmentId, int times) {
+        localRepository.getListScanStagseByDepartment(orderId, departmentId, UserManager.getInstance().getUser().getId(), times)
                 .subscribe(new Action1<LogListScanStages>() {
                     @Override
                     public void call(LogListScanStages logListScanStages) {
@@ -233,18 +243,52 @@ public class StagesPresenter implements StagesContract.Presenter {
         view.showListTimes(soEntity.getListTimesInput());
     }
 
+    @Override
+    public void uploadDataAll() {
+        view.showProgressBar();
+        localRepository.getListLogScanStagesUpdate().subscribe(new Action1<List<LogScanStages>>() {
+            @Override
+            public void call(List<LogScanStages> logScanStages) {
+                GsonBuilder builder = new GsonBuilder();
+                builder.excludeFieldsWithoutExposeAnnotation();
+                Gson gson = builder.create();
+                scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(logScanStages)),
+                        new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
+                                ScanProductDetailOutUsecase.ErrorValue>() {
+                            @Override
+                            public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
+                                view.hideProgressBar();
+                                localRepository.updateStatusScanStages().subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+                                        view.showSuccess(successResponse.getDescription());
+                                    }
+                                });
+
+                            }
+
+                            @Override
+                            public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
+                                view.hideProgressBar();
+                                view.showError(errorResponse.getDescription());
+                            }
+                        });
+            }
+        });
+    }
+
     public void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
             productEntity, String barcode, int departmentId) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
 
-        LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), user.getRole(), departmentId, productEntity.getProductDetailID(),
+        LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), departmentId, user.getRole(), productEntity.getProductDetailID(),
                 barcode, productEntity.getModule(), 1, numberInput.getTimes(), ConvertUtils.getDateTimeCurrent(), user.getId());
         localRepository.addLogScanStagesAsync(logScanStages).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 if (listStagesIsNull) {
-                    getListScanStages(productEntity.getOrderId(), departmentId);
+                    getListScanStages(productEntity.getOrderId(), departmentId, numberInput.getTimes());
                 }
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();

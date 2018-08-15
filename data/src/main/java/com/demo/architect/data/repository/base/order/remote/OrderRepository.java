@@ -16,7 +16,7 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(int orderId, int departmentIDIn, int departmentIDOut);
 
-    Observable<BaseListResponse> scanProductDetailOut(String json);
+    Observable<BaseListResponse> scanProductDetailOut(String key, String json);
 
     Observable<BaseListResponse> confirmInput(int departmentId, String json);
 

@@ -7,7 +7,6 @@ import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -128,6 +126,13 @@ public class DatabaseRealm {
         return list;
     }
 
+    public List<LogScanStages> getListLogScanStagesUpload() {
+        Realm realm = getRealmInstance();
+        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
+        return list;
+    }
+
+
     public void addLogScanStagesAsync(final LogScanStages model) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -158,9 +163,9 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListScanStages getListScanStages(int orderId, int departmentId, int userId) {
+    public LogListScanStages getListScanStages(int orderId, int departmentId, int userId, int times) {
         Realm realm = getRealmInstance();
-        LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId);
+        LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId, times);
         return logListScanStages;
     }
 
@@ -177,17 +182,18 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 for (OrderConfirmEntity orderConfirmEntity : list) {
-                    ConfirmInputModel.create(realm, orderConfirmEntity, userId);
+                    LogScanConfirm.createOrUpdate(realm, orderConfirmEntity, userId);
                 }
             }
         });
     }
 
-    public RealmList<ConfirmInputModel> getListConfirm(int times) {
+    public RealmResults<LogScanConfirm> getListConfirm(int orderId, final int departmentIdOut,int times) {
         Realm realm = getRealmInstance();
-        RealmList<ConfirmInputModel> results = ConfirmInputModel.getListScanConfirm(realm, times);
+        RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm,orderId,departmentIdOut, times,userId);
         return results;
     }
+
     public List<LogScanConfirm> getListLogScanConfirm() {
         Realm realm = getRealmInstance();
         List<LogScanConfirm> results = LogScanConfirm.getListLogScanConfirm(realm, userId);
@@ -195,28 +201,12 @@ public class DatabaseRealm {
     }
 
 
-    public void addLogScanConfirm(final LogScanConfirm logScanConfirm) {
+    public void updateNumberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.create(realm, logScanConfirm);
-            }
-        });
-    }
-
-    public ConfirmInputModel findConfirmByBarcode(String barcode) {
-        Realm realm = getRealmInstance();
-        ConfirmInputModel model = ConfirmInputModel.findConfirmByBarcode(realm, barcode);
-        return model;
-    }
-
-    public void updateNumberLogConfirm(final int logId, final int numberScan) {
-        Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                LogScanConfirm.updateNumberScan(realm, logId, numberScan);
+                LogScanConfirm.updateNumberScan(realm, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
             }
         });
     }
@@ -227,6 +217,26 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 LogScanConfirm.updateStatusScanConfirm(realm, userId);
+            }
+        });
+    }
+
+    public void updateStatusScanStagesByOrder(final int orderId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogListScanStages.updateStatusScanStagesByOrder(realm, orderId, userId);
+            }
+        });
+    }
+
+    public void updateStatusScanStages() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogListScanStages.updateStatusScanStages(realm, userId);
             }
         });
     }

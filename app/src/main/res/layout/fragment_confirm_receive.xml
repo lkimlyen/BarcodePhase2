@@ -90,10 +90,10 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <Spinner
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_type_product"
                 android:layout_width="0dp"
-                android:prompt="@string/text_choose_type_product"
+                app:hintText="@string/text_choose_type_product"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5" />
 
@@ -193,12 +193,12 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <Spinner
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_times"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5"
-                android:prompt="@string/text_choose_times_scan" />
+                app:hintText="@string/text_choose_times_scan" />
 
         </LinearLayout>
 

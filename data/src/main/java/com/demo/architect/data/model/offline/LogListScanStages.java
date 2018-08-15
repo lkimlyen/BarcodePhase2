@@ -9,6 +9,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class LogListScanStages extends RealmObject {
@@ -16,6 +17,7 @@ public class LogListScanStages extends RealmObject {
     private int id;
     private int departmentId;
     private int status;
+    private int times;
     private int userId;
     private String date;
 
@@ -29,11 +31,12 @@ public class LogListScanStages extends RealmObject {
     public LogListScanStages() {
     }
 
-    public LogListScanStages(int id, int departmentId, int status, int userId, String date) {
+    public LogListScanStages(int id, int departmentId, int status, int userId, int times, String date) {
         this.id = id;
         this.departmentId = departmentId;
         this.status = status;
         this.userId = userId;
+        this.times = times;
         this.date = date;
     }
 
@@ -71,17 +74,63 @@ public class LogListScanStages extends RealmObject {
         return list;
     }
 
-    public static LogListScanStages getListScanStagesByDepartment(Realm realm, int orderId, int departmentId, int userId) {
+    public static List<LogScanStages> getListScanStagesWaitingUpload(Realm realm, int userId) {
+        List<LogScanStages> list = new ArrayList<>();
+        RealmList<LogScanStages> realmList = new RealmList<>();
+        RealmResults<LogListScanStages> logListScanStages = realm.where(LogListScanStages.class)
+                .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).findAll();
+        for (LogListScanStages log : logListScanStages) {
+            realmList.addAll(log.getList());
+        }
+        if (logListScanStages != null) {
+            list = realm.copyFromRealm(realmList);
+        }
+        return list;
+    }
+
+    public static LogListScanStages getListScanStagesByDepartment(Realm realm, int orderId, int departmentId, int userId, int times) {
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         LogListScanStages logListScanStages = null;
         if (logListScanStagesMain != null) {
             if (logListScanStagesMain.getList() != null) {
                 logListScanStages = logListScanStagesMain.getList().where()
-                        .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).findFirst();
+                        .equalTo("status", Constants.WAITING_UPLOAD)
+                        .equalTo("departmentId", departmentId)
+                        .equalTo("times", times)
+                        .equalTo("userId", userId).findFirst();
             }
         }
 
         return logListScanStages;
+    }
+
+    public static void updateStatusScanStagesByOrder(Realm realm, int orderId, int userId) {
+        LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
+        RealmResults<LogListScanStages> logListScanStages = null;
+        if (logListScanStagesMain != null) {
+            if (logListScanStagesMain.getList() != null) {
+                logListScanStages = logListScanStagesMain.getList().where()
+                        .equalTo("status", Constants.WAITING_UPLOAD)
+                        .equalTo("userId", userId).findAll();
+
+                for (LogListScanStages log : logListScanStages) {
+                    log.setStatus(Constants.COMPLETE);
+                }
+
+            }
+        }
+
+    }
+
+    public static void updateStatusScanStages(Realm realm, int userId) {
+        RealmResults<LogListScanStages> logListScanStages = realm.where(LogListScanStages.class).equalTo("userId", userId).findAll();
+        if (logListScanStages != null) {
+            for (LogListScanStages log : logListScanStages) {
+                log.setStatus(Constants.COMPLETE);
+            }
+
+        }
+
     }
 
 
@@ -99,5 +148,41 @@ public class LogListScanStages extends RealmObject {
 
     public int getStatus() {
         return status;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setList(RealmList<LogScanStages> list) {
+        this.list = list;
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public void setTimes(int times) {
+        this.times = times;
     }
 }

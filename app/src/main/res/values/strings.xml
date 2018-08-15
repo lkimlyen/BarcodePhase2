@@ -13,6 +13,9 @@
     <string name="text_scan_delivery">Quét giao hàng</string>
     <string name="text_logout">Thoát</string>
     <string name="text_upload_all_data">Tải dữ liệu lên server</string>
+
+    <string name="text_upload_all">Tải tất cả</string>
+    <string name="text_upload_order" formatted="true">Tải %s</string>
     <string name="text_setting">Thiết lập - Hướng dẫn</string>
     <string name="text_import_works">Nhập công trình</string>
     <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng</string>
@@ -63,7 +66,7 @@
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
     <string name="text_not_done_pack_current_refresh">Chưa hoàn thành gói hiện tại!Bạn có muốn hủy không?</string>
     <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
-
+    <string name="text_upload_data">Bạn có muốn tải tất cả dữ liệu lên server không?</string>
     <string name="text_back_have_detail_waiting">Bạn chưa tải dữ liệu lên server!\n Bạn có muốn tải dữ liệu không?</string>
     <string name="text_ip_address">Địa chỉ ip</string>
     <string name="text_port">Port</string>
@@ -88,6 +91,7 @@
     <string name="text_print_again">In lại gói này</string>
     <string name="text_delete_pack">Bạn có muốn xóa gói này không?</string>
     <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
+    <string name="text_exceed_the_number_of_requests">Số lượng bạn nhập vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
     <string name="text_delete_success">Xóa thành công</string>
     <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
     <string name="text_print_pack">Bạn có muốn in gói này không?</string>
@@ -165,6 +169,7 @@
     <string name="text_department_id_null">Bạn chưa chọn bộ phận giao</string>
     <string name="text_times_id_null">Bạn chưa chọn lần quét</string>
     <string name="text_get_so_success">Lấy danh sách SO thành công</string>
+    <string name="text_product_not_in_times">Sản phẩm không có trong lần quét này</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

@@ -21,13 +21,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
@@ -50,7 +48,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import io.realm.RealmList;
+import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -71,7 +69,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     SearchableSpinner ssCodeSO;
 
     @Bind(R.id.ss_times)
-    Spinner spTimes;
+    SearchableSpinner ssTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -86,7 +84,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     ListView lvConfirm;
 
     @Bind(R.id.ss_type_product)
-    Spinner ssTypeProduct;
+    SearchableSpinner ssTypeProduct;
 
     private Vibrator vibrate;
     private int orderId = 0;
@@ -148,7 +146,24 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 return false;
             }
         });
-
+        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+        ssTimes.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
         adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
@@ -166,6 +181,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
             }
         });
+
+        mPresenter.getListDepartment();
 
     }
 
@@ -276,12 +293,15 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Override
     public void showListTimes(List<Integer> list) {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
-        spTimes.setAdapter(adapter);
-        spTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ssTimes.setAdapter(adapter);
+        ssTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
-                mPresenter.getListConfirmByTimes(times);
+                if (orderId > 0 && departmentId > 0) {
+                    mPresenter.getListConfirmByTimes(orderId, departmentId,times);
+                }
+
             }
 
             @Override
@@ -301,6 +321,9 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
                 mPresenter.getListConfirm(orderId, departmentId);
+                if (orderId > 0 && times > 0) {
+                    mPresenter.getListConfirmByTimes(orderId, departmentId,times);
+                }
             }
 
             @Override
@@ -311,11 +334,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     }
 
     @Override
-    public void showListConfirm(RealmList<ConfirmInputModel> list) {
+    public void showListConfirm(RealmResults<LogScanConfirm> list) {
         adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
-                mPresenter.updateNumberConfirm(item.getId(), number);
+                //   mPresenter.updateNumberConfirm(item.getProductDetailID(),item, number);
             }
         }, new ConfirmInputAdapter.onErrorListener() {
             @Override
@@ -369,7 +392,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-       if (orderId == 0) {
+        if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
             return;
         }

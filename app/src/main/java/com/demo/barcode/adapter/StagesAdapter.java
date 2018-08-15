@@ -76,13 +76,12 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
                         holder.edtNumberScan.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        onErrorListener.errorListener(item, numberInput,CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
                     if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
-                        holder.edtNumberScan.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                        onErrorListener.errorListener(item, numberInput, null);
                         return;
                     }
                     if (numberInput == numberInputModel.getNumberRest()) {
@@ -99,7 +98,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         holder.txtModule.setText(item.getModule());
         holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
         holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(numberInputModel.getNumberScanned() + "");
+        holder.txtQuantityScan.setText(numberInputModel.getNumberSuccess() + "");
         holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
 
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -155,6 +154,6 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
     }
 
     public interface onErrorListener {
-        void errorListener(String message);
+        void errorListener(LogScanStages item, int number, String message);
     }
 }

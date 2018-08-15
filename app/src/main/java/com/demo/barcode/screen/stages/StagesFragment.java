@@ -13,6 +13,7 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -301,7 +302,9 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
-                mPresenter.getListScanStages(orderId,departmentId);
+                if (times > 0 && orderId > 0) {
+                    mPresenter.getListScanStages(orderId, departmentId, times);
+                }
             }
 
             @Override
@@ -340,21 +343,45 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }, new StagesAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
-
                 mPresenter.updateNumberScanStages(item.getId(), number);
             }
         }, new StagesAdapter.onErrorListener() {
             @Override
-            public void errorListener(String message) {
-                showToast(message);
-                turnOnVibrator();
-                startMusicError();
+            public void errorListener(LogScanStages item, int numberInput, String message) {
+                if (!TextUtils.isEmpty(message)) {
+                    showToast(message);
+                    turnOnVibrator();
+                    startMusicError();
+                } else {
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(getString(R.string.text_title_noti))
+                            .setContentText(getString(R.string.text_exceed_the_number_of_requests))
+                            .setConfirmText(getString(R.string.text_yes))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                    mPresenter.updateNumberScanStages(item.getId(), numberInput);
+                                    sweetAlertDialog.dismiss();
+
+                                }
+                            })
+                            .setCancelText(getString(R.string.text_no))
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput());
+                                    sweetAlertDialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+
             }
         });
         rvCode.setAdapter(adapter);
 
     }
-
 
     @Override
     public void showListSO(List<SOEntity> list) {
@@ -368,6 +395,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListProduct(orderId);
                 mPresenter.getListTimes(orderId);
+
+                if (departmentId > 0 && times > 0) {
+                    mPresenter.getListScanStages(orderId, departmentId, times);
+                }
 
             }
 
@@ -434,6 +465,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
+                if (orderId > 0 && departmentId > 0) {
+                    mPresenter.getListScanStages(orderId, departmentId, times);
+                }
+
             }
 
             @Override
@@ -590,6 +625,27 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_upload)
     public void upload() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_upload_data))
+                .setConfirmText(getString(R.string.text_upload_all))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.uploadDataAll();
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(String.format(getString(R.string.text_upload_order),ssCodeSO.getSelectedItem().toString()))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.uploadData(orderId);
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
     }
 
     @OnClick(R.id.btn_scan)

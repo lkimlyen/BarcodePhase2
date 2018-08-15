@@ -16,7 +16,6 @@ public class LogScanStages extends RealmObject {
 
     @PrimaryKey
     private int id;
-
     @Expose
     @SerializedName("pOrderID")
     private int orderId;
@@ -183,9 +182,9 @@ public class LogScanStages extends RealmObject {
         RealmList<LogListScanStages> mainParentList = mainParent.getList();
 
         LogListScanStages parent = realm.where(LogListScanStages.class).equalTo("departmentId", scanStages.getDepartmentIdOut())
-                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
         if (parent == null) {
-            parent = new LogListScanStages(LogListScanStages.id(realm) + 1, scanStages.getDepartmentIdOut(), Constants.WAITING_UPLOAD, scanStages.getUserId(), DateUtils.getShortDateCurrent());
+            parent = new LogListScanStages(LogListScanStages.id(realm) + 1, scanStages.getDepartmentIdOut(), Constants.WAITING_UPLOAD, scanStages.getUserId(), scanStages.getTimes(), DateUtils.getShortDateCurrent());
             parent = realm.copyToRealm(parent);
             mainParentList.add(parent);
         }
@@ -196,7 +195,7 @@ public class LogScanStages extends RealmObject {
                 .equalTo("module", scanStages.getModule()).equalTo("times", scanStages.getTimes()).findFirst();
         if (logScanStages == null) {
             scanStages.setProductDetail(productDetail);
-            scanStages.setId(id(realm)+1);
+            scanStages.setId(id(realm) + 1);
             logScanStages = realm.copyToRealm(scanStages);
             parentList.add(logScanStages);
         } else {
@@ -209,12 +208,15 @@ public class LogScanStages extends RealmObject {
 
     public static void updateNumberInput(Realm realm, int stagesId, int numberInput) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
-        int number = logScanStages.getNumberInput() - numberInput;
+        int number = numberInput - logScanStages.getNumberInput();
         logScanStages.setNumberInput(numberInput);
         ProductDetail productDetail = logScanStages.getProductDetail();
         NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
+
         numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + number);
         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+
+
     }
 
     public static void deleteScanStages(Realm realm, int stagesId) {

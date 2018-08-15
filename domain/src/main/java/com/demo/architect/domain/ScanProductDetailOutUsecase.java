@@ -19,7 +19,7 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         String json = ((RequestValue) requestValues).json;
-        return remoteRepository.scanProductDetailOut(json);
+        return remoteRepository.scanProductDetailOut("13AKby8uFhdlayHD6oPsaU90b8o00=",json);
     }
 
     @Override

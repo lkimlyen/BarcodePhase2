@@ -52,9 +52,11 @@ public interface StagesContract {
 
         void updateNumberScanStages(int stagesId, int numberInput);
 
-        void getListScanStages(int orderId, int departmentId);
+        void getListScanStages(int orderId, int departmentId, int times);
 
         void getListTimes(int orderId);
+
+        void uploadDataAll();
 
 
     }

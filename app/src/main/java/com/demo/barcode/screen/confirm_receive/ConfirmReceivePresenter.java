@@ -6,7 +6,6 @@ import android.util.Log;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
-import com.demo.architect.data.model.offline.ConfirmInputModel;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
@@ -20,7 +19,6 @@ import com.demo.barcode.manager.ListOrderConfirmManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
-import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -29,7 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.realm.RealmList;
+import io.realm.RealmResults;
 import rx.functions.Action1;
 
 /**
@@ -64,7 +62,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-        getListDepartment();
+
     }
 
     @Override
@@ -84,6 +82,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         view.showListSO(successResponse.getEntity());
                         ListSOManager.getInstance().setListSO(successResponse.getEntity());
                         view.hideProgressBar();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_so_success));
                     }
 
                     @Override
@@ -137,11 +136,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListConfirmByTimes(int times) {
-        localRepository.getListConfirm(times).subscribe(new Action1<RealmList<ConfirmInputModel>>() {
+    public void getListConfirmByTimes(int orderId, int deparmentId, int times) {
+        localRepository.getListConfirm(orderId, deparmentId, times).subscribe(new Action1<RealmResults<LogScanConfirm>>() {
             @Override
-            public void call(RealmList<ConfirmInputModel> confirmInputModels) {
-                view.showListConfirm(confirmInputModels);
+            public void call(RealmResults<LogScanConfirm> logScanConfirms) {
+                view.showListConfirm(logScanConfirms);
             }
         });
     }
@@ -175,7 +174,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 if (confirmInputModel == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
-                    saveConfirm(confirmInputModel.getId(), confirmInputModel.getDepartmentIDOut(), times);
+                    saveConfirm(orderId, confirmInputModel.getId(), confirmInputModel.getDepartmentIDOut(), times);
                 }
             }
         });
@@ -186,8 +185,8 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void updateNumberConfirm(int logId, int numberScan) {
-        localRepository.updateNumnberLogConfirm(logId, numberScan).subscribe(new Action1<String>() {
+    public void updateNumberConfirm(int orderId, int orderProductId, int departmentIdOut, int times, int numberScan) {
+        localRepository.updateNumnberLogConfirm(orderId, orderProductId, departmentIdOut, times, numberScan, false).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));
@@ -233,10 +232,8 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         });
     }
 
-    public void saveConfirm(int orderProductId, int departmentIdOut, int times) {
-        LogScanConfirm logScanConfirm = new LogScanConfirm(orderProductId, departmentIdOut, 1, UserManager.getInstance().getUser().getId(), times,
-                ConvertUtils.getDateTimeCurrent());
-        localRepository.addLogScanConfirm(logScanConfirm).subscribe(new Action1<String>() {
+    public void saveConfirm(int orderId, int orderProductId, int departmentIdOut, int times) {
+        localRepository.updateNumnberLogConfirm(orderId, orderProductId, departmentIdOut, times, 1, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));

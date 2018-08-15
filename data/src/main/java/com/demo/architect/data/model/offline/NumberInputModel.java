@@ -10,6 +10,7 @@ public class NumberInputModel extends RealmObject {
     @PrimaryKey
     private int id;
     private int numberTotal;
+    private int numberSuccess;
     private int numberScanned;
     private int numberRest;
     private int times;
@@ -17,9 +18,10 @@ public class NumberInputModel extends RealmObject {
     public NumberInputModel() {
     }
 
-    public NumberInputModel(int id, int numberTotal, int numberScanned, int numberRest, int times) {
+    public NumberInputModel(int id, int numberTotal, int numberSuccess, int numberScanned, int numberRest, int times) {
         this.id = id;
         this.numberTotal = numberTotal;
+        this.numberSuccess = numberSuccess;
         this.numberScanned = numberScanned;
         this.numberRest = numberRest;
         this.times = times;
@@ -34,8 +36,8 @@ public class NumberInputModel extends RealmObject {
     }
 
     public static NumberInputModel create(Realm realm, NumberInput numberInput) {
-        NumberInputModel numberInputModel = new NumberInputModel(id(realm)+1, numberInput.getNumberTotalInput(),
-                numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), numberInput.getTimesInput());
+        NumberInputModel numberInputModel = new NumberInputModel(id(realm) + 1, numberInput.getNumberTotalInput(),
+                numberInput.getNumberSuccess(), numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), numberInput.getTimesInput());
         numberInputModel = realm.copyToRealm(numberInputModel);
         return numberInputModel;
     }
@@ -78,5 +80,13 @@ public class NumberInputModel extends RealmObject {
 
     public void setTimes(int times) {
         this.times = times;
+    }
+
+    public int getNumberSuccess() {
+        return numberSuccess;
+    }
+
+    public void setNumberSuccess(int numberSuccess) {
+        this.numberSuccess = numberSuccess;
     }
 }
