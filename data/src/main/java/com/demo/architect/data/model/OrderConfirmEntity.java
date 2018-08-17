@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class OrderConfirmEntity {
-    @SerializedName("OutputProductDetailID")
+    @SerializedName("MasterOutputID")
     @Expose
-    private int outputProductDetailID;
+    private int masterOutputID;
 
     @SerializedName("OrderID")
     @Expose
@@ -46,10 +46,6 @@ public class OrderConfirmEntity {
     @Expose
     private int numberTotalOrder;
 
-    @SerializedName("TimesOutput")
-    @Expose
-    private int timesOutput;
-
     @SerializedName("ListInputConfirmed")
     @Expose
     private List<NumberInputConfirm> listInputConfirmed;
@@ -58,12 +54,12 @@ public class OrderConfirmEntity {
     @Expose
     private int numberOut;
 
-    @SerializedName("DateTimeScan")
+    @SerializedName("LastTimeGetData")
     @Expose
-    private String dateTimeScan;
+    private String lastTimeGetData;
 
-    public int getOutputProductDetailID() {
-        return outputProductDetailID;
+    public int getMasterOutputID() {
+        return masterOutputID;
     }
 
     public int getOrderId() {
@@ -102,10 +98,6 @@ public class OrderConfirmEntity {
         return numberTotalOrder;
     }
 
-    public int getTimesOutput() {
-        return timesOutput;
-    }
-
     public List<NumberInputConfirm> getListInputConfirmed() {
         return listInputConfirmed;
     }
@@ -114,7 +106,7 @@ public class OrderConfirmEntity {
         return numberOut;
     }
 
-    public String getDateTimeScan() {
-        return dateTimeScan;
+    public String getLastTimeGetData() {
+        return lastTimeGetData;
     }
 }

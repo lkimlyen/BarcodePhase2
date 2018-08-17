@@ -23,9 +23,7 @@ public class ListDepartmentManager {
     }
 
     public List<DepartmentEntity> getListDepartment(int role) {
-        if (list == null) {
-            list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
-        }
+        list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
         int position = -1;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId() == role) {
@@ -33,7 +31,7 @@ public class ListDepartmentManager {
                 break;
             }
         }
-        if (position > -1){
+        if (position > -1) {
             list.remove(position);
         }
 
@@ -42,9 +40,8 @@ public class ListDepartmentManager {
 
     public String getDepartmentByRole(int role) {
         String name = "";
-        if (list == null) {
-            list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
-        }
+        list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
+
 
         for (DepartmentEntity entity : list) {
             if (entity.getId() == role) {

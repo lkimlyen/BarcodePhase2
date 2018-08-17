@@ -236,14 +236,14 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-
     @Override
-    public Observable<ConfirmInputModel> findConfirmByBarcode(final String barcode) {
-        return Observable.create(new Observable.OnSubscribe<ConfirmInputModel>() {
+    public Observable<LogScanConfirm> findConfirmByBarcode(final int orderId, final int departmentIdOut, final int times, final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<LogScanConfirm>() {
             @Override
-            public void call(Subscriber<? super ConfirmInputModel> subscriber) {
+            public void call(Subscriber<? super LogScanConfirm> subscriber) {
                 try {
-                    ConfirmInputModel model = databaseRealm.findConfirmByBarcode(barcode);
+                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(barcode,orderId, departmentIdOut,
+                            times);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -252,6 +252,8 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+
 
     @Override
     public Observable<String> updateNumnberLogConfirm(final int orderId,final int orderProductId, final int departmentIdOut, final int times, final int numberScan,final boolean scan) {

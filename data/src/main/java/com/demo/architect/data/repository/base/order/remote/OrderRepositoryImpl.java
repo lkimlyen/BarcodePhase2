@@ -125,13 +125,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse> confirmInput(final int departmentId, final String json) {
+    public Observable<BaseListResponse> confirmInput(final String key, final int departmentId, final String json) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override
             public void call(Subscriber<? super BaseListResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.confirmInput(
-                        server + "/WS/api/GD2ComfirmInput",departmentId, json), subscriber);
+                        server + "/WS/api/GD2ComfirmInput",key,departmentId, json), subscriber);
             }
         });
 

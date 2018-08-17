@@ -37,16 +37,17 @@ public interface LocalRepository {
 
     Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
 
-    Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut,final int times);
+    Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut, final int times);
 
     Observable<List<LogScanConfirm>> getListLogScanConfirm();
 
 
-    Observable<ConfirmInputModel> findConfirmByBarcode(final String barcode);
+    Observable<LogScanConfirm> findConfirmByBarcode(final int orderId, int departmentIdOut, int times, final String barcode);
 
-    Observable<String> updateNumnberLogConfirm(final int orderId,final int orderProductId, final int departmentIdOut, final int times, final int numberScan,final boolean scan);
+    Observable<String> updateNumnberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan);
 
     Observable<String> updateStatusLogConfirm();
+
     Observable<String> updateStatusScanStagesByOrder(int orderId);
 
     Observable<String> updateStatusScanStages();

@@ -72,6 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:padding="@dimen/distance_5dp"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -205,31 +206,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_delivery_date"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_delivery_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:textSize="@dimen/text_16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="1">
@@ -279,15 +255,16 @@
             android:id="@+id/table_row1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:weightSum="5">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/name"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/size_60dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="serif"
                 android:gravity="center"
+                android:layout_weight="0"
+                android:textStyle="bold"
                 android:text="@string/text_serial_module_break"
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp" />
@@ -296,19 +273,23 @@
                 android:id="@+id/age"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="1"
                 android:fontFamily="serif"
                 android:gravity="center"
+
+                android:textStyle="bold"
                 android:text="@string/text_name_detail_break"
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp" />
 
             <TextView
                 android:id="@+id/position"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/size_50dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:fontFamily="serif"
+
+                android:textStyle="bold"
                 android:gravity="center"
                 android:text="@string/text_number_delivery"
                 android:textColor="#000"
@@ -316,19 +297,22 @@
 
             <TextView
                 android:id="@+id/address"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/size_50dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:text="@string/text_number_receive"
+
+                android:textStyle="bold"
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/size_80dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_weight="0"
                 android:orientation="vertical">
 
                 <TextView
@@ -337,6 +321,7 @@
                     android:fontFamily="serif"
                     android:gravity="center"
                     android:text="@string/text_confirm"
+                    android:textStyle="bold"
                     android:textSize="@dimen/text_12sp"
                     android:textColor="#000" />
 

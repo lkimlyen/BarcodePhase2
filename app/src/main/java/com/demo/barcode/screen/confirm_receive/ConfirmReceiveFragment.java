@@ -299,7 +299,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
                 if (orderId > 0 && departmentId > 0) {
-                    mPresenter.getListConfirmByTimes(orderId, departmentId,times);
+                    mPresenter.getListConfirmByTimes(orderId, departmentId, times);
                 }
 
             }
@@ -322,7 +322,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 departmentId = list.get(position).getId();
                 mPresenter.getListConfirm(orderId, departmentId);
                 if (orderId > 0 && times > 0) {
-                    mPresenter.getListConfirmByTimes(orderId, departmentId,times);
+                    mPresenter.getListConfirmByTimes(orderId, departmentId, times);
                 }
             }
 
@@ -338,7 +338,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
-                //   mPresenter.updateNumberConfirm(item.getProductDetailID(),item, number);
+                mPresenter.updateNumberConfirm(item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
             }
         }, new ConfirmInputAdapter.onErrorListener() {
             @Override
@@ -494,10 +494,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 //                    .show();
 //
 //        } else {
-//            getActivity().finish();
+        getActivity().finish();
 //        }
     }
 
+    @OnClick(R.id.img_upload)
+    public void upload() {
+        mPresenter.uploadData();
+    }
 
     @OnClick(R.id.btn_scan)
     public void scan() {

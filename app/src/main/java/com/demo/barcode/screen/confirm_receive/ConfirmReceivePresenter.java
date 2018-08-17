@@ -168,13 +168,13 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         int checkBarcode = 0;
 
 
-        localRepository.findConfirmByBarcode(barcode).subscribe(new Action1<ConfirmInputModel>() {
+        localRepository.findConfirmByBarcode(orderId, departmentId, times, barcode).subscribe(new Action1<LogScanConfirm>() {
             @Override
-            public void call(ConfirmInputModel confirmInputModel) {
-                if (confirmInputModel == null) {
+            public void call(LogScanConfirm logScanConfirm) {
+                if (logScanConfirm == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
-                    saveConfirm(orderId, confirmInputModel.getId(), confirmInputModel.getDepartmentIDOut(), times);
+                    saveConfirm(orderId, logScanConfirm.getId(), logScanConfirm.getDepartmentIDOut(), times);
                 }
             }
         });

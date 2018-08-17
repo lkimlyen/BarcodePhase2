@@ -18,6 +18,6 @@ public interface OrderRepository {
 
     Observable<BaseListResponse> scanProductDetailOut(String key, String json);
 
-    Observable<BaseListResponse> confirmInput(int departmentId, String json);
+    Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);
 
 }

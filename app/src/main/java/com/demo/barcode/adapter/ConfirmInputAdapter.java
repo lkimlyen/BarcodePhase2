@@ -31,7 +31,6 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         this.onErrorListener = onErrorListener;
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         HistoryHolder viewHolder;
@@ -56,7 +55,6 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -86,9 +84,9 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.txtNumberDelivery.setText(String.valueOf(item.getNumberOut()));
+        holder.txtNumberDelivery.setText(String.valueOf(item.getNumberScanOut()));
         holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
-        switch (item.getStatus()) {
+        switch (item.getStatusConfirm()) {
             case Constants.FULL:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_full));
                 break;

@@ -2,6 +2,7 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
+import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 
@@ -20,7 +21,7 @@ public class ConfirmInputUsecase extends BaseUseCase {
     protected Observable buildUseCaseObservable() {
         int departmentId = ((RequestValue) requestValues).departmentId;
         String json = ((RequestValue) requestValues).json;
-        return remoteRepository.confirmInput(departmentId, json);
+        return remoteRepository.confirmInput(Constants.KEY,departmentId, json);
     }
 
     @Override

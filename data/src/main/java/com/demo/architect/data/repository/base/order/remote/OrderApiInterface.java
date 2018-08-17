@@ -31,6 +31,6 @@ public interface OrderApiInterface {
     Call<BaseListResponse> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse> confirmInput(@Url String url, @Field("pDepartmentID") int departmentID, @Field("pJsonListInputComfirmed") String jsonListInputComfirmed);
+    Call<BaseListResponse> confirmInput(@Url String url,@Field("pKey") String key, @Field("pDepartmentID") int departmentID, @Field("pJsonListInputComfirmed") String jsonListInputComfirmed);
 
 }

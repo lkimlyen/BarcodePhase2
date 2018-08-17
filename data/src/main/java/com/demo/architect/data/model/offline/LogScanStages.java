@@ -30,7 +30,6 @@ public class LogScanStages extends RealmObject {
     private int productDetailId;
 
     private ProductDetail productDetail;
-
     @Expose
     @SerializedName("pBarcode")
     private String barcode;

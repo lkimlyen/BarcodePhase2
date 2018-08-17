@@ -145,7 +145,7 @@ public class DatabaseRealm {
 
     public void updateNumberScanStages(final int stagesId, final int numberInput) {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 LogScanStages.updateNumberInput(realm, stagesId, numberInput);
@@ -188,9 +188,9 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<LogScanConfirm> getListConfirm(int orderId, final int departmentIdOut,int times) {
+    public RealmResults<LogScanConfirm> getListConfirm(int orderId, final int departmentIdOut, int times) {
         Realm realm = getRealmInstance();
-        RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm,orderId,departmentIdOut, times,userId);
+        final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm, orderId, departmentIdOut, times, userId);
         return results;
     }
 
@@ -203,7 +203,7 @@ public class DatabaseRealm {
 
     public void updateNumberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan) {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 LogScanConfirm.updateNumberScan(realm, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
@@ -213,7 +213,7 @@ public class DatabaseRealm {
 
     public void updateStatusConfirm() {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 LogScanConfirm.updateStatusScanConfirm(realm, userId);
@@ -239,5 +239,12 @@ public class DatabaseRealm {
                 LogListScanStages.updateStatusScanStages(realm, userId);
             }
         });
+    }
+
+    public LogScanConfirm findConfirmByBarcode(String barcode, int orderId,
+                                               int departmentIDOut, int times) {
+        Realm realm = getRealmInstance();
+        LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, barcode, orderId, departmentIDOut, times, userId);
+        return logScanConfirm;
     }
 }

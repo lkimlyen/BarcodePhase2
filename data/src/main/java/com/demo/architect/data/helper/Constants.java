@@ -20,6 +20,7 @@ public class Constants {
     public static final int DISCONNECT = 2;
 
     public static final String KEY_SERVER = "SERVER";
+    public static final String KEY = "13AKby8uFhdlayHD6oPsaU90b8o00=";
 
 
     public static final String SERVER_MAIN = "http://acc.imark.com.vn";
