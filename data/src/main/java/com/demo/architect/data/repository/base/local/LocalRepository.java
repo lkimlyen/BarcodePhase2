@@ -19,7 +19,7 @@ public interface LocalRepository {
 
     Observable<List<MessageModel>> findAll();
 
-    Observable<Integer> countLogScanStages(final int orderId, final int departmentId);
+    Observable<Integer> countLogScanStages(final int orderId, final int departmentId, final int times);
 
     Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId);
 

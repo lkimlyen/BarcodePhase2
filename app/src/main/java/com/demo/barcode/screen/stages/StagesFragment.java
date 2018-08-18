@@ -154,7 +154,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
                     return true;
                 }
                 return false;
@@ -171,7 +171,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
                     return true;
                 }
                 return false;
@@ -187,7 +187,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
                     return true;
                 }
                 return false;
@@ -202,7 +202,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -597,7 +597,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+        if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))

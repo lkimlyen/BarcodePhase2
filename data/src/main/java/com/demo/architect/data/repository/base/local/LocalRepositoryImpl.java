@@ -59,12 +59,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> countLogScanStages(final int orderId, final int departmentId) {
+    public Observable<Integer> countLogScanStages(final int orderId, final int departmentId, final int times) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    int count = databaseRealm.countLogScanStagesWatingUpload(orderId, departmentId);
+                    int count = databaseRealm.countLogScanStagesWatingUpload(orderId, departmentId, times);
 
                     subscriber.onNext(count);
                     subscriber.onCompleted();

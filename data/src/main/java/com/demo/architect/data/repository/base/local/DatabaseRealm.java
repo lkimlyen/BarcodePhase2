@@ -113,10 +113,10 @@ public class DatabaseRealm {
         });
     }
 
-    public int countLogScanStagesWatingUpload(int orderId, int departmentId) {
+    public int countLogScanStagesWatingUpload(int orderId, int departmentId, int times) {
 
         Realm realm = getRealmInstance();
-        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId);
+        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId,times);
         return count;
     }
 

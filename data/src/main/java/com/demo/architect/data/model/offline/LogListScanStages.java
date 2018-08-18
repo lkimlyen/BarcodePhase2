@@ -48,12 +48,13 @@ public class LogListScanStages extends RealmObject {
         return nextId;
     }
 
-    public static int countDetailWaitingUpload(Realm realm, int orderId, int departmentId, int userId) {
+    public static int countDetailWaitingUpload(Realm realm, int orderId, int departmentId, int userId, int times) {
         int count = 0;
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         if (logListScanStagesMain != null) {
             LogListScanStages logListScanStages = logListScanStagesMain.getList().where().equalTo("departmentId", departmentId)
-                    .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).equalTo("date", DateUtils.getShortDateCurrent()).findFirst();
+                    .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).equalTo("times",times)
+                    .equalTo("date", DateUtils.getShortDateCurrent()).findFirst();
             if (logListScanStages != null) {
                 count = logListScanStages.getList().size();
             }

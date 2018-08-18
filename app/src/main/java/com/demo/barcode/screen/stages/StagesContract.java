@@ -33,6 +33,8 @@ public interface StagesContract {
         void showCheckResidual(int times);
 
         void showListTimes(List<Integer> list);
+
+        void clear
     }
 
     interface Presenter extends BasePresenter {
@@ -44,7 +46,7 @@ public interface StagesContract {
 
         void checkBarcode(String barcode, int departmentId, int times);
 
-        int countLogScanStages(int orderId, int departmentId);
+        int countLogScanStages(int orderId, int departmentId,int times);
 
         void uploadData(int orderId);
 

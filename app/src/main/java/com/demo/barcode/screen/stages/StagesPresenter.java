@@ -148,8 +148,8 @@ public class StagesPresenter implements StagesContract.Presenter {
     private int count = 0;
 
     @Override
-    public int countLogScanStages(int orderId, int departmentId) {
-        localRepository.countLogScanStages(orderId, departmentId).subscribe(new Action1<Integer>() {
+    public int countLogScanStages(int orderId, int departmentId, int times) {
+        localRepository.countLogScanStages(orderId, departmentId,times).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 count = integer;
