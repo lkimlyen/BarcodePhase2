@@ -15,7 +15,7 @@
     <string name="text_upload_all_data">Tải dữ liệu lên server</string>
 
     <string name="text_upload_all">Tải tất cả</string>
-    <string name="text_upload_order" formatted="true">Tải %s</string>
+    <string name="text_upload_order" formatted="true">Tải ĐH %s</string>
     <string name="text_setting">Thiết lập - Hướng dẫn</string>
     <string name="text_import_works">Nhập công trình</string>
     <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng</string>

@@ -227,12 +227,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                 .subscribe(new Action1<LogListScanStages>() {
                     @Override
                     public void call(LogListScanStages logListScanStages) {
-                        if (logListScanStages != null) {
                             view.showListLogScanStages(logListScanStages);
-                            listStagesIsNull = false;
-                        } else {
-                            listStagesIsNull = true;
-                        }
                     }
                 });
     }
@@ -287,9 +282,6 @@ public class StagesPresenter implements StagesContract.Presenter {
         localRepository.addLogScanStagesAsync(logScanStages).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                if (listStagesIsNull) {
-                    getListScanStages(productEntity.getOrderId(), departmentId, numberInput.getTimes());
-                }
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();

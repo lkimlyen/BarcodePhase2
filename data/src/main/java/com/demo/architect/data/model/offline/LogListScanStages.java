@@ -98,7 +98,26 @@ public class LogListScanStages extends RealmObject {
                         .equalTo("departmentId", departmentId)
                         .equalTo("times", times)
                         .equalTo("userId", userId).findFirst();
+                if(logListScanStages == null){
+                    realm.beginTransaction();
+                    RealmList<LogListScanStages> parentList = logListScanStagesMain.getList();
+                    logListScanStages = new LogListScanStages(LogListScanStages.id(realm) + 1,departmentId,
+                            Constants.WAITING_UPLOAD,userId, times, DateUtils.getShortDateCurrent());
+                    logListScanStages = realm.copyToRealm(logListScanStages);
+                    parentList.add(logListScanStages);
+                    realm.commitTransaction();
+                }
             }
+        }else {
+            realm.beginTransaction();
+            logListScanStagesMain = new LogListScanStagesMain(orderId);
+            logListScanStagesMain = realm.copyToRealm(logListScanStagesMain);
+            RealmList<LogListScanStages> parentList = logListScanStagesMain.getList();
+            logListScanStages = new LogListScanStages(LogListScanStages.id(realm) + 1,departmentId,
+                    Constants.WAITING_UPLOAD,userId, times, DateUtils.getShortDateCurrent());
+            logListScanStages = realm.copyToRealm(logListScanStages);
+            parentList.add(logListScanStages);
+            realm.commitTransaction();
         }
 
         return logListScanStages;

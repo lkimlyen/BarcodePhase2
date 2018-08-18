@@ -154,31 +154,66 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
+                return false;
+            }
+        });
 
-                return checkCountData();
+        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                uploadData();
             }
         });
 
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                return checkCountData();
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
+                return false;
             }
         });
+        ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                uploadData();
+            }
+        });
+
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
                 return false;
             }
         });
-
+        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                uploadData();
+            }
+        });
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
+                    return true;
+                }
                 return false;
             }
         });
-
+        ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                uploadData();
+            }
+        });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
         adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
@@ -197,37 +232,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         });
         mPresenter.getListDepartment();
 
-    }
-
-
-    public boolean checkCountData() {
-        if (mPresenter.countLogScanStages(orderId, departmentId) > 0) {
-
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_have_detail_waiting))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            isReturn = true;
-                            mPresenter.uploadData(orderId);
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            isReturn = false;
-                            sweetAlertDialog.dismiss();
-
-                        }
-                    })
-                    .show();
-            return isReturn;
-        }
-        return false;
     }
 
     @Override
@@ -636,7 +640,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         sweetAlertDialog.dismiss();
                     }
                 })
-                .setCancelText(String.format(getString(R.string.text_upload_order),ssCodeSO.getSelectedItem().toString()))
+                .setCancelText(String.format(getString(R.string.text_upload_order), ssCodeSO.getSelectedItem().toString()))
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {

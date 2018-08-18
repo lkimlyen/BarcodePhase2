@@ -173,24 +173,13 @@ public class LogScanStages extends RealmObject {
 
     public static void addLogScanStages(Realm realm, LogScanStages scanStages) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
-        if (mainParent == null) {
-            mainParent = new LogListScanStagesMain(scanStages.getOrderId());
-            mainParent = realm.copyToRealm(mainParent);
-        }
 
-        RealmList<LogListScanStages> mainParentList = mainParent.getList();
-
-        LogListScanStages parent = realm.where(LogListScanStages.class).equalTo("departmentId", scanStages.getDepartmentIdOut())
+        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
                 .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-        if (parent == null) {
-            parent = new LogListScanStages(LogListScanStages.id(realm) + 1, scanStages.getDepartmentIdOut(), Constants.WAITING_UPLOAD, scanStages.getUserId(), scanStages.getTimes(), DateUtils.getShortDateCurrent());
-            parent = realm.copyToRealm(parent);
-            mainParentList.add(parent);
-        }
         RealmList<LogScanStages> parentList = parent.getList();
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", scanStages.getProductDetailId()).findFirst();
 
-        LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("barcode", scanStages.getBarcode())
+        LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
                 .equalTo("module", scanStages.getModule()).equalTo("times", scanStages.getTimes()).findFirst();
         if (logScanStages == null) {
             scanStages.setProductDetail(productDetail);
