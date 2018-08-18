@@ -45,6 +45,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -154,7 +155,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -171,7 +172,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -187,7 +188,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
+                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -482,6 +483,19 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         });
     }
 
+    @Override
+    public void clearDataNoProduct(boolean chooseType) {
+        if (chooseType) {
+            txtCustomerName.setText("");
+            ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
+            ssCodeSO.setAdapter(adapter);
+        }
+        ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
+        ssTimes.setAdapter(adapterTimes);
+        rvCode.setAdapter(null);
+
+    }
+
     @OnClick(R.id.ic_refresh)
     public void refresh() {
 //        if (mPresenter.countListScan(orderId) > 0) {
@@ -597,7 +611,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (mPresenter.countLogScanStages(orderId, departmentId,times) > 0) {
+        if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -606,7 +620,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId);
+                            mPresenter.uploadData(orderId, departmentId, times);
                             sweetAlertDialog.dismiss();
                             getActivity().finish();
                         }
@@ -629,27 +643,27 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_upload_data))
-                .setConfirmText(getString(R.string.text_upload_all))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadDataAll();
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .setCancelText(String.format(getString(R.string.text_upload_order), ssCodeSO.getSelectedItem().toString()))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(orderId);
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .show();
+//        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+//                .setTitleText(getString(R.string.text_title_noti))
+//                .setContentText(getString(R.string.text_upload_data))
+//                .setConfirmText(getString(R.string.text_upload_all))
+//                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                    @Override
+//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+        mPresenter.uploadDataAll(orderId, departmentId, times);
+//                        sweetAlertDialog.dismiss();
+//                    }
+//                })
+//                .setCancelText(String.format(getString(R.string.text_upload_order), ssCodeSO.getSelectedItem().toString()))
+//                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                    @Override
+//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                        mPresenter.uploadData(orderId,departmentId,times);
+//                        sweetAlertDialog.dismiss();
+//
+//                    }
+//                })
+//                .show();
     }
 
     @OnClick(R.id.btn_scan)

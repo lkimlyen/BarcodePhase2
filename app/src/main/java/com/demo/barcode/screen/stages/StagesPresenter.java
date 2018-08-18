@@ -160,7 +160,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void uploadData(int orderId) {
+    public void uploadData(int orderId,int departmentId, int times) {
         view.showProgressBar();
         localRepository.getListLogScanStagesUpdate(orderId).subscribe(new Action1<List<LogScanStages>>() {
             @Override
@@ -178,6 +178,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(successResponse.getDescription());
+                                        getListScanStages(orderId,departmentId,times);
                                     }
                                 });
                             }
@@ -219,8 +220,6 @@ public class StagesPresenter implements StagesContract.Presenter {
         });
     }
 
-    private boolean listStagesIsNull = false;
-
     @Override
     public void getListScanStages(int orderId, int departmentId, int times) {
         localRepository.getListScanStagseByDepartment(orderId, departmentId, UserManager.getInstance().getUser().getId(), times)
@@ -239,7 +238,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void uploadDataAll() {
+    public void uploadDataAll(int orderId, int departmentId, int times) {
         view.showProgressBar();
         localRepository.getListLogScanStagesUpdate().subscribe(new Action1<List<LogScanStages>>() {
             @Override
@@ -257,6 +256,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(successResponse.getDescription());
+                                        getListScanStages(orderId,departmentId,times);
                                     }
                                 });
 
@@ -320,6 +320,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
+                        view.clearDataNoProduct(true);
                     }
                 });
     }

@@ -330,6 +330,7 @@
                     android:layout_height="wrap_content"
                     android:scaleX="0.7"
                     android:scaleY="0.7"
+                    android:visibility="gone"
                     android:text="@string/text_choose_all"
                     android:textSize="@dimen/text_12sp" />
 

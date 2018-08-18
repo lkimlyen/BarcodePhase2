@@ -34,7 +34,7 @@ public interface StagesContract {
 
         void showListTimes(List<Integer> list);
 
-        void clear
+        void clearDataNoProduct(boolean chooseType);
     }
 
     interface Presenter extends BasePresenter {
@@ -48,7 +48,7 @@ public interface StagesContract {
 
         int countLogScanStages(int orderId, int departmentId,int times);
 
-        void uploadData(int orderId);
+        void uploadData(int orderId, int departmentId, int times);
 
         void deleteScanStages(int stagesId);
 
@@ -58,7 +58,7 @@ public interface StagesContract {
 
         void getListTimes(int orderId);
 
-        void uploadDataAll();
+        void uploadDataAll(int orderId, int departmentId, int times);
 
 
     }

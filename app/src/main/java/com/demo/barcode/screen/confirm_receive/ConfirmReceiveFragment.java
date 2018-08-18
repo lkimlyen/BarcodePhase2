@@ -119,6 +119,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
+                mPresenter.checkBarcode(orderId,barcode,departmentId,times);
                 checkPermissionLocation();
 
             }
