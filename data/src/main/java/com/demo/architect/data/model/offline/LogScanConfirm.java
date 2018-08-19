@@ -304,9 +304,20 @@ public class LogScanConfirm extends RealmObject {
         final RealmResults<LogScanConfirm> list = realm.where(LogScanConfirm.class).equalTo("orderId", orderId)
                 .equalTo("departmentIDOut", departmentIDOut)
                 .equalTo("userId", userId)
+                .equalTo("status",Constants.WAITING_UPLOAD)
                 .notEqualTo("numberScanOut", 0)
                 .equalTo("timesInput", times).findAll();
         return list;
+    }
+
+    public static int countListConfirmByTimesWaitingUpload(Realm realm, int orderId, int departmentIDOut, int times, int userId) {
+        final RealmResults<LogScanConfirm> list = realm.where(LogScanConfirm.class).equalTo("orderId", orderId)
+                .equalTo("departmentIDOut", departmentIDOut)
+                .equalTo("userId", userId)
+                .equalTo("status", Constants.WAITING_UPLOAD)
+                .notEqualTo("statusConfirm",-1 )
+                .equalTo("timesInput", times).findAll();
+        return list.size();
     }
 
     public static LogScanConfirm findConfirmByBarcode(Realm realm, String barcode, int orderId,

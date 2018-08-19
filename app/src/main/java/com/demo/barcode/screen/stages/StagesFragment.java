@@ -398,12 +398,15 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
-                mPresenter.getListProduct(orderId);
-                mPresenter.getListTimes(orderId);
+                if (orderId > 0) {
+                    mPresenter.getListProduct(orderId);
+                    //mPresenter.getListTimes(orderId);
 
-                if (departmentId > 0 && times > 0) {
-                    mPresenter.getListScanStages(orderId, departmentId, times);
+                    if (departmentId > 0 && times > 0) {
+                        mPresenter.getListScanStages(orderId, departmentId, times);
+                    }
                 }
+
 
             }
 
@@ -459,8 +462,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
-    private int position = -1;
-
 
     @Override
     public void showListTimes(List<Integer> list) {
@@ -487,11 +488,17 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     public void clearDataNoProduct(boolean chooseType) {
         if (chooseType) {
             txtCustomerName.setText("");
+
             ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
             ssCodeSO.setAdapter(adapter);
+            orderId = 0;
+
         }
+
+
         ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
         ssTimes.setAdapter(adapterTimes);
+        times = 0;
         rvCode.setAdapter(null);
 
     }
@@ -534,14 +541,18 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (edtBarcode.getText().toString().equals("")) {
-            return;
-        }
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_code_so))) {
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
             return;
         }
 
-        if (ssDepartment.getSelectedItem().toString().equals(getString(R.string.text_choose_receiving_department))) {
+        if (departmentId == 0) {
+            showError(getString(R.string.text_department_id_null));
+            return;
+        }
+
+        if (times == 0) {
+            showError(getString(R.string.text_times_id_null));
             return;
         }
         checkPermissionLocation();
@@ -622,7 +633,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                             // mPresenter.deleteAllItemLog();
                             mPresenter.uploadData(orderId, departmentId, times);
                             sweetAlertDialog.dismiss();
-                            getActivity().finish();
                         }
                     })
                     .setCancelText(getString(R.string.text_no))
@@ -643,33 +653,42 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_upload)
     public void upload() {
-//        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                .setTitleText(getString(R.string.text_title_noti))
-//                .setContentText(getString(R.string.text_upload_data))
-//                .setConfirmText(getString(R.string.text_upload_all))
-//                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                    @Override
-//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-        mPresenter.uploadDataAll(orderId, departmentId, times);
-//                        sweetAlertDialog.dismiss();
-//                    }
-//                })
-//                .setCancelText(String.format(getString(R.string.text_upload_order), ssCodeSO.getSelectedItem().toString()))
-//                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                    @Override
-//                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                        mPresenter.uploadData(orderId,departmentId,times);
-//                        sweetAlertDialog.dismiss();
-//
-//                    }
-//                })
-//                .show();
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_upload_data))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.uploadDataAll(orderId, departmentId, times);
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
     }
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_code_so))) {
+        if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (departmentId == 0) {
+            showError(getString(R.string.text_department_id_null));
+            return;
+        }
+
+        if (times == 0) {
+            showError(getString(R.string.text_times_id_null));
             return;
         }
         integrator = new IntentIntegrator(getActivity());

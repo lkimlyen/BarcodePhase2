@@ -90,6 +90,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
+                        view.clearDataNoProduct(true);
                     }
                 });
     }
@@ -115,6 +116,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                             @Override
                             public void call(String s) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_confirm_success));
+
                             }
                         });
                     }
@@ -124,6 +126,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListOrderConfirmManager.getInstance().setListOrder(new ArrayList<>());
+                        view.clearDataNoProduct(false);
                     }
                 });
     }
@@ -144,6 +147,19 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             }
         });
     }
+    int count = 0;
+
+    @Override
+    public int countListConfirmByTimesWaitingUpload(int orderId, int deparmentId, int times) {
+        count = 0;
+        localRepository.countListConfirmByTimesWaitingUpload(orderId, deparmentId, times).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                count = integer;
+            }
+        });
+        return count;
+    }
 
     @Override
     public void checkBarcode(int orderId, String barcode, int departmentId, int times) {
@@ -156,32 +172,17 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             return;
         }
 
-        List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
-
-
-        if (list.size() == 0) {
-            showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-
-            return;
-        }
-
-        int checkBarcode = 0;
-
-
         localRepository.findConfirmByBarcode(orderId, departmentId, times, barcode).subscribe(new Action1<LogScanConfirm>() {
             @Override
             public void call(LogScanConfirm logScanConfirm) {
                 if (logScanConfirm == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
-                    saveConfirm(orderId, logScanConfirm.getId(), logScanConfirm.getDepartmentIDOut(), times);
+                    saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
                 }
             }
         });
 
-        if (checkBarcode == 0) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
-        }
     }
 
     @Override
@@ -198,7 +199,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void uploadData() {
+    public void uploadData(int orderId, int departmentIdOut, int times) {
         view.showProgressBar();
         localRepository.getListLogScanConfirm().subscribe(new Action1<List<LogScanConfirm>>() {
             @Override
@@ -217,6 +218,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                             @Override
                             public void call(String s) {
                                 view.showSuccess(successResponse.getDescription());
+                                getListConfirmByTimes(orderId, departmentIdOut, times);
                             }
                         });
 
@@ -232,8 +234,8 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         });
     }
 
-    public void saveConfirm(int orderId, int orderProductId, int departmentIdOut, int times) {
-        localRepository.updateNumnberLogConfirm(orderId, orderProductId, departmentIdOut, times, 1, true).subscribe(new Action1<String>() {
+    public void saveConfirm(int orderId, int marterOutputId, int departmentIdOut, int times) {
+        localRepository.updateNumnberLogConfirm(orderId, marterOutputId, departmentIdOut, times, 1, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));

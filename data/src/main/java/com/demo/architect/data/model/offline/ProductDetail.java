@@ -13,6 +13,7 @@ public class ProductDetail extends RealmObject {
     private int productId;
     private String productName;
     private String productDetailCode;
+    private int userId;
     @SuppressWarnings("unused")
     private RealmList<NumberInputModel> listInput;
     private RealmList<Integer> listStages;
@@ -21,10 +22,11 @@ public class ProductDetail extends RealmObject {
     public ProductDetail() {
     }
 
-    public ProductDetail(int productId, String productName, String productDetailCode) {
+    public ProductDetail(int productId, String productName, String productDetailCode, int userId) {
         this.productId = productId;
         this.productName = productName;
         this.productDetailCode = productDetailCode;
+        this.userId = userId;
     }
 
     public String getProductName() {
@@ -67,9 +69,9 @@ public class ProductDetail extends RealmObject {
         return listInput;
     }
 
-    public static ProductDetail create(Realm realm, ProductEntity productEntity) {
+    public static ProductDetail create(Realm realm, ProductEntity productEntity, int userId) {
         ProductDetail productDetail = new ProductDetail(productEntity.getProductDetailID(),
-                productEntity.getProductDetailName(), productEntity.getProductDetailCode());
+                productEntity.getProductDetailName(), productEntity.getProductDetailCode(), userId);
         productDetail = realm.copyToRealm(productDetail);
         RealmList<NumberInputModel> numberInputModels = productDetail.getListInput();
         for (NumberInput numberInput : productEntity.getListInput()) {
@@ -83,11 +85,12 @@ public class ProductDetail extends RealmObject {
         return productDetail;
     }
 
-    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity) {
-        ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID()).findFirst();
+    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity, int userId) {
+        ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
+                .equalTo("userId", userId).findFirst();
         if (productDetail == null) {
             realm.beginTransaction();
-            productDetail = ProductDetail.create(realm, productEntity);
+            productDetail = ProductDetail.create(realm, productEntity, userId);
             realm.commitTransaction();
         } else {
             if (productDetail.getListInput().size() < productEntity.getListInput().size()) {
@@ -98,6 +101,16 @@ public class ProductDetail extends RealmObject {
                     NumberInputModel numberInputModel = list.where().equalTo("times", numberInput.getTimesInput()).findFirst();
                     if (numberInputModel == null) {
                         list.add(NumberInputModel.create(realm, numberInput));
+                    } else {
+                        int numberTotalOld = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
+                        numberInputModel.setNumberTotal(numberTotalOld);
+                        numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotalOld);
+
+                        int numberScanSuccessOld = numberInput.getNumberSuccess() - numberInputModel.getNumberSuccess();
+                        numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
+                        numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + numberScanSuccessOld);
+                        numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+
                     }
 
                 }

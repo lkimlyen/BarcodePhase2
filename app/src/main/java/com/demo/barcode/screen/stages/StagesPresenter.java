@@ -118,7 +118,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     view.startMusicError();
                                     view.turnOnVibrator();
                                 }
-                            }else {
+                            } else {
                                 showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                             }
 
@@ -149,7 +149,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public int countLogScanStages(int orderId, int departmentId, int times) {
-        localRepository.countLogScanStages(orderId, departmentId,times).subscribe(new Action1<Integer>() {
+        localRepository.countLogScanStages(orderId, departmentId, times).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 count = integer;
@@ -160,7 +160,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void uploadData(int orderId,int departmentId, int times) {
+    public void uploadData(int orderId, int departmentId, int times) {
         view.showProgressBar();
         localRepository.getListLogScanStagesUpdate(orderId).subscribe(new Action1<List<LogScanStages>>() {
             @Override
@@ -178,7 +178,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(successResponse.getDescription());
-                                        getListScanStages(orderId,departmentId,times);
+                                        getListScanStages(orderId, departmentId, times);
                                     }
                                 });
                             }
@@ -226,7 +226,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                 .subscribe(new Action1<LogListScanStages>() {
                     @Override
                     public void call(LogListScanStages logListScanStages) {
-                            view.showListLogScanStages(logListScanStages);
+                        view.showListLogScanStages(logListScanStages);
                     }
                 });
     }
@@ -234,7 +234,10 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void getListTimes(int orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
-        view.showListTimes(soEntity.getListTimesInput());
+        if (soEntity != null) {
+            view.showListTimes(soEntity.getListTimesOutput());
+        }
+
     }
 
     @Override
@@ -243,6 +246,9 @@ public class StagesPresenter implements StagesContract.Presenter {
         localRepository.getListLogScanStagesUpdate().subscribe(new Action1<List<LogScanStages>>() {
             @Override
             public void call(List<LogScanStages> logScanStages) {
+                if (logScanStages.size() == 0) {
+                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
+                }
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 Gson gson = builder.create();
@@ -256,7 +262,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(successResponse.getDescription());
-                                        getListScanStages(orderId,departmentId,times);
+                                        getListScanStages(orderId, departmentId, times);
                                     }
                                 });
 
@@ -335,6 +341,8 @@ public class StagesPresenter implements StagesContract.Presenter {
                     public void onSuccess(GetInputForProductDetailUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListProductManager.getInstance().setListProduct(successResponse.getEntity());
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
+                        getListTimes(orderId);
                     }
 
                     @Override
@@ -342,6 +350,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListProductManager.getInstance().setListProduct(new ArrayList<>());
+                        view.clearDataNoProduct(false);
                     }
                 });
 

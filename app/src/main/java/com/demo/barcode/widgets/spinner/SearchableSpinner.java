@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.demo.barcode.R;
@@ -82,6 +81,11 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
             setAdapter(arrayAdapter);
         }
     }
+
+    public void resetSpinner(){
+        init();
+    }
+
 
 
     @Override

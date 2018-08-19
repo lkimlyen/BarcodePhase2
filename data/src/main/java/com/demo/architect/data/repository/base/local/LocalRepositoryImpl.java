@@ -221,6 +221,22 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<Integer> countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                   int count = databaseRealm.countListConfirmByTimesWaitingUpload(orderId,departmentIdOut,times);
+                    subscriber.onNext(count);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<List<LogScanConfirm>> getListLogScanConfirm() {
         return Observable.create(new Observable.OnSubscribe<List<LogScanConfirm>>() {
             @Override

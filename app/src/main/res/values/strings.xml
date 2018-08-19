@@ -170,6 +170,8 @@
     <string name="text_times_id_null">Bạn chưa chọn lần quét</string>
     <string name="text_get_so_success">Lấy danh sách SO thành công</string>
     <string name="text_product_not_in_times">Sản phẩm không có trong lần quét này</string>
+    <string name="text_get_list_detail_success">Lấy danh sách chi tiết thành công</string>
+    <string name="text_no_data_upload">Không có dữ liệu để tải lên</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

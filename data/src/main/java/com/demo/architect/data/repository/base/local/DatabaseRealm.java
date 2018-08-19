@@ -171,7 +171,7 @@ public class DatabaseRealm {
 
     public ProductDetail getProductDetail(final ProductEntity productEntity) {
         Realm realm = getRealmInstance();
-        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity);
+        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity,userId);
         return productDetail;
 
     }
@@ -192,6 +192,12 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm, orderId, departmentIdOut, times, userId);
         return results;
+    }
+
+    public int countListConfirmByTimesWaitingUpload(int orderId, final int departmentIdOut, int times) {
+        Realm realm = getRealmInstance();
+        final int count = LogScanConfirm.countListConfirmByTimesWaitingUpload(realm, orderId, departmentIdOut, times, userId);
+        return count;
     }
 
     public List<LogScanConfirm> getListLogScanConfirm() {

@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -144,25 +145,61 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                    return true;
+                }
                 return false;
+            }
+        });
+        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                mPresenter.uploadData(orderId,departmentId ,times );
             }
         });
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                    return true;
+                }
                 return false;
+            }
+        });
+        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                mPresenter.uploadData(orderId,departmentId ,times );
             }
         });
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                    return true;
+                }
                 return false;
+            }
+        });
+        ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                mPresenter.uploadData(orderId,departmentId ,times );
             }
         });
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                    return true;
+                }
                 return false;
+            }
+        });
+        ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                mPresenter.uploadData(orderId,departmentId ,times );
             }
         });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
@@ -352,6 +389,24 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         lvConfirm.setAdapter(adapter);
     }
 
+    @Override
+    public void clearDataNoProduct(boolean chooseType) {
+        if (chooseType) {
+            txtCustomerName.setText("");
+
+            ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
+            ssCodeSO.setAdapter(adapter);
+            orderId = 0;
+
+        }
+
+
+        ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
+        ssTimes.setAdapter(adapterTimes);
+        times = 0;
+        lvConfirm.setAdapter(null);
+    }
+
     @OnClick(R.id.ic_refresh)
     public void refresh() {
 //        if (mPresenter.countListScan(orderId) > 0) {
@@ -415,6 +470,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times);
+                        sweetAlertDialog.dismiss();
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -472,36 +528,57 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_back)
     public void back() {
-//        if (mPresenter.countListScan(orderId) > 0) {
-//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                    .setTitleText(getString(R.string.text_title_noti))
-//                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
-//                    .setConfirmText(getString(R.string.text_yes))
-//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            mPresenter.deleteAllItemLog();
-//                            sweetAlertDialog.dismiss();
-//                            getActivity().finish();
-//                        }
-//                    })
-//                    .setCancelText(getString(R.string.text_no))
-//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            sweetAlertDialog.dismiss();
-//                        }
-//                    })
-//                    .show();
-//
-//        } else {
-        getActivity().finish();
-//        }
+        if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_back_have_detail_waiting))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            // mPresenter.deleteAllItemLog();
+                            mPresenter.uploadData(orderId, departmentId, times);
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+
+                        }
+                    })
+                    .show();
+
+        } else {
+            getActivity().finish();
+        }
     }
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        mPresenter.uploadData();
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_upload_data))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.uploadData(orderId, departmentId, times);
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
     }
 
     @OnClick(R.id.btn_scan)

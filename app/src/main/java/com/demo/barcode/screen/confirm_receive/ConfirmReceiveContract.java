@@ -34,6 +34,8 @@ public interface ConfirmReceiveContract {
 
         void showListConfirm(RealmResults<LogScanConfirm> list);
 
+        void clearDataNoProduct(boolean chooseType);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -47,11 +49,13 @@ public interface ConfirmReceiveContract {
 
         void getListConfirmByTimes(int orderId, int deparmentId, int times);
 
+        int countListConfirmByTimesWaitingUpload(int orderId, int deparmentId, int times);
+
         void checkBarcode(int orderId, String barcode, int departmentId, int times);
 
         void updateNumberConfirm(int orderId,int orderProductId, int departmentIdOut, int times, int numberScan);
 
-        void uploadData();
+        void uploadData(int orderId, int departmentIdOut, int times);
 
     }
 }

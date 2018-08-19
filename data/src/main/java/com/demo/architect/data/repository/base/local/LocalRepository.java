@@ -38,6 +38,7 @@ public interface LocalRepository {
     Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
 
     Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut, final int times);
+    Observable<Integer>  countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times);
 
     Observable<List<LogScanConfirm>> getListLogScanConfirm();
 
