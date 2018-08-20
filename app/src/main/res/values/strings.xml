@@ -50,6 +50,7 @@
     <string name="text_minus">-</string>
     <string name="text_barcode_error_type">Mã quét loại này không đúng! Xin chọn mã khác!</string>
     <string name="text_barcode_error_lenght">Độ dài mã quét không đúng, Hãy kiểm tra lại!</string>
+    <string name="text_number_confirm_residual">Số lượng đã nhận vượt quá số lượng giao.</string>
     <string name="text_product_empty">Không có SP nào trong SO này, Vui lòng tải lại!</string>
     <string name="text_barcode_no_exist">Mã quét không tồn tại trong SO này! Vui lòng thử mã khác!</string>
     <string name="text_save_barcode_success">Hợp lệ! Lưu Thành Công</string>
@@ -113,7 +114,7 @@
     <string name="text_web_report" formatted="true">%s/Report/Account/Login</string>
     <string name="text_name_database_test">barcodetest.realm</string>
     <string name="text_name_database_main">barcodemain.realm</string>
-    <string name="text_path_file">/ACR/backup/</string>
+    <string name="text_path_file">/BarcodePhase2/backup/</string>
     <string name="text_backup_success">Sao lưu thành công</string>
     <string name="text_save_success">Lưu thành công</string>
     <string name="text_backup_fail">Sao lưu thất bại</string>

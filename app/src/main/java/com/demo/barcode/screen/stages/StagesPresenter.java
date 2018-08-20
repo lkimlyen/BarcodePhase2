@@ -111,10 +111,10 @@ public class StagesPresenter implements StagesContract.Presenter {
                                 }
                             }
                             if (numberInput != null) {
-                                if (numberInput.getNumberRest() + numberInput.getNumberScanned() == numberInput.getNumberTotal()) {
+                                if (numberInput.getNumberRest() > 0) {
                                     saveBarcodeToDataBase(numberInput, model, barcode, departmentId);
                                 } else {
-                                    view.showCheckResidual(numberInput.getTimes());
+                                    view.showCheckResidual(numberInput,model,barcode,departmentId);
                                     view.startMusicError();
                                     view.turnOnVibrator();
                                 }
@@ -235,7 +235,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     public void getListTimes(int orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
         if (soEntity != null) {
-            view.showListTimes(soEntity.getListTimesOutput());
+            view.showListTimes(soEntity.getListTimesInput());
         }
 
     }
@@ -278,6 +278,7 @@ public class StagesPresenter implements StagesContract.Presenter {
         });
     }
 
+    @Override
     public void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
             productEntity, String barcode, int departmentId) {
         view.showProgressBar();

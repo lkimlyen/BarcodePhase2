@@ -147,7 +147,6 @@ public class SettingPresenter implements SettingContract.Presenter {
 //                    CoreApplication.getInstance().getString(R.string.text_name_database));
             view.uploadFile(dataPath,user.getId(), user.getName());
         }else {
-
             view.showError(CoreApplication.getInstance().getString(R.string.text_backup_fail));
             view.hideProgressBar();
         }

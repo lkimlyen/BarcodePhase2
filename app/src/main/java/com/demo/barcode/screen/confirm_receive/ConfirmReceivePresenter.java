@@ -98,7 +98,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     @Override
     public void getListTimes(int orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
-        view.showListTimes(soEntity.getListTimesInput());
+        view.showListTimes(soEntity.getListTimesOutput());
     }
 
     @Override
@@ -178,7 +178,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 if (logScanConfirm == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
-                    saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
+                    if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()){
+                        showError(CoreApplication.getInstance().getString(R.string.text_number_confirm_residual));
+                    }else {
+                        saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
+                    }
+
                 }
             }
         });
@@ -186,11 +191,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void updateNumberConfirm(int orderId, int orderProductId, int departmentIdOut, int times, int numberScan) {
-        localRepository.updateNumnberLogConfirm(orderId, orderProductId, departmentIdOut, times, numberScan, false).subscribe(new Action1<String>() {
+    public void updateNumberConfirm(int orderId, int masterOutputId, int departmentIdOut, int times, int numberScan) {
+        localRepository.updateNumnberLogConfirm(orderId, masterOutputId, departmentIdOut, times, numberScan, false).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
                 view.hideProgressBar();
@@ -238,7 +243,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         localRepository.updateNumnberLogConfirm(orderId, marterOutputId, departmentIdOut, times, 1, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
                 view.hideProgressBar();

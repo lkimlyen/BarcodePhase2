@@ -1,13 +1,9 @@
-package com.demo.barcode.screen.print_stemp;
+package com.demo.barcode.screen.print_stamp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;

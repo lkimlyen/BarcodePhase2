@@ -26,9 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
@@ -439,20 +441,23 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidual(int times) {
+    public void showCheckResidual(NumberInputModel numberInput, ProductEntity
+            productEntity, String barcode, int departmentId) {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(String.format(getString(R.string.text_number_residual), times))
+                .setContentText(getString(R.string.text_exceed_the_number_of_requests))
                 .setConfirmText(getString(R.string.text_yes))
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity,barcode,departmentId);
                         sweetAlertDialog.dismiss();
+
                     }
                 })
-
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();

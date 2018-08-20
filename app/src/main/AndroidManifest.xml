@@ -53,7 +53,7 @@
         </activity>
         <activity android:name=".screen.chang_password.ChangePasswordActivity" />
         <activity android:name=".screen.create_packaging.CreatePackagingActivity" />
-        <activity android:name=".screen.print_stemp.PrintStempActivity" />
+        <activity android:name=".screen.print_stamp.PrintStempActivity" />
         <activity android:name=".screen.capture.ScanActivity"
             android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"

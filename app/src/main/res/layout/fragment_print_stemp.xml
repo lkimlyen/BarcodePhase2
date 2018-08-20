@@ -395,7 +395,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_serial"
+                    android:id="@+id/txt_serial_pack"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:textColor="@android:color/black"

@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class ProductDetail extends RealmObject {
     @PrimaryKey
+    private int id;
     private int productId;
     private String productName;
     private String productDetailCode;
@@ -22,7 +23,8 @@ public class ProductDetail extends RealmObject {
     public ProductDetail() {
     }
 
-    public ProductDetail(int productId, String productName, String productDetailCode, int userId) {
+    public ProductDetail(int id, int productId, String productName, String productDetailCode, int userId) {
+        this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.productDetailCode = productDetailCode;
@@ -70,7 +72,7 @@ public class ProductDetail extends RealmObject {
     }
 
     public static ProductDetail create(Realm realm, ProductEntity productEntity, int userId) {
-        ProductDetail productDetail = new ProductDetail(productEntity.getProductDetailID(),
+        ProductDetail productDetail = new ProductDetail(id(realm)+1, productEntity.getProductDetailID(),
                 productEntity.getProductDetailName(), productEntity.getProductDetailCode(), userId);
         productDetail = realm.copyToRealm(productDetail);
         RealmList<NumberInputModel> numberInputModels = productDetail.getListInput();

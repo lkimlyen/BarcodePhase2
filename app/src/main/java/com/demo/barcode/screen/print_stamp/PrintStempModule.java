@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.print_stemp;
+package com.demo.barcode.screen.print_stamp;
 
 import android.support.annotation.NonNull;
 

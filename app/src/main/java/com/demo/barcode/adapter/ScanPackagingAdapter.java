@@ -16,19 +16,18 @@ import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.util.ConvertUtils;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
 
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public StagesAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, StagesAdapter.onErrorListener onErrorListener) {
+    public ScanPackagingAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
+                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
@@ -45,7 +44,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
+            viewHolder = (StagesAdapter.HistoryHolder) convertView.getTag();
         }
 
         if (adapterData != null) {
@@ -56,7 +55,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, LogScanStages item) {
+    private void setDataToViews(StagesAdapter.HistoryHolder holder, LogScanStages item) {
         final ProductDetail productDetail = item.getProductDetail();
         final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
         TextWatcher textWatcher = new TextWatcher() {
@@ -76,7 +75,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
                         holder.edtNumberScan.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(item, numberInput,CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }

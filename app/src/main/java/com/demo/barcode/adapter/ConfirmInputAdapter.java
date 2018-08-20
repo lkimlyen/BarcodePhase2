@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -89,15 +91,18 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         switch (item.getStatusConfirm()) {
             case Constants.FULL:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_full));
+                holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
                 break;
             case Constants.INCOMPLETE:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_incomplete));
+                holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
                 break;
             case Constants.RESIDUAL:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_residual));
                 break;
             default:
                 holder.txtStatus.setText("");
+                holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
                 break;
         }
 
@@ -128,6 +133,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         TextView txtSerialModule;
         TextView txtNameDetail;
         //ImageView imgDelete;
+        LinearLayout layoutMain;
         TextView txtNumberDelivery;
         EditText edtNumberReceive;
         TextView txtStatus;
@@ -136,7 +142,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
             super(v);
             txtSerialModule = (TextView) v.findViewById(R.id.txt_serial_module);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
-            //  imgDelete = (ImageView) v.findViewById(R.id.img_delete);
+            layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
             txtNumberDelivery = (TextView) v.findViewById(R.id.txt_number_delivery);
             edtNumberReceive = (EditText) v.findViewById(R.id.txt_number_receive);
             txtStatus = (TextView) v.findViewById(R.id.txt_status);

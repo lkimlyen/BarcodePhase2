@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.IPAddress;
+import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
@@ -77,7 +78,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
-        if (auth.getCurrentUser() != null) {
+        if (auth.getCurrentUser() == null) {
             String email = getString(R.string.text_email);
             String password = getString(R.string.text_password);
             auth.signInWithEmailAndPassword(email, password).
@@ -87,11 +88,15 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
                             if (!task.isSuccessful()) {
                                 // there was an error
                                 Log.d(TAG, "Login fail");
+
                             } else {
+                                storageRef = storage.getReference();
                                 Log.d(TAG, "Success");
                             }
                         }
                     });
+
+        }else {
             storageRef = storage.getReference();
         }
         return view;
@@ -181,35 +186,42 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @Override
     public void uploadFile(String path, int userId, String userName) {
 
-        hideProgressBar();
+
         UploadTask uploadTask;
         Uri file = Uri.fromFile(new File(path));
-        StorageReference riversRef = storageRef.child(userId + "_" + userName  + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
-        uploadTask = riversRef.putFile(file);
+        String dateCurrent = DateUtils.getShortDateCurrent();
+        if (storageRef != null){
+            StorageReference riversRef = storageRef.child(userId + "_" + userName+"_" + dateCurrent + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
+            uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                if (isAdded()) {
-                    showError(getString(R.string.text_backup_fail));
-                    Log.d(TAG, exception.getMessage());
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    if (isAdded()) {
+                        showError(getString(R.string.text_backup_fail));
+                        Log.d(TAG, exception.getMessage());
+                        hideProgressBar();
+                    }
+
                 }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
+                    if (isAdded()) {
+                        showSuccess(getString(R.string.text_backup_success));
+                        hideProgressBar();
+                    }
 
-                if (isAdded()) {
-                    showSuccess(getString(R.string.text_backup_success));
                 }
+            });
+        }else {
+            showError(getString(R.string.text_backup_fail));
+            hideProgressBar();
+        }
 
-            }
-        });
     }
 
 

@@ -26,8 +26,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  * Created by MSI on 26/11/2017.
  */
 
-public class DashboardActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class DashboardActivity extends BaseActivity {
     @Inject
     DashboardPresenter DashboardPresenter;
 

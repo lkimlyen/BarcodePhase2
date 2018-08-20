@@ -3,6 +3,7 @@ package com.demo.architect.data.model.offline;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.NumberInputConfirm;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -218,9 +219,11 @@ public class LogScanConfirm extends RealmObject {
                 .equalTo("orderId", orderId)
                 .equalTo("timesInput", times).equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findFirst();
+        scanConfirm.setDateConfirm(DateUtils. getDateTimeCurrent());
+        RealmList<NumberInputConfirmModel> realmList = scanConfirm.getList();
         if (scan) {
             scanConfirm.setNumberConfirmed(scanConfirm.getNumberConfirmed() + numberScan);
-            RealmList<NumberInputConfirmModel> realmList = scanConfirm.getList();
+
             if (scanConfirm.getNumberConfirmed() <= scanConfirm.getNumberScanOut()) {
                 for (NumberInputConfirmModel numberInputConfirmModel : realmList) {
                     if (numberInputConfirmModel.getTimesInput() == times) {
@@ -252,7 +255,6 @@ public class LogScanConfirm extends RealmObject {
             int numberScanRest = scanConfirm.getNumberScanOut() - scanConfirm.getNumberConfirmed();
             int numberScanCurrent = numberScan - scanConfirm.getNumberConfirmed();
             scanConfirm.setNumberConfirmed(numberScan);
-            RealmList<NumberInputConfirmModel> realmList = scanConfirm.getList();
             if (numberScanCurrent <= numberScanRest) {
                 for (NumberInputConfirmModel numberInputConfirmModel : realmList) {
                     if (numberInputConfirmModel.getTimesInput() == times) {
@@ -271,24 +273,24 @@ public class LogScanConfirm extends RealmObject {
                 }
             }
 
-            for (LogScanConfirm logScanConfirm : results) {
-                NumberInputConfirmModel numberInputConfirmModel = realmList.where().equalTo("timesInput", logScanConfirm.getTimesInput()).findFirst();
-                logScanConfirm.setNumberScanOut(numberInputConfirmModel.getNumberScanOut());
-                if (logScanConfirm.getNumberConfirmed() > 0) {
-                    if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
-                        logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
-                    } else if (logScanConfirm.getNumberScanOut() == logScanConfirm.getNumberConfirmed()) {
-                        logScanConfirm.setStatusConfirm(Constants.FULL);
-                    } else {
-                        logScanConfirm.setStatusConfirm(Constants.RESIDUAL);
-                    }
-                } else {
-                    logScanConfirm.setStatusConfirm(-1);
-                }
-            }
         }
 
 
+        for (LogScanConfirm logScanConfirm : results) {
+            NumberInputConfirmModel numberInputConfirmModel = realmList.where().equalTo("timesInput", logScanConfirm.getTimesInput()).findFirst();
+            logScanConfirm.setNumberScanOut(numberInputConfirmModel.getNumberScanOut());
+            if (logScanConfirm.getNumberConfirmed() > 0) {
+                if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
+                    logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
+                } else if (logScanConfirm.getNumberScanOut() == logScanConfirm.getNumberConfirmed()) {
+                    logScanConfirm.setStatusConfirm(Constants.FULL);
+                } else {
+                    logScanConfirm.setStatusConfirm(Constants.RESIDUAL);
+                }
+            } else {
+                logScanConfirm.setStatusConfirm(-1);
+            }
+        }
     }
 
     public static void updateStatusScanConfirm(Realm realm, int userId) {
@@ -304,7 +306,7 @@ public class LogScanConfirm extends RealmObject {
         final RealmResults<LogScanConfirm> list = realm.where(LogScanConfirm.class).equalTo("orderId", orderId)
                 .equalTo("departmentIDOut", departmentIDOut)
                 .equalTo("userId", userId)
-                .equalTo("status",Constants.WAITING_UPLOAD)
+                .equalTo("status", Constants.WAITING_UPLOAD)
                 .notEqualTo("numberScanOut", 0)
                 .equalTo("timesInput", times).findAll();
         return list;
@@ -315,7 +317,7 @@ public class LogScanConfirm extends RealmObject {
                 .equalTo("departmentIDOut", departmentIDOut)
                 .equalTo("userId", userId)
                 .equalTo("status", Constants.WAITING_UPLOAD)
-                .notEqualTo("statusConfirm",-1 )
+                .notEqualTo("statusConfirm", -1)
                 .equalTo("timesInput", times).findAll();
         return list.size();
     }

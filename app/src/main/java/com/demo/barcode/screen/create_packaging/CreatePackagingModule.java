@@ -11,16 +11,16 @@ import dagger.Provides;
 
 @Module
 public class CreatePackagingModule {
-    private final CreatePackagingContract.View CreateCodePackageView;
+    private final CreatePackagingContract.View CreatePackagingView;
 
-    public CreatePackagingModule(CreatePackagingContract.View CreateCodePackageView) {
-        this.CreateCodePackageView = CreateCodePackageView;
+    public CreatePackagingModule(CreatePackagingContract.View CreatePackagingView) {
+        this.CreatePackagingView = CreatePackagingView;
     }
 
     @Provides
     @NonNull
-    CreatePackagingContract.View provideCreateCodePackageView() {
-        return this.CreateCodePackageView;
+    CreatePackagingContract.View provideCreatePackagingView() {
+        return this.CreatePackagingView;
     }
 }
 

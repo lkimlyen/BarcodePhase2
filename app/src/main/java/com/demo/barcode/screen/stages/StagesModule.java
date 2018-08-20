@@ -11,16 +11,16 @@ import dagger.Provides;
 
 @Module
 public class StagesModule {
-    private final StagesContract.View CreateCodePackageView;
+    private final StagesContract.View StagesView;
 
-    public StagesModule(StagesContract.View CreateCodePackageView) {
-        this.CreateCodePackageView = CreateCodePackageView;
+    public StagesModule(StagesContract.View StagesView) {
+        this.StagesView = StagesView;
     }
 
     @Provides
     @NonNull
-    StagesContract.View provideCreateCodePackageView() {
-        return this.CreateCodePackageView;
+    StagesContract.View provideStagesView() {
+        return this.StagesView;
     }
 }
 

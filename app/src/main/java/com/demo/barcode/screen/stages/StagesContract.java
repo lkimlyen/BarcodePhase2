@@ -1,8 +1,10 @@
 package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -30,7 +32,8 @@ public interface StagesContract {
 
         void turnOnVibrator();
 
-        void showCheckResidual(int times);
+        void showCheckResidual(NumberInputModel numberInput, ProductEntity
+                productEntity, String barcode, int departmentId);
 
         void showListTimes(List<Integer> list);
 
@@ -59,6 +62,9 @@ public interface StagesContract {
         void getListTimes(int orderId);
 
         void uploadDataAll(int orderId, int departmentId, int times);
+
+        void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
+                productEntity, String barcode, int departmentId);
 
 
     }

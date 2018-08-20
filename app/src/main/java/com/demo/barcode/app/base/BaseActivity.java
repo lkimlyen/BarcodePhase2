@@ -43,11 +43,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  */
 
 public class BaseActivity extends AppCompatActivity
-        implements iBaseView, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        implements iBaseView {
     MaterialDialog pDialog;
-    private LocationHelper locationHelper;
-    private Location mLastLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,8 +60,6 @@ public class BaseActivity extends AppCompatActivity
             setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
-        locationHelper = new LocationHelper(this);
-        locationHelper.checkpermission();
         Window window = this.getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -85,12 +80,6 @@ public class BaseActivity extends AppCompatActivity
             e.printStackTrace();
         } catch (GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
-        }
-        checkPermission();
-        if (locationHelper.checkPlayServices()) {
-
-            // Building the GoogleApi client
-            locationHelper.buildGoogleApiClient();
         }
 
         if (!ConvertUtils.checkConnection(this)){
@@ -186,7 +175,7 @@ public class BaseActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
         }
-        locationHelper.checkPlayServices();
+
         //  this.findViewById(android.R.id.content).findViewById(R.id.fragmentContainer).setPadding(0, getStatusBarHeight(), 0, 0);
 
 //        Window w = getWindow(); // in Activity's onCreate() for instance
@@ -246,37 +235,7 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        locationHelper.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * Google api callback methods
-     */
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.i("Connection failed:", " ConnectionResult.getErrorCode() = "
-                + result.getErrorCode());
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-
-        // Once connected with google api, get the location
-        mLastLocation = locationHelper.getLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        locationHelper.connectApiClient();
-    }
-
-
-    // Permission check functions
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        // redirects to utils
-        locationHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
     }
+
 }

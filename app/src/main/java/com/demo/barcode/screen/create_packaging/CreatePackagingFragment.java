@@ -29,7 +29,7 @@ import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.screen.capture.ScanActivity;
-import com.demo.barcode.screen.print_stemp.PrintStempActivity;
+import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -127,7 +127,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_temp_packaging, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_stamp_packaging, container, false);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
