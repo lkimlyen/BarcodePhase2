@@ -13,16 +13,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.demo.architect.data.model.offline.LogListScanPackagingMain;
-import com.demo.architect.data.model.offline.LogListScanPagkaging;
-import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListOrderPackaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
+import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
-
-import java.util.HashMap;
-import java.util.List;
-
-import io.realm.RealmResults;
 
 /**
  * Created by Thinh on 08/08/2017.
@@ -30,11 +27,11 @@ import io.realm.RealmResults;
 
 public class CreateStampPackagingAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
     private Context context;
-    private LogListScanPackagingMain list;
+    private LogListModulePagkaging list;
     private boolean open = false;
     private int positionChoose;
 
-    public CreateStampPackagingAdapter(Context context, LogListScanPackagingMain list) {
+    public CreateStampPackagingAdapter(Context context, LogListModulePagkaging list) {
         this.context = context;
         this.list = list;
     }
@@ -58,7 +55,7 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
     public View getRealChildView(int groupPosition, final int childPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final LogListSerialPackPagkaging listScan = (LogListSerialPackPagkaging) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context
@@ -66,8 +63,27 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
             convertView = infalInflater.inflate(R.layout.item_content, null);
         }
 
+        ScanPackagingAdapter adapter = new ScanPackagingAdapter(listScan.getList(),
+                new ScanPackagingAdapter.OnItemClearListener() {
+                    @Override
+                    public void onItemClick(LogScanPackaging item) {
+
+                    }
+                }, new ScanPackagingAdapter.OnEditTextChangeListener() {
+            @Override
+            public void onEditTextChange(LogScanPackaging item, int number) {
+
+            }
+        }, new ScanPackagingAdapter.onErrorListener() {
+            @Override
+            public void errorListener(String message) {
+
+            }
+        });
         ListView lvScan = (ListView) convertView
                 .findViewById(R.id.lv_scan);
+
+        lvScan.setAdapter(adapter);
 
 //        TextView txtListChild = (TextView) convertView
 //                .findViewById(R.id.txt_answer);
@@ -82,12 +98,12 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this.listQuestion.get(groupPosition);
+        return this.list.getList().get(groupPosition).getSerialPack();
     }
 
     @Override
     public int getGroupCount() {
-        return this.listQuestion.size();
+        return this.list.getList().size();
     }
 
     @Override
@@ -123,10 +139,10 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
         }
 
 
-        TextView lblListHeader = (TextView) convertView
+        TextView txtHeader = (TextView) convertView
                 .findViewById(R.id.txt_serial_pack);
-        lblListHeader.setTypeface(null, Typeface.NORMAL);
-        lblListHeader.setText(headerTitle);
+        txtHeader.setTypeface(null, Typeface.NORMAL);
+        txtHeader.setText(headerTitle);
         return convertView;
     }
 

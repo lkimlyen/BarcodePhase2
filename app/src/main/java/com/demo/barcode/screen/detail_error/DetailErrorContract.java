@@ -1,5 +1,6 @@
-package com.demo.barcode.screen.create_packaging;
+package com.demo.barcode.screen.detail_error;
 
+import com.demo.architect.data.model.offline.DetailError;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -7,7 +8,7 @@ import com.demo.barcode.app.base.BaseView;
  * Created by MSI on 26/11/2017.
  */
 
-public interface CreatePackagingContract {
+public interface DetailErrorContract {
     interface View extends BaseView<Presenter> {
         void showError(String message);
 
@@ -18,19 +19,14 @@ public interface CreatePackagingContract {
         void startMusicSuccess();
 
         void turnOnVibrator();
+
+        void showImageError(DetailError detailError);
     }
 
     interface Presenter extends BasePresenter {
 
-        void getListSO(int orderType);
+        void addImage(String pathFile);
 
-        void getListDetail(int orderId);
-
-        void getListFloor(int orderId);
-
-        void getListModule(int orderId);
-
-        void getListScan(int orderId, int floor, int module);
-
+        void deleteImage(int id);
     }
 }

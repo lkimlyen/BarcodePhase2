@@ -39,7 +39,7 @@
                 android:layout_marginStart="@dimen/distance_8dp"
                 android:layout_toRightOf="@+id/img_back"
                 android:gravity="center"
-                android:text="@string/text_create_temp_packaging"
+                android:text="@string/text_detail_error"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
@@ -87,15 +87,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="@string/text_code_so"
+                android:text="@string/text_code_scan"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
+            <TextView
                 android:id="@+id/ss_code_so"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_code_so"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5" />
 
@@ -114,7 +113,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="@string/text_customer_name"
+                android:text="@string/text_serial_module"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
@@ -139,15 +138,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="@string/text_floor_or_apartment"
+                android:text="@string/text_name_detail"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
+            <TextView
                 android:id="@+id/ss_floor"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_floor"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5" />
 
@@ -165,110 +163,52 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="@string/text_serial_module"
+                android:text="@string/text_number_order"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
+            <TextView
                 android:id="@+id/ss_serial_module"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_serial_module"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5" />
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
+            android:gravity="center_vertical">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_date_scan"
+                android:text="@string/text_image"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/txt_date_scan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:textSize="@dimen/text_16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <EditText
-                android:id="@+id/edt_barcode"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_marginEnd="@dimen/distance_5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_edittext_stroke_white"
-                android:hint="Nhập mã barcode"
-                android:inputType="textMultiLine"
-                android:padding="@dimen/distance_5dp"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp" />
-
-            <Button
-                android:id="@+id/btn_save"
+                android:id="@+id/txt_add_image"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_weight="0"
-                android:background="@drawable/bg_button_blue_small"
-                android:gravity="center"
-                android:text="@string/text_add"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="@string/text_add_image"
+                android:drawableLeft="@drawable/ic_add_image"
+                android:textColor="@android:color/holo_red_dark"
+                android:layout_alignParentRight="true"
+                android:textStyle="italic"
+                android:textSize="@dimen/text_16sp" />
+        </RelativeLayout>
 
-    </LinearLayout>
-
-    <!--<ListView-->
-    <!--android:id="@+id/lv_code"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="0dp"-->
-    <!--android:background="#E6E6FA"-->
-    <!--android:layout_weight="1" />-->
-    <com.demo.barcode.widgets.AnimatedExpandableListView
-        android:id="@+id/lv_package"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:padding="5dp">
-
-        <Button
-            android:id="@+id/btn_scan"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_image"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_button_blue"
-            android:text="Quét QR CODE"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content" />
+
 
     </LinearLayout>
+
 
 </LinearLayout>

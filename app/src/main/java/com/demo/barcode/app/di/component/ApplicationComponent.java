@@ -16,6 +16,8 @@ import com.demo.barcode.screen.create_packaging.CreatePackagingComponent;
 import com.demo.barcode.screen.create_packaging.CreatePackagingModule;
 import com.demo.barcode.screen.dashboard.DashboardComponent;
 import com.demo.barcode.screen.dashboard.DashboardModule;
+import com.demo.barcode.screen.detail_error.DetailErrorComponent;
+import com.demo.barcode.screen.detail_error.DetailErrorModule;
 import com.demo.barcode.screen.detail_package.DetailPackageComponent;
 import com.demo.barcode.screen.detail_package.DetailPackageModule;
 import com.demo.barcode.screen.history_pack.HistoryPackageComponent;
@@ -24,6 +26,8 @@ import com.demo.barcode.screen.login.LoginComponent;
 import com.demo.barcode.screen.login.LoginModule;
 import com.demo.barcode.screen.print_stamp.PrintStempComponent;
 import com.demo.barcode.screen.print_stamp.PrintStempModule;
+import com.demo.barcode.screen.quality_control.QualityControlComponent;
+import com.demo.barcode.screen.quality_control.QualityControlModule;
 import com.demo.barcode.screen.setting.SettingComponent;
 import com.demo.barcode.screen.setting.SettingModule;
 import com.demo.barcode.screen.stages.StagesComponent;
@@ -70,4 +74,7 @@ public interface ApplicationComponent {
 
     ConfirmReceiveComponent plus(ConfirmReceiveModule module);
 
+    QualityControlComponent plus(QualityControlModule module);
+
+    DetailErrorComponent plus(DetailErrorModule module);
 }

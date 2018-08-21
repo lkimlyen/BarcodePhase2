@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.create_packaging;
+package com.demo.barcode.screen.quality_control;
 
 import android.Manifest;
 import android.app.Activity;
@@ -53,10 +53,10 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
  * Created by MSI on 26/11/2017.
  */
 
-public class CreatePackagingFragment extends BaseFragment implements CreatePackagingContract.View {
+public class QualityControlFragment extends BaseFragment implements QualityControlContract.View {
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
-    private final String TAG = CreatePackagingFragment.class.getName();
-    private CreatePackagingContract.Presenter mPresenter;
+    private final String TAG = QualityControlFragment.class.getName();
+    private QualityControlContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
@@ -80,13 +80,13 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
-    public CreatePackagingFragment() {
+    public QualityControlFragment() {
         // Required empty public constructor
     }
 
 
-    public static CreatePackagingFragment newInstance() {
-        CreatePackagingFragment fragment = new CreatePackagingFragment();
+    public static QualityControlFragment newInstance() {
+        QualityControlFragment fragment = new QualityControlFragment();
         return fragment;
     }
 
@@ -118,6 +118,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             } else {
                 isClick = false;
             }
+
 
         }
     }
@@ -158,7 +159,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
 
     @Override
-    public void setPresenter(CreatePackagingContract.Presenter presenter) {
+    public void setPresenter(QualityControlContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 

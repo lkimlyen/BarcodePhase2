@@ -11,23 +11,24 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> implements ListAdapter {
 
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public ScanPackagingAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
+    public ScanPackagingAdapter(OrderedRealmCollection<LogScanPackaging> realmResults, OnItemClearListener listener,
+                                OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
@@ -44,20 +45,19 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implem
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (StagesAdapter.HistoryHolder) convertView.getTag();
+            viewHolder = (HistoryHolder) convertView.getTag();
         }
 
         if (adapterData != null) {
-            final LogScanStages item = adapterData.get(position);
+            final LogScanPackaging item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews(StagesAdapter.HistoryHolder holder, LogScanStages item) {
-        final ProductDetail productDetail = item.getProductDetail();
-        final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
+    private void setDataToViews(HistoryHolder holder, LogScanPackaging item) {
+        final ProductPackagingModel productPackagingModel = item.getProductPackagingModel();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,12 +75,12 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implem
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
                         holder.edtNumberScan.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_number_bigger_zero));
                         return;
 
                     }
-                    if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
-                        onErrorListener.errorListener(item, numberInput, null);
+                    if (numberInput - item.getNumberInput() > productPackagingModel.getNumberRest()) {
+                        onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest));
                         return;
                     }
                     if (numberInput == item.getNumberInput()) {
@@ -94,13 +94,11 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implem
             }
         };
         holder.txtBarcode.setText(item.getBarcode());
-        holder.txtNameDetail.setText(item.getProductDetail().getProductName());
-        holder.txtModule.setText(item.getModule());
-        holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
-        holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(numberInputModel.getNumberSuccess() + "");
+        holder.txtNameDetail.setText(productPackagingModel.getProductName());
+        holder.txtQuantityProduct.setText(productPackagingModel.getNumberTotal() + "");
+        holder.txtQuantityRest.setText(productPackagingModel.getNumberRest() + "");
+        holder.txtQuantityScan.setText(productPackagingModel.getNumberSuccess() + "");
         holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
-
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -143,19 +141,20 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanStages> implem
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
+            txtModule.setVisibility(View.GONE);
         }
 
     }
 
     public interface OnItemClearListener {
-        void onItemClick(LogScanStages item);
+        void onItemClick(LogScanPackaging item);
     }
 
     public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanStages item, int number);
+        void onEditTextChange(LogScanPackaging item, int number);
     }
 
     public interface onErrorListener {
-        void errorListener(LogScanStages item, int number, String message);
+        void errorListener(String message);
     }
 }

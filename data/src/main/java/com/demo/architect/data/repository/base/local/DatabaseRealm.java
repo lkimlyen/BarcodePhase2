@@ -7,11 +7,15 @@ import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.offline.ImageModel;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
@@ -116,7 +120,7 @@ public class DatabaseRealm {
     public int countLogScanStagesWatingUpload(int orderId, int departmentId, int times) {
 
         Realm realm = getRealmInstance();
-        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId,times);
+        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId, times);
         return count;
     }
 
@@ -171,7 +175,7 @@ public class DatabaseRealm {
 
     public ProductDetail getProductDetail(final ProductEntity productEntity) {
         Realm realm = getRealmInstance();
-        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity,userId);
+        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity, userId);
         return productDetail;
 
     }
@@ -252,5 +256,43 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, barcode, orderId, departmentIDOut, times, userId);
         return logScanConfirm;
+    }
+
+    public void addImageModel(final String pathFile) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ImageModel.create(realm, pathFile);
+            }
+        });
+    }
+
+    public void deleteImageModel(final int id) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ImageModel.delete(realm, id);
+            }
+        });
+    }
+
+    public void updateStatusAndServerIdImage(final int id, final int serverId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ImageModel.updateStatusAndServerId(realm, id, serverId);
+            }
+        });
+    }
+
+    public LogListModulePagkaging getListScanPackaging(int orderId, String floor, String module,
+                                                       HashMap<String, String> packList) {
+        Realm realm = getRealmInstance();
+        LogListModulePagkaging logListModulePagkaging = LogScanPackaging.getListScanPackaging(realm,
+                orderId, floor, module, packList);
+        return logListModulePagkaging;
     }
 }

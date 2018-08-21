@@ -3,11 +3,13 @@ package com.demo.architect.data.repository.base.local;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -52,5 +54,15 @@ public interface LocalRepository {
     Observable<String> updateStatusScanStagesByOrder(int orderId);
 
     Observable<String> updateStatusScanStages();
+
+    Observable<String> updateStatusAndServerIdImage(final int id, int serverId);
+
+    Observable<String> addImageModel(final String pathFile);
+
+    Observable<String> deleteImageModel(final int id);
+
+    Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, String floor,
+                                                            String module, HashMap<String, String> packList);
+
 
 }

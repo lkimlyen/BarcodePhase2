@@ -152,6 +152,7 @@
     <string name="text_choose_type_product">Chọn loại hàng</string>
     <string name="text_number_residual" formatted="true">Số lượng nhập vào đã đủ. Bạn có muốn quét lần %d không?</string>
     <string name="text_name_detail">Tên chi tiết</string>
+    <string name="text_name_detail_print">Tên chi tiết:</string>
     <string name="text_name_detail_break">Tên \n chi tiết</string>
     <string name="text_product_not_in_stages">Sản phẩm không đi qua công đoạn này!</string>
     <string name="text_choose_times">Chọn số lần quét hiện tại của chi tiết</string>
@@ -163,6 +164,7 @@
     <string name="text_choose_delivery_department">Chọn bộ phận giao</string>
     <string name="text_number_receive">SL \n nhận</string>
     <string name="text_number_delivery">SL \n giao</string>
+    <string name="text_number_order">SL đơn hàng:</string>
     <string name="text_choose_all">Chọn tất cả</string>
     <string name="text_incomplete">Thiếu</string>
     <string name="text_full">Đủ</string>
@@ -173,6 +175,17 @@
     <string name="text_product_not_in_times">Sản phẩm không có trong lần quét này</string>
     <string name="text_get_list_detail_success">Lấy danh sách chi tiết thành công</string>
     <string name="text_no_data_upload">Không có dữ liệu để tải lên</string>
+    <string name="text_quality_control">QC hàng lỗi</string>
+    <string name="text_department_error">Bộ phận lỗi</string>
+    <string name="text_choose_department_error">Chọn bộ phận lỗi</string>
+    <string name="text_detail_error">Chi tiết lỗi</string>
+    <string name="text_add_success">Thêm hình ảnh thành công!</string>
+    <string name="text_delete_image_success">Xóa hình ảnh thành công</string>
+    <string name="text_delete_image">Bạn có muốn xóa hình ảnh này không?</string>
+    <string name="text_image">Hình ảnh</string>
+    <string name="text_add_image">Thêm ảnh</string>
+    <string name="text_pick_picture">Chọn hình ảnh</string>
+    <string name="text_take_picture">Chụp ảnh</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

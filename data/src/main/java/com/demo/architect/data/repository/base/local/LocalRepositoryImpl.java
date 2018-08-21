@@ -5,11 +5,13 @@ import android.content.Context;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -210,7 +212,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super RealmResults<LogScanConfirm>> subscriber) {
                 try {
-                    RealmResults<LogScanConfirm> realmList = databaseRealm.getListConfirm(orderId,departmentIdOut,times);
+                    RealmResults<LogScanConfirm> realmList = databaseRealm.getListConfirm(orderId, departmentIdOut, times);
                     subscriber.onNext(realmList);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -226,7 +228,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                   int count = databaseRealm.countListConfirmByTimesWaitingUpload(orderId,departmentIdOut,times);
+                    int count = databaseRealm.countListConfirmByTimesWaitingUpload(orderId, departmentIdOut, times);
                     subscriber.onNext(count);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -258,7 +260,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super LogScanConfirm> subscriber) {
                 try {
-                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(barcode,orderId, departmentIdOut,
+                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(barcode, orderId, departmentIdOut,
                             times);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -270,14 +272,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-
     @Override
-    public Observable<String> updateNumnberLogConfirm(final int orderId,final int orderProductId, final int departmentIdOut, final int times, final int numberScan,final boolean scan) {
+    public Observable<String> updateNumnberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                   databaseRealm.updateNumberLogConfirm(orderId,orderProductId,departmentIdOut,times, numberScan,scan);
+                    databaseRealm.updateNumberLogConfirm(orderId, orderProductId, departmentIdOut, times, numberScan, scan);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -327,6 +328,71 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     databaseRealm.updateStatusScanStages();
                     subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusAndServerIdImage(final int id, final int serverId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusAndServerIdImage(id, serverId);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addImageModel(final String pathFile) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addImageModel(pathFile);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteImageModel(final int id) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteImageModel(id);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final String floor, final String module, final HashMap<String, String> packList) {
+        return Observable.create(new Observable.OnSubscribe<LogListModulePagkaging>() {
+            @Override
+            public void call(Subscriber<? super LogListModulePagkaging> subscriber) {
+                try {
+                    LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
+                            floor,module,packList);
+                    subscriber.onNext(logListModulePagkaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

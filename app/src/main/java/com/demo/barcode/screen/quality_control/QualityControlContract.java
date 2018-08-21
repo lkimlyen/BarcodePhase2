@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.create_packaging;
+package com.demo.barcode.screen.quality_control;
 
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
@@ -7,7 +7,7 @@ import com.demo.barcode.app.base.BaseView;
  * Created by MSI on 26/11/2017.
  */
 
-public interface CreatePackagingContract {
+public interface QualityControlContract {
     interface View extends BaseView<Presenter> {
         void showError(String message);
 
@@ -22,15 +22,6 @@ public interface CreatePackagingContract {
 
     interface Presenter extends BasePresenter {
 
-        void getListSO(int orderType);
-
-        void getListDetail(int orderId);
-
-        void getListFloor(int orderId);
-
-        void getListModule(int orderId);
-
-        void getListScan(int orderId, int floor, int module);
 
     }
 }

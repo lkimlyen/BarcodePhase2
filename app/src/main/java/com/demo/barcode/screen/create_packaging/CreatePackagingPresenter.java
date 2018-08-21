@@ -41,4 +41,28 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
 
+    @Override
+    public void getListSO(int orderType) {
+
+    }
+
+    @Override
+    public void getListDetail(int orderId) {
+
+    }
+
+    @Override
+    public void getListFloor(int orderId) {
+
+    }
+
+    @Override
+    public void getListModule(int orderId) {
+
+    }
+
+    @Override
+    public void getListScan(int orderId, int floor, int module) {
+
+    }
 }

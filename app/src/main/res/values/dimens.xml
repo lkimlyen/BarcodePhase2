@@ -28,4 +28,6 @@
     <dimen name="distance_14dp">14dp</dimen>
     <dimen name="distance_35dp">35dp</dimen>
     <dimen name="distance_2dp">2dp</dimen>
+    <dimen name="size_65dp">65dp</dimen>
+    <dimen name="size_30dp">30dp</dimen>
 </resources>
