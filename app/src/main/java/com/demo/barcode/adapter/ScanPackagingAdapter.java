@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
@@ -117,6 +119,12 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                 listener.onItemClick(item);
             }
         });
+        if (item.getStatus() == Constants.FULL){
+            holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
+        }else {
+            holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
+        }
+
 
     }
 
@@ -130,6 +138,8 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         TextView txtQuantityRest;
         TextView txtQuantityScan;
         EditText edtNumberScan;
+        LinearLayout layoutMain;
+
 
         private HistoryHolder(View v) {
             super(v);
@@ -142,6 +152,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
             txtModule.setVisibility(View.GONE);
+            layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
         }
 
     }

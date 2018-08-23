@@ -3,11 +3,14 @@ package com.demo.architect.data.repository.base.local;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductPackagingModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +43,10 @@ public interface LocalRepository {
     Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
 
     Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut, final int times);
-    Observable<Integer>  countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times);
+
+    Observable<Integer> countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times);
 
     Observable<List<LogScanConfirm>> getListLogScanConfirm();
-
 
     Observable<LogScanConfirm> findConfirmByBarcode(final int orderId, int departmentIdOut, int times, final String barcode);
 
@@ -64,5 +67,21 @@ public interface LocalRepository {
     Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, String floor,
                                                             String module, HashMap<String, String> packList);
 
+    Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, String floor,
+                                                            String module);
 
+
+    Observable<String> saveBarcodeScanPackaging(ProductPackagingEntity entity,
+                                                int orderId, String floor, String module,
+                                                String barcode);
+
+    Observable<String> deleteScanPackaging(int logId);
+
+    Observable<String> updateNumberScanPackaging(int logId, int number);
+
+    Observable<ProductPackagingModel> findProductPackaging(int productId);
+
+    Observable<LogListOrderPackaging> findOrderPackaging(int orderId);
+
+    Observable<Integer> getTotalScanBySerialPack(int logId);
 }

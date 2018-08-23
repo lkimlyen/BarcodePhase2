@@ -4,5 +4,5 @@
     android:toDegrees="90"
     android:pivotX="50%"
     android:pivotY="50%"
-    android:drawable="@drawable/arrow_yellow">
+    android:drawable="@drawable/arrow_blue">
 </rotate>

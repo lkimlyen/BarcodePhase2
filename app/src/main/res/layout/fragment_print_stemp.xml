@@ -58,26 +58,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/distance_8dp"
             android:background="@android:color/white"
-            android:orientation="vertical">
-
+            android:orientation="vertical"
+            android:padding="@dimen/distance_8dp">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:weightSum="5"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:weightSum="5">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
                     android:text="@string/text_code_so"
                     android:textColor="@android:color/black"
-                    android:layout_weight="1.5"
                     android:textSize="@dimen/text_16sp"
                     android:textStyle="bold" />
 
@@ -85,8 +84,8 @@
                     android:id="@+id/txt_code_so"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_16sp"
-                    android:layout_weight="3.5"/>
+                    android:layout_weight="3.5"
+                    android:textSize="@dimen/text_16sp" />
 
             </LinearLayout>
 
@@ -94,50 +93,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:weightSum="5"
-                android:gravity="center_vertical">
+                android:weightSum="5">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
                     android:text="@string/text_customer_name"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/text_16sp"
-                    android:layout_weight="1.5"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txt_customer_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_16sp"
-                    android:layout_weight="3.5"/>
+                    android:layout_weight="3.5"
+                    android:textSize="@dimen/text_16sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:weightSum="5"
-                android:gravity="center_vertical">
+                android:weightSum="5">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
                     android:text="@string/text_floor_or_apartment"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/text_16sp"
-                    android:layout_weight="1.5"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txt_floor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_16sp"
-                    android:layout_weight="3.5"/>
+                    android:layout_weight="3.5"
+                    android:textSize="@dimen/text_16sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -158,43 +159,45 @@
                 <com.demo.barcode.widgets.spinner.SearchableSpinner
                     android:id="@+id/ss_serial_package"
                     android:layout_width="0dp"
-                    app:hintText="@string/text_choose_serial_package"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3.5" />
+                    android:layout_weight="3.5"
+                    app:hintText="@string/text_choose_serial_package" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="1"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
+
                 <Button
                     android:id="@+id/btn_save"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_40dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textAllCaps="false"
                     android:layout_weight="0"
                     android:background="@drawable/bg_button_blue_small"
+                    android:gravity="center"
                     android:text="@string/tex_print_stemp"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                >
+                android:layout_margin="5dp">
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -217,15 +220,17 @@
                         android:text="Mã Màu"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
                         android:orientation="vertical">
+
                         <LinearLayout
-                            android:layout_gravity="center"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:background="@android:color/white"
                             android:orientation="vertical">
 
@@ -238,16 +243,17 @@
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/white"
                             android:orientation="vertical">
+
                             <TableLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="11dp"
-                                >
+                                android:layout_marginBottom="11dp">
 
                                 <TableRow
                                     android:layout_width="match_parent"
@@ -262,6 +268,7 @@
                                         android:text="STT"
                                         android:textColor="@android:color/black"
                                         android:textStyle="bold" />
+
                                     <TextView
                                         android:id="@+id/txt4"
                                         android:ellipsize="none"
@@ -269,6 +276,7 @@
                                         android:text="STT"
                                         android:textColor="@android:color/black"
                                         android:textStyle="bold" />
+
                                     <TextView
                                         android:id="@+id/txt5"
                                         android:ellipsize="none"
@@ -289,6 +297,7 @@
                         android:text="Mã Màu"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/txt7"
                         android:ellipsize="none"
@@ -296,6 +305,7 @@
                         android:text="Mã Màu"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/txt8"
                         android:ellipsize="none"
@@ -315,8 +325,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#E6E6FA">
-    </ListView>
+        android:background="#E6E6FA"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -333,11 +342,9 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_gravity="center"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:text="@string/text_total"
@@ -353,7 +360,6 @@
 
 
                 <TextView
-                    android:layout_gravity="center"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:text="@string/text_code_pack"
@@ -372,8 +378,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
+
                 <TextView
-                    android:layout_gravity="center"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:text="@string/text_serial_module_print"
@@ -386,8 +392,8 @@
                     android:scrollHorizontally="false"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
+
                 <TextView
-                    android:layout_gravity="center"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:text="@string/text_serial_pack"
@@ -408,7 +414,6 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_gravity="center"
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
                     android:text="@string/text_date_print"

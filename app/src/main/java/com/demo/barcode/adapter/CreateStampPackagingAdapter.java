@@ -14,10 +14,8 @@ import android.widget.TextView;
 
 
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
-import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 
@@ -28,12 +26,18 @@ import com.demo.barcode.widgets.AnimatedExpandableListView;
 public class CreateStampPackagingAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
     private Context context;
     private LogListModulePagkaging list;
+    private OnEditTextChangeListener listener;
+    private OnItemClearListener onItemClearListener;
+    private onErrorListener onErrorListener;
     private boolean open = false;
     private int positionChoose;
 
-    public CreateStampPackagingAdapter(Context context, LogListModulePagkaging list) {
+    public CreateStampPackagingAdapter(Context context, LogListModulePagkaging list, OnEditTextChangeListener listener, OnItemClearListener onItemClearListener, CreateStampPackagingAdapter.onErrorListener onErrorListener) {
         this.context = context;
         this.list = list;
+        this.listener = listener;
+        this.onItemClearListener = onItemClearListener;
+        this.onErrorListener = onErrorListener;
     }
 
     public void setOpen(boolean open, int position) {
@@ -67,16 +71,17 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
                 new ScanPackagingAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
-
+                        onItemClearListener.onItemClick(item);
                     }
                 }, new ScanPackagingAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
-
+                listener.onEditTextChange(item, number);
             }
         }, new ScanPackagingAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
+                onErrorListener.errorListener(message);
 
             }
         });
@@ -156,4 +161,16 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
         return true;
     }
 
+
+    public interface OnItemClearListener {
+        void onItemClick(LogScanPackaging item);
+    }
+
+    public interface OnEditTextChangeListener {
+        void onEditTextChange(LogScanPackaging item, int number);
+    }
+
+    public interface onErrorListener {
+        void errorListener(String message);
+    }
 }

@@ -10,6 +10,7 @@ import io.realm.annotations.PrimaryKey;
 public class LogListSerialPackPagkaging extends RealmObject {
     @PrimaryKey
     private int id;
+
     private String serialPack;
     private String codeProduct;
     private int status;
@@ -88,5 +89,17 @@ public class LogListSerialPackPagkaging extends RealmObject {
 
     public void setCodeProduct(String codeProduct) {
         this.codeProduct = codeProduct;
+    }
+
+    @Override
+    public String toString() {
+        return serialPack;
+    }
+
+    public static int getTotalScan(Realm realm,int logId) {
+        LogListSerialPackPagkaging log = realm.where(LogListSerialPackPagkaging.class)
+                .equalTo("id",logId).findFirst();
+        int   sum     = log.getList().sum("age").intValue();
+        return sum;
     }
 }

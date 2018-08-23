@@ -5,11 +5,14 @@ import android.content.Context;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductPackagingModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -393,6 +396,121 @@ public class LocalRepositoryImpl implements LocalRepository {
                     LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
                             floor,module,packList);
                     subscriber.onNext(logListModulePagkaging);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final String floor, final String module) {
+        return Observable.create(new Observable.OnSubscribe<LogListModulePagkaging>() {
+            @Override
+            public void call(Subscriber<? super LogListModulePagkaging> subscriber) {
+                try {
+                    LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
+                            floor,module);
+                    subscriber.onNext(logListModulePagkaging);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> saveBarcodeScanPackaging(final ProductPackagingEntity entity,
+                                                       final int orderId, final String floor, final String module,
+                                                       final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addBarcodeScanPackaging(entity,orderId,floor,module,barcode);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteScanPackaging(final int logId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteScanPackaging(logId);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateNumberScanPackaging(final int logId, final int number) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateNumberScanPackaging(logId, number);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ProductPackagingModel> findProductPackaging(final int productId) {
+        return Observable.create(new Observable.OnSubscribe<ProductPackagingModel>() {
+            @Override
+            public void call(Subscriber<? super ProductPackagingModel> subscriber) {
+                try {
+                    ProductPackagingModel model =  databaseRealm.findProductPackaging(productId);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<LogListOrderPackaging> findOrderPackaging(final int orderId) {
+        return Observable.create(new Observable.OnSubscribe<LogListOrderPackaging>() {
+            @Override
+            public void call(Subscriber<? super LogListOrderPackaging> subscriber) {
+                try {
+                    LogListOrderPackaging model =  databaseRealm.findOrderPackaging(orderId);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Integer> getTotalScanBySerialPack(final int logId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                    int total =  databaseRealm.getTotalScanBySerialPack(logId);
+                    subscriber.onNext(total);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

@@ -72,11 +72,14 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
+                    if (numberInput > item.getNumberScanOut()){
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                        return;
+                    }
                     if (numberInput == item.getNumberConfirmed()) {
                         return;
                     }
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
-
 
                 } catch (Exception e) {
 
@@ -96,9 +99,6 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
             case Constants.INCOMPLETE:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_incomplete));
                 holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
-                break;
-            case Constants.RESIDUAL:
-                holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_residual));
                 break;
             default:
                 holder.txtStatus.setText("");

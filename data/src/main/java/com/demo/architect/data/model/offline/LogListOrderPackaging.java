@@ -8,14 +8,20 @@ import io.realm.annotations.PrimaryKey;
 public class LogListOrderPackaging extends RealmObject {
     @PrimaryKey
     private int orderId;
+
+
+    private String codeSO;
+    private String customerName;
     @SuppressWarnings("unused")
     private RealmList<LogListFloorPagkaging> list;
 
     public LogListOrderPackaging() {
     }
 
-    public LogListOrderPackaging(int orderId) {
+    public LogListOrderPackaging(int orderId, String codeSO, String customerName) {
         this.orderId = orderId;
+        this.codeSO = codeSO;
+        this.customerName = customerName;
     }
 
     public int getOrderId() {
@@ -26,9 +32,31 @@ public class LogListOrderPackaging extends RealmObject {
         return list;
     }
 
-    public static LogListOrderPackaging create(Realm realm, int orderId) {
-        LogListOrderPackaging logListOrderPackaging = new LogListOrderPackaging(orderId);
+    public static LogListOrderPackaging create(Realm realm, int orderId, String codeSO, String customerName) {
+        LogListOrderPackaging logListOrderPackaging = new LogListOrderPackaging(orderId, codeSO, customerName);
         logListOrderPackaging = realm.copyToRealm(logListOrderPackaging);
+        return logListOrderPackaging;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCodeSO() {
+        return codeSO;
+    }
+
+    public void setCodeSO(String codeSO) {
+        this.codeSO = codeSO;
+    }
+
+    public static LogListOrderPackaging findOrderPackaging(Realm realm, int orderId) {
+        LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
+                .equalTo("orderId", orderId).findFirst();
         return logListOrderPackaging;
     }
 }

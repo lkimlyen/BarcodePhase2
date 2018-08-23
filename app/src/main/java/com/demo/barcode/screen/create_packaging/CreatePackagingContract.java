@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.create_packaging;
 
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -18,6 +19,8 @@ public interface CreatePackagingContract {
         void startMusicSuccess();
 
         void turnOnVibrator();
+
+        void showListScan(LogListModulePagkaging logListModulePagkaging);
     }
 
     interface Presenter extends BasePresenter {
@@ -30,7 +33,13 @@ public interface CreatePackagingContract {
 
         void getListModule(int orderId);
 
-        void getListScan(int orderId, int floor, int module);
+        void getListScan(int orderId, String floor, String module);
+
+        void deleteLogScan(int id);
+
+        void updateNumberScan(int id, int number);
+
+        void checkBarcode(String barcode,int orderId, String floor, String module);
 
     }
 }
