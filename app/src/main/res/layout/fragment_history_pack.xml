@@ -67,17 +67,70 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/text_request_produce"
+                android:layout_weight="1.5"
+                android:text="@string/text_code_so"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
             <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_produce"
+                android:id="@+id/ss_code_so"
+                android:layout_width="0dp"
+                app:hintText="@string/text_choose_code_so"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4" />
+                android:layout_weight="1.5"
+                android:text="@string/text_customer_name"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_customer_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                android:textSize="@dimen/text_16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_floor_or_apartment"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_floor"
+                android:layout_width="0dp"
+                app:hintText="@string/text_choose_floor"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5" />
 
         </LinearLayout>
 
@@ -92,21 +145,20 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/text_code_so"
+                android:layout_weight="1.5"
+                android:text="@string/text_serial_module"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/txt_code_so"
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_serial_module"
                 android:layout_width="0dp"
+                app:hintText="@string/text_choose_serial_module"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:textSize="@dimen/text_16sp" />
+                android:layout_weight="3.5" />
 
         </LinearLayout>
-
         <Button
             android:id="@+id/btn_search"
             android:layout_width="match_parent"
