@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
@@ -67,7 +68,7 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
             convertView = infalInflater.inflate(R.layout.item_content, null);
         }
 
-        ScanPackagingAdapter adapter = new ScanPackagingAdapter(listScan.getList(),
+        ScanPackagingAdapter adapter = new ScanPackagingAdapter(listScan.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll(),
                 new ScanPackagingAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
@@ -89,9 +90,6 @@ public class CreateStampPackagingAdapter extends AnimatedExpandableListView.Anim
                 .findViewById(R.id.lv_scan);
 
         lvScan.setAdapter(adapter);
-
-//        TextView txtListChild = (TextView) convertView
-//                .findViewById(R.id.txt_answer);
         return convertView;
     }
 

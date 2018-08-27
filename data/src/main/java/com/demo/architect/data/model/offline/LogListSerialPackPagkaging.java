@@ -13,18 +13,16 @@ public class LogListSerialPackPagkaging extends RealmObject {
 
     private String serialPack;
     private String codeProduct;
-    private int status;
     @SuppressWarnings("unused")
     private RealmList<LogScanPackaging> list;
 
     public LogListSerialPackPagkaging() {
     }
 
-    public LogListSerialPackPagkaging(int id, String serialPack, String codeProduct, int status) {
+    public LogListSerialPackPagkaging(int id, String serialPack, String codeProduct) {
         this.id = id;
         this.serialPack = serialPack;
         this.codeProduct = codeProduct;
-        this.status = status;
     }
 
 
@@ -37,7 +35,7 @@ public class LogListSerialPackPagkaging extends RealmObject {
     }
 
     public static LogListSerialPackPagkaging create(Realm realm, String codeProduct, String module) {
-        LogListSerialPackPagkaging log = new LogListSerialPackPagkaging(id(realm) + 1, module, codeProduct, Constants.WAITING_UPLOAD);
+        LogListSerialPackPagkaging log = new LogListSerialPackPagkaging(id(realm) + 1, module, codeProduct);
         log = realm.copyToRealm(log);
         return log;
     }
@@ -57,14 +55,6 @@ public class LogListSerialPackPagkaging extends RealmObject {
 
     public void setModule(String module) {
         this.serialPack = module;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public RealmList<LogScanPackaging> getList() {

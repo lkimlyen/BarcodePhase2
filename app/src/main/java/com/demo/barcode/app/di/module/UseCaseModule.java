@@ -8,11 +8,14 @@ import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
+import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
+import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
+import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
@@ -82,5 +85,19 @@ public class UseCaseModule {
         return new GetInputForProductDetailUsecase(productRepository);
     }
 
+    @Provides
+    GroupProductDetailUsecase provideGroupProductDetailUsecase(ProductRepository productRepository) {
+        return new GroupProductDetailUsecase(productRepository);
+    }
+
+    @Provides
+    DeactiveProductDetailGroupUsecase provideDeactiveProductDetailGroupUsecase(ProductRepository productRepository) {
+        return new DeactiveProductDetailGroupUsecase(productRepository);
+    }
+
+    @Provides
+    GetListProductDetailGroupUsecase provideGetListProductDetailGroupUsecase(ProductRepository productRepository) {
+        return new GetListProductDetailGroupUsecase(productRepository);
+    }
 }
 

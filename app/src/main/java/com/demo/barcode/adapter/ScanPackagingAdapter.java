@@ -14,8 +14,6 @@ import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.offline.LogScanPackaging;
-import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -119,7 +117,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                 listener.onItemClick(item);
             }
         });
-        if (item.getStatus() == Constants.FULL){
+        if (item.getStatusScan() == Constants.FULL){
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
         }else {
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
