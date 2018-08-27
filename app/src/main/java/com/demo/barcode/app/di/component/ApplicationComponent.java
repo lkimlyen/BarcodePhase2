@@ -20,6 +20,8 @@ import com.demo.barcode.screen.detail_error.DetailErrorComponent;
 import com.demo.barcode.screen.detail_error.DetailErrorModule;
 import com.demo.barcode.screen.detail_package.DetailPackageComponent;
 import com.demo.barcode.screen.detail_package.DetailPackageModule;
+import com.demo.barcode.screen.group_code.GroupCodeComponent;
+import com.demo.barcode.screen.group_code.GroupCodeModule;
 import com.demo.barcode.screen.history_pack.HistoryPackageComponent;
 import com.demo.barcode.screen.history_pack.HistoryPackageModule;
 import com.demo.barcode.screen.login.LoginComponent;
@@ -77,4 +79,6 @@ public interface ApplicationComponent {
     QualityControlComponent plus(QualityControlModule module);
 
     DetailErrorComponent plus(DetailErrorModule module);
+
+    GroupCodeComponent plus(GroupCodeModule module);
 }

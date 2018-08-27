@@ -8,7 +8,9 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
@@ -175,6 +177,18 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId, times);
         return logListScanStages;
+    }
+
+    public RealmResults<LogScanStages> getListScanStagesByModule(int orderId, int departmentId, int times, String module) {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanStages> logListScanStages = LogListScanStages.getListScanStagesByModule(realm, orderId, departmentId, userId, times, module);
+        return logListScanStages;
+    }
+
+    public RealmResults<ListGroupCode> getListGroupCodeByModule(int orderId, int departmentId, int times, String module) {
+        Realm realm = getRealmInstance();
+        RealmResults<ListGroupCode> results = LogListScanStages.getListGroupCodeByModule(realm, orderId, departmentId, userId, times, module);
+        return results;
     }
 
     public ProductDetail getProductDetail(final ProductEntity productEntity) {

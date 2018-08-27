@@ -87,7 +87,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
 
-
     @Bind(R.id.ss_receiving_department)
     SearchableSpinner ssDepartment;
 
@@ -451,7 +450,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity,barcode,departmentId);
+                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity, barcode, departmentId);
                         sweetAlertDialog.dismiss();
 
                     }
@@ -705,5 +704,29 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         integrator.setBarcodeImageEnabled(true);
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
+    }
+
+    @OnClick(R.id.btn_group_code)
+    public void groupCode() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_group_code_scan))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
+
     }
 }

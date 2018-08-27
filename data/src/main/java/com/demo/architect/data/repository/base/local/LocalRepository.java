@@ -4,6 +4,8 @@ import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
@@ -29,6 +31,11 @@ public interface LocalRepository {
     Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId);
 
     Observable<List<LogScanStages>> getListLogScanStagesUpdate();
+
+    Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module);
+
+    Observable<RealmResults<ListGroupCode>> getListGroupCode(final int orderId, final int departmentIdOut, final int times, final String module);
+
 
     Observable<String> addLogScanStagesAsync(final LogScanStages model);
 

@@ -30,4 +30,5 @@
     <dimen name="distance_2dp">2dp</dimen>
     <dimen name="size_65dp">65dp</dimen>
     <dimen name="size_30dp">30dp</dimen>
+    <dimen name="size_70dp">70dp</dimen>
 </resources>

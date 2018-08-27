@@ -6,6 +6,8 @@ import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
@@ -103,6 +105,40 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super List<LogScanStages>> subscriber) {
                 try {
                     List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload();
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStages>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
+                try {
+                    RealmResults<LogScanStages> list = databaseRealm.getListScanStagesByModule(orderId,
+                            departmentIdOut,times,module);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<ListGroupCode>> getListGroupCode(final int orderId, final int departmentIdOut, final int times, final String module) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<ListGroupCode>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<ListGroupCode>> subscriber) {
+                try {
+                    RealmResults<ListGroupCode> list = databaseRealm.getListGroupCodeByModule(orderId,
+                            departmentIdOut,times,module);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {

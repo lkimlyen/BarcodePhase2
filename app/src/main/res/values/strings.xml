@@ -186,6 +186,10 @@
     <string name="text_add_image">Thêm ảnh</string>
     <string name="text_pick_picture">Chọn hình ảnh</string>
     <string name="text_take_picture">Chụp ảnh</string>
+    <string name="text_group_code">Gộp mã</string>
+    <string name="text_group_code_scan">Bạn có muốn gộp mã không?</string>
+    <string name="text_number">Số lượng</string>
+    <string name="text_all">All</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
