@@ -602,5 +602,21 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<String> removeItemInGroup(final ListGroupCode groupCode, final LogScanStages logScanStages, final int orderId, final int departmentId, final int times) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.removeItemInGroup(groupCode,logScanStages,orderId,departmentId,times);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 
 }

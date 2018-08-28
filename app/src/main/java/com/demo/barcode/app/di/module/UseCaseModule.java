@@ -18,6 +18,7 @@ import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
+import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
 
@@ -98,6 +99,11 @@ public class UseCaseModule {
     @Provides
     GetListProductDetailGroupUsecase provideGetListProductDetailGroupUsecase(ProductRepository productRepository) {
         return new GetListProductDetailGroupUsecase(productRepository);
+    }
+
+    @Provides
+    UpdateProductDetailGroupUsecase provideUpdateProductDetailGroupUsecase(ProductRepository productRepository) {
+        return new UpdateProductDetailGroupUsecase(productRepository);
     }
 }
 

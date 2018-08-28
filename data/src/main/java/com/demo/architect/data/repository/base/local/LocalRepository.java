@@ -97,4 +97,6 @@ public interface LocalRepository {
     Observable<String> updateNumberGroup(int logId, int numberGroup);
 
     Observable<String> detachedCodeStages(int orderId, int departmentId, int times, ListGroupCode list);
+
+    Observable<String> removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages,int orderId, int departmentId, int times);
 }

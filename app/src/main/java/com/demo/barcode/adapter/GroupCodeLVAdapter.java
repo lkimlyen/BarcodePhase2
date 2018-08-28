@@ -88,12 +88,12 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
                         holder.edtNumberGroup.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
                     if (numberInput > item.getNumberInput()) {
-                        onErrorListener.errorListener(item, numberInput, null);
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_number_scan).toString());
                         return;
                     }
                     if (numberInput == item.getNumberGroup()) {
@@ -162,6 +162,6 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
     }
 
     public interface onErrorListener {
-        void errorListener(LogScanStages item, int number, String message);
+        void errorListener(String message);
     }
 }

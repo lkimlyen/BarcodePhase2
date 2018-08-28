@@ -404,4 +404,14 @@ public class DatabaseRealm {
             }
         });
     }
+
+    public void removeItemInGroup(final ListGroupCode groupCode, final LogScanStages logScanStages, final int orderId, final int departmentId, final int times) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.removeItemInGroup(realm,groupCode,logScanStages,orderId,departmentId,times,userId);
+            }
+        });
+    }
 }

@@ -47,5 +47,7 @@ public interface GroupCodeContract {
 
         void detachedCode(int orderId, int departmentId, int times, ListGroupCode list);
 
+        void removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages,int orderId, int departmentId, int times);
+
     }
 }

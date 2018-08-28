@@ -246,5 +246,41 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
         );
     }
 
+    @Override
+    public void removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages,int orderId, int departmentId, int times) {
+        view.showProgressBar();
+        List<GroupCodeEntity> groupCodeList = new ArrayList<>();
+        GroupCodeEntity groupCodeEntity = new GroupCodeEntity(logScanStages.getOrderId(), logScanStages.getProductDetailId(),
+                logScanStages.getNumberGroup(), logScanStages.getUserId());
+        groupCodeList.add(groupCodeEntity);
+        Gson gson = new Gson();
+        String json = gson.toJson(groupCodeList);
+        UserEntity user = UserManager.getInstance().getUser();
+        updateProductDetailGroupUsecase.executeIO(
+                new UpdateProductDetailGroupUsecase.RequestValue(groupCode.getGroupCode(), null,
+                        null, json, user.getId()),
+                new BaseUseCase.UseCaseCallback<UpdateProductDetailGroupUsecase.ResponseValue,
+                        UpdateProductDetailGroupUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(UpdateProductDetailGroupUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        localRepository.removeItemInGroup(groupCode, logScanStages,orderId,departmentId,times)
+                                .subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_remove_item_in_group_code_success));
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(UpdateProductDetailGroupUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                }
+        );
+    }
+
 
 }

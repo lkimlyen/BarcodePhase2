@@ -174,11 +174,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         lvAdapter = new GroupCodeLVAdapter(results, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
-
+                mPresenter.updateNumberGroup(item.getId(), number);
             }
         }, new GroupCodeLVAdapter.onErrorListener() {
             @Override
-            public void errorListener(LogScanStages item, int number, String message) {
+            public void errorListener(String message) {
 
             }
         });
@@ -190,6 +190,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         adapter = new GroupCodeAdapter(getContext(), groupCodes, new GroupCodeAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(ListGroupCode groupCode, LogScanStages item) {
+
 
             }
         });

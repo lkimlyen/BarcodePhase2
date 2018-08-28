@@ -197,6 +197,8 @@
     <string name="text_update_number_group_success">Cập nhật số lượng gộp thành công</string>
     <string name="text_detached_code">Tách mã</string>
     <string name="text_detached_code_success">Tách mã thành công</string>
+    <string name="text_remove_item_in_group_code_success">Xoá sản phẩm trong nhóm thành công</string>
+    <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng đã quét</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
