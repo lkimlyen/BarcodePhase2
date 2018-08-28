@@ -8,23 +8,13 @@ import com.google.gson.annotations.Expose;
 
 public class UploadEntity {
     @Expose
-    private Data data;
+    private int ImageID;
 
-    public Data getData() {
-        return data;
+    public int getImageID() {
+        return ImageID;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public void setImageID(int imageID) {
+        ImageID = imageID;
     }
-
-    public String getImageUrl() {
-        return data != null ? data.link : "";
-    }
-
-    private class Data {
-        @Expose
-        private String link;
-    }
-
 }

@@ -34,6 +34,16 @@ public interface ProductApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseResponse> deactiveProductDetailGroup(@Url String url, @Field("pKey") String key,
-                                                  @Field("pGroupCode") String groupCode);
+                                                  @Field("pGroupCode") String groupCode,
+                                                  @Field("pUserID") int userId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> updateProductDetailGroup(@Url String url, @Field("pKey") String key,
+                                                  @Field("pGroupCode") String groupCode,
+                                                @Field("pJsonNew") String jsonNew,
+                                                @Field("pJsonUpdate") String jsonUpdate,
+                                                @Field("pJsonDelete") String jsonDelete,
+                                                @Field("pUserID") int userId);
 
 }

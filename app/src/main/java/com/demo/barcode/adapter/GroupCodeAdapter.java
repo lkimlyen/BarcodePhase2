@@ -7,48 +7,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import io.realm.RealmResults;
 
 public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
     private Context context;
     private RealmResults<ListGroupCode> list;
-    private CreateStampPackagingAdapter.OnEditTextChangeListener listener;
-    private CreateStampPackagingAdapter.OnItemClearListener onItemClearListener;
-    private CreateStampPackagingAdapter.onErrorListener onErrorListener;
-    private boolean open = false;
-    private int positionChoose;
+    private Set<ListGroupCode> countersToSelect = new HashSet<ListGroupCode>();
+    private ListGroupCode ListGroupCodeSelect = null;
 
-    public GroupCodeAdapter(Context context, RealmResults<ListGroupCode> list, CreateStampPackagingAdapter.OnEditTextChangeListener listener, CreateStampPackagingAdapter.OnItemClearListener onItemClearListener, CreateStampPackagingAdapter.onErrorListener onErrorListener) {
-        this.context = context;
-        this.list = list;
-        this.listener = listener;
-        this.onItemClearListener = onItemClearListener;
-        this.onErrorListener = onErrorListener;
+
+    public ListGroupCode getListGroupCodeSelect() {
+        return ListGroupCodeSelect;
     }
 
-    public void setOpen(boolean open, int position) {
-        this.open = open;
-        this.positionChoose = position;
+    private OnItemClearListener onItemClearListener;
+
+    public GroupCodeAdapter(Context context, RealmResults<ListGroupCode> list, OnItemClearListener onItemClearListener) {
+        this.context = context;
+        this.list = list;
+        this.onItemClearListener = onItemClearListener;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this.list.get(groupPosition).getGroupCodeList().get(childPosititon);
+        return this.list.get(groupPosition).getList().get(childPosititon);
     }
 
     @Override
@@ -68,21 +65,10 @@ public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpanda
             convertView = infalInflater.inflate(R.layout.item_group_code_content, null);
         }
 
-        GroupCodeContentAdapter adapter = new GroupCodeContentAdapter(listScan.getGroupCodeList(),
-                new GroupCodeContentAdapter.OnItemClearListener() {
-                    @Override
-                    public void onItemClick(LogScanStages item) {
-
-                    }
-                }, new GroupCodeContentAdapter.OnEditTextChangeListener() {
+        GroupCodeContentAdapter adapter = new GroupCodeContentAdapter(listScan.getList(), new GroupCodeContentAdapter.OnRemoveListener() {
             @Override
-            public void onEditTextChange(LogScanStages item, int number) {
-
-            }
-        }, new GroupCodeContentAdapter.onErrorListener() {
-            @Override
-            public void errorListener(LogScanStages item, int number, String message) {
-
+            public void onRemove(LogScanStages item) {
+                onItemClearListener.onItemClick(listScan,item);
             }
         });
         ListView lvScan = (ListView) convertView
@@ -94,7 +80,7 @@ public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpanda
 
     @Override
     public int getRealChildrenCount(int groupPosition) {
-        return this.list.get(groupPosition).getGroupCodeList()
+        return this.list.get(groupPosition).getList()
                 .size();
     }
 
@@ -116,7 +102,7 @@ public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpanda
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = ((ListGroupCode) getGroup(groupPosition)).getGroupCode();
+        ListGroupCode listGroupCode = ((ListGroupCode) getGroup(groupPosition));
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -143,7 +129,21 @@ public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpanda
         TextView txtHeader = (TextView) convertView
                 .findViewById(R.id.txt_serial_pack);
         txtHeader.setTypeface(null, Typeface.NORMAL);
-        txtHeader.setText(headerTitle);
+        txtHeader.setText(listGroupCode.getGroupCode());
+
+        CheckBox cbSelect = (CheckBox) convertView.findViewById(R.id.cb_select);
+        RadioButton rbSelect = (RadioButton) convertView.findViewById(R.id.rb_select);
+        rbSelect.setVisibility(View.VISIBLE);
+        cbSelect.setVisibility(View.GONE);
+        rbSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListGroupCodeSelect = listGroupCode;
+            }
+        });
+        rbSelect.setChecked(ListGroupCodeSelect.equals(listGroupCode));
+
+
         return convertView;
     }
 
@@ -159,14 +159,7 @@ public class GroupCodeAdapter extends AnimatedExpandableListView.AnimatedExpanda
 
 
     public interface OnItemClearListener {
-        void onItemClick(LogScanPackaging item);
+        void onItemClick(ListGroupCode groupCode,LogScanStages item);
     }
 
-    public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanPackaging item, int number);
-    }
-
-    public interface onErrorListener {
-        void errorListener(String message);
-    }
 }

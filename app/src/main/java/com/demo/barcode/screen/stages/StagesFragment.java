@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
@@ -54,6 +55,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -507,6 +510,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
+    @Override
+    public void showGroupCode(RealmList<ListGroupCode> list) {
+
+    }
+
     @OnClick(R.id.ic_refresh)
     public void refresh() {
 //        if (mPresenter.countListScan(orderId) > 0) {
@@ -727,6 +735,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     }
                 })
                 .show();
+
+    }
+
+    @OnClick(R.id.btn_detached_code)
+    public void detachedCode() {
 
     }
 }

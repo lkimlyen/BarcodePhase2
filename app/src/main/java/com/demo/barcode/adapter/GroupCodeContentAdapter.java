@@ -1,37 +1,26 @@
 package com.demo.barcode.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
-import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class GroupCodeContentAdapter extends RealmBaseAdapter<GroupCode> implements ListAdapter {
+public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+    private OnRemoveListener onRemoveListener;
 
-    private OnItemClearListener listener;
-    private OnEditTextChangeListener onEditTextChangeListener;
-    private onErrorListener onErrorListener;
-
-    public GroupCodeContentAdapter(OrderedRealmCollection<GroupCode> realmResults, OnItemClearListener listener,
-                                   OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
+    public GroupCodeContentAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnRemoveListener onRemoveListener) {
         super(realmResults);
-        this.listener = listener;
-        this.onEditTextChangeListener = onEditTextChangeListener;
-        this.onErrorListener = onErrorListener;
+        this.onRemoveListener = onRemoveListener;
     }
 
 
@@ -40,7 +29,7 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<GroupCode> impleme
         HistoryHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_group_code, parent, false);
+                    .inflate(R.layout.item_code_in_group, parent, false);
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -48,88 +37,47 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<GroupCode> impleme
         }
 
         if (adapterData != null) {
-            final GroupCode item = adapterData.get(position);
+            final LogScanStages item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, GroupCode item) {
-        TextWatcher textWatcher = new TextWatcher() {
+    private void setDataToViews(HistoryHolder holder, LogScanStages item) {
+
+        holder.txtNameDetail.setText(item.getProductDetail().getProductName());
+        holder.txtNumberGroup.setText(String.valueOf(item.getNumberGroup()));
+        holder.txtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.imgRemove.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-//                    int numberInput = Integer.parseInt(s.toString());
-//                    if (numberInput <= 0) {
-//                        holder.edtNumberScan.setText(item.getNumberInput() + "");
-//                        onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
-//                        return;
-//
-//                    }
-//                    if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
-//                        onErrorListener.errorListener(item, numberInput, null);
-//                        return;
-//                    }
-//                    if (numberInput == item.getNumberInput()) {
-//                        return;
-//                    }
-//                    onEditTextChangeListener.onEditTextChange(item, numberInput);
-
-                } catch (Exception e) {
-
-                }
-            }
-        };
-        holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.edtNumberScan.setText(String.valueOf(item.getNumber()));
-
-        holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    holder.edtNumberScan.addTextChangedListener(textWatcher);
-                } else {
-
-                    holder.edtNumberScan.removeTextChangedListener(textWatcher);
-                }
+            public void onClick(View v) {
+                onRemoveListener.onRemove(item);
             }
         });
+
 
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
         TextView txtNameDetail;
-        EditText edtNumberScan;
+        TextView txtNumberGroup;
+        TextView txtNumberScan;
+        ImageButton imgRemove;
 
         private HistoryHolder(View v) {
             super(v);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
-            edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
+            txtNumberGroup = (TextView) v.findViewById(R.id.txt_number_group);
+            txtNumberScan = (TextView) v.findViewById(R.id.txt_number_scan);
+            imgRemove = (ImageButton) v.findViewById(R.id.btn_remove);
         }
 
     }
 
-    public interface OnItemClearListener {
-        void onItemClick(LogScanStages item);
-    }
 
-    public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanStages item, int number);
-    }
-
-    public interface onErrorListener {
-        void errorListener(LogScanStages item, int number, String message);
+    public interface OnRemoveListener{
+        void onRemove(LogScanStages item);
     }
 }

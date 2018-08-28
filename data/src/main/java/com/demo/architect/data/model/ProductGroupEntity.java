@@ -12,7 +12,7 @@ public class ProductGroupEntity {
     @Expose
     private int productDetailID;
 
-    @SerializedName("GroupCode")
+    @SerializedName("GroupCodeEntity")
     @Expose
     private String groupCode;
 

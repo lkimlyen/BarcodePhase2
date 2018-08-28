@@ -3,12 +3,16 @@ package com.demo.barcode.screen.stages;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -38,6 +42,8 @@ public interface StagesContract {
         void showListTimes(List<Integer> list);
 
         void clearDataNoProduct(boolean chooseType);
+
+        void showGroupCode(RealmList<ListGroupCode> list);
     }
 
     interface Presenter extends BasePresenter {
@@ -49,7 +55,7 @@ public interface StagesContract {
 
         void checkBarcode(String barcode, int departmentId, int times);
 
-        int countLogScanStages(int orderId, int departmentId,int times);
+        int countLogScanStages(int orderId, int departmentId, int times);
 
         void uploadData(int orderId, int departmentId, int times);
 

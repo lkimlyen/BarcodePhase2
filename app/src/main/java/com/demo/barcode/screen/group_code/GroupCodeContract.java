@@ -1,11 +1,12 @@
 package com.demo.barcode.screen.group_code;
 
-import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
+import java.util.Collection;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -19,10 +20,14 @@ public interface GroupCodeContract {
         void showError(String message);
 
         void showSuccess(String message);
+
         void showListModule(List<String> list);
-        void getListScanStages(RealmResults<LogScanStages> results);
+
+        void showListScanStages(RealmResults<LogScanStages> results);
 
         void showGroupCode(RealmResults<ListGroupCode> groupCodes);
+
+        void showSODetail(SOEntity soEntity);
     }
 
     interface Presenter extends BasePresenter {
@@ -31,5 +36,16 @@ public interface GroupCodeContract {
         void getListScanStages(int orderId, int departmentId, int times, String module);
 
         void getListGroupCode(int orderId, int departmentId, int times, String module);
+
+        void getListOrderDetail(int orderId);
+
+        void groupCode(int orderId, int departmentId, int times, Collection<LogScanStages> list);
+
+        void updateGroupCode(ListGroupCode groupCode,int orderId, int departmentId, int times, Collection<LogScanStages> list);
+
+        void updateNumberGroup(int logId, int numberGroup);
+
+        void detachedCode(int orderId, int departmentId, int times, ListGroupCode list);
+
     }
 }

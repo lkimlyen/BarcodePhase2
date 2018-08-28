@@ -1,45 +1,50 @@
 package com.demo.barcode.adapter;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.widgets.AnimatedExpandableListView;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
 public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+    private boolean inChooseMode = true;
+    private Set<LogScanStages> countersToSelect = new HashSet<LogScanStages>();
 
-    private OnItemClearListener listener;
+    void enableDeletionMode(boolean enabled) {
+        inChooseMode = enabled;
+        if (!enabled) {
+            countersToSelect.clear();
+        }
+        notifyDataSetChanged();
+    }
+
+   public Set<LogScanStages> getCountersToSelect() {
+        return countersToSelect;
+    }
+
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public GroupCodeLVAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
+    public GroupCodeLVAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
         super(realmResults);
-        this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
     }
@@ -66,8 +71,6 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
     }
 
     private void setDataToViews(HistoryHolder holder, LogScanStages item) {
-        final ProductDetail productDetail = item.getProductDetail();
-        final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -84,16 +87,16 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
-                        holder.edtNumberScan.setText(item.getNumberInput() + "");
+                        holder.edtNumberGroup.setText(item.getNumberInput() + "");
                         onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
-                    if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
+                    if (numberInput > item.getNumberInput()) {
                         onErrorListener.errorListener(item, numberInput, null);
                         return;
                     }
-                    if (numberInput == item.getNumberInput()) {
+                    if (numberInput == item.getNumberGroup()) {
                         return;
                     }
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
@@ -104,37 +107,54 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
             }
         };
         holder.txtNameDetail.setText(item.getProductDetail().getProductName());
-        holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
-
-        holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        holder.edtNumberGroup.setText(String.valueOf(item.getNumberGroup()));
+        holder.txtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    holder.edtNumberScan.addTextChangedListener(textWatcher);
+                    holder.edtNumberGroup.addTextChangedListener(textWatcher);
                 } else {
-
-                    holder.edtNumberScan.removeTextChangedListener(textWatcher);
+                    holder.edtNumberGroup.removeTextChangedListener(textWatcher);
                 }
             }
         });
+
+        if (inChooseMode) {
+            holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked){
+                        countersToSelect.add(item);
+                    }else {
+                        countersToSelect.remove(item);
+                    }
+
+                }
+            });
+        } else {
+            holder.cbSelect.setOnCheckedChangeListener(null);
+        }
+        holder.cbSelect.setChecked(countersToSelect.contains(item));
+        holder.cbSelect.setVisibility(inChooseMode ? View.VISIBLE : View.GONE);
 
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
         TextView txtNameDetail;
-        EditText edtNumberScan;
+        EditText edtNumberGroup;
+        TextView txtNumberScan;
+        CheckBox cbSelect;
 
         private HistoryHolder(View v) {
             super(v);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
-            edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
+            edtNumberGroup = (EditText) v.findViewById(R.id.edt_number);
+            txtNumberScan = (TextView) v.findViewById(R.id.txt_number_scan);
+            cbSelect = (CheckBox) v.findViewById(R.id.cb_select);
         }
 
-    }
-
-    public interface OnItemClearListener {
-        void onItemClick(LogScanStages item);
     }
 
     public interface OnEditTextChangeListener {

@@ -190,6 +190,13 @@
     <string name="text_group_code_scan">Bạn có muốn gộp mã không?</string>
     <string name="text_number">Số lượng</string>
     <string name="text_all">All</string>
+    <string name="text_number_scan">SL đã quét</string>
+    <string name="text_number_group">Số lượng gộp</string>
+    <string name="text_group_code_success">Gộp mã thành công</string>
+    <string name="text_cancel_group_code">Bạn có muốn hủy gộp mã không?</string>
+    <string name="text_update_number_group_success">Cập nhật số lượng gộp thành công</string>
+    <string name="text_detached_code">Tách mã</string>
+    <string name="text_detached_code_success">Tách mã thành công</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

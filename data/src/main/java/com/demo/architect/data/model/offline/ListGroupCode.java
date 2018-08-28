@@ -14,25 +14,26 @@ public class ListGroupCode extends RealmObject {
     @PrimaryKey
     private int id;
     private String groupCode;
+    @SuppressWarnings("unused")
+    private RealmList<LogScanStages> list;
     private String module;
 
-    public RealmList<GroupCode> getGroupCodeList() {
-        return groupCodeList;
-    }
-
-    public void setGroupCodeList(RealmList<GroupCode> groupCodeList) {
-        this.groupCodeList = groupCodeList;
-    }
-
-    @SuppressWarnings("unused")
-    private RealmList<GroupCode> groupCodeList;
     public ListGroupCode() {
     }
-
-    public ListGroupCode(int id, String groupCode) {
+    public ListGroupCode(int id, String groupCode, String module) {
         this.id = id;
         this.groupCode = groupCode;
+        this.module = module;
     }
+
+    public RealmList<LogScanStages> getList() {
+        return list;
+    }
+
+    public void setList(RealmList<LogScanStages> list) {
+        this.list = list;
+    }
+
 
 
     public static int id(Realm realm) {

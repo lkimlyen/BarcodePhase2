@@ -198,7 +198,6 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="serif"
                 android:gravity="center"
-                android:visibility="gone"
                 android:layout_weight="0"
                 android:textStyle="bold"
                 android:text="@string/text_all"
@@ -218,6 +217,16 @@
                 android:textSize="@dimen/text_12sp" />
 
             <TextView
+                android:layout_width="@dimen/size_100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="serif"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/text_number_scan"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp" />
+            <TextView
                 android:id="@+id/position"
                 android:layout_width="@dimen/size_100dp"
                 android:layout_height="wrap_content"
@@ -225,10 +234,17 @@
                 android:fontFamily="serif"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="@string/text_number"
+                android:text="@string/text_number_group"
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp" />
-
+            <ImageButton
+                android:id="@+id/btn_remove"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text="@string/text_number"
+                android:visibility="invisible"
+                android:src="@drawable/ic_remove"/>
 
         </TableRow>
 
@@ -256,6 +272,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:focusable="true"
+        android:visibility="gone"
         android:focusableInTouchMode="true"
         android:padding="5dp">
 

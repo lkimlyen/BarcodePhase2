@@ -17,10 +17,22 @@
             android:layout_height="wrap_content"
             android:fontFamily="serif"
             android:gravity="center"
+
+            android:layout_weight="0"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:textSize="@dimen/text_12sp" />
+
+        <RadioButton
+            android:id="@+id/rb_select"
+            android:layout_width="@dimen/size_70dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:gravity="center"
+
             android:visibility="gone"
             android:layout_weight="0"
             android:textStyle="bold"
-            android:text="@string/text_all"
             android:textColor="#000"
             android:textSize="@dimen/text_12sp" />
 

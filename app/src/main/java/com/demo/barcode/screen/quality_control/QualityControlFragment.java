@@ -57,11 +57,13 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = QualityControlFragment.class.getName();
     private QualityControlContract.Presenter mPresenter;
-    private FusedLocationProviderClient mFusedLocationClient;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
+
+    @Bind(R.id.ss_type_product)
+    SearchableSpinner ssTypeProduct;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -75,8 +77,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     @Bind(R.id.lv_code)
     ListView rvCode;
     private Vibrator vibrate;
-    private int orderId = 0;
-    private Location mLocation;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -93,21 +93,17 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2000) {
-            checkPermissionLocation();
-        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                checkPermissionLocation();
+
             }
         }
 
@@ -127,7 +123,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_stamp_packaging, container, false);
+        View view = inflater.inflate(R.layout.fragment_quality_control, container, false);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
@@ -140,7 +136,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         // Vibrate for 500 milliseconds
 
         ssCodeSO.setTitle(getString(R.string.text_choose_request_produce));
-        checkPermissionLocation();
         ssCodeSO.setPrompt(getString(R.string.text_choose_request_produce));
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
@@ -260,7 +255,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
             return;
         }
-        checkPermissionLocation();
+
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -281,48 +276,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 })
                 .show();
 
-    }
-
-    public void checkPermissionLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_LOCATION_REQUEST_CODE);
-        } else {
-            // Access to the location has been granted to the app.
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                mLocation = location;  // Logic to handle location object
-                            }
-                        }
-                    }).addOnFailureListener(getActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    showError(e.getMessage());
-                }
-            });
-
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkPermissionLocation();
-            } else {
-                // Permission was denied. Display an error message.
-            }
-        }
     }
 
     @OnClick(R.id.img_back)

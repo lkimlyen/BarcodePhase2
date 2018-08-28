@@ -9,19 +9,22 @@ import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import rx.Observable;
 import rx.Subscriber;
 
-public class DeactiveProductDetailGroupUsecase extends BaseUseCase {
-    private static final String TAG = DeactiveProductDetailGroupUsecase.class.getSimpleName();
+public class UpdateProductDetailGroupUsecase extends BaseUseCase {
+    private static final String TAG = UpdateProductDetailGroupUsecase.class.getSimpleName();
     private final ProductRepository remoteRepository;
 
-    public DeactiveProductDetailGroupUsecase(ProductRepository remoteRepository) {
+    public UpdateProductDetailGroupUsecase(ProductRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
     @Override
     protected Observable buildUseCaseObservable() {
         String groupCode = ((RequestValue) requestValues).groupCode;
+        String jsonNew = ((RequestValue) requestValues).jsonNew;
+        String jsonUpdate = ((RequestValue) requestValues).jsonUpdate;
+        String jsonDelete = ((RequestValue) requestValues).jsonDelete;
         int userId = ((RequestValue) requestValues).userId;
-        return remoteRepository.deactiveProductDetailGroup(Constants.KEY,groupCode,userId);
+        return remoteRepository.updateProductDetailGroup(Constants.KEY, groupCode,jsonNew,jsonUpdate,jsonDelete,userId);
     }
 
     @Override
@@ -57,16 +60,23 @@ public class DeactiveProductDetailGroupUsecase extends BaseUseCase {
 
     public static final class RequestValue implements RequestValues {
         private final String groupCode;
+        private final String jsonNew;
+        private final String jsonUpdate;
+        private final String jsonDelete;
         private final int userId;
 
-        public RequestValue(String groupCode, int userId) {
+        public RequestValue(String groupCode, String jsonNew, String jsonUpdate, String jsonDelete, int userId) {
             this.groupCode = groupCode;
+            this.jsonNew = jsonNew;
+            this.jsonUpdate = jsonUpdate;
+            this.jsonDelete = jsonDelete;
             this.userId = userId;
         }
     }
 
     public static final class ResponseValue implements ResponseValues {
         private String description;
+
 
         public ResponseValue(String description) {
             this.description = description;

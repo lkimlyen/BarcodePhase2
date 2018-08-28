@@ -1,5 +1,7 @@
 package com.demo.architect.data.model.offline;
 
+import android.util.Log;
+
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
@@ -47,6 +49,8 @@ public class LogScanStages extends RealmObject {
     @Expose
     @SerializedName("pUserID")
     private int userId;
+
+    private int numberGroup;
 
     public LogScanStages() {
     }
@@ -217,4 +221,91 @@ public class LogScanStages extends RealmObject {
     }
 
 
+    public int getNumberGroup() {
+        return numberGroup;
+    }
+
+    public void setNumberGroup(int numberGroup) {
+        this.numberGroup = numberGroup;
+    }
+
+    public static void addGroupCode(Realm realm, String groupCode, int orderId, int departmentId, int times, LogScanStages[] listSelect, int userId) {
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
+
+        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", departmentId)
+                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", times).equalTo("userId", userId).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        RealmList<LogScanStages> parentList = parent.getList();
+        RealmList<ListGroupCode> listGroupCodes = parent.getListGroupCodes();
+        ListGroupCode groupCodeList = listGroupCodes.where().equalTo("groupCode", groupCode)
+                .findFirst();
+        if (groupCodeList == null) {
+            groupCodeList = new ListGroupCode(ListGroupCode.id(realm) + 1, groupCode, listSelect[0].getModule());
+            groupCodeList = realm.copyToRealm(groupCodeList);
+            listGroupCodes.add(groupCodeList);
+        }
+
+        RealmList<LogScanStages> logScanStageGroupList = groupCodeList.getList();
+        for (LogScanStages logScanStages : listSelect) {
+            LogScanStages log = realm.where(LogScanStages.class).equalTo("id", logScanStages.getId()).findFirst();
+            LogScanStages logInGroup = logScanStageGroupList.where().equalTo("barcode", logScanStages.barcode).findFirst();
+
+            if (logScanStages.getNumberInput() == logScanStages.getNumberGroup()) {
+                parentList.remove(log);
+                if (logInGroup != null) {
+                    logInGroup.setNumberGroup(log.getNumberGroup()+logInGroup.getNumberGroup());
+                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
+                } else {
+                    logScanStageGroupList.add(log);
+                }
+            } else {
+                int number = logScanStages.getNumberInput() - logScanStages.getNumberGroup();
+                log.setNumberInput(number);
+                if (logInGroup != null) {
+                    logInGroup.setNumberGroup(log.getNumberGroup()+logInGroup.getNumberGroup());
+                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
+                } else {
+                    LogScanStages logScanStagesNew = logScanStages;
+                    logScanStagesNew.setId(id(realm) + 1);
+                    logScanStagesNew.setNumberInput(logScanStages.getNumberGroup());
+                    logScanStagesNew = realm.copyToRealm(logScanStagesNew);
+                    logScanStageGroupList.add(logScanStagesNew);
+                }
+
+            }
+
+
+        }
+    }
+
+    public static void updateNumberGroup(Realm realm, int logId, int numberGroup) {
+        LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", logId).findFirst();
+        logScanStages.setNumberGroup(numberGroup);
+    }
+
+    public static void detachedCodeStages(Realm realm, int orderId, int departmentId, int times, ListGroupCode list, int userId) {
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
+
+        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", departmentId)
+                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", times).equalTo("userId", userId).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        RealmList<LogScanStages> parentList = parent.getList();
+        RealmList<ListGroupCode> listGroupCodes = parent.getListGroupCodes();
+        ListGroupCode groupCodeList = listGroupCodes.where().equalTo("groupCode", list.getGroupCode())
+                .findFirst();
+
+        RealmList<LogScanStages> listScanStagesGroup = groupCodeList.getList();
+
+        for (LogScanStages log : listScanStagesGroup) {
+            LogScanStages logCheck = parentList.where().equalTo("barcode", log.barcode).findFirst();
+            if (logCheck == null) {
+                parentList.add(log);
+                listScanStagesGroup.remove(log);
+            } else {
+                logCheck.setNumberInput(log.getNumberGroup() + logCheck.getNumberGroup());
+            }
+        }
+        listScanStagesGroup.deleteAllFromRealm();
+        groupCodeList.deleteFromRealm();
+
+
+    }
 }

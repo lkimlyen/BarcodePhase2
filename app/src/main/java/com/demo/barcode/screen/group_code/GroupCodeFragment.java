@@ -1,6 +1,5 @@
 package com.demo.barcode.screen.group_code;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -8,25 +7,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
+import com.demo.barcode.adapter.GroupCodeAdapter;
 import com.demo.barcode.adapter.GroupCodeLVAdapter;
-import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
-import com.demo.barcode.screen.detail_package.DetailPackageActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -42,9 +38,16 @@ import io.realm.RealmResults;
 public class GroupCodeFragment extends BaseFragment implements GroupCodeContract.View {
     private final String TAG = GroupCodeFragment.class.getName();
     public static final String ORDER_ID = "order_id";
+    public static final String DEPARTMENT_ID = "department_id";
+    public static final String TIMES = "times";
+    public static final String GROUP_CODE = "group_code";
     private GroupCodeContract.Presenter mPresenter;
     private GroupCodeLVAdapter lvAdapter;
+    private GroupCodeAdapter adapter;
     private int orderId = 0;
+    private int departmentId = 0;
+    private int times = 0;
+    private boolean groupCode;
     @Bind(R.id.ss_serial_module)
     SearchableSpinner ssModule;
 
@@ -59,6 +62,12 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Bind(R.id.elv_code)
     AnimatedExpandableListView elvCode;
+
+    @Bind(R.id.txt_title)
+    TextView txtTitle;
+
+    @Bind(R.id.btn_group_code)
+    Button btnGroupCode;
 
     public GroupCodeFragment() {
         // Required empty public constructor
@@ -87,11 +96,18 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         View view = inflater.inflate(R.layout.fragment_group_code, container, false);
         ButterKnife.bind(this, view);
         orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
+        departmentId = getActivity().getIntent().getIntExtra(DEPARTMENT_ID, 0);
+        times = getActivity().getIntent().getIntExtra(TIMES, 0);
+        groupCode = getActivity().getIntent().getBooleanExtra(GROUP_CODE, true);
         initView();
         return view;
     }
 
     private void initView() {
+        if (!groupCode) {
+            txtTitle.setText(getString(R.string.text_detached_code));
+            btnGroupCode.setText(getString(R.string.text_detached_code));
+        }
     }
 
 
@@ -154,14 +170,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     }
 
     @Override
-    public void getListScanStages(RealmResults<LogScanStages> results) {
-        lvAdapter = new GroupCodeLVAdapter(results,
-                new GroupCodeLVAdapter.OnItemClearListener() {
-                    @Override
-                    public void onItemClick(LogScanStages item) {
-
-                    }
-                }, new GroupCodeLVAdapter.OnEditTextChangeListener() {
+    public void showListScanStages(RealmResults<LogScanStages> results) {
+        lvAdapter = new GroupCodeLVAdapter(results, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
 
@@ -177,11 +187,25 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showGroupCode(RealmResults<ListGroupCode> groupCodes) {
+        adapter = new GroupCodeAdapter(getContext(), groupCodes, new GroupCodeAdapter.OnItemClearListener() {
+            @Override
+            public void onItemClick(ListGroupCode groupCode, LogScanStages item) {
+
+            }
+        });
+        elvCode.setAdapter(adapter);
         if (groupCodes.size() > 0) {
             elvCode.setVisibility(View.VISIBLE);
+
         } else {
             elvCode.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void showSODetail(SOEntity soEntity) {
+        txtCodeSO.setText(soEntity.getCodeSO());
+        txtCustomerName.setText(soEntity.getCustomerName());
     }
 
 
@@ -194,16 +218,48 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
-        getActivity().finish();
 
+        if (lvAdapter.getCountersToSelect().size() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_cancel_group_code))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+                        }
+                    })
+                    .show();
+        } else {
+            getActivity().finish();
+        }
     }
 
-    @OnClick(R.id.btn_search)
-    public void search() {
-        if (orderId == 0) {
-            showError(getString(R.string.text_order_id_null));
-            return;
+    @OnClick(R.id.btn_group_code)
+    public void groupCode() {
+        if (groupCode) {
+            if (lvAdapter.getCountersToSelect().size() > 0 && adapter.getListGroupCodeSelect() == null) {
+                mPresenter.groupCode(orderId, departmentId, times, lvAdapter.getCountersToSelect());
+            } else if (lvAdapter.getCountersToSelect().size() > 0 && adapter.getListGroupCodeSelect() != null) {
+                mPresenter.updateGroupCode(adapter.getListGroupCodeSelect(), orderId,
+                        departmentId, times, lvAdapter.getCountersToSelect());
+            }
+        } else {
+            if (adapter.getListGroupCodeSelect() != null) {
+                mPresenter.detachedCode(orderId, departmentId, times, adapter.getListGroupCodeSelect());
+            }
         }
+
     }
 
 

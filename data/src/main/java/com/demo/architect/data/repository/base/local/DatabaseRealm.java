@@ -8,7 +8,6 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
-import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -374,5 +373,35 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         int total = LogListSerialPackPagkaging.getTotalScan(realm, logId);
         return total;
+    }
+
+    public void addGroupCode(final String groupCode, final int orderId, final int departmentId, final int times, final LogScanStages[] listSelect) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.addGroupCode(realm, groupCode, orderId,departmentId,times,listSelect,userId);
+            }
+        });
+    }
+
+    public void updateNumberGroup(final int logId, final int numberGroup) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.updateNumberGroup(realm, logId, numberGroup);
+            }
+        });
+    }
+
+    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final ListGroupCode list) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.detachedCodeStages(realm, orderId,departmentId,times,list,userId);
+            }
+        });
     }
 }

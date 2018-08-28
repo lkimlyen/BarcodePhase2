@@ -227,6 +227,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                     @Override
                     public void call(LogListScanStages logListScanStages) {
                         view.showListLogScanStages(logListScanStages);
+                        view.showGroupCode(logListScanStages.getListGroupCodes());
                     }
                 });
     }

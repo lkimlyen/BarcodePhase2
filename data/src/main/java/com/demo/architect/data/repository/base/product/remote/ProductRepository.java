@@ -24,6 +24,12 @@ public interface ProductRepository {
 
     Observable<BaseListResponse<ProductGroupEntity>> getListProductDetailGroup(int orderId);
 
-    Observable<BaseResponse> deactiveProductDetailGroup(String key, String groupCode);
+    Observable<BaseResponse> deactiveProductDetailGroup(String key, String groupCode, int userId);
+
+    Observable<BaseResponse> updateProductDetailGroup(String key, String groupCode,
+                                                      String jsonNew,String jsonUpdate,
+                                                      String jsonDelete,int userId);
+
+
 
 }

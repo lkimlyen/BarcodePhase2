@@ -4,7 +4,6 @@ import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
-import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
@@ -18,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmResults;
+import rx.Completable;
 import rx.Observable;
 
 public interface LocalRepository {
@@ -91,4 +91,10 @@ public interface LocalRepository {
     Observable<LogListOrderPackaging> findOrderPackaging(int orderId);
 
     Observable<Integer> getTotalScanBySerialPack(int logId);
+
+    Observable<String> addGroupCode(String groupCode,int orderId, int departmentId, int times, LogScanStages[] listSelect);
+
+    Observable<String> updateNumberGroup(int logId, int numberGroup);
+
+    Observable<String> detachedCodeStages(int orderId, int departmentId, int times, ListGroupCode list);
 }
