@@ -79,6 +79,7 @@
     <string name="tex_print_stemp">In tem</string>
     <string name="text_total">Tổng cộng:</string>
     <string name="text_serial_pack">STT Kiện:</string>
+    <string name="text_serial_pack_product">STT Kiện</string>
     <string name="text_date_create">Ngày đóng gói: </string>
     <string name="text_confirm_print_temp_packinging">Xác nhận in tem bao bì</string>
     <string name="text_no_connect_printer">Không có kết nối vs máy In! Không thể IN!!!</string>
@@ -199,6 +200,9 @@
     <string name="text_detached_code_success">Tách mã thành công</string>
     <string name="text_remove_item_in_group_code_success">Xoá sản phẩm trong nhóm thành công</string>
     <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng đã quét</string>
+    <string name="text_reason_error">Nguyên nhân lỗi</string>
+    <string name="text_description_reason_error">Mô tả lỗi:</string>
+    <string name="text_choose_code_pack">Chọn mã gói</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

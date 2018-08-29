@@ -5,14 +5,21 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
+import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetApartmentUsecase;
+import com.demo.architect.domain.GetCodePackUsecase;
+import com.demo.architect.domain.GetListSOUsecase;
+import com.demo.architect.domain.GetModuleUsecase;
+import com.demo.architect.domain.PostCheckBarCodeUsecase;
+import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.manager.ListProductPackagingManager;
+import com.demo.barcode.manager.ListApartmentManager;
+import com.demo.barcode.manager.ListSOManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -26,12 +33,25 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
     private final String TAG = CreatePackagingPresenter.class.getName();
     private final CreatePackagingContract.View view;
+    private final GetListSOUsecase getListSOUsecase;
+    private final GetApartmentUsecase getApartmentUsecase;
+    private final GetModuleUsecase getModuleUsecase;
+    private final GetCodePackUsecase getCodePackUsecase;
+    private final PostCheckBarCodeUsecase postCheckBarCodeUsecase;
+    private final PostListCodeProductDetailUsecase postListCodeProductDetailUsecase;
+
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    CreatePackagingPresenter(@NonNull CreatePackagingContract.View view) {
+    CreatePackagingPresenter(@NonNull CreatePackagingContract.View view, GetListSOUsecase getListSOUsecase, GetApartmentUsecase getApartmentUsecase, GetModuleUsecase getModuleUsecase, GetCodePackUsecase getCodePackUsecase, PostCheckBarCodeUsecase postCheckBarCodeUsecase, PostListCodeProductDetailUsecase postListCodeProductDetailUsecase) {
         this.view = view;
+        this.getListSOUsecase = getListSOUsecase;
+        this.getApartmentUsecase = getApartmentUsecase;
+        this.getModuleUsecase = getModuleUsecase;
+        this.getCodePackUsecase = getCodePackUsecase;
+        this.postCheckBarCodeUsecase = postCheckBarCodeUsecase;
+        this.postListCodeProductDetailUsecase = postListCodeProductDetailUsecase;
     }
 
     @Inject
@@ -54,27 +74,73 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
     @Override
     public void getListSO(int orderType) {
+        view.showProgressBar();
+        getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(orderType),
+                new BaseUseCase.UseCaseCallback<GetListSOUsecase.ResponseValue,
+                        GetListSOUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListSOUsecase.ResponseValue successResponse) {
+                        view.showListSO(successResponse.getEntity());
+                        ListSOManager.getInstance().setListSO(successResponse.getEntity());
+                        view.hideProgressBar();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_so_success));
+                    }
 
+                    @Override
+                    public void onError(GetListSOUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                        ListSOManager.getInstance().setListSO(new ArrayList<>());
+                        //   view.clearDataNoProduct(true);
+                    }
+                });
     }
 
     @Override
-    public void getListDetail(int orderId) {
+    public void getListApartment(int orderId) {
+        view.showProgressBar();
+        getApartmentUsecase.executeIO(new GetApartmentUsecase.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetApartmentUsecase.ResponseValue,
+                        GetApartmentUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetApartmentUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        ListApartmentManager.getInstance().setListDepartment(successResponse.getEntity());
+                        view.showListApartment(successResponse.getEntity());
+                    }
 
+                    @Override
+                    public void onError(GetApartmentUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+
+                    }
+                });
     }
 
     @Override
-    public void getListFloor(int orderId) {
+    public void getListModule(int orderId, int orderType, int apartmentId) {
+        view.showProgressBar();
+        getModuleUsecase.executeIO(new GetModuleUsecase.RequestValue(orderId,orderType,apartmentId),
+                new BaseUseCase.UseCaseCallback<GetModuleUsecase.ResponseValue,
+                        GetModuleUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetModuleUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        view.showListModule(successResponse.getEntity());
+                    }
 
+                    @Override
+                    public void onError(GetModuleUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
 
     @Override
-    public void getListModule(int orderId) {
-
-    }
-
-    @Override
-    public void getListScan(int orderId, String floor, String module) {
-        localRepository.getListScanPackaging(orderId, floor, module, new HashMap<String, String>())
+    public void getListScan(int orderId, int productId, int apartmentId, String packcode, String sttPack) {
+        localRepository.getListScanPackaging(orderId, productId, apartmentId, packcode,sttPack)
                 .subscribe(new Action1<LogListModulePagkaging>() {
                     @Override
                     public void call(LogListModulePagkaging logListModulePagkaging) {
@@ -82,6 +148,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     }
                 });
     }
+
 
     @Override
     public void deleteLogScan(int id) {
@@ -108,7 +175,27 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
     @Override
-    public void checkBarcode(String barcode, int orderId, String floor, String module) {
+    public void getListCodePack(int orderId, int orderType, int productId) {
+        view.showProgressBar();
+        getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId,orderType,productId),
+                new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
+                        GetCodePackUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        view.showListCodePack(successResponse.getEntity());
+                    }
+
+                    @Override
+                    public void onError(GetCodePackUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
+    }
+
+    @Override
+    public void checkBarcode(String barcode, int orderId, int productId, int apartmentId, String packCode, String sttPack) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -118,24 +205,51 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             return;
         }
 
-        ProductPackagingEntity product = ListProductPackagingManager.getInstance().getProdctByBarcode(barcode);
-        if (product != null) {
-            localRepository.findProductPackaging(product.getId()).subscribe(new Action1<ProductPackagingModel>() {
-                @Override
-                public void call(ProductPackagingModel productPackagingModel) {
-                    if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
-                        saveBarcode(product, barcode, orderId, floor, module);
-                    } else {
-                        showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
+        postCheckBarCodeUsecase.executeIO(new PostCheckBarCodeUsecase.RequestValue(orderId,productId,apartmentId,packCode,sttPack,barcode),
+                new BaseUseCase.UseCaseCallback<PostCheckBarCodeUsecase.ResponseValue,
+                        PostCheckBarCodeUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(PostCheckBarCodeUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+//                        view.showListCodePack(successResponse.getEntity());
                     }
-                }
-            });
 
-        } else {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
-            return;
-        }
+                    @Override
+                    public void onError(PostCheckBarCodeUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
+
+//    @Override
+//    public void checkBarcode(String barcode, int orderId, String floor, String module) {
+//        if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
+//            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+//            return;
+//        }
+//        if (barcode.length() < 10 || barcode.length() > 13) {
+//            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+//            return;
+//        }
+////        ProductPackagingEntity product = ListProductPackagingManager.getInstance().getProdctByBarcode(barcode);
+////        if (product != null) {
+////            localRepository.findProductPackaging(product.getId()).subscribe(new Action1<ProductPackagingModel>() {
+////                @Override
+////                public void call(ProductPackagingModel productPackagingModel) {
+////                    if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
+////                        saveBarcode(product, barcode, orderId, floor, module);
+////                    } else {
+////                        showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
+////                    }
+////                }
+////            });
+////
+////        } else {
+////            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+////            return;
+////        }
+//    }
 
     void saveBarcode(ProductPackagingEntity product, String barcode, int orderId, String floor, String module) {
         localRepository.saveBarcodeScanPackaging(product, orderId, floor, module, barcode)

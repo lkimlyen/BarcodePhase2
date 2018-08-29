@@ -1,49 +1,44 @@
 package com.demo.barcode.screen.create_packaging;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.ApartmentEntity;
+import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ModuleEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.CreateStampPackagingAdapter;
-import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.adapter.ScanPackagingAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -61,11 +56,23 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = CreatePackagingFragment.class.getName();
     private CreatePackagingContract.Presenter mPresenter;
-    private CreateStampPackagingAdapter adapter;
+    private ScanPackagingAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
+
+    @Bind(R.id.ss_type_product)
+    SearchableSpinner ssTypeProduct;
+
+    @Bind(R.id.ss_module)
+    SearchableSpinner ssModule;
+
+    @Bind(R.id.ss_code_pack)
+    SearchableSpinner ssCodePack;
+
+    @Bind(R.id.ss_apartment)
+    SearchableSpinner ssApartment;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -76,10 +83,12 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
-    @Bind(R.id.lv_package)
-    AnimatedExpandableListView lvPackage;
+    @Bind(R.id.lv_code)
+    ListView lvCode;
     private Vibrator vibrate;
     private int orderId = 0;
+    private int apartmentId = 0;
+    private int orderType = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -146,11 +155,23 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             }
         });
 
-        List<String> list = new ArrayList<>();
-        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssCodeSO.setAdapter(adapter);
+        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
+                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        ssTypeProduct.setAdapter(adapter);
+        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
+                orderType = TypeSOManager.getInstance().getValueByPositon(position);
 
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 
@@ -242,7 +263,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @Override
     public void showListScan(LogListModulePagkaging logListModulePagkaging) {
-        adapter = new CreateStampPackagingAdapter(getContext(), logListModulePagkaging,
+        adapter = new ScanPackagingAdapter(getContext(), logListModulePagkaging,
                 new CreateStampPackagingAdapter.OnEditTextChangeListener() {
                     @Override
                     public void onEditTextChange(LogScanPackaging item, int number) {
@@ -281,6 +302,89 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         });
         lvPackage.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void showListSO(List<SOEntity> list) {
+        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCustomerName.setText(list.get(position).getCustomerName());
+                orderId = list.get(position).getOrderId();
+                if (orderId > 0) {
+                    mPresenter.getListApartment(orderId);
+//
+//                    if (departmentId > 0 && times > 0) {
+//                        mPresenter.getListScanStages(orderId, departmentId, times);
+//                    }
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListApartment(List<ApartmentEntity> list) {
+        ArrayAdapter<ApartmentEntity> adapter = new ArrayAdapter<ApartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssApartment.setAdapter(adapter);
+        ssApartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                apartmentId = list.get(position).getApartmentID();
+                mPresenter.getListModule(orderId, orderType, apartmentId);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListModule(List<ModuleEntity> list) {
+        ArrayAdapter<ModuleEntity> adapter = new ArrayAdapter<ModuleEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssModule.setAdapter(adapter);
+        ssModule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListCodePack(orderId, orderType, list.get(position).getProductId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListCodePack(List<CodePackEntity> list) {
+        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodePack.setAdapter(adapter);
+        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 

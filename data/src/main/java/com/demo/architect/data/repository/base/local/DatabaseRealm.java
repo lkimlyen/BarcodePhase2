@@ -305,8 +305,7 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListModulePagkaging getListScanPackaging(int orderId, String floor, String module,
-                                                       HashMap<String, String> packList) {
+    public LogListModulePagkaging getListScanPackaging(int orderId, int productId, int apartmentId, String packcode, String sttPack) {
         Realm realm = getRealmInstance();
         LogListModulePagkaging logListModulePagkaging = LogScanPackaging.getListScanPackaging(realm,
                 orderId, floor, module, packList);

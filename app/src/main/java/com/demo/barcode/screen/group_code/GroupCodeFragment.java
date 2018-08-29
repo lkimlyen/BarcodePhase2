@@ -190,7 +190,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         adapter = new GroupCodeAdapter(getContext(), groupCodes, new GroupCodeAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(ListGroupCode groupCode, LogScanStages item) {
-
+                mPresenter.removeItemInGroup(groupCode, item,orderId,departmentId,times);
 
             }
         });

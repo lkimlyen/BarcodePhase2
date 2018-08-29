@@ -76,8 +76,7 @@ public class LogScanPackaging extends RealmObject {
         this.dateScan = dateScan;
     }
 
-    public static LogListModulePagkaging getListScanPackaging(Realm realm, int orderId, String floor, String module,
-                                                              HashMap<String, String> packList) {
+    public static LogListModulePagkaging getListScanPackaging(Realm realm, int orderId, int productId, int apartmentId, String packcode, String sttPack) {
 
         LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
                 .equalTo("orderId", orderId).findFirst();
@@ -86,7 +85,7 @@ public class LogScanPackaging extends RealmObject {
             logListOrderPackaging = LogListOrderPackaging.create(realm, orderId, "", "");
             realm.commitTransaction();
         }
-        LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("floor", floor)
+        LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("id", apartmentId)
                 .findFirst();
         if (logListFloorPagkaging == null) {
             realm.beginTransaction();

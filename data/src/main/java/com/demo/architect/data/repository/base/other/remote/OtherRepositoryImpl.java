@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
+import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
@@ -71,6 +72,26 @@ public class OtherRepositoryImpl implements OtherRepository {
             }
         }
     }
+    private void handleApartmentResponse(Call<BaseListResponse<ApartmentEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<ApartmentEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
 
     private void handleUploadResponse(Call<BaseResponse<UploadEntity>> call, Subscriber subscriber) {
         try {
@@ -160,6 +181,18 @@ public class OtherRepositoryImpl implements OtherRepository {
                         RequestBody.create(MultipartBody.FORM, departmentId+""),
                         RequestBody.create(MultipartBody.FORM,fileName),
                         RequestBody.create(MultipartBody.FORM,userId)), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<ApartmentEntity>> getApartment(final int orderId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ApartmentEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<ApartmentEntity>> subscriber) {
+                handleApartmentResponse(mRemoteApiInterface.getApartment(
+                        server + "/WS/api/GD2GetApartment",orderId), subscriber);
             }
         });
     }

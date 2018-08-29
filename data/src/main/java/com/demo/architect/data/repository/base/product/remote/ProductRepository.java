@@ -30,6 +30,9 @@ public interface ProductRepository {
                                                       String jsonNew,String jsonUpdate,
                                                       String jsonDelete,int userId);
 
+    Observable<BaseResponse> postListCodeProductDetail(String key, String json,
+                                                      int userId,String note);
+
 
 
 }

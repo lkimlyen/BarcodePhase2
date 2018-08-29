@@ -1,5 +1,6 @@
 package com.demo.architect.data.repository.base.other.remote;
 
+import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
@@ -23,5 +24,5 @@ public interface OtherRepository {
 
     Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, int orderId,
                                                        int departmentId, String fileName, String userId);
-
+    Observable<BaseListResponse<ApartmentEntity>> getApartment(int orderId);
 }

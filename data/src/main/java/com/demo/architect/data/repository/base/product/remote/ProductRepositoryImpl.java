@@ -151,7 +151,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.deactiveProductDetailGroup(
-                        server + "/WS/api/GD2DeactiveProductDetailGroup", key, groupCode,userId), subscriber);
+                        server + "/WS/api/GD2DeactiveProductDetailGroup", key, groupCode, userId), subscriber);
             }
         });
     }
@@ -167,6 +167,19 @@ public class ProductRepositoryImpl implements ProductRepository {
                 handleBaseResponse(mRemoteApiInterface.updateProductDetailGroup(
                         server + "/WS/api/GD2UpdateProductDetailGroup", key, groupCode,
                         jsonNew, jsonUpdate, jsonDelete, userId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseResponse> postListCodeProductDetail(final String key, final String json, final int userId, final String note) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.postListCodeProductDetail(
+                        server + "/WS/api/GD2PostListCodeProductDetail", key, json,
+                        userId, note), subscriber);
             }
         });
     }

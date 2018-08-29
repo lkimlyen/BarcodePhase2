@@ -46,4 +46,11 @@ public interface ProductApiInterface {
                                                 @Field("pJsonDelete") String jsonDelete,
                                                 @Field("pUserID") int userId);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> postListCodeProductDetail(@Url String url, @Field("pKey") String key,
+                                                @Field("pJsonListProductDetail") String json,
+                                                @Field("pUserID") int userId,
+                                                @Field("pNote") String note);
+
 }

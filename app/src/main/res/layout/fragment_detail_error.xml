@@ -194,20 +194,53 @@
                 android:id="@+id/txt_add_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_add_image"
-                android:drawableLeft="@drawable/ic_add_image"
-                android:textColor="@android:color/holo_red_dark"
                 android:layout_alignParentRight="true"
-                android:textStyle="italic"
-                android:textSize="@dimen/text_16sp" />
+                android:drawableLeft="@drawable/ic_add_image"
+                android:text="@string/text_add_image"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="italic" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_description_reason_error"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_reason_error"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold" />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="3"
+            android:id="@+id/edt_reason"
+            android:background="@drawable/bg_edittext_stroke_white"/>
 
+        <GridView
+            android:id="@+id/gv_reason"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:stretchMode="columnWidth"
+            android:numColumns="2"
+            android:columnWidth="100dp"
+            android:layout_weight="1"
+            android:verticalSpacing="0dp"
+            android:horizontalSpacing="0dp"
+            android:gravity="center"
+            />
     </LinearLayout>
 
 

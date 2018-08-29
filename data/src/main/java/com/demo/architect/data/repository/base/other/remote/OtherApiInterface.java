@@ -1,6 +1,7 @@
 package com.demo.architect.data.repository.base.other.remote;
 
 
+import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
@@ -43,4 +44,7 @@ public interface OtherApiInterface {
             @Part("pDepartmentID") RequestBody departmentId,
             @Part("pFileName") RequestBody fileName,
             @Part("pUserID") RequestBody userId);
+
+    @GET
+    Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") int orderId);
 }

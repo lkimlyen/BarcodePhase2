@@ -4,8 +4,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.repository.base.local.LocalRepository;
+import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListReasonManager;
 
 import javax.inject.Inject;
 
@@ -19,12 +22,14 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
 
     private final String TAG = DetailErrorPresenter.class.getName();
     private final DetailErrorContract.View view;
+    private final GetListReasonUsecase getListReasonUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    DetailErrorPresenter(@NonNull DetailErrorContract.View view) {
+    DetailErrorPresenter(@NonNull DetailErrorContract.View view, GetListReasonUsecase getListReasonUsecase) {
         this.view = view;
+        this.getListReasonUsecase = getListReasonUsecase;
     }
 
     @Inject
@@ -51,8 +56,8 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
         localRepository.addImageModel(pathFile).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-           view.hideProgressBar();
-           view.showSuccess(CoreApplication.getInstance().getString(R.string.text_add_success));
+                view.hideProgressBar();
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_add_success));
             }
         });
     }
@@ -67,5 +72,26 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_image_success));
             }
         });
+    }
+
+    @Override
+    public void getListReason() {
+        view.showProgressBar();
+        getListReasonUsecase.executeIO(new GetListReasonUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetListReasonUsecase.ResponseValue,
+                        GetListReasonUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListReasonUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        view.showListReason(successResponse.getEntity());
+                      //  ListReasonManager.getInstance().setListReason(successResponse.getEntity());
+                    }
+
+                    @Override
+                    public void onError(GetListReasonUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
 }

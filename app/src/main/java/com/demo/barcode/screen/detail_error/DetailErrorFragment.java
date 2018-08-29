@@ -25,21 +25,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.DetailError;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ImageAdapter;
+import com.demo.barcode.adapter.ReasonAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.util.Precondition;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,12 +60,11 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     private DetailErrorContract.Presenter mPresenter;
     public static final int REQUEST_CODE_PICK_IMAGE = 666;
     public static final int REQUEST_CODE_TAKE_IMAGE = 667;
-    private ImageAdapter adapter;
+    private ImageAdapter imAdapter;
     public MediaPlayer mp1, mp2;
     private Vibrator vibrate;
     private String mCurrentPhotoPath;
-    private int orderId;
-    private int logId;
+    private ReasonAdapter rsAdapter;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
@@ -89,6 +91,9 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @Bind(R.id.rv_image)
     RecyclerView rvImage;
+
+    @Bind(R.id.gv_reason)
+    GridView gvReason;
 
     public DetailErrorFragment() {
         // Required empty public constructor
@@ -135,8 +140,8 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        orderId = getActivity().getIntent().getIntExtra(Constants.KEY_ORDER_ID, 0);
-        logId = getActivity().getIntent().getIntExtra(Constants.KEY_ID, 0);
+//        orderId = getActivity().getIntent().getIntExtra(Constants.KEY_ORDER_ID, 0);
+//        logId = getActivity().getIntent().getIntExtra(Constants.KEY_ID, 0);
         initView();
         return view;
     }
@@ -212,7 +217,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @Override
     public void showImageError(DetailError detailError) {
-        adapter = new ImageAdapter(detailError.getList(), new ImageAdapter.OnItemClearListener() {
+        imAdapter = new ImageAdapter(detailError.getList(), new ImageAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(int id) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -236,8 +241,14 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                         .show();
             }
         });
-        rvImage.setAdapter(adapter);
+        rvImage.setAdapter(imAdapter);
 
+    }
+
+    @Override
+    public void showListReason(List<ReasonsEntity> list) {
+        rsAdapter = new ReasonAdapter(getContext(), list);
+        gvReason.setAdapter(rsAdapter);
     }
 
 

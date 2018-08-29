@@ -71,8 +71,7 @@ public interface LocalRepository {
 
     Observable<String> deleteImageModel(final int id);
 
-    Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, String floor,
-                                                            String module, HashMap<String, String> packList);
+    Observable<LogListModulePagkaging> getListScanPackaging(int orderId, int productId, int apartmentId, String packcode, String sttPack);
 
     Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, String floor,
                                                             String module);

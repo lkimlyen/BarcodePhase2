@@ -9,14 +9,20 @@ import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
+import com.demo.architect.domain.GetApartmentUsecase;
+import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
+import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
+import com.demo.architect.domain.GetModuleUsecase;
 import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.LoginUsecase;
+import com.demo.architect.domain.PostCheckBarCodeUsecase;
+import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
@@ -105,5 +111,36 @@ public class UseCaseModule {
     UpdateProductDetailGroupUsecase provideUpdateProductDetailGroupUsecase(ProductRepository productRepository) {
         return new UpdateProductDetailGroupUsecase(productRepository);
     }
+
+    @Provides
+    PostListCodeProductDetailUsecase providePostListCodeProductDetailUsecase(ProductRepository productRepository) {
+        return new PostListCodeProductDetailUsecase(productRepository);
+    }
+
+    @Provides
+    GetListReasonUsecase provideGetListReasonUsecase(OtherRepository otherRepository) {
+        return new GetListReasonUsecase(otherRepository);
+    }
+
+    @Provides
+    GetApartmentUsecase provideGetApartmentUsecase(OtherRepository otherRepository) {
+        return new GetApartmentUsecase(otherRepository);
+    }
+
+    @Provides
+    GetModuleUsecase provideGetModuleUsecase(OrderRepository orderRepository) {
+        return new GetModuleUsecase(orderRepository);
+    }
+
+    @Provides
+    GetCodePackUsecase provideGetCodePackUsecase(OrderRepository orderRepository) {
+        return new GetCodePackUsecase(orderRepository);
+    }
+
+    @Provides
+    PostCheckBarCodeUsecase providePostCheckBarCodeUsecase(OrderRepository orderRepository) {
+        return new PostCheckBarCodeUsecase(orderRepository);
+    }
+
 }
 

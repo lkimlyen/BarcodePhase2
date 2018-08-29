@@ -423,13 +423,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final String floor, final String module, final HashMap<String, String> packList) {
+    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final int productId, final int apartmentId, final String packcode, final String sttPack) {
         return Observable.create(new Observable.OnSubscribe<LogListModulePagkaging>() {
             @Override
             public void call(Subscriber<? super LogListModulePagkaging> subscriber) {
                 try {
                     LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
-                            floor,module,packList);
+                            productId,apartmentId,packcode,sttPack);
                     subscriber.onNext(logListModulePagkaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
