@@ -80,7 +80,7 @@ public interface LocalRepository {
 
     Observable<String> deleteImageModel(final int id);
 
-    Observable<LogListSerialPackPagkaging> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack);
+    Observable<RealmResults<LogScanPackaging>> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack);
 
     Observable<List<LogScanPackaging>> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack);
 

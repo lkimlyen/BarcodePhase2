@@ -9,6 +9,7 @@ import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import io.realm.RealmResults;
 import rx.functions.Action1;
 
 /**
@@ -154,10 +156,10 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
         ApartmentEntity apartmentEntity = ListApartmentManager.getInstance().getApartmentById(apartmentId);
         CodePackEntity codePackEntity = ListCodePackManager.getInstance().getCodePackById(sttPack);
         localRepository.getListScanPackaging(soEntity, moduleEntity, apartmentEntity, codePackEntity)
-                .subscribe(new Action1<LogListSerialPackPagkaging>() {
+                .subscribe(new Action1<RealmResults<LogScanPackaging>>() {
                     @Override
-                    public void call(LogListSerialPackPagkaging log) {
-                        view.showListScan(log);
+                    public void call(RealmResults<LogScanPackaging> logScanPackagings) {
+                        view.showListScan(logScanPackagings);
                     }
                 });
     }
@@ -197,6 +199,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         view.showListCodePack(successResponse.getEntity());
+                        ListCodePackManager.getInstance().setListCodePack(successResponse.getEntity() );
                     }
 
                     @Override
@@ -229,7 +232,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                             @Override
                             public void call(ProductPackagingModel productPackagingModel) {
                                 if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
-                                    saveBarcode(product, barcode, orderId, productId, apartmentId, packCode, sttPack);
+                                    saveBarcode(product, barcode, orderId,  apartmentId,productId, packCode, sttPack);
                                 } else {
                                     showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
                                 }

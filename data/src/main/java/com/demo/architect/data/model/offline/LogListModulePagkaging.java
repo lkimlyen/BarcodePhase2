@@ -58,7 +58,7 @@ public class LogListModulePagkaging extends RealmObject {
 
     public static LogListModulePagkaging create(Realm realm, ModuleEntity moduleEntity) {
         LogListModulePagkaging log = new LogListModulePagkaging(moduleEntity.getProductId(),moduleEntity.getModuleName());
-        realm.copyToRealm(log);
+        log = realm.copyToRealm(log);
         return log;
     }
 

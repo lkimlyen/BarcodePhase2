@@ -6,10 +6,13 @@ import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
+
+import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -27,7 +30,7 @@ public interface CreatePackagingContract {
 
         void turnOnVibrator();
 
-        void showListScan(LogListSerialPackPagkaging log);
+        void showListScan(RealmResults<LogScanPackaging> log);
 
         void showListSO(List<SOEntity> list);
 

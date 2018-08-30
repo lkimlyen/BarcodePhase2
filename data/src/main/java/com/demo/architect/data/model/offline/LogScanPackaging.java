@@ -106,7 +106,7 @@ public class LogScanPackaging extends RealmObject {
         this.dateScan = dateScan;
     }
 
-    public static LogListSerialPackPagkaging getListScanPackaging(Realm realm, SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
+    public static RealmResults<LogScanPackaging> getListScanPackaging(Realm realm, SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
 
         LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
                 .equalTo("orderId", soEntity.getOrderId()).findFirst();
@@ -133,7 +133,6 @@ public class LogScanPackaging extends RealmObject {
             logListModulePagkaging = LogListModulePagkaging.create(realm, moduleEntity);
             RealmList<LogListModulePagkaging> logListModulePagkagings = logListFloorPagkaging.getList();
             logListModulePagkagings.add(logListModulePagkaging);
-
             realm.commitTransaction();
         }
 
@@ -147,7 +146,8 @@ public class LogScanPackaging extends RealmObject {
 
             realm.commitTransaction();
         }
-        return logListSerialPackPagkaging;
+        RealmResults<LogScanPackaging> results = logListSerialPackPagkaging.getList().where().equalTo("status",Constants.WAITING_UPLOAD).findAll();
+        return results;
 
     }
 
@@ -241,16 +241,17 @@ public class LogScanPackaging extends RealmObject {
             logScanPackaging = new LogScanPackaging(id(realm) + 1, apartmentId, product.getId(), packCode, serialPack, barcode, productPackagingModel, 1, DateUtils.getDateTimeCurrent(), Constants.INCOMPLETE, Constants.WAITING_UPLOAD);
             logScanPackaging = realm.copyToRealm(logScanPackaging);
             parentList.add(logScanPackaging);
+
         } else {
             logScanPackaging.setNumberInput(logScanPackaging.getNumberInput() + 1);
-            ProductPackagingModel productPackagingModel = logScanPackaging.getProductPackagingModel();
-            productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() + 1);
-            productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
-            if (productPackagingModel.getNumberRest() == 0) {
-                logScanPackaging.setStatusScan(Constants.FULL);
-            } else {
-                logScanPackaging.setStatusScan(Constants.INCOMPLETE);
-            }
+        }
+        ProductPackagingModel productPackagingModel = logScanPackaging.getProductPackagingModel();
+        productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() + 1);
+        productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
+        if (productPackagingModel.getNumberRest() == 0) {
+            logScanPackaging.setStatusScan(Constants.FULL);
+        } else {
+            logScanPackaging.setStatusScan(Constants.INCOMPLETE);
         }
     }
 

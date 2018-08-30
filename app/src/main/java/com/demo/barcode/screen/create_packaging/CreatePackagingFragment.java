@@ -46,6 +46,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -294,8 +295,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     @Override
-    public void showListScan(LogListSerialPackPagkaging logListSerialPackPagkaging) {
-        adapter = new ScanPackagingAdapter(logListSerialPackPagkaging.getList(),
+    public void showListScan(RealmResults<LogScanPackaging> results) {
+        adapter = new ScanPackagingAdapter(results,
                 new ScanPackagingAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
@@ -415,6 +416,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 serialPack = list.get(position).getSttPack();
                 codePack = list.get(position).getPackCode();
                 mPresenter.getListProduct(orderId,moduleId,apartmentId,codePack,serialPack);
+                mPresenter.getListScan(orderId,moduleId,apartmentId,serialPack);
             }
 
             @Override

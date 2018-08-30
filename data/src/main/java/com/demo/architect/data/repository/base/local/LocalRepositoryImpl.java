@@ -430,12 +430,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListSerialPackPagkaging> getListScanPackaging(final SOEntity soEntity, final ModuleEntity moduleEntity, final ApartmentEntity apartment, final CodePackEntity codePack) {
-        return Observable.create(new Observable.OnSubscribe<LogListSerialPackPagkaging>() {
+    public Observable<RealmResults<LogScanPackaging>> getListScanPackaging(final SOEntity soEntity, final ModuleEntity moduleEntity, final ApartmentEntity apartment, final CodePackEntity codePack) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanPackaging>>() {
             @Override
-            public void call(Subscriber<? super LogListSerialPackPagkaging> subscriber) {
+            public void call(Subscriber<? super RealmResults<LogScanPackaging>> subscriber) {
                 try {
-                    LogListSerialPackPagkaging listScanPackaging =  databaseRealm.getListScanPackaging(soEntity,
+                    RealmResults<LogScanPackaging> listScanPackaging =  databaseRealm.getListScanPackaging(soEntity,
                             moduleEntity,apartment,codePack);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();

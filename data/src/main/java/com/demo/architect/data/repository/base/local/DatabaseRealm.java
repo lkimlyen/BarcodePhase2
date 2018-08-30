@@ -309,9 +309,9 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListSerialPackPagkaging getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
+    public  RealmResults<LogScanPackaging> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
         Realm realm = getRealmInstance();
-        LogListSerialPackPagkaging listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
+        RealmResults<LogScanPackaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
                 soEntity, moduleEntity, apartment, codePack);
         return listScanPackaging;
     }
