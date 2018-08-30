@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.print_stamp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -15,12 +16,15 @@ import android.widget.Toast;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.DetailPrintTempAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,14 +37,16 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class PrintStempFragment extends BaseFragment implements PrintStempContract.View {
     public static final String ORDER_ID = "order_id";
-    public static final String FLOOR = "floor";
-    public static final String MODULE = "module";
+    public static final String APARTMENT_ID = "apartment_id";
+    public static final String MODULE_ID = "module_id";
+    public static final String SERIAL_PACK = "serial_pack";
     private final String TAG = PrintStempFragment.class.getName();
     private PrintStempContract.Presenter mPresenter;
     private DetailPrintTempAdapter adapter;
     private int orderId;
-    private String floor;
-    private String module;
+    private int apartmentId;
+    private int moduleId;
+    private String serialPack;
     @Bind(R.id.lv_codes)
     ListView lvCode;
 
@@ -56,14 +62,11 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Bind(R.id.txt_total)
     TextView txtTotal;
 
-    @Bind(R.id.txt_serial_pack)
-    TextView txtSerialPack;
-
     @Bind(R.id.txt_date_create)
     TextView txtDate;
 
-    @Bind(R.id.ss_serial_package)
-    SearchableSpinner ssSerialPack;
+    @Bind(R.id.txt_serial_pack)
+    TextView txtSerialPack;
 
     @Bind(R.id.txt_serial_module)
     TextView txtSerialModule;
@@ -99,23 +102,18 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         View view = inflater.inflate(R.layout.fragment_print_stemp, container, false);
         ButterKnife.bind(this, view);
         orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
-        module = getActivity().getIntent().getStringExtra(FLOOR);
-        floor = getActivity().getIntent().getStringExtra(MODULE);
+        moduleId = getActivity().getIntent().getIntExtra(MODULE_ID, 0);
+        apartmentId = getActivity().getIntent().getIntExtra(APARTMENT_ID, 0);
+        serialPack = getActivity().getIntent().getStringExtra(SERIAL_PACK);
         initView();
         return view;
     }
 
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
-        txtFloor.setText(floor);
-        txtSerialModule.setText(module);
+        txtSerialPack.setText(serialPack);
+        mPresenter.getOrderPackaging(orderId);
 
-        ssSerialPack.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
     }
 
 
@@ -171,28 +169,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         showToast(message);
     }
 
-    @Override
-    public void showListSerialPack(LogListModulePagkaging log) {
-        ArrayAdapter<LogListSerialPackPagkaging> adapter = new ArrayAdapter<LogListSerialPackPagkaging>(
-                getContext(), android.R.layout.simple_spinner_item, log.getList());
-        ssSerialPack.setAdapter(adapter);
-        ssSerialPack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                PrintStempFragment.this.adapter = new DetailPrintTempAdapter(log.getList().get(position).getList());
-                lvCode.setAdapter(PrintStempFragment.this.adapter);
-                txtCodePack.setText(log.getList().get(position).getCodeProduct());
-                txtSerialPack.setText(log.getList().get(position).getSerialPack());
-                mPresenter.getTotalScanBySerialPack(log.getList().get(position).getId());
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
 
     @Override
     public void showOrderPackaging(LogListOrderPackaging log) {
@@ -203,6 +179,33 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Override
     public void showTotalNumberScan(int sum) {
         txtTotal.setText(String.valueOf(sum));
+    }
+
+    @Override
+    public void showListScanPackaging(List<LogScanPackaging> list) {
+
+    }
+
+    @Override
+    public void showDialogCreateIPAddress() {
+
+    }
+
+    @Override
+    public void startActivityCreate() {
+        Intent returnIntent = new Intent();
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showApartmentName(String apartmentName) {
+        txtFloor.setText(apartmentName);
+    }
+
+    @Override
+    public void showModuleName(String module) {
+        txtSerialModule.setText(module);
     }
 
 

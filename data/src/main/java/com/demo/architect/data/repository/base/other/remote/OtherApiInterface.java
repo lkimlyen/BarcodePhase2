@@ -45,6 +45,7 @@ public interface OtherApiInterface {
             @Part("pFileName") RequestBody fileName,
             @Part("pUserID") RequestBody userId);
 
-    @GET
+    @FormUrlEncoded
+    @POST
     Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") int orderId);
 }

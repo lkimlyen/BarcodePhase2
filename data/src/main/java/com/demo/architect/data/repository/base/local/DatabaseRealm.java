@@ -5,9 +5,13 @@ import android.content.Context;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
+import com.demo.architect.data.model.ApartmentEntity;
+import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -305,34 +309,13 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListModulePagkaging getListScanPackaging(int orderId, int productId, int apartmentId, String packcode, String sttPack) {
+    public LogListSerialPackPagkaging getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
         Realm realm = getRealmInstance();
-        LogListModulePagkaging logListModulePagkaging = LogScanPackaging.getListScanPackaging(realm,
-                orderId, floor, module, packList);
-        return logListModulePagkaging;
+        LogListSerialPackPagkaging listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
+                soEntity, moduleEntity, apartment, codePack);
+        return listScanPackaging;
     }
 
-    public LogListModulePagkaging getListScanPackaging(int orderId, String floor, String module) {
-        Realm realm = getRealmInstance();
-        LogListModulePagkaging logListModulePagkaging = LogScanPackaging.getListScanPackaging(realm,
-                orderId, floor, module);
-        return logListModulePagkaging;
-    }
-
-
-    public void addBarcodeScanPackaging(final ProductPackagingEntity entity,
-                                        final int orderId, final String floor, final String module,
-                                        final String barcode) {
-        Realm realm = getRealmInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                LogScanPackaging.createOrUpdateLogScanPackaging(realm, entity, orderId, floor, module,
-                        barcode);
-            }
-        });
-
-    }
 
     public void deleteScanPackaging(final int logId) {
         Realm realm = getRealmInstance();
@@ -368,9 +351,9 @@ public class DatabaseRealm {
         return listOrderPackaging;
     }
 
-    public int getTotalScanBySerialPack(int logId) {
+    public int getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack) {
         Realm realm = getRealmInstance();
-        int total = LogListSerialPackPagkaging.getTotalScan(realm, logId);
+        int total = LogScanPackaging.getTotalScan(realm, orderId,apartmentId,moduleId,serialPack);
         return total;
     }
 
@@ -379,7 +362,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addGroupCode(realm, groupCode, orderId,departmentId,times,listSelect,userId);
+                LogScanStages.addGroupCode(realm, groupCode, orderId, departmentId, times, listSelect, userId);
             }
         });
     }
@@ -399,7 +382,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.detachedCodeStages(realm, orderId,departmentId,times,list,userId);
+                LogScanStages.detachedCodeStages(realm, orderId, departmentId, times, list, userId);
             }
         });
     }
@@ -409,8 +392,38 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.removeItemInGroup(realm,groupCode,logScanStages,orderId,departmentId,times,userId);
+                LogScanStages.removeItemInGroup(realm, groupCode, logScanStages, orderId, departmentId, times, userId);
             }
         });
+    }
+
+    public void addBarcodeScanPackaging(final ProductPackagingEntity product, final String barcode, final int orderId, final int apartmentId, final int moduleId, final String packCode, final String serialPack) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackaging.createOrUpdateLogScanPackaging(realm, product, barcode, orderId, apartmentId,
+                        moduleId, packCode, serialPack);
+            }
+        });
+
+    }
+
+    public List<LogScanPackaging> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack) {
+        Realm realm = getRealmInstance();
+        List<LogScanPackaging> result = LogScanPackaging.getListScanPackaging(realm,
+                orderId, apartmentId, moduleId, serialPack);
+        return result;
+    }
+
+    public void updateStatusScanPackaging(final int serverId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackaging.updateStatusScanPackaging(realm, serverId);
+            }
+        });
+
     }
 }

@@ -8,8 +8,6 @@ import io.realm.annotations.PrimaryKey;
 public class LogListOrderPackaging extends RealmObject {
     @PrimaryKey
     private int orderId;
-
-
     private String codeSO;
     private String customerName;
     @SuppressWarnings("unused")

@@ -5,6 +5,7 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -48,9 +49,18 @@ public interface ProductApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseResponse> postListCodeProductDetail(@Url String url, @Field("pKey") String key,
+    Call<BaseResponse<Integer>> postListCodeProductDetail(@Url String url, @Field("pKey") String key,
                                                 @Field("pJsonListProductDetail") String json,
                                                 @Field("pUserID") int userId,
                                                 @Field("pNote") String note);
+
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") int orderId,
+                                                                           @Field("pProductID") int productId,
+                                                                           @Field("pApartmentID") int apartmentId,
+                                                                           @Field("pCodePack") String packCode,
+                                                                           @Field("pSTTPack") String sttPack);
 
 }

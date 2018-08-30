@@ -3,8 +3,11 @@ package com.demo.barcode.screen.print_stamp;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
+
+import java.util.List;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -16,19 +19,33 @@ public interface PrintStempContract {
 
         void showSuccess(String message);
 
-        void showListSerialPack(LogListModulePagkaging log);
-
         void showOrderPackaging(LogListOrderPackaging log);
 
         void showTotalNumberScan(int sum);
+
+        void showListScanPackaging(List<LogScanPackaging> list);
+
+        void showDialogCreateIPAddress();
+
+        void startActivityCreate();
+
+        void showApartmentName(String apartmentName);
+
+        void showModuleName(String module);
     }
 
     interface Presenter extends BasePresenter {
 
-        void getListSerialPack(int orderId, String floor, String module);
-
         void getOrderPackaging(int orderId);
 
-        void getTotalScanBySerialPack(int logId);
+        void getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack);
+
+        void getListScanStages(int orderId, int apartmentId, int moduleId, String serialPack);
+
+        void printTemp(int serverId);
+
+        void getApartment(int apartmentId);
+        void getModule(int moduleId);
+
     }
 }

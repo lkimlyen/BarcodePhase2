@@ -2,15 +2,22 @@ package com.demo.architect.data.repository.base.local;
 
 import android.content.Context;
 
+import com.demo.architect.data.model.ApartmentEntity;
+import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.MessageModel;
+import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
@@ -423,14 +430,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final int productId, final int apartmentId, final String packcode, final String sttPack) {
-        return Observable.create(new Observable.OnSubscribe<LogListModulePagkaging>() {
+    public Observable<LogListSerialPackPagkaging> getListScanPackaging(final SOEntity soEntity, final ModuleEntity moduleEntity, final ApartmentEntity apartment, final CodePackEntity codePack) {
+        return Observable.create(new Observable.OnSubscribe<LogListSerialPackPagkaging>() {
             @Override
-            public void call(Subscriber<? super LogListModulePagkaging> subscriber) {
+            public void call(Subscriber<? super LogListSerialPackPagkaging> subscriber) {
                 try {
-                    LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
-                            productId,apartmentId,packcode,sttPack);
-                    subscriber.onNext(logListModulePagkaging);
+                    LogListSerialPackPagkaging listScanPackaging =  databaseRealm.getListScanPackaging(soEntity,
+                            moduleEntity,apartment,codePack);
+                    subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -440,14 +447,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListModulePagkaging> getListScanPackaging(final int orderId, final String floor, final String module) {
-        return Observable.create(new Observable.OnSubscribe<LogListModulePagkaging>() {
+    public Observable<List<LogScanPackaging>> getListScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack) {
+        return Observable.create(new Observable.OnSubscribe<List<LogScanPackaging>>() {
             @Override
-            public void call(Subscriber<? super LogListModulePagkaging> subscriber) {
+            public void call(Subscriber<? super List<LogScanPackaging>> subscriber) {
                 try {
-                    LogListModulePagkaging logListModulePagkaging =  databaseRealm.getListScanPackaging(orderId,
-                            floor,module);
-                    subscriber.onNext(logListModulePagkaging);
+                    List<LogScanPackaging> listScanPackaging =  databaseRealm.getListScanPackaging(orderId,
+                            apartmentId,moduleId,serialPack);
+                    subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -456,15 +463,15 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+
+
     @Override
-    public Observable<String> saveBarcodeScanPackaging(final ProductPackagingEntity entity,
-                                                       final int orderId, final String floor, final String module,
-                                                       final String barcode) {
+    public Observable<String> saveBarcodeScanPackaging(final ProductPackagingEntity product, final String barcode, final int orderId, final int apartmentId, final int moduleId, final String packCode, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addBarcodeScanPackaging(entity,orderId,floor,module,barcode);
+                    databaseRealm.addBarcodeScanPackaging(product,barcode,orderId,apartmentId,moduleId,packCode,serialPack);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -539,12 +546,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> getTotalScanBySerialPack(final int logId) {
+    public Observable<Integer> getTotalScanBySerialPack(final int orderId, final int apartmentId, final int moduleId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    int total =  databaseRealm.getTotalScanBySerialPack(logId);
+                    int total =  databaseRealm.getTotalScanBySerialPack(orderId,apartmentId,moduleId,serialPack);
                     subscriber.onNext(total);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -618,5 +625,52 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<IPAddress> insertOrUpdateIpAddress(final IPAddress model) {
+        return Observable.create(new Observable.OnSubscribe<IPAddress>() {
+            @Override
+            public void call(Subscriber<? super IPAddress> subscriber) {
+                try {
+                    databaseRealm.insertOrUpdate(model);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusScanPackaging(final int serverId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusScanPackaging(serverId);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<IPAddress> findIPAddress() {
+        return Observable.create(new Observable.OnSubscribe<IPAddress>() {
+            @Override
+            public void call(Subscriber<? super IPAddress> subscriber) {
+                try {
+                    IPAddress ipAddress = databaseRealm.findFirst(IPAddress.class);
+                    subscriber.onNext(ipAddress);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 
 }

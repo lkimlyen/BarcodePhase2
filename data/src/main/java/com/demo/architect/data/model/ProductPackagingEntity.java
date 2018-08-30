@@ -16,6 +16,10 @@ public class ProductPackagingEntity {
     @Expose
     private String productName;
 
+    @SerializedName("ColorCode")
+    @Expose
+    private String productColor;
+
     @SerializedName("ProductLong")
     @Expose
     private int length;
@@ -72,6 +76,10 @@ public class ProductPackagingEntity {
 
     public int getId() {
         return id;
+    }
+
+    public String getProductColor() {
+        return productColor;
     }
 
     public void setId(int id) {

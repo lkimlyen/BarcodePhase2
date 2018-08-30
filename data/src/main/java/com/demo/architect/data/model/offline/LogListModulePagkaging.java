@@ -1,6 +1,8 @@
 package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ModuleEntity;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -54,8 +56,8 @@ public class LogListModulePagkaging extends RealmObject {
         return nextId;
     }
 
-    public static LogListModulePagkaging create(Realm realm, String module) {
-        LogListModulePagkaging log = new LogListModulePagkaging(id(realm) + 1, module);
+    public static LogListModulePagkaging create(Realm realm, ModuleEntity moduleEntity) {
+        LogListModulePagkaging log = new LogListModulePagkaging(moduleEntity.getProductId(),moduleEntity.getModuleName());
         realm.copyToRealm(log);
         return log;
     }

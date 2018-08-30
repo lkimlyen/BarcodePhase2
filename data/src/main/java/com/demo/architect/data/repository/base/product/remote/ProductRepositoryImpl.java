@@ -8,6 +8,7 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -86,6 +87,26 @@ public class ProductRepositoryImpl implements ProductRepository {
             }
         }
     }
+    private void handleIntegerResponse(Call<BaseResponse<Integer>> call, Subscriber subscriber) {
+        try {
+            BaseResponse<Integer> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
 
     private void handleStringResponse(Call<BaseResponse<String>> call, Subscriber subscriber) {
         try {
@@ -105,7 +126,24 @@ public class ProductRepositoryImpl implements ProductRepository {
             }
         }
     }
-
+    private void handleProductPackagingResponse(Call<BaseListResponse<ProductPackagingEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<ProductPackagingEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
 
     @Override
     public Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(final int orderId, final int departmentId) {
@@ -172,14 +210,26 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseResponse> postListCodeProductDetail(final String key, final String json, final int userId, final String note) {
+    public Observable<BaseResponse<Integer>> postListCodeProductDetail(final String key, final String json, final int userId, final String note) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<Integer>>() {
             @Override
-            public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.postListCodeProductDetail(
+            public void call(Subscriber<? super BaseResponse<Integer>> subscriber) {
+                handleIntegerResponse(mRemoteApiInterface.postListCodeProductDetail(
                         server + "/WS/api/GD2PostListCodeProductDetail", key, json,
                         userId, note), subscriber);
+            }
+        });
+    }
+    @Override
+    public Observable<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(final int orderId, final int productId, final int apartmentId, final String packCode, final String sttPack) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductPackagingEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<ProductPackagingEntity>> subscriber) {
+                handleProductPackagingResponse(mRemoteApiInterface.getListProductInPackage(
+                        server + "/WS/api/GD2GetListProductInPackage", orderId, productId, apartmentId,
+                        packCode, sttPack), subscriber);
             }
         });
     }

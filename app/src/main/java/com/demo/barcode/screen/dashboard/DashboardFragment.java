@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.barcode.R;
+import com.demo.barcode.adapter.CreateStampPackagingAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ServerManager;
@@ -49,6 +50,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @Bind(R.id.btn_confirm_receive)
     Button btnConfirmreceive;
+
+    @Bind(R.id.btn_scan_packaging)
+    Button btnScanPackaging;
+
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -117,8 +122,12 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Override
     public void showUser(UserEntity user) {
         txtName.setText(user.getName());
-        if (user.getRole() <= 5){
+        if (user.getRole() > 0 && user.getRole() <= 9) {
             txtPosition.setText(ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
+            btnScanPackaging.setVisibility(View.GONE);
+        } else {
+            btnScanStages.setVisibility(View.GONE);
+            btnConfirmreceive.setVisibility(View.GONE);
         }
 
 
@@ -164,6 +173,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @OnClick(R.id.btn_confirm_receive)
     public void confirmReceive() {
         ConfirmReceiveActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_scan_packaging)
+    public void scanPackaging(){
+        CreatePackagingActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_link)

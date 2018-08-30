@@ -47,7 +47,7 @@ public interface CreatePackagingContract {
 
         void getListModule(int orderId, int orderType, int apartmentId);
 
-        void getListScan(int orderId, int productId, int apartmentId,String packcode,String sttPack);
+        void getListScan(int orderId, int productId, int apartmentId, String sttPack);
 
         void deleteLogScan(int id);
 
@@ -55,6 +55,13 @@ public interface CreatePackagingContract {
 
         void getListCodePack(int orderId, int orderType, int productId);
 
-        void checkBarcode(String barcode, int orderId,int productId, int apartmentId, String packCode,String sttPack);
+        void checkBarcode(String barcode, int orderId, int productId, int apartmentId, String packCode, String sttPack);
+
+        void getListProduct(int orderId, int productId, int apartmentId, String packCode, String sttPack);
+
+        boolean countListScanInPack(int sizeList);
+
+        boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack);
+
     }
 }

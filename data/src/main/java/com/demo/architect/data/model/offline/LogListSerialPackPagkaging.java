@@ -1,6 +1,7 @@
 package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.CodePackEntity;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -34,8 +35,8 @@ public class LogListSerialPackPagkaging extends RealmObject {
         return nextId;
     }
 
-    public static LogListSerialPackPagkaging create(Realm realm, String codeProduct, String module) {
-        LogListSerialPackPagkaging log = new LogListSerialPackPagkaging(id(realm) + 1, module, codeProduct);
+    public static LogListSerialPackPagkaging create(Realm realm, CodePackEntity codePackEntity) {
+        LogListSerialPackPagkaging log = new LogListSerialPackPagkaging(id(realm) + 1, codePackEntity.getSttPack(), codePackEntity.getPackCode());
         log = realm.copyToRealm(log);
         return log;
     }
@@ -86,10 +87,5 @@ public class LogListSerialPackPagkaging extends RealmObject {
         return serialPack;
     }
 
-    public static int getTotalScan(Realm realm,int logId) {
-        LogListSerialPackPagkaging log = realm.where(LogListSerialPackPagkaging.class)
-                .equalTo("id",logId).findFirst();
-        int   sum     = log.getList().sum("age").intValue();
-        return sum;
-    }
+
 }

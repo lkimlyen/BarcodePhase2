@@ -3,11 +3,8 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.BaseListResponse;
-import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
-
-import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -30,7 +27,7 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseListResponse<ProductGroupEntity>>() {
+        return new Subscriber<BaseResponse<Integer>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -45,11 +42,11 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseListResponse<ProductGroupEntity> data) {
+            public void onNext(BaseResponse<Integer> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    List<ProductGroupEntity> result = data.getData();
-                    if (result != null && data.getStatus() == 1) {
+                    int result = data.getData();
+                    if (result > 0 && data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
                         useCaseCallback.onError(new ErrorValue(data.getDescription()));
@@ -72,14 +69,14 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private List<ProductGroupEntity> entity;
+        private int id;
 
-        public ResponseValue(List<ProductGroupEntity> entity) {
-            this.entity = entity;
+        public ResponseValue(int id) {
+            this.id = id;
         }
 
-        public List<ProductGroupEntity> getEntity() {
-            return entity;
+        public int getId() {
+            return id;
         }
     }
 

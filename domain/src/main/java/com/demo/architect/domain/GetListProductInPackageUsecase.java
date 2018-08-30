@@ -3,21 +3,20 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseListResponse;
-import com.demo.architect.data.model.ModuleEntity;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
+import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
 
-public class PostCheckBarCodeUsecase extends BaseUseCase {
-    private static final String TAG = PostCheckBarCodeUsecase.class.getSimpleName();
-    private final OrderRepository remoteRepository;
+public class GetListProductInPackageUsecase extends BaseUseCase {
+    private static final String TAG = GetListProductInPackageUsecase.class.getSimpleName();
+    private final ProductRepository remoteRepository;
 
-    public PostCheckBarCodeUsecase(OrderRepository remoteRepository) {
+    public GetListProductInPackageUsecase(ProductRepository remoteRepository) {
         this.remoteRepository = remoteRepository;
     }
 
@@ -28,8 +27,7 @@ public class PostCheckBarCodeUsecase extends BaseUseCase {
         int apartmentId = ((RequestValue) requestValues).apartmentId;
         String packCode = ((RequestValue) requestValues).packCode;
         String sttPack = ((RequestValue) requestValues).sttPack;
-        String code = ((RequestValue) requestValues).code;
-        return remoteRepository.postCheckBarCode(orderId, productId, apartmentId,packCode,sttPack,code);
+        return remoteRepository.getListProductInPackage(orderId, productId, apartmentId,packCode,sttPack);
     }
 
     @Override
@@ -69,16 +67,14 @@ public class PostCheckBarCodeUsecase extends BaseUseCase {
         private final int apartmentId;
         private final String packCode;
         private final String sttPack;
-        private final String code;
 
 
-        public RequestValue(int orderId, int productId, int apartmentId, String packCode, String sttPack, String code) {
+        public RequestValue(int orderId, int productId, int apartmentId, String packCode, String sttPack) {
             this.orderId = orderId;
             this.productId = productId;
             this.apartmentId = apartmentId;
             this.packCode = packCode;
             this.sttPack = sttPack;
-            this.code = code;
         }
 
     }

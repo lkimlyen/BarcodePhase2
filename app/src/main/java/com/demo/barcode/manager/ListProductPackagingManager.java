@@ -26,7 +26,7 @@ public class ListProductPackagingManager {
         this.listProduct = listProduct;
     }
 
-        public ProductPackagingEntity getProdctByBarcode(String barcode) {
+    public ProductPackagingEntity getProdctByBarcode(String barcode) {
         for (ProductPackagingEntity requestEntity : listProduct) {
             if (requestEntity.getBarcode() == barcode) {
                 return requestEntity;
@@ -34,4 +34,12 @@ public class ListProductPackagingManager {
         }
         return null;
     }
+    public int sumNumber() {
+        int sum = 0;
+        for (ProductPackagingEntity requestEntity : listProduct) {
+           sum += requestEntity.getNumber();
+        }
+        return sum;
+    }
+
 }

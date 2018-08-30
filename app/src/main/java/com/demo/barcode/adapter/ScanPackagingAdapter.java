@@ -97,7 +97,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         holder.txtNameDetail.setText(productPackagingModel.getProductName());
         holder.txtQuantityProduct.setText(productPackagingModel.getNumberTotal() + "");
         holder.txtQuantityRest.setText(productPackagingModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(productPackagingModel.getNumberSuccess() + "");
+        holder.txtQuantityScan.setText(productPackagingModel.getNumberScan() + "");
         holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -117,9 +117,9 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                 listener.onItemClick(item);
             }
         });
-        if (item.getStatusScan() == Constants.FULL){
+        if (item.getStatusScan() == Constants.FULL) {
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
-        }else {
+        } else {
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
         }
 

@@ -4,6 +4,7 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -30,8 +31,11 @@ public interface ProductRepository {
                                                       String jsonNew,String jsonUpdate,
                                                       String jsonDelete,int userId);
 
-    Observable<BaseResponse> postListCodeProductDetail(String key, String json,
+    Observable<BaseResponse<Integer>> postListCodeProductDetail(String key, String json,
                                                       int userId,String note);
+    Observable<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(int orderId, int productId,
+                                                                          int apartmentId, String packCode,
+                                                                          String sttPack);
 
 
 

@@ -1,5 +1,7 @@
 package com.demo.architect.data.model.offline;
 
+import com.demo.architect.data.model.ApartmentEntity;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -45,8 +47,8 @@ public class LogListFloorPagkaging extends RealmObject {
         this.list = list;
     }
 
-    public static LogListFloorPagkaging create(Realm realm, String floor) {
-        LogListFloorPagkaging log = new LogListFloorPagkaging(id(realm) + 1, floor);
+    public static LogListFloorPagkaging create(Realm realm, ApartmentEntity apartmentEntity) {
+        LogListFloorPagkaging log = new LogListFloorPagkaging(apartmentEntity.getApartmentID(),apartmentEntity.getApartmentName());
         log = realm.copyToRealm(log);
         return log;
     }

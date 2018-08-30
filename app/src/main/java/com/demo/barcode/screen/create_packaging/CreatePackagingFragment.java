@@ -24,6 +24,7 @@ import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.CreateStampPackagingAdapter;
@@ -77,18 +78,22 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSO;
-
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
     @Bind(R.id.lv_code)
     ListView lvCode;
+
+    @Bind(R.id.txt_date_scan)
+    TextView txtDateScan;
+
     private Vibrator vibrate;
+    private String serialPack;
+    private String codePack;
     private int orderId = 0;
     private int apartmentId = 0;
     private int orderType = 0;
+    private int moduleId = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -116,14 +121,13 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-
+                mPresenter.checkBarcode(barcode, orderId, moduleId, apartmentId, codePack, serialPack);
             }
         }
 
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 showSuccess(getString(R.string.text_print_success));
-
             } else {
                 isClick = false;
             }
@@ -151,6 +155,34 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             @Override
             public boolean onClick() {
 
+                return false;
+            }
+        });
+
+        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ssApartment.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ssModule.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
                 return false;
             }
         });
@@ -262,45 +294,46 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     @Override
-    public void showListScan(LogListModulePagkaging logListModulePagkaging) {
-        adapter = new ScanPackagingAdapter(getContext(), logListModulePagkaging,
-                new CreateStampPackagingAdapter.OnEditTextChangeListener() {
+    public void showListScan(LogListSerialPackPagkaging logListSerialPackPagkaging) {
+        adapter = new ScanPackagingAdapter(logListSerialPackPagkaging.getList(),
+                new ScanPackagingAdapter.OnItemClearListener() {
                     @Override
-                    public void onEditTextChange(LogScanPackaging item, int number) {
-                        mPresenter.updateNumberScan(item.getId(), number);
+                    public void onItemClick(LogScanPackaging item) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.text_title_noti))
+                                .setContentText(getString(R.string.text_delete_code))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.deleteLogScan(item.getId());
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+                                    }
+                                })
+                                .show();
                     }
-                }, new CreateStampPackagingAdapter.OnItemClearListener() {
+                }, new ScanPackagingAdapter.OnEditTextChangeListener() {
             @Override
-            public void onItemClick(LogScanPackaging item) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_delete_code))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                mPresenter.deleteLogScan(item.getId());
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
+            public void onEditTextChange(LogScanPackaging item, int number) {
+                mPresenter.updateNumberScan(item.getId(), number);
             }
-        }, new CreateStampPackagingAdapter.onErrorListener() {
+        }, new ScanPackagingAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
                 startMusicError();
                 turnOnVibrator();
             }
-        });
-        lvPackage.setAdapter(adapter);
+        }
+        );
+        lvCode.setAdapter(adapter);
 
     }
 
@@ -359,6 +392,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssModule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                moduleId = list.get(position).getProductId();
                 mPresenter.getListCodePack(orderId, orderType, list.get(position).getProductId());
             }
 
@@ -378,6 +412,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                serialPack = list.get(position).getSttPack();
+                codePack = list.get(position).getPackCode();
+                mPresenter.getListProduct(orderId,moduleId,apartmentId,codePack,serialPack);
             }
 
             @Override
@@ -410,7 +447,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, moduleId, apartmentId, codePack, serialPack);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -433,7 +470,17 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @OnClick(R.id.img_print)
     public void print() {
+        if (!mPresenter.countListScanInPack(adapter.getCount())) {
+            showNotification(getString(R.string.text_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
+            return;
+        }
 
+        if (!mPresenter.checkNumberProduct(orderId, moduleId, apartmentId, serialPack)) {
+            showNotification(getString(R.string.text_quality_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
+            return;
+        }
+
+        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack);
     }
 
     @OnClick(R.id.btn_scan)

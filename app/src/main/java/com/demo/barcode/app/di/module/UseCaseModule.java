@@ -16,6 +16,7 @@ import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
+import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetModuleUsecase;
@@ -140,6 +141,11 @@ public class UseCaseModule {
     @Provides
     PostCheckBarCodeUsecase providePostCheckBarCodeUsecase(OrderRepository orderRepository) {
         return new PostCheckBarCodeUsecase(orderRepository);
+    }
+
+    @Provides
+    GetListProductInPackageUsecase provideGetListProductInPackageUsecase(ProductRepository productRepository) {
+        return new GetListProductInPackageUsecase(productRepository);
     }
 
 }
