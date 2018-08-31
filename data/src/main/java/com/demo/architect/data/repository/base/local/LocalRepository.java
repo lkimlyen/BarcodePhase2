@@ -21,6 +21,7 @@ import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +75,7 @@ public interface LocalRepository {
 
     Observable<String> updateStatusScanStages();
 
-    Observable<String> updateStatusAndServerIdImage(final int id, int serverId);
+    Observable<String> updateStatusAndServerIdImage(final int id,final int imageId, int serverId);
 
     Observable<String> addImageModel(final String pathFile);
 
@@ -91,7 +92,7 @@ public interface LocalRepository {
 
     Observable<String> updateNumberScanPackaging(int logId, int number);
 
-    Observable<ProductPackagingModel> findProductPackaging(int productId);
+    Observable<ProductPackagingModel> findProductPackaging(int productId, String serialPack);
 
     Observable<LogListOrderPackaging> findOrderPackaging(int orderId);
 
@@ -109,4 +110,10 @@ public interface LocalRepository {
     Observable<IPAddress> insertOrUpdateIpAddress(final IPAddress model);
 
     Observable<String> updateStatusScanPackaging(int serverId);
+
+    Observable<String> deleteAllItemLogScanPackaging();
+
+    Observable<RealmResults<QualityControlModel>> getListQualityControl(int orderId, int departmentId);
+
+    Observable<QualityControlModel> getDetailQualityControl(int id);
 }

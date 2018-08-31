@@ -74,11 +74,11 @@ public class ImageModel extends RealmObject {
         return nextId;
     }
 
-    public static void create(Realm realm, String pathFile) {
+    public static ImageModel create(Realm realm, String pathFile) {
 
         ImageModel imageModel = new ImageModel(id(realm) + 1, pathFile, Constants.WAITING_UPLOAD, DateUtils.getDateTimeCurrent());
-        realm.copyToRealm(imageModel);
-
+        imageModel = realm.copyToRealm(imageModel);
+        return imageModel;
     }
 
     public static void delete(Realm realm, int id) {
@@ -90,13 +90,7 @@ public class ImageModel extends RealmObject {
 
     }
 
-    public static void updateStatusAndServerId(Realm realm,int id, int serverId){
-        ImageModel imageModel = realm.where(ImageModel.class).equalTo("id", id).findFirst();
-        if (imageModel != null) {
-            imageModel.setStatus(Constants.COMPLETE);
-            imageModel.setServerId(serverId);
-        }
-    }
+
 
     public int getServerId() {
         return serverId;

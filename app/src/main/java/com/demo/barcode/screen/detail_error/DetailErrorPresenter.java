@@ -3,6 +3,7 @@ package com.demo.barcode.screen.detail_error;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetListReasonUsecase;
@@ -84,7 +85,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
                     public void onSuccess(GetListReasonUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         view.showListReason(successResponse.getEntity());
-                      //  ListReasonManager.getInstance().setListReason(successResponse.getEntity());
+                        //  ListReasonManager.getInstance().setListReason(successResponse.getEntity());
                     }
 
                     @Override
@@ -93,5 +94,15 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
                         view.showError(errorResponse.getDescription());
                     }
                 });
+    }
+
+    @Override
+    public void getDetailQualityControl(int id) {
+        localRepository.getDetailQualityControl(id).subscribe(new Action1<QualityControlModel>() {
+            @Override
+            public void call(QualityControlModel qualityControlModel) {
+                view.showDetailQualityControl(qualityControlModel);
+            }
+        });
     }
 }

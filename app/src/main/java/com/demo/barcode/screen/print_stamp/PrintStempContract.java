@@ -32,6 +32,8 @@ public interface PrintStempContract {
         void showApartmentName(String apartmentName);
 
         void showModuleName(String module);
+
+        void showCodePack(String codePack);
     }
 
     interface Presenter extends BasePresenter {
@@ -42,10 +44,16 @@ public interface PrintStempContract {
 
         void getListScanStages(int orderId, int apartmentId, int moduleId, String serialPack);
 
-        void printTemp(int serverId);
+        void printTemp(int serverId, String note);
 
         void getApartment(int apartmentId);
+
         void getModule(int moduleId);
+
+        void saveIPAddress(String ipAddress, int port, int serverId, String note);
+
+        void getCodePack(String serialPack);
+
 
     }
 }

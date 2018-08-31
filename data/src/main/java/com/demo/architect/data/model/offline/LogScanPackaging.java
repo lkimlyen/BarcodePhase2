@@ -146,7 +146,7 @@ public class LogScanPackaging extends RealmObject {
 
             realm.commitTransaction();
         }
-        RealmResults<LogScanPackaging> results = logListSerialPackPagkaging.getList().where().equalTo("status",Constants.WAITING_UPLOAD).findAll();
+        RealmResults<LogScanPackaging> results = logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return results;
 
     }
@@ -168,12 +168,9 @@ public class LogScanPackaging extends RealmObject {
     public static void deleteLogScanPackaging(Realm realm, int logId) {
 
         LogScanPackaging logScanPackaging = realm.where(LogScanPackaging.class).equalTo("id", logId).findFirst();
-
-        ProductPackagingModel productPackagingModel = logScanPackaging.getProductPackagingModel();
-        productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() - logScanPackaging.getNumberInput());
-        productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
-
         logScanPackaging.setStatus(Constants.CANCEL);
+        logScanPackaging.getProductPackagingModel().setStatus(Constants.CANCEL);
+
         //logScanPackaging.deleteFromRealm();
     }
 
@@ -234,18 +231,25 @@ public class LogScanPackaging extends RealmObject {
 
         RealmList<LogScanPackaging> parentList = logListSerialPackPagkaging.getList();
         LogScanPackaging logScanPackaging = parentList.where().equalTo("barcode", barcode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        ProductPackagingModel productPackagingModel = realm.where(ProductPackagingModel.class).equalTo("productId", product.getId()).equalTo("serialPack", serialPack)
+                .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        if (productPackagingModel == null) {
+            productPackagingModel = new ProductPackagingModel(id(realm) + 1, product.getId(), product.getProductName(),
+                    product.getProductColor(), serialPack, product.getWidth(), product.getLength(), product.getHeight(), product.getNumber(), 0, product.getNumber(), Constants.WAITING_UPLOAD);
+
+            productPackagingModel = realm.copyToRealm(productPackagingModel);
+        }
+
         if (logScanPackaging == null) {
             //add productPackingModel
-            ProductPackagingModel productPackagingModel = new ProductPackagingModel(product.getId(), product.getProductName(),
-                    product.getProductColor(), product.getWidth(), product.getLength(), product.getHeight(), product.getNumber(), product.getNumber(), 0);
             logScanPackaging = new LogScanPackaging(id(realm) + 1, apartmentId, product.getId(), packCode, serialPack, barcode, productPackagingModel, 1, DateUtils.getDateTimeCurrent(), Constants.INCOMPLETE, Constants.WAITING_UPLOAD);
             logScanPackaging = realm.copyToRealm(logScanPackaging);
             parentList.add(logScanPackaging);
+            logScanPackaging.setProductPackagingModel(productPackagingModel);
 
         } else {
             logScanPackaging.setNumberInput(logScanPackaging.getNumberInput() + 1);
         }
-        ProductPackagingModel productPackagingModel = logScanPackaging.getProductPackagingModel();
         productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() + 1);
         productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
         if (productPackagingModel.getNumberRest() == 0) {
@@ -279,6 +283,7 @@ public class LogScanPackaging extends RealmObject {
         for (LogScanPackaging logScanPackaging : results) {
             logScanPackaging.setStatus(Constants.COMPLETE);
             logScanPackaging.setServerId(serverId);
+            logScanPackaging.getProductPackagingModel().setStatus(Constants.COMPLETE);
         }
     }
 
@@ -305,5 +310,13 @@ public class LogScanPackaging extends RealmObject {
 
     public void setServerId(int serverId) {
         this.serverId = serverId;
+    }
+
+    public static void deleteAllItemLogScanPackaging(Realm realm) {
+        RealmResults<LogScanPackaging> results = realm.where(LogScanPackaging.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        for (LogScanPackaging logScanPackaging : results) {
+            logScanPackaging.setStatus(Constants.CANCEL);
+            logScanPackaging.getProductPackagingModel().setStatus(Constants.CANCEL);
+        }
     }
 }

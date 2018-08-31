@@ -32,10 +32,13 @@ import android.widget.Toast;
 
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.DetailError;
+import com.demo.architect.data.model.offline.ImageModel;
+import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ImageAdapter;
 import com.demo.barcode.adapter.ReasonAdapter;
 import com.demo.barcode.app.base.BaseFragment;
+import com.demo.barcode.constants.Constants;
 import com.demo.barcode.util.Precondition;
 
 import java.io.File;
@@ -48,6 +51,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -65,6 +69,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     private Vibrator vibrate;
     private String mCurrentPhotoPath;
     private ReasonAdapter rsAdapter;
+    private int id;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
@@ -79,9 +84,6 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @Bind(R.id.txt_serial)
     TextView txtSerial;
-
-    @Bind(R.id.txt_code_request)
-    TextView txtCodeRequest;
 
     @Bind(R.id.txt_code_so)
     TextView txtCodeSo;
@@ -140,7 +142,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//        orderId = getActivity().getIntent().getIntExtra(Constants.KEY_ORDER_ID, 0);
+        id = getActivity().getIntent().getIntExtra("qc_id", 0);
 //        logId = getActivity().getIntent().getIntExtra(Constants.KEY_ID, 0);
         initView();
         return view;
@@ -216,8 +218,8 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     }
 
     @Override
-    public void showImageError(DetailError detailError) {
-        imAdapter = new ImageAdapter(detailError.getList(), new ImageAdapter.OnItemClearListener() {
+    public void showImageError(RealmList<ImageModel> imageModels) {
+        imAdapter = new ImageAdapter(imageModels, new ImageAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(int id) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -249,6 +251,11 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     public void showListReason(List<ReasonsEntity> list) {
         rsAdapter = new ReasonAdapter(getContext(), list);
         gvReason.setAdapter(rsAdapter);
+    }
+
+    @Override
+    public void showDetailQualityControl(QualityControlModel qualityControlModel) {
+
     }
 
 

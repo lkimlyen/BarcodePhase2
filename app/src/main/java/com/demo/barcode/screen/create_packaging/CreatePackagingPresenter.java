@@ -228,7 +228,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     public void onSuccess(PostCheckBarCodeUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ProductPackagingEntity product = successResponse.getEntity().get(0);
-                        localRepository.findProductPackaging(product.getId()).subscribe(new Action1<ProductPackagingModel>() {
+                        localRepository.findProductPackaging(product.getId(),sttPack).subscribe(new Action1<ProductPackagingModel>() {
                             @Override
                             public void call(ProductPackagingModel productPackagingModel) {
                                 if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
@@ -286,6 +286,16 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             }
         });
         return ListProductPackagingManager.getInstance().sumNumber() == numberProduct;
+    }
+
+    @Override
+    public void deleteAllItemLog() {
+        localRepository.deleteAllItemLogScanPackaging().subscribe(new Action1<String>() {
+            @Override
+            public void call(String integer) {
+
+            }
+        });
     }
 
     void saveBarcode(ProductPackagingEntity product, String barcode, int orderId, int apartmentId, int moduleId, String packCode, String serialPack) {

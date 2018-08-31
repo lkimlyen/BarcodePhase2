@@ -117,24 +117,25 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     @Override
     public void saveIPAddress(String ipAddress, int port) {
-//        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
-//        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
-//            @Override
-//            public void call(IPAddress address) {
-//                view.showIPAddress(address);
-//                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_success));
-//            }
-//        });
+        int userId = UserManager.getInstance().getUser().getId();
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                view.showIPAddress(address);
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_success));
+            }
+        });
     }
 
     @Override
     public void getIPAddress() {
-//        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
-//            @Override
-//            public void call(IPAddress address) {
-//                view.showIPAddress(address);
-//            }
-//        });
+        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                view.showIPAddress(address);
+            }
+        });
     }
 
     @Override
@@ -143,14 +144,10 @@ public class SettingPresenter implements SettingContract.Presenter {
         UserEntity user = UserManager.getInstance().getUser();
         String dataPath = ConvertUtils.exportRealmFile();
         if (!dataPath.equals("")) {
-//            SendMailUtil.sendMail(user.getUserId(), user.getUserName(), user.getPhone(), dataPath, getVersion(),
-//                    CoreApplication.getInstance().getString(R.string.text_name_database));
             view.uploadFile(dataPath,user.getId(), user.getName());
         }else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_backup_fail));
             view.hideProgressBar();
         }
     }
-
-
 }

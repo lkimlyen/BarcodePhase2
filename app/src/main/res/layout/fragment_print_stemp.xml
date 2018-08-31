@@ -165,6 +165,16 @@
 
             </LinearLayout>
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="2"
+                android:hint="@string/text_note_print"
+                android:padding="@dimen/distance_2dp"
+                android:gravity="left|top"
+                android:layout_marginBottom="@dimen/distance_5dp"
+                android:background="@drawable/bg_edittext_stroke_white"
+                android:id="@+id/edt_note"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

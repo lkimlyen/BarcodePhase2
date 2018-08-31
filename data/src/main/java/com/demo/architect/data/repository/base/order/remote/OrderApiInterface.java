@@ -4,6 +4,7 @@ package com.demo.architect.data.repository.base.order.remote;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -58,5 +59,13 @@ public interface OrderApiInterface {
                                                                     @Field("pPackCode") String packCode,
                                                                     @Field("pSTTPack") String sttPack,
                                                                     @Field("pCode") String code);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(@Url String url, @Field("pOrderID") int orderId,
+                                                           @Field("pProductID") int productId,
+                                                           @Field("pApartmentID") int apartmentId,
+                                                           @Field("pCodePack") String packCode,
+                                                           @Field("pSTTPack") String sttPack);
 
 }

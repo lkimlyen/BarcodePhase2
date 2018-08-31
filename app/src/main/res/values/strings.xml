@@ -205,6 +205,10 @@
     <string name="text_choose_code_pack">Chọn mã gói</string>
     <string name="text_product_not_enough_in_package">Sản phẩm quét không đủ để in. Vui lòng kiểm tra lại</string>
     <string name="text_quality_product_not_enough_in_package">Số lượng sản phẩm chưa đủ để in. Vui lòng kiểm tra lại</string>
+    <string name="text_note_print">Nhập ghi chú</string>
+    <string name="text_print_stamp">In tem</string>
+    <string name="text_total_number">Tổng số lượng:</string>
+    <string name="text_history_create_stamp_packaging">Lịch sử tạo tem bao bì</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

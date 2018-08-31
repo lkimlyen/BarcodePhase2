@@ -18,17 +18,25 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
+import com.demo.barcode.adapter.QualityControlAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
+import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -46,6 +54,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -57,6 +66,9 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = QualityControlFragment.class.getName();
     private QualityControlContract.Presenter mPresenter;
+    private QualityControlAdapter adapter;
+    private int orderId;
+    private int departmentId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -68,14 +80,18 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSO;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
     @Bind(R.id.lv_code)
-    ListView rvCode;
+    ListView lvCode;
+    @Bind(R.id.ss_receiving_department)
+    SearchableSpinner ssDepartment;
+
+    @Bind(R.id.txt_delivery_date)
+    TextView txtDateScan;
+
     private Vibrator vibrate;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
@@ -132,11 +148,11 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     }
 
     private void initView() {
+        txtDateScan.setText(DateUtils.getShortDateCurrent());
+
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
-        ssCodeSO.setTitle(getString(R.string.text_choose_request_produce));
-        ssCodeSO.setPrompt(getString(R.string.text_choose_request_produce));
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
@@ -144,12 +160,30 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 return false;
             }
         });
+        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
 
-        List<String> list = new ArrayList<>();
-        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssCodeSO.setAdapter(adapter);
+        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
+                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
+        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        ssTypeProduct.setAdapter(adapter);
 
+        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        mPresenter.getListDepartment();
     }
 
 
@@ -219,7 +253,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     }
 
 
-
     @Override
     public void startMusicError() {
         mp2.start();
@@ -240,6 +273,93 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         }
     }
 
+    @Override
+    public void showListDepartment(List<DepartmentEntity> list) {
+        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssDepartment.setAdapter(adapter);
+        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                departmentId = list.get(position).getId();
+                mPresenter.getListQualityControl(orderId, departmentId);
+//                if (times > 0 && orderId > 0) {
+//                    mPresenter.getListScanStages(orderId, departmentId, times);
+//                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListQualityControl(RealmResults<QualityControlModel> results) {
+        adapter = new QualityControlAdapter(results, new QualityControlAdapter.OnItemClearListener() {
+            @Override
+            public void onItemClick(QualityControlModel item) {
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_delete_code))
+                        .setConfirmText(getString(R.string.text_yes))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                mPresenter.removeItemQualityControl(item.getId());
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_no))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+        lvCode.setAdapter(adapter);
+        lvCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DetailErrorActivity.start(getActivity(), adapter.getItem(position).getId());
+            }
+        });
+
+    }
+
+    @Override
+    public void showListSO(List<SOEntity> list) {
+        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodeSO.setAdapter(adapter);
+        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCustomerName.setText(list.get(position).getCustomerName());
+                orderId = list.get(position).getOrderId();
+                if (orderId > 0) {
+                    mPresenter.getListProduct(orderId);
+//                    //mPresenter.getListTimes(orderId);
+//
+//                    if (departmentId > 0 && times > 0) {
+//                        mPresenter.getListScanStages(orderId, departmentId, times);
+//                    }
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -249,12 +369,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (edtBarcode.getText().toString().equals("")) {
-            return;
-        }
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
-            return;
-        }
 
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))

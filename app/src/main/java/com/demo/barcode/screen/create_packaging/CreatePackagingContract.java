@@ -66,5 +66,6 @@ public interface CreatePackagingContract {
 
         boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack);
 
+        void deleteAllItemLog();
     }
 }

@@ -34,6 +34,7 @@ import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
+import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -149,13 +150,22 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     private void initView() {
+        txtDateScan.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-
+        ssCodeSO.setPrintStamp(true);
+        ssTypeProduct.setPrintStamp(true);
+        ssCodePack.setPrintStamp(true);
+        ssApartment.setPrintStamp(true);
+        ssModule.setPrintStamp(true);
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-
+                if (adapter != null){
+                    if (adapter.getCount() > 0) {
+                        return true;
+                    }
+                }
                 return false;
             }
         });
@@ -163,6 +173,12 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (adapter != null){
+                    if (adapter.getCount() > 0) {
+                        return true;
+                    }
+                }
+
                 return false;
             }
         });
@@ -170,6 +186,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (adapter != null){
+                    if (adapter.getCount() > 0) {
+                        return true;
+                    }
+                }
                 return false;
             }
         });
@@ -177,6 +198,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssApartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (adapter != null){
+                    if (adapter.getCount() > 0) {
+                        return true;
+                    }
+                }
                 return false;
             }
         });
@@ -184,6 +210,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssModule.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
+                if (adapter != null){
+                    if (adapter.getCount() > 0) {
+                        return true;
+                    }
+                }
                 return false;
             }
         });
@@ -415,8 +446,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
                 serialPack = list.get(position).getSttPack();
                 codePack = list.get(position).getPackCode();
-                mPresenter.getListProduct(orderId,moduleId,apartmentId,codePack,serialPack);
-                mPresenter.getListScan(orderId,moduleId,apartmentId,serialPack);
+                mPresenter.getListProduct(orderId, moduleId, apartmentId, codePack, serialPack);
+                mPresenter.getListScan(orderId, moduleId, apartmentId, serialPack);
             }
 
             @Override
@@ -468,10 +499,38 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @OnClick(R.id.img_back)
     public void back() {
 
+        if (adapter != null && adapter.getCount() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            mPresenter.deleteAllItemLog();
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .show();
+
+        } else {
+            getActivity().finish();
+        }
     }
 
     @OnClick(R.id.img_print)
     public void print() {
+        if (adapter == null){
+            return;
+        }
         if (!mPresenter.countListScanInPack(adapter.getCount())) {
             showNotification(getString(R.string.text_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
             return;

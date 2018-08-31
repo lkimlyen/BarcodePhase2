@@ -54,6 +54,9 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Bind(R.id.btn_scan_packaging)
     Button btnScanPackaging;
 
+    @Bind(R.id.btn_history)
+    Button btnHistory;
+
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -125,11 +128,14 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         if (user.getRole() > 0 && user.getRole() <= 9) {
             txtPosition.setText(ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
             btnScanPackaging.setVisibility(View.GONE);
+            btnHistory.setVisibility(View.GONE);
+            if (user.getRole() == 9) {
+                btnScanPackaging.setVisibility(View.GONE);
+            }
         } else {
             btnScanStages.setVisibility(View.GONE);
             btnConfirmreceive.setVisibility(View.GONE);
         }
-
 
     }
 
@@ -176,7 +182,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     }
 
     @OnClick(R.id.btn_scan_packaging)
-    public void scanPackaging(){
+    public void scanPackaging() {
         CreatePackagingActivity.start(getContext());
     }
 
@@ -186,4 +192,8 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         startActivity(intent);
     }
 
+    @OnClick(R.id.btn_history)
+    public void history() {
+        HistoryPackageActivity.start(getContext());
+    }
 }

@@ -7,6 +7,7 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -146,6 +147,25 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
+    private void handleHistoryResponse(Call<BaseListResponse<HistoryEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<HistoryEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
 
 
     @Override
@@ -231,6 +251,19 @@ public class OrderRepositoryImpl implements OrderRepository {
                 handleProductPackagingResponse(mRemoteApiInterface.postCheckBarCode(
                         server + "/WS/api/GD2PostCheckBarCode", orderId, productId, apartmentId,
                         packCode, sttPack, code), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(final int orderId, final int productId, final int apartmentId, final String packCode, final String sttPack) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<HistoryEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<HistoryEntity>> subscriber) {
+                handleHistoryResponse(mRemoteApiInterface.getListPrintPackageHistory(
+                        server + "/WS/api/GD2GetListPrintPackageHistory", orderId, productId, apartmentId,
+                        packCode, sttPack), subscriber);
             }
         });
     }

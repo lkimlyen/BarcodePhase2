@@ -2,10 +2,14 @@ package com.demo.barcode.screen.detail_error;
 
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.DetailError;
+import com.demo.architect.data.model.offline.ImageModel;
+import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
+
+import io.realm.RealmList;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -23,9 +27,11 @@ public interface DetailErrorContract {
 
         void turnOnVibrator();
 
-        void showImageError(DetailError detailError);
+        void showImageError(RealmList<ImageModel> imageModels);
 
         void showListReason(List<ReasonsEntity> list);
+
+        void showDetailQualityControl(QualityControlModel qualityControlModel);
     }
 
     interface Presenter extends BasePresenter {
@@ -35,5 +41,7 @@ public interface DetailErrorContract {
         void deleteImage(int id);
 
         void getListReason();
+
+        void getDetailQualityControl(int id);
     }
 }

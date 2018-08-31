@@ -15,6 +15,7 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
+import com.demo.architect.domain.GetListPrintPackageHistoryUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
@@ -148,5 +149,9 @@ public class UseCaseModule {
         return new GetListProductInPackageUsecase(productRepository);
     }
 
+    @Provides
+    GetListPrintPackageHistoryUsecase provideGetListPrintPackageHistoryUsecase(OrderRepository orderRepository) {
+        return new GetListPrintPackageHistoryUsecase(orderRepository);
+    }
 }
 

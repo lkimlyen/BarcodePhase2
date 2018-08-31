@@ -31,6 +31,7 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;
     private boolean _isFromInit;
+    private boolean printStamp;
     private OnClickListener listener;
     private OnUploadDataListener uploadDataListener;
 
@@ -82,10 +83,9 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
         }
     }
 
-    public void resetSpinner(){
+    public void resetSpinner() {
         init();
     }
-
 
 
     @Override
@@ -96,40 +96,55 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (listener.onClick()) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
-                        .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
-                        .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                uploadDataListener.uploadData();
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                if (null != _arrayAdapter) {
-
-                                    // Refresh content #6
-                                    // Change Start
-                                    // Description: The items were only set initially, not reloading the data in the
-                                    // spinner every time it is loaded with items in the adapter.
-                                    _items.clear();
-                                    for (int i = 0; i < _arrayAdapter.getCount(); i++) {
-                                        _items.add(_arrayAdapter.getItem(i));
-                                    }
-                                    // Change end.
-
-                                    _searchableListDialog.show(scanForActivity(_context).getFragmentManager(), "TAG");
+                if (printStamp){
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(getContext().getString(R.string.text_title_noti))
+                            .setContentText(getContext().getString(R.string.text_not_done_pack_current))
+                            .setConfirmText(getContext().getString(R.string.text_ok))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
                                 }
+                            }).show();
+                    return true;
+                }else {
+                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+                            .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+                            .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    uploadDataListener.uploadData();
+                                    sweetAlertDialog.dismiss();
+                                }
+                            })
+                            .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                    if (null != _arrayAdapter) {
 
-                            }
-                        })
-                        .show();
+                                        // Refresh content #6
+                                        // Change Start
+                                        // Description: The items were only set initially, not reloading the data in the
+                                        // spinner every time it is loaded with items in the adapter.
+                                        _items.clear();
+                                        for (int i = 0; i < _arrayAdapter.getCount(); i++) {
+                                            _items.add(_arrayAdapter.getItem(i));
+                                        }
+                                        // Change end.
+
+                                        _searchableListDialog.show(scanForActivity(_context).getFragmentManager(), "TAG");
+                                    }
+
+                                }
+                            })
+                            .show();
+                }
+
                 // return true;
             } else {
                 if (null != _arrayAdapter) {
@@ -233,6 +248,10 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
 
     public void setUploadDataListener(OnUploadDataListener uploadDataListener) {
         this.uploadDataListener = uploadDataListener;
+    }
+
+    public void setPrintStamp(boolean printStamp) {
+        this.printStamp = printStamp;
     }
 
     public interface OnClickListener {

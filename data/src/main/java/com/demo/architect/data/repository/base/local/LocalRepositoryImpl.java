@@ -21,6 +21,7 @@ import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -382,12 +383,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusAndServerIdImage(final int id, final int serverId) {
+    public Observable<String> updateStatusAndServerIdImage(final int id, final int imageId,final int serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusAndServerIdImage(id, serverId);
+                    databaseRealm.updateStatusAndServerIdImage(id,imageId, serverId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -514,12 +515,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ProductPackagingModel> findProductPackaging(final int productId) {
+    public Observable<ProductPackagingModel> findProductPackaging(final int productId,final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<ProductPackagingModel>() {
             @Override
             public void call(Subscriber<? super ProductPackagingModel> subscriber) {
                 try {
-                    ProductPackagingModel model =  databaseRealm.findProductPackaging(productId);
+                    ProductPackagingModel model =  databaseRealm.findProductPackaging(productId,serialPack);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -649,6 +650,54 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     databaseRealm.updateStatusScanPackaging(serverId);
                     subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAllItemLogScanPackaging() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAllItemLogScanPackaging();
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<QualityControlModel>> getListQualityControl(final int orderId, final int departmentId) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<QualityControlModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<QualityControlModel>> subscriber) {
+                try {
+                    RealmResults<QualityControlModel> results =  databaseRealm.getListQualityControl(orderId,departmentId);
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<QualityControlModel> getDetailQualityControl(final int id) {
+        return Observable.create(new Observable.OnSubscribe<QualityControlModel>() {
+            @Override
+            public void call(Subscriber<? super QualityControlModel> subscriber) {
+                try {
+                    QualityControlModel results =  databaseRealm.getDetailQualityControl(id);
+                    subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

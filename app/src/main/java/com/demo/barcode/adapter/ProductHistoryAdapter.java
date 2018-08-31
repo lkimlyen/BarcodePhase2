@@ -1,22 +1,44 @@
 package com.demo.barcode.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.HistoryEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
+
+import java.util.List;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class DetailPrintTempAdapter extends RealmBaseAdapter<LogScanPackaging> implements ListAdapter {
+public class ProductHistoryAdapter extends BaseAdapter {
+    private List<ProductPackagingEntity> list;
 
-    public DetailPrintTempAdapter(OrderedRealmCollection<LogScanPackaging> realmResults) {
-        super(realmResults);
+    public ProductHistoryAdapter( List<ProductPackagingEntity> list) {
+        this.list = list;
+    }
+
+    @Override
+    public int getCount() {
+        return list.size();
+    }
+
+    @Override
+    public ProductPackagingEntity getItem(int i) {
+        return list.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -30,20 +52,19 @@ public class DetailPrintTempAdapter extends RealmBaseAdapter<LogScanPackaging> i
         } else {
             viewHolder = (HistoryHolder) convertView.getTag();
         }
-        if (adapterData != null) {
-            final LogScanPackaging item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
-        }
+        final ProductPackagingEntity item = getItem(position);
+        setDataToViews(viewHolder, item);
+
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, LogScanPackaging item) {
-        holder.txtCodeColor.setText(item.getProductPackagingModel().getProductColor());
-        holder.txtHeight.setText(item.getProductPackagingModel().getHeight() + "");
-        holder.txtLength.setText(item.getProductPackagingModel().getLength() + "");
-        holder.txtWidth.setText(item.getProductPackagingModel().getWidth() + "");
-        holder.txtNumber.setText(item.getNumberInput() + "");
-        holder.txtNameProduct.setText(item.getProductPackagingModel().getProductName());
+    private void setDataToViews(HistoryHolder holder, ProductPackagingEntity item) {
+        holder.txtCodeColor.setText(item.getProductColor());
+        holder.txtHeight.setText(item.getHeight() + "");
+        holder.txtLength.setText(item.getLength() + "");
+        holder.txtWidth.setText(item.getWidth() + "");
+        holder.txtNumber.setText(item.getNumber()+ "");
+        holder.txtNameProduct.setText(item.getProductName());
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {

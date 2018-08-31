@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
+import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
@@ -17,8 +18,10 @@ import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
+import com.demo.barcode.manager.ListCodePackManager;
 import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.UserManager;
+import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -102,7 +105,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void printTemp(int serverId) {
+    public void printTemp(int serverId,String note) {
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
@@ -120,12 +123,12 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
                                 postListCodeProductDetailUsecase.executeIO(new PostListCodeProductDetailUsecase.RequestValue(jsonUpload, user.getId(),
-                                        ""), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
+                                        note), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
                                         PostListCodeProductDetailUsecase.ErrorValue>() {
                                     @Override
                                     public void onSuccess(PostListCodeProductDetailUsecase.ResponseValue successResponse) {
 
-                                        printTemp(successResponse.getId());
+                                        printTemp(successResponse.getId(),note);
                                     }
 
                                     @Override
@@ -168,4 +171,24 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
         ModuleEntity module= ListModuleManager.getInstance().getModuleById(moduleId);
         view.showModuleName(module.getModuleName());
     }
+
+    @Override
+    public void saveIPAddress(String ipAddress, int port,int serverId,String note) {
+        int userId = UserManager.getInstance().getUser().getId();
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                //  view.showIPAddress(address);
+                printTemp(serverId,note);
+            }
+        });
+    }
+
+    @Override
+    public void getCodePack(String serialPack) {
+        CodePackEntity codePack = ListCodePackManager.getInstance().getCodePackById(serialPack);
+        view.showCodePack(codePack.getPackCode());
+    }
+
 }

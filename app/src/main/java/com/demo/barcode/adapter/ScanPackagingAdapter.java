@@ -80,6 +80,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
 
                     }
                     if (numberInput - item.getNumberInput() > productPackagingModel.getNumberRest()) {
+                        holder.edtNumberScan.setText(item.getNumberInput() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest));
                         return;
                     }
@@ -123,7 +124,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
         }
 
-
+        holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {

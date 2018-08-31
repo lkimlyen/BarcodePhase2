@@ -23,12 +23,14 @@ import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -299,17 +301,17 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusAndServerIdImage(final int id, final int serverId) {
+    public void updateStatusAndServerIdImage(final int id,final int imageId, final int serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ImageModel.updateStatusAndServerId(realm, id, serverId);
+                QualityControlModel.updateStatusAndServerId(realm, id,imageId, serverId);
             }
         });
     }
 
-    public  RealmResults<LogScanPackaging> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
+    public RealmResults<LogScanPackaging> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
         Realm realm = getRealmInstance();
         RealmResults<LogScanPackaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
                 soEntity, moduleEntity, apartment, codePack);
@@ -339,9 +341,9 @@ public class DatabaseRealm {
 
     }
 
-    public ProductPackagingModel findProductPackaging(final int productId) {
+    public ProductPackagingModel findProductPackaging(final int productId, final String serialPack) {
         Realm realm = getRealmInstance();
-        ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId);
+        ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId, serialPack);
         return productPackagingModel;
     }
 
@@ -353,7 +355,7 @@ public class DatabaseRealm {
 
     public int getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack) {
         Realm realm = getRealmInstance();
-        int total = LogScanPackaging.getTotalScan(realm, orderId,apartmentId,moduleId,serialPack);
+        int total = LogScanPackaging.getTotalScan(realm, orderId, apartmentId, moduleId, serialPack);
         return total;
     }
 
@@ -425,5 +427,27 @@ public class DatabaseRealm {
             }
         });
 
+    }
+
+    public void deleteAllItemLogScanPackaging() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackaging.deleteAllItemLogScanPackaging(realm);
+            }
+        });
+    }
+
+    public RealmResults<QualityControlModel> getListQualityControl(int orderId, int departmentId) {
+        Realm realm = getRealmInstance();
+        RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm, orderId, departmentId, userId);
+        return results;
+    }
+
+    public QualityControlModel getDetailQualityControl(int id) {
+        Realm realm = getRealmInstance();
+        QualityControlModel results = QualityControlModel.getDetailQualityControl(realm, id);
+        return results;
     }
 }

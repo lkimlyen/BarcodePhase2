@@ -10,6 +10,7 @@ import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseActivity;
 import com.demo.barcode.app.di.Precondition;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.screen.dashboard.DashboardFragment;
 
 import javax.inject.Inject;
 
@@ -24,10 +25,14 @@ public class DetailPackageActivity extends BaseActivity {
 
     DetailPackageFragment fragment;
 
-    public static void start(Activity activity, int orderId, int logId) {
+    public static void start(Activity activity, int orderId, int apartmentId, int moduleId, String serialPack, int packageId) {
         Intent intent = new Intent(activity, DetailPackageActivity.class);
-        intent.putExtra(Constants.KEY_ORDER_ID, orderId);
-        intent.putExtra(Constants.KEY_ID, logId);
+        intent.putExtra(DetailPackageFragment.ORDER_ID, orderId);
+        intent.putExtra(DetailPackageFragment.APARTMENT_ID, apartmentId);
+        intent.putExtra(DetailPackageFragment.MODULE_ID, moduleId);
+        intent.putExtra(DetailPackageFragment.SERIAL_PACK, serialPack);
+        intent.putExtra(DetailPackageFragment.PACKAGE_ID, packageId);
+
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 

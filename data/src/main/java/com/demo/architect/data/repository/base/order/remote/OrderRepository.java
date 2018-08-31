@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.order.remote;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -30,4 +31,8 @@ public interface OrderRepository {
     Observable<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(int orderId, int productId,
                                                                           int apartmentId,String packCode,
                                                                           String sttPack,String code);
+
+    Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(int orderId, int productId,
+                                                                 int apartmentId, String packCode,
+                                                                 String sttPack);
 }
