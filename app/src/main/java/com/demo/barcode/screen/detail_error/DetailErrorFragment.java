@@ -143,13 +143,14 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         id = getActivity().getIntent().getIntExtra("qc_id", 0);
-//        logId = getActivity().getIntent().getIntExtra(Constants.KEY_ID, 0);
         initView();
         return view;
     }
 
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        mPresenter.getListReason();
+        mPresenter.getDetailQualityControl(id);
     }
 
 

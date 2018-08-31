@@ -43,5 +43,7 @@ public interface DetailErrorContract {
         void getListReason();
 
         void getDetailQualityControl(int id);
+
+        void getListImageError(int id);
     }
 }
