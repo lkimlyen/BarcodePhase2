@@ -8,6 +8,7 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -111,9 +112,9 @@ public class OtherRepositoryImpl implements OtherRepository {
             }
         }
     }
-    private void handleReasonResponse(Call<BaseListResponse<ReasonsEntity>> call, Subscriber subscriber) {
+    private void handleReasonResponse(Call<BaseResponse<ListReasonsEntity>> call, Subscriber subscriber) {
         try {
-            BaseListResponse<ReasonsEntity> response = call.execute().body();
+            BaseResponse<ListReasonsEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -143,11 +144,11 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ReasonsEntity>> getRAndSQC() {
+    public Observable<BaseResponse<ListReasonsEntity>> getRAndSQC() {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ReasonsEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<ListReasonsEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseListResponse<ReasonsEntity>> subscriber) {
+            public void call(Subscriber<? super BaseResponse<ListReasonsEntity>> subscriber) {
                 handleReasonResponse(mRemoteApiInterface.getRAndSQC(
                         server + "/WS/api/GD2GetRAndSQC"), subscriber);
             }
@@ -167,20 +168,20 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseResponse<UploadEntity>> uploadImage(final File file, final String key, final int orderId, final int departmentId, final String fileName, final String userId) {
+    public Observable<BaseResponse<UploadEntity>> uploadImage(final File file, final String key, final int orderId, final int departmentId, final String fileName, final int userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse<UploadEntity>>() {
             @Override
             public void call(Subscriber<? super BaseResponse<UploadEntity>> subscriber) {
 
-                handleUploadResponse(mRemoteApiInterface.uploadImage( MultipartBody.Part
+                handleUploadResponse(mRemoteApiInterface.uploadImage(server + "/ws/UploadImage/UploadFile", MultipartBody.Part
                                 .createFormData("file", file.getName(),
                                         RequestBody.create(MultipartBody.FORM, file)),
                         RequestBody.create(MultipartBody.FORM, key),
                         RequestBody.create(MultipartBody.FORM, orderId+""),
                         RequestBody.create(MultipartBody.FORM, departmentId+""),
                         RequestBody.create(MultipartBody.FORM,fileName),
-                        RequestBody.create(MultipartBody.FORM,userId)), subscriber);
+                        RequestBody.create(MultipartBody.FORM,userId+"")), subscriber);
             }
         });
     }

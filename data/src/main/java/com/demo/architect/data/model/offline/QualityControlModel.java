@@ -1,6 +1,8 @@
 package com.demo.architect.data.model.offline;
 
 import android.media.Image;
+import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.ProductEntity;
@@ -225,14 +227,18 @@ public class QualityControlModel extends RealmObject {
 
         ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId).findFirst();
         if (listOrderQualityControl == null) {
+            realm.beginTransaction();
             listOrderQualityControl = ListOrderQualityControl.create(realm, orderId);
+            realm.commitTransaction();
         }
 
         RealmList<ListDepartmentQualityControl> parentList = listOrderQualityControl.getList();
         ListDepartmentQualityControl listDepartmentQualityControl = listOrderQualityControl.getList().where().equalTo("departmentId", departmentId).findFirst();
         if (listDepartmentQualityControl == null) {
+            realm.beginTransaction();
             listDepartmentQualityControl = ListDepartmentQualityControl.create(realm, departmentId);
             parentList.add(listDepartmentQualityControl);
+            realm.commitTransaction();
         }
 
         RealmResults<QualityControlModel> results = listDepartmentQualityControl.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
@@ -240,12 +246,7 @@ public class QualityControlModel extends RealmObject {
 
     }
 
-    public static void updateNumber(Realm realm, int id, int number) {
-        QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
-        qualityControlModel.setNumber(number);
-    }
-
-    public static void updateListReason(Realm realm, int id, Collection<Integer> idList) {
+    public static void updateDetailErrorQC(Realm realm, int id, int numberFailed, String description, Collection<Integer> idList) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         RealmList<Integer> integers = qualityControlModel.getIdReasonList();
         integers.clear();
@@ -255,8 +256,8 @@ public class QualityControlModel extends RealmObject {
             sId += idReason + ",";
         }
         qualityControlModel.setListReason(sId.substring(0, sId.lastIndexOf(",")));
-
-
+        qualityControlModel.setDescription(description);
+        qualityControlModel.setNumber(numberFailed);
     }
 
     public static void updateListImage(Realm realm, int id, String filePath) {
@@ -274,7 +275,6 @@ public class QualityControlModel extends RealmObject {
             imageModel.setStatus(Constants.COMPLETE);
             imageModel.setServerId(serverId);
         }
-
         qualityControlModel.setListImage(qualityControlModel.getListImage().length() == 0 ? String.valueOf(serverId) : qualityControlModel.getListImage() + "," + serverId);
 
     }
@@ -299,5 +299,34 @@ public class QualityControlModel extends RealmObject {
     public static QualityControlModel getDetailQualityControl(Realm realm, int id) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         return qualityControlModel;
+    }
+
+    public static RealmList<Integer> getListReasonQualityControl(Realm realm, int id) {
+        QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
+        RealmList<Integer> results = qualityControlModel.getIdReasonList();
+        return results;
+    }
+
+    public static List<QualityControlModel> getListQualityControlUpload(Realm realm, int userId) {
+        RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("userId", userId).findAll();
+        return realm.copyFromRealm(results);
+    }
+
+    public static void updateImageIdAndStatus(Realm realm, int qcId, int id, int imageId) {
+        QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", qcId).findFirst();
+        ImageModel imageModel = qualityControlModel.getImageList().where().equalTo("id", id).findFirst();
+        imageModel.setServerId(imageId);
+        imageModel.setStatus(Constants.COMPLETE);
+        qualityControlModel.setListImage(!TextUtils.isEmpty(qualityControlModel.getListImage()) ? qualityControlModel.getListImage() + "," + imageId : String.valueOf(imageId));
+
+    }
+
+    public static void updateStatusQC(Realm realm, int userId) {
+        RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("userId", userId).findAll();
+        for (QualityControlModel qualityControlModel : results) {
+            qualityControlModel.setStatus(Constants.COMPLETE);
+        }
     }
 }

@@ -14,21 +14,29 @@ import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.realm.RealmList;
+
 public class ReasonAdapter extends BaseAdapter {
     private Context mContext;
     private List<ReasonsEntity> list;
-    private Set<ReasonsEntity> countersToSelect = new HashSet<ReasonsEntity>();
+    private Set<Integer> countersToSelect = new HashSet<Integer>();
 
     public ReasonAdapter(Context c, List<ReasonsEntity> list ) {
         mContext = c;
         this.list = list;
     }
 
-    public Set<ReasonsEntity> getCountersToSelect() {
+    public void setListCounterSelect(RealmList<Integer> list){
+        countersToSelect = new HashSet<Integer>(list);
+        notifyDataSetChanged();
+    }
+
+    public Set<Integer> getCountersToSelect() {
         return countersToSelect;
     }
     @Override
@@ -65,15 +73,15 @@ public class ReasonAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    countersToSelect.add(list.get(position));
+                    countersToSelect.add(list.get(position).getReasonId());
                 }else {
-                    countersToSelect.remove(list.get(position));
+                    countersToSelect.remove(list.get(position).getReasonId());
                 }
 
             }
         });
 
-        holder.cbReason.setChecked(countersToSelect.contains(list.get(position)));
+        holder.cbReason.setChecked(countersToSelect.contains(list.get(position).getReasonId()));
         return convertView;
     }
 

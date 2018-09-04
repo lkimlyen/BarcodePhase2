@@ -5,6 +5,7 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -28,7 +29,7 @@ public interface OtherApiInterface {
     Call<BaseListResponse<DepartmentEntity>> getListDepartment(@Url String url);
 
     @GET
-    Call<BaseListResponse<ReasonsEntity>> getRAndSQC(@Url String url);
+    Call<BaseResponse<ListReasonsEntity>> getRAndSQC(@Url String url);
 
     @FormUrlEncoded
     @POST
@@ -38,6 +39,7 @@ public interface OtherApiInterface {
     @Multipart
     @POST()
     Call<BaseResponse<UploadEntity>> uploadImage(
+            @Url String url,
             @Part MultipartBody.Part file,
             @Part("pKey") RequestBody key,
             @Part("pOrderID") RequestBody orderId,

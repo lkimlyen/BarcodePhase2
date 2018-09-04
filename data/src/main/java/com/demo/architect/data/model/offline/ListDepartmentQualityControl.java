@@ -36,9 +36,8 @@ public class ListDepartmentQualityControl extends RealmObject {
     }
     public static ListDepartmentQualityControl create(Realm realm, int departmentId) {
         ListDepartmentQualityControl listDepartmentQualityControl = new ListDepartmentQualityControl(departmentId);
-        realm.beginTransaction();
         listDepartmentQualityControl = realm.copyToRealm(listDepartmentQualityControl);
-        realm.commitTransaction();
+
         return listDepartmentQualityControl;
     }
 

@@ -4,6 +4,7 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -18,11 +19,11 @@ import rx.Observable;
 public interface OtherRepository {
     Observable<BaseListResponse<DepartmentEntity>> getListDepartment();
 
-    Observable<BaseListResponse<ReasonsEntity>> getRAndSQC();
+    Observable<BaseResponse<ListReasonsEntity>> getRAndSQC();
 
     Observable<BaseResponse> addLogQC(String key, String json);
 
     Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, int orderId,
-                                                       int departmentId, String fileName, String userId);
+                                                       int departmentId, String fileName, int userId);
     Observable<BaseListResponse<ApartmentEntity>> getApartment(int orderId);
 }

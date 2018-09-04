@@ -69,10 +69,12 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput < 0) {
+                        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
                     if (numberInput > item.getNumberScanOut()){
+                        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
                     }
@@ -119,7 +121,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
             }
         });
 
-//        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+//        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                listener.onItemClick(item);
@@ -132,7 +134,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
         TextView txtSerialModule;
         TextView txtNameDetail;
-        //ImageView imgDelete;
+        //ImageView btnDelete;
         LinearLayout layoutMain;
         TextView txtNumberDelivery;
         EditText edtNumberReceive;

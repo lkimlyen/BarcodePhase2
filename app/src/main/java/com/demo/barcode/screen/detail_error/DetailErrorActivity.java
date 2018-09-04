@@ -18,7 +18,7 @@ import javax.inject.Inject;
  */
 
 public class DetailErrorActivity extends BaseActivity {
-    public static final int REQUEST_CODE = 123;
+    public static final int REQUEST_CODE = 144;
     @Inject
     DetailErrorPresenter DetailErrorPresenter;
 

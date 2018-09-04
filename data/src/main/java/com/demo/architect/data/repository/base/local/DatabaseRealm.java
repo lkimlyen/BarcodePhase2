@@ -25,6 +25,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -281,12 +282,12 @@ public class DatabaseRealm {
         return logScanConfirm;
     }
 
-    public void addImageModel(final String pathFile) {
+    public void addImageModel(final int id, final String pathFile) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ImageModel.create(realm, pathFile);
+                QualityControlModel.updateListImage(realm,id, pathFile);
             }
         });
     }
@@ -449,5 +450,57 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         QualityControlModel results = QualityControlModel.getDetailQualityControl(realm, id);
         return results;
+    }
+
+    public RealmList<Integer> getListReasonQualityControl(int id) {
+        Realm realm = getRealmInstance();
+        RealmList<Integer> results = QualityControlModel.getListReasonQualityControl(realm, id);
+        return results;
+    }
+
+    public void saveBarcodeQC(final int orderId, final int departmentId, final ProductEntity productEntity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.create(realm,orderId,departmentId,productEntity,userId);
+            }
+        });
+    }
+
+    public void updateDetailErrorQC(final int id, final int numberFailed, final String description, final Collection<Integer> idList) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.updateDetailErrorQC(realm,id,numberFailed,description,idList);
+            }
+        });
+    }
+
+    public List<QualityControlModel> getListQualityControlUpload() {
+        Realm realm = getRealmInstance();
+        List<QualityControlModel>  result  =  QualityControlModel.getListQualityControlUpload(realm,userId);
+        return result;
+    }
+
+    public void updateImageIdAndStatus(final int qcId,final int id, final int imageId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.updateImageIdAndStatus(realm,qcId,id,imageId);
+            }
+        });
+    }
+
+    public void updateStatusQC() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.updateStatusQC(realm,userId);
+            }
+        });
     }
 }

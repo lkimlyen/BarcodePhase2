@@ -7,6 +7,7 @@ import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
+import java.util.Collection;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -32,18 +33,23 @@ public interface DetailErrorContract {
         void showListReason(List<ReasonsEntity> list);
 
         void showDetailQualityControl(QualityControlModel qualityControlModel);
+
+        void showUpdateListCounterSelect(RealmList<Integer> integerRealmList);
+
+        void goBackQualityControl();
     }
 
     interface Presenter extends BasePresenter {
 
-        void addImage(String pathFile);
+        void addImage(int id, String pathFile);
 
         void deleteImage(int id);
 
-        void getListReason();
+        void getListReason(int id);
 
         void getDetailQualityControl(int id);
 
-        void getListImageError(int id);
+        void save(int id, int numberFailed, String description, Collection<Integer> idList);
+
     }
 }

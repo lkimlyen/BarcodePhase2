@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.detail_error;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,14 +19,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +43,7 @@ import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ImageAdapter;
 import com.demo.barcode.adapter.ReasonAdapter;
+import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.util.Precondition;
@@ -70,32 +77,30 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     private String mCurrentPhotoPath;
     private ReasonAdapter rsAdapter;
     private int id;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
 
-    @Bind(R.id.lv_code)
-    ListView lvCodes;
+    @Bind(R.id.txt_barcode)
+    TextView txtBarcode;
 
-    @Bind(R.id.txt_total)
-    TextView txtTotal;
+    @Bind(R.id.txt_serial_module)
+    TextView txtModule;
 
-    @Bind(R.id.txt_date_create)
-    TextView txtDateCreate;
+    @Bind(R.id.txt_name_detail)
+    TextView txtNameDetail;
 
-    @Bind(R.id.txt_serial)
-    TextView txtSerial;
+    @Bind(R.id.txt_number_order)
+    TextView txtNumberOrder;
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSo;
-
-    @Bind(R.id.txt_customer_name)
-    TextView txtCustomerName;
+    @Bind(R.id.edt_number_failed)
+    EditText edtNumberFailed;
 
     @Bind(R.id.rv_image)
     RecyclerView rvImage;
 
     @Bind(R.id.gv_reason)
     GridView gvReason;
+
+    @Bind(R.id.edt_description)
+    EditText edtDescription;
 
     public DetailErrorFragment() {
         // Required empty public constructor
@@ -118,14 +123,14 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE_TAKE_IMAGE) {
                 if (mCurrentPhotoPath != null) {
-                    mPresenter.addImage(mCurrentPhotoPath);
+                    mPresenter.addImage(id, mCurrentPhotoPath);
                 }
             }
 
             if (requestCode == REQUEST_CODE_PICK_IMAGE) {
                 Uri uri = data.getData();
                 String pathFile = uri.toString();
-                mPresenter.addImage(pathFile);
+                mPresenter.addImage(id, pathFile);
             }
 
         }
@@ -136,20 +141,53 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail_error, container, false);
-        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         id = getActivity().getIntent().getIntExtra("qc_id", 0);
         initView();
         return view;
     }
 
     private void initView() {
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rvImage.setLayoutManager(layoutManager);
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        mPresenter.getListReason();
+        edtNumberFailed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    int numberInput = Integer.parseInt(s.toString());
+                    if (numberInput <= 0) {
+                        edtNumberFailed.setText("1");
+                        Toast.makeText(getContext(), getString(R.string.text_number_bigger_zero), Toast.LENGTH_SHORT).show();
+                        return;
+
+                    }
+                    if (numberInput > Integer.parseInt(txtNumberOrder.getText().toString())) {
+                        edtNumberFailed.setText(txtNumberOrder.getText().toString());
+                        Toast.makeText(getContext(), getString(R.string.text_number_bigger_number_order), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                } catch (Exception e) {
+
+                }
+            }
+        });
+        mPresenter.getListReason(id);
         mPresenter.getDetailQualityControl(id);
     }
 
@@ -252,11 +290,62 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     public void showListReason(List<ReasonsEntity> list) {
         rsAdapter = new ReasonAdapter(getContext(), list);
         gvReason.setAdapter(rsAdapter);
+        gvReason.post(new Runnable() {
+            @Override
+            public void run() {
+                setGridViewHeightBasedOnChildren(gvReason, 2);
+            }
+        });
+    }
+
+    public void setGridViewHeightBasedOnChildren(GridView gridView, int columns) {
+        ListAdapter listAdapter = gridView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        int items = listAdapter.getCount();
+        int rows = 0;
+
+        View listItem = listAdapter.getView(0, null, gridView);
+        listItem.measure(0, 0);
+        totalHeight = listItem.getMeasuredHeight();
+
+        float x = 1;
+        if (items > columns) {
+            x = items / columns;
+            rows = (int) (x + 1);
+            totalHeight *= rows;
+        }
+
+        ViewGroup.LayoutParams params = gridView.getLayoutParams();
+        params.height = totalHeight;
+        gridView.setLayoutParams(params);
+
     }
 
     @Override
     public void showDetailQualityControl(QualityControlModel qualityControlModel) {
+        txtBarcode.setText(qualityControlModel.getBarcode());
+        txtModule.setText(qualityControlModel.getModule());
+        txtNameDetail.setText(qualityControlModel.getProductName());
+        txtNumberOrder.setText(String.valueOf(qualityControlModel.getTotalNumber()));
+        edtNumberFailed.setText(String.valueOf(qualityControlModel.getNumber()));
+        edtDescription.setText(qualityControlModel.getDescription());
+    }
 
+    @Override
+    public void showUpdateListCounterSelect(RealmList<Integer> integerRealmList) {
+        rsAdapter.setListCounterSelect(integerRealmList);
+    }
+
+    @Override
+    public void goBackQualityControl() {
+        Intent returnIntent = new Intent();
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        getActivity().finish();
     }
 
 
@@ -322,14 +411,14 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                         photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, codePickImage);
+                        getActivity().startActivityForResult(photoPickerIntent, codePickImage);
                         dialogInterface.dismiss();
                     }
                 });
         builder.setNegativeButton(getString(R.string.text_take_picture),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dispatchTakePictureIntent();
+                        dispatchTakePictureIntent(codeTakeImage);
                         dialog.dismiss();
                     }
                 });
@@ -361,27 +450,29 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         return image;
     }
 
-    static final int REQUEST_TAKE_PHOTO = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    private void dispatchTakePictureIntent(int codeTakeImage) {
+        Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        if (takePicture.resolveActivity(getActivity().getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                mCurrentPhotoPath = null;
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.example.android.fileprovider",
+                        "com.demo.barcode.fileprovider",
                         photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                getActivity().startActivityForResult(takePicture, codeTakeImage);
             }
         }
+    }
+
+    @OnClick(R.id.btn_save)
+    public void save() {
+        mPresenter.save(id, Integer.parseInt(edtNumberFailed.getText().toString()), edtDescription.getText().toString(),rsAdapter.getCountersToSelect());
     }
 }

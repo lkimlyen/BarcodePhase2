@@ -39,12 +39,14 @@ public interface QualityControlContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(int orderId);
+        void getListProduct(int orderId,int departmentId);
 
 
-        void checkBarcode(String barcode, int departmentId, int times);
+        void checkBarcode(String barcode, int orderId, int departmentId);
 
         void getListQualityControl(int orderId, int departmentId);
         void removeItemQualityControl(int id);
+
+        void uploadData();
     }
 }

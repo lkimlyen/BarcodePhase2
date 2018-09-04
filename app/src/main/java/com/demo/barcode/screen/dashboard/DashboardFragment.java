@@ -20,6 +20,7 @@ import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
 import com.demo.barcode.screen.login.LoginActivity;
+import com.demo.barcode.screen.quality_control.QualityControlActivity;
 import com.demo.barcode.screen.setting.SettingActivity;
 import com.demo.barcode.screen.stages.StagesActivity;
 import com.demo.barcode.util.Precondition;
@@ -56,6 +57,9 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @Bind(R.id.btn_history)
     Button btnHistory;
+
+    @Bind(R.id.btn_quality_control)
+    Button btnQC;
 
     private DashboardContract.Presenter mPresenter;
 
@@ -132,6 +136,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
             if (user.getRole() == 9) {
                 btnScanPackaging.setVisibility(View.GONE);
             }
+            btnQC.setVisibility(View.GONE);
         } else {
             btnScanStages.setVisibility(View.GONE);
             btnConfirmreceive.setVisibility(View.GONE);
@@ -195,5 +200,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @OnClick(R.id.btn_history)
     public void history() {
         HistoryPackageActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_quality_control)
+    public void qualityControl(){
+        QualityControlActivity.start(getContext());
     }
 }

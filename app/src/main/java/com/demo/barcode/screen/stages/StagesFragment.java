@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -38,6 +40,7 @@ import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
+import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -96,6 +99,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
 
+    @Bind(R.id.btn_group_code)
+    Button btnGroupCode;
+
+    @Bind(R.id.btn_detached_code)
+    Button btnDetachedCode;
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;
@@ -154,6 +162,14 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private void initView() {
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        UserEntity user = UserManager.getInstance().getUser();
+        if (user.getRole() == 6 || user.getRole() == 8) {
+            btnDetachedCode.setVisibility(View.VISIBLE);
+            btnGroupCode.setVisibility(View.VISIBLE);
+        } else {
+            btnDetachedCode.setVisibility(View.GONE);
+            btnGroupCode.setVisibility(View.GONE);
+        }
         // Vibrate for 500 milliseconds
         checkPermissionLocation();
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {

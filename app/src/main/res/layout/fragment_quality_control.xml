@@ -56,14 +56,14 @@
 
 
             <ImageView
-                android:id="@+id/img_print"
+                android:id="@+id/img_upload"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:gravity="center"
                 android:padding="@dimen/distance_10dp"
-                android:src="@drawable/ic_print" />
+                android:src="@drawable/ic_upload" />
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
@@ -171,7 +171,7 @@
                 android:textStyle="bold" />
 
             <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_floor"
+                android:id="@+id/ss_department"
                 android:layout_width="0dp"
                 app:hintText="@string/text_choose_department_error"
                 android:layout_height="wrap_content"

@@ -25,7 +25,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true"/>
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
@@ -38,6 +39,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.demo.barcode.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"></meta-data>
+        </provider>
         <activity android:name=".screen.login.LoginActivity"></activity>
         <activity android:name=".screen.dashboard.DashboardActivity" />
         <activity android:name=".screen.setting.SettingActivity" />
@@ -62,6 +72,9 @@
         <activity android:name=".screen.history_pack.HistoryPackageActivity"/>
         <activity android:name=".screen.detail_package.DetailPackageActivity"/>
         <activity android:name=".screen.confirm_receive.ConfirmReceiveActivity"/>
+        <activity android:name=".screen.detail_error.DetailErrorActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".screen.quality_control.QualityControlActivity"/>
         <activity android:name=".screen.stages.StagesActivity"/>
         <activity android:name=".app.permission.PermissionActivity"/>
         <activity

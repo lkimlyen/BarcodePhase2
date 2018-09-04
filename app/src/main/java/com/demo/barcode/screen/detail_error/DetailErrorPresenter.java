@@ -11,8 +11,11 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListReasonManager;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
+import io.realm.RealmList;
 import rx.functions.Action1;
 
 /**
@@ -52,9 +55,9 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
 
 
     @Override
-    public void addImage(String pathFile) {
+    public void addImage(int id, String pathFile) {
         view.showProgressBar();
-        localRepository.addImageModel(pathFile).subscribe(new Action1<String>() {
+        localRepository.addImageModel(id, pathFile).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.hideProgressBar();
@@ -76,7 +79,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     }
 
     @Override
-    public void getListReason() {
+    public void getListReason(int id) {
         view.showProgressBar();
         getListReasonUsecase.executeIO(new GetListReasonUsecase.RequestValue(),
                 new BaseUseCase.UseCaseCallback<GetListReasonUsecase.ResponseValue,
@@ -84,7 +87,13 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
                     @Override
                     public void onSuccess(GetListReasonUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        view.showListReason(successResponse.getEntity());
+                        view.showListReason(successResponse.getEntity().getList());
+                        localRepository.getListReasonQualityControl(id).subscribe(new Action1<RealmList<Integer>>() {
+                            @Override
+                            public void call(RealmList<Integer> integerRealmList) {
+                                view.showUpdateListCounterSelect(integerRealmList);
+                            }
+                        });
                         //  ListReasonManager.getInstance().setListReason(successResponse.getEntity());
                     }
 
@@ -102,7 +111,19 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
             @Override
             public void call(QualityControlModel qualityControlModel) {
                 view.showDetailQualityControl(qualityControlModel);
+                view.showImageError(qualityControlModel.getImageList());
             }
         });
     }
+
+    @Override
+    public void save(int id, int numberFailed, String description, Collection<Integer> idList) {
+        localRepository.updateDetailErrorQC(id, numberFailed, description, idList).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.goBackQualityControl();
+            }
+        });
+    }
+
 }

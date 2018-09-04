@@ -91,7 +91,6 @@ public class ImageModel extends RealmObject {
     }
 
 
-
     public int getServerId() {
         return serverId;
     }
@@ -99,4 +98,6 @@ public class ImageModel extends RealmObject {
     public void setServerId(int serverId) {
         this.serverId = serverId;
     }
+
+
 }

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.demo.architect.data.model.offline.ImageModel;
@@ -43,7 +44,7 @@ public class ImageAdapter extends RealmRecyclerViewAdapter<ImageModel, ImageAdap
         final int itemId = obj.getId();
         File f = new File(obj.getPathFile());
         Picasso.with(CoreApplication.getInstance()).load(f).into(holder.image);
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onItemClick(itemId);
@@ -59,14 +60,14 @@ public class ImageAdapter extends RealmRecyclerViewAdapter<ImageModel, ImageAdap
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imgDelete;
+        public ImageButton btnDelete;
         public ImageView image;
         public ImageModel data;
 
         private MyViewHolder(View v) {
             super(v);
             image = (ImageView) v.findViewById(R.id.iv_image_error);
-            imgDelete = (ImageView) v.findViewById(R.id.img_delete);
+            btnDelete = (ImageButton) v.findViewById(R.id.btn_delete);
         }
 
     }

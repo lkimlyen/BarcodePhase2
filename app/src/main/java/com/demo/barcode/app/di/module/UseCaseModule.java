@@ -6,6 +6,7 @@ import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
+import com.demo.architect.domain.AddLogQCUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
@@ -29,6 +30,7 @@ import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
+import com.demo.architect.domain.UploadImageUsecase;
 
 import dagger.Module;
 import dagger.Provides;
@@ -153,5 +155,15 @@ public class UseCaseModule {
     GetListPrintPackageHistoryUsecase provideGetListPrintPackageHistoryUsecase(OrderRepository orderRepository) {
         return new GetListPrintPackageHistoryUsecase(orderRepository);
     }
+    @Provides
+    UploadImageUsecase provideUploadImageUsecase(OtherRepository otherRepository) {
+        return new UploadImageUsecase(otherRepository);
+    }
+    @Provides
+    AddLogQCUsecase provideAddLogQCUsecase(OtherRepository otherRepository) {
+        return new AddLogQCUsecase(otherRepository);
+    }
+
+
 }
 

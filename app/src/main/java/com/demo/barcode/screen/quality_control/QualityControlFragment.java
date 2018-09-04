@@ -86,10 +86,11 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @Bind(R.id.lv_code)
     ListView lvCode;
-    @Bind(R.id.ss_receiving_department)
+
+    @Bind(R.id.ss_department)
     SearchableSpinner ssDepartment;
 
-    @Bind(R.id.txt_delivery_date)
+    @Bind(R.id.txt_date_scan)
     TextView txtDateScan;
 
     private Vibrator vibrate;
@@ -119,13 +120,14 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
+                mPresenter.checkBarcode(barcode, orderId, departmentId);
 
             }
         }
 
-        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+        if (requestCode == DetailErrorActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                showSuccess(getString(R.string.text_print_success));
+                showSuccess(getString(R.string.text_update_success));
 
             } else {
                 isClick = false;
@@ -149,7 +151,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     private void initView() {
         txtDateScan.setText(DateUtils.getShortDateCurrent());
-
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
@@ -161,6 +162,13 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             }
         });
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
                 return false;
@@ -282,10 +290,13 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
-                mPresenter.getListQualityControl(orderId, departmentId);
-//                if (times > 0 && orderId > 0) {
-//                    mPresenter.getListScanStages(orderId, departmentId, times);
-//                }
+                if (orderId > 0) {
+                    mPresenter.getListProduct(orderId, departmentId);
+                    mPresenter.getListQualityControl(orderId, departmentId);
+
+
+                }
+
             }
 
             @Override
@@ -341,8 +352,8 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
-                if (orderId > 0) {
-                    mPresenter.getListProduct(orderId);
+                if (departmentId > 0) {
+                    mPresenter.getListProduct(orderId, departmentId);
 //                    //mPresenter.getListTimes(orderId);
 //
 //                    if (departmentId > 0 && times > 0) {
@@ -377,7 +388,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, departmentId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -394,12 +405,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.img_back)
     public void back() {
-
-    }
-
-    @OnClick(R.id.img_print)
-    public void print() {
-
+        getActivity().finish();
     }
 
     @OnClick(R.id.btn_scan)
@@ -417,5 +423,10 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         integrator.setBarcodeImageEnabled(true);
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
+    }
+
+    @OnClick(R.id.img_upload)
+    public void upload() {
+        mPresenter.uploadData();
     }
 }

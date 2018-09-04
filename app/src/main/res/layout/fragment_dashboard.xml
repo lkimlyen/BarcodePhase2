@@ -147,6 +147,17 @@
                     android:text="@string/text_history_create_stamp_packaging"
                     android:textAllCaps="false" />
                 <Button
+                    android:id="@+id/btn_quality_control"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_60dp"
+                    android:background="@drawable/bg_button_stroke_white"
+                    android:drawableLeft="@drawable/ic_report_detail"
+                    android:drawablePadding="@dimen/distance_16dp"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/distance_16dp"
+                    android:text="@string/text_quality_control"
+                    android:textAllCaps="false" />
+                <Button
                     android:id="@+id/btn_setting"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_60dp"

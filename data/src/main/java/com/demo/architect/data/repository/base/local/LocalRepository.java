@@ -23,9 +23,12 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import rx.Completable;
 import rx.Observable;
@@ -77,7 +80,7 @@ public interface LocalRepository {
 
     Observable<String> updateStatusAndServerIdImage(final int id,final int imageId, int serverId);
 
-    Observable<String> addImageModel(final String pathFile);
+    Observable<String> addImageModel(final int id, final String pathFile);
 
     Observable<String> deleteImageModel(final int id);
 
@@ -116,4 +119,16 @@ public interface LocalRepository {
     Observable<RealmResults<QualityControlModel>> getListQualityControl(int orderId, int departmentId);
 
     Observable<QualityControlModel> getDetailQualityControl(int id);
+
+    Observable<RealmList<Integer>> getListReasonQualityControl(int id);
+
+    Observable<String> saveBarcodeQC(int orderId, int departmentId, ProductEntity productEntity);
+
+    Observable<String> updateDetailErrorQC(int id, int numberFailed, String description, Collection<Integer> idList);
+
+    Observable<List<QualityControlModel>> getListQualityControlUpload();
+
+    Observable<String> updateImageIdAndStatus(int qcId, int id, int imageId);
+
+    Observable<String> updateStatusQC();
 }

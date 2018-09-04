@@ -82,10 +82,11 @@ public class BaseActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if (!ConvertUtils.checkConnection(this)){
+        if (!ConvertUtils.checkConnection(this)) {
             WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             wifiManager.setWifiEnabled(true);
         }
+        checkPermission();
     }
 
     public int getStatusBarHeight() {
@@ -124,7 +125,7 @@ public class BaseActivity extends AppCompatActivity
                 .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(
                         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.VIBRATE)
+                        Manifest.permission.CAMERA, Manifest.permission.VIBRATE)
                 .check();
     }
 

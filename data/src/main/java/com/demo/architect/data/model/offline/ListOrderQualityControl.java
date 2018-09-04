@@ -37,9 +37,7 @@ public class ListOrderQualityControl extends RealmObject {
     public static ListOrderQualityControl create(Realm realm, int orderId) {
 
         ListOrderQualityControl listOrderQualityControl = new ListOrderQualityControl(orderId);
-        realm.beginTransaction();
         listOrderQualityControl = realm.copyToRealm(listOrderQualityControl);
-        realm.commitTransaction();
         return listOrderQualityControl;
     }
 }

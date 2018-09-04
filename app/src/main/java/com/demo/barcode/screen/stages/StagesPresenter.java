@@ -293,7 +293,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
-                view.turnOnVibrator();
                 view.hideProgressBar();
             }
         });
