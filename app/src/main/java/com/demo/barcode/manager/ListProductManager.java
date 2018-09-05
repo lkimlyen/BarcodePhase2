@@ -1,6 +1,7 @@
 package com.demo.barcode.manager;
 
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,15 @@ public class ListProductManager {
 
     public void setListProduct(List<ProductEntity> listProduct) {
         this.listProduct = listProduct;
+    }
+
+    public  ProductEntity getProductById(int productId) {
+        for (ProductEntity requestEntity : listProduct) {
+            if (requestEntity.getProductDetailID() == productId) {
+               return requestEntity;
+            }
+        }
+        return null;
     }
 
 }

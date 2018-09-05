@@ -97,5 +97,8 @@ public class ProductEntity {
         return productDetailCode;
     }
 
-
+    @Override
+    public String toString() {
+        return productDetailName;
+    }
 }

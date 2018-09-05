@@ -217,6 +217,7 @@
     <string name="text_detached_code_scan">Bạn có muốn tách mã không?</string>
     <string name="text_not_product_upload">Bạn chưa chọn sản phẩm để gộp</string>
     <string name="text_not_product_detached">Bạn chưa chọn sản phẩm để tách!</string>
+    <string name="text_product_in_group">Sản phẩm này có gộp mã không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

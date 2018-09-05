@@ -2,6 +2,7 @@ package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
@@ -12,7 +13,6 @@ import com.demo.barcode.app.base.BaseView;
 import java.util.List;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -45,6 +45,8 @@ public interface StagesContract {
 
         void showGroupCode(RealmList<ListGroupCode> list);
 
+        void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -74,6 +76,9 @@ public interface StagesContract {
                 productEntity, String barcode, int departmentId);
 
         void getListGroupCode(int orderId);
+
+        void saveListWithGroupCode(NumberInputModel inputModel,ProductGroupEntity productGroupEntity,String barcode, int departmentId);
+
 
     }
 }

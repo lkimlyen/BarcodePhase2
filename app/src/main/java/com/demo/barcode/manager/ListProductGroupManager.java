@@ -25,12 +25,23 @@ public class ListProductGroupManager {
         this.listProduct = listProduct;
     }
 
-    public ProductGroupEntity getProdctByBarcode(int productId) {
+    public  List<ProductGroupEntity> getListProductById(int productId) {
+        List<ProductGroupEntity> list = new ArrayList<>();
         for (ProductGroupEntity requestEntity : listProduct) {
             if (requestEntity.getProductDetailID() == productId) {
-                return requestEntity;
+                list.add(requestEntity);
             }
         }
-        return null;
+        return list;
     }
+    public  List<ProductGroupEntity> getListProductByGroupCode(String groupCode) {
+        List<ProductGroupEntity> list = new ArrayList<>();
+        for (ProductGroupEntity requestEntity : listProduct) {
+            if (requestEntity.getGroupCode().equals(groupCode)) {
+                list.add(requestEntity);
+            }
+        }
+        return list;
+    }
+
 }

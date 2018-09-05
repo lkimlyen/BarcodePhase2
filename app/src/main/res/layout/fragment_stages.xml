@@ -317,7 +317,6 @@
             <LinearLayout
                 android:id="@+id/layoutContent"
                 android:layout_width="match_parent"
-                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"></LinearLayout>
         </ScrollView>

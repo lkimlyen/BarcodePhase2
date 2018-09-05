@@ -1,19 +1,14 @@
 package com.demo.barcode.screen.stages;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,6 +27,7 @@ import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -44,16 +40,13 @@ import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -65,7 +58,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -377,7 +369,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }, new StagesAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
-                mPresenter.updateNumberScanStages(item.getId(), number,true);
+                mPresenter.updateNumberScanStages(item.getId(), number, true);
             }
         }, new StagesAdapter.onErrorListener() {
             @Override
@@ -395,7 +387,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                                    mPresenter.updateNumberScanStages(item.getId(), numberInput,true);
+                                    mPresenter.updateNumberScanStages(item.getId(), numberInput, true);
                                     sweetAlertDialog.dismiss();
 
                                 }
@@ -404,7 +396,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                             .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput(),false);
+                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput(), false);
                                     sweetAlertDialog.dismiss();
                                 }
                             })
@@ -430,7 +422,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 if (orderId > 0) {
                     mPresenter.getListProduct(orderId);
                     //mPresenter.getListTimes(orderId);
-
+                    mPresenter.getListGroupCode(orderId);
                     if (departmentId > 0 && times > 0) {
                         mPresenter.getListScanStages(orderId, departmentId, times);
                     }
@@ -549,6 +541,46 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }
     }
 
+    @Override
+    public void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.dialog_default_title))
+                .setContentText(getString(R.string.text_product_in_group))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        // mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times);
+                        if (groupEntityList.size() == 1) {
+                            mPresenter.saveListWithGroupCode(numberInput, groupEntityList.get(0),
+                                    barcode, departmentId);
+                        } else {
+                            ChooseGroupDialog chooseGroupDialog = new ChooseGroupDialog();
+                            chooseGroupDialog.show(getActivity().getFragmentManager(), TAG);
+                            chooseGroupDialog.setList(groupEntityList);
+                            chooseGroupDialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
+                                @Override
+                                public void onSave(ProductGroupEntity productGroupEntity) {
+                                    mPresenter.saveListWithGroupCode(numberInput, productGroupEntity,
+                                            barcode, departmentId);
+                                }
+                            });
+                        }
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity,
+                                barcode, departmentId);
+                    }
+                })
+                .show();
+    }
+
     private void setLayout(ListGroupCode item, RealmList<LogScanStages> list) {
         LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.item_content_group, null);
@@ -561,7 +593,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
             @Override
             public void onRemove(ListGroupCode groupCode, LogScanStages item) {
-               // mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
+                // mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
             }
         });
 
@@ -787,6 +819,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 })
                 .show();
     }
+
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
         ListAdapter listAdapter = listView.getAdapter();

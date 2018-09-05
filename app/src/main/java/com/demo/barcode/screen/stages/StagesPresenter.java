@@ -11,7 +11,6 @@ import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
-import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
@@ -106,38 +105,41 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                 checkBarcode++;
                 if (model.getListDepartmentID().contains(departmentId)) {
-                    ProductGroupEntity productPackagingModel = ListProductGroupManager.getInstance().getProdctByBarcode(model.getProductDetailID());
-                    if (productPackagingModel != null) {
 
-                    } else {
-                        localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
-                            @Override
-                            public void call(ProductDetail productDetail) {
-                                NumberInputModel numberInput = null;
-                                for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                                    NumberInputModel input = productDetail.getListInput().get(i);
-                                    if (input.getTimes() == times) {
-                                        numberInput = input;
-                                        break;
-                                    }
+                    localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
+                        @Override
+                        public void call(ProductDetail productDetail) {
+                            NumberInputModel numberInput = null;
+                            for (int i = 0; i < productDetail.getListInput().size(); i++) {
+                                NumberInputModel input = productDetail.getListInput().get(i);
+                                if (input.getTimes() == times) {
+                                    numberInput = input;
+                                    break;
                                 }
-                                if (numberInput != null) {
-                                    if (numberInput.getNumberRest() > 0) {
-                                        saveBarcodeToDataBase(numberInput, model, barcode, departmentId);
+                            }
+                            if (numberInput != null) {
+                                if (numberInput.getNumberRest() > 0) {
+                                    List<ProductGroupEntity> groupEntityList = ListProductGroupManager.getInstance().getListProductById(model.getProductDetailID());
+                                    if (groupEntityList.size() > 0) {
+                                        view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
                                     } else {
-                                        view.showCheckResidual(numberInput, model, barcode, departmentId);
-                                        view.startMusicError();
-                                        view.turnOnVibrator();
+                                        saveBarcodeToDataBase(numberInput, model, barcode, departmentId);
                                     }
+
                                 } else {
-                                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                                    view.showCheckResidual(numberInput, model, barcode, departmentId);
+                                    view.startMusicError();
+                                    view.turnOnVibrator();
                                 }
-
-
+                            } else {
+                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                             }
 
-                        });
-                    }
+
+                        }
+
+                    });
+
                 } else {
                     showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
                 }
@@ -343,6 +345,15 @@ public class StagesPresenter implements StagesContract.Presenter {
                         //  view.showError(errorResponse.getDescription());
                     }
                 });
+    }
+
+    @Override
+    public void saveListWithGroupCode(NumberInputModel inputModel,ProductGroupEntity productGroupEntity,String barcode, int departmentId) {
+        List<ProductGroupEntity> list = ListProductGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
+        for (ProductGroupEntity item : list) {
+            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+            saveBarcodeToDataBase(inputModel, productEntity, barcode, departmentId);
+        }
     }
 
 
