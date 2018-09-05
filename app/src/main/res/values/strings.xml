@@ -214,6 +214,9 @@
     <string name="text_code_scan_error">Mã quét</string>
     <string name="text_number_bigger_number_order">Số lượng lỗi không được lớn hơn số lượng đơn hàng</string>
     <string name="text_update_success">Cập nhật thành công</string>
+    <string name="text_detached_code_scan">Bạn có muốn tách mã không?</string>
+    <string name="text_not_product_upload">Bạn chưa chọn sản phẩm để gộp</string>
+    <string name="text_not_product_detached">Bạn chưa chọn sản phẩm để tách!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

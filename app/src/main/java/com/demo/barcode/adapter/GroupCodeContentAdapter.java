@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 
@@ -17,6 +18,7 @@ import io.realm.RealmBaseAdapter;
 
 public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
     private OnRemoveListener onRemoveListener;
+    private ListGroupCode listGroupCode;
 
     public GroupCodeContentAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnRemoveListener onRemoveListener) {
         super(realmResults);
@@ -52,11 +54,19 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> imp
         holder.imgRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRemoveListener.onRemove(item);
+                onRemoveListener.onRemove(listGroupCode,item);
             }
         });
 
 
+    }
+
+    public void setListGroupCode(ListGroupCode listGroupCode) {
+        this.listGroupCode = listGroupCode;
+    }
+
+    public ListGroupCode getListGroupCode() {
+        return listGroupCode;
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
@@ -77,7 +87,7 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> imp
     }
 
 
-    public interface OnRemoveListener{
-        void onRemove(LogScanStages item);
+    public interface OnRemoveListener {
+        void onRemove(ListGroupCode groupCode,LogScanStages item);
     }
 }

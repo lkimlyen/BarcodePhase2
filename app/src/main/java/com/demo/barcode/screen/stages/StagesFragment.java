@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.stages;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,7 +23,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +40,14 @@ import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
+import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.capture.ScanActivity;
+import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -71,7 +77,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = StagesFragment.class.getName();
     private StagesContract.Presenter mPresenter;
-    private FusedLocationProviderClient mFusedLocationClient;
     private StagesAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
@@ -104,6 +109,9 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Bind(R.id.btn_detached_code)
     Button btnDetachedCode;
+
+    @Bind(R.id.layoutContent)
+    LinearLayout layoutContent;
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;
@@ -124,21 +132,24 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2000) {
-            checkPermissionLocation();
+
+        if (requestCode == 178) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("message");
+                showSuccess(result);
+                return;
+            }
         }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                checkPermissionLocation();
                 mPresenter.checkBarcode(barcode, departmentId, times);
             }
         }
@@ -157,7 +168,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         return view;
     }
 
-    private boolean isReturn;
 
     private void initView() {
         txtDateScan.setText(DateUtils.getShortDateCurrent());
@@ -171,7 +181,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             btnGroupCode.setVisibility(View.GONE);
         }
         // Vibrate for 500 milliseconds
-        checkPermissionLocation();
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
@@ -368,7 +377,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }, new StagesAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
-                mPresenter.updateNumberScanStages(item.getId(), number);
+                mPresenter.updateNumberScanStages(item.getId(), number,true);
             }
         }, new StagesAdapter.onErrorListener() {
             @Override
@@ -386,7 +395,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                                    mPresenter.updateNumberScanStages(item.getId(), numberInput);
+                                    mPresenter.updateNumberScanStages(item.getId(), numberInput,true);
                                     sweetAlertDialog.dismiss();
 
                                 }
@@ -395,7 +404,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                             .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput());
+                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput(),false);
                                     sweetAlertDialog.dismiss();
                                 }
                             })
@@ -528,7 +537,49 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showGroupCode(RealmList<ListGroupCode> list) {
+        layoutContent.removeAllViews();
+        for (ListGroupCode item : list) {
+            setLayout(item, item.getList());
+        }
+        if (list.size() > 0) {
+            layoutContent.setVisibility(View.VISIBLE);
 
+        } else {
+            layoutContent.setVisibility(View.GONE);
+        }
+    }
+
+    private void setLayout(ListGroupCode item, RealmList<LogScanStages> list) {
+        LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.item_content_group, null);
+        TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
+        RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
+        rbSelect.setVisibility(View.GONE);
+        final ListView lvCode = (ListView) v.findViewById(R.id.lv_code);
+
+        txtTitle.setText(item.getGroupCode());
+        GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
+            @Override
+            public void onRemove(ListGroupCode groupCode, LogScanStages item) {
+               // mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
+            }
+        });
+
+        islandContentAdapter.setListGroupCode(item);
+        lvCode.setAdapter(islandContentAdapter);
+
+        lvCode.post(new Runnable() {
+            @Override
+            public void run() {
+                setListViewHeightBasedOnItems(lvCode);
+            }
+        });
+
+//        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+//        param.gravity = Gravity.CENTER;
+//        v.setLayoutParams(param);
+        layoutContent.addView(v);
     }
 
     @OnClick(R.id.ic_refresh)
@@ -583,7 +634,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             showError(getString(R.string.text_times_id_null));
             return;
         }
-        checkPermissionLocation();
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -606,47 +656,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
-    public void checkPermissionLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_LOCATION_REQUEST_CODE);
-        } else {
-            // Access to the location has been granted to the app.
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                mLocation = location;  // Logic to handle location object
-                            }
-                        }
-                    }).addOnFailureListener(getActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    showError(e.getMessage());
-                }
-            });
-
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkPermissionLocation();
-            } else {
-                // Permission was denied. Display an error message.
-            }
-        }
-    }
 
     @OnClick(R.id.img_back)
     public void back() {
@@ -740,6 +749,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
+                        GroupCodeActivity.start(getActivity(), true, orderId, departmentId, times);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -756,6 +766,57 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.btn_detached_code)
     public void detachedCode() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_detached_code_scan))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        GroupCodeActivity.start(getActivity(), false, orderId, departmentId, times);
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
+    }
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
 
     }
 }

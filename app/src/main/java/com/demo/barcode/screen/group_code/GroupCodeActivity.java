@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.group_code;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,14 +18,19 @@ import javax.inject.Inject;
  */
 
 public class GroupCodeActivity extends BaseActivity {
+    private final static int REQUEST_CODE = 178;
     @Inject
     GroupCodePresenter GroupCodePresenter;
 
     GroupCodeFragment fragment;
 
-    public static void start(Context context) {
+    public static void start(Activity context, boolean groupType, int orderId, int departmentId, int times) {
         Intent intent = new Intent(context, GroupCodeActivity.class);
-        context.startActivity(intent);
+        intent.putExtra(GroupCodeFragment.GROUP_CODE, groupType);
+        intent.putExtra(GroupCodeFragment.DEPARTMENT_ID, departmentId);
+        intent.putExtra(GroupCodeFragment.ORDER_ID, orderId);
+        intent.putExtra(GroupCodeFragment.TIMES, times);
+        context.startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
@@ -65,7 +71,7 @@ public class GroupCodeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         fragment.back();
-       // super.onBackPressed();
+        // super.onBackPressed();
     }
 
     @Override

@@ -28,6 +28,8 @@ public interface GroupCodeContract {
         void showGroupCode(RealmResults<ListGroupCode> groupCodes);
 
         void showSODetail(SOEntity soEntity);
+
+        void backScanStages(String message);
     }
 
     interface Presenter extends BasePresenter {
@@ -39,15 +41,14 @@ public interface GroupCodeContract {
 
         void getListOrderDetail(int orderId);
 
-        void groupCode(int orderId, int departmentId, int times, Collection<LogScanStages> list);
+        void groupCode(int orderId, int departmentId, int times, String module, Collection<LogScanStages> list);
 
-        void updateGroupCode(ListGroupCode groupCode,int orderId, int departmentId, int times, Collection<LogScanStages> list);
+        void updateGroupCode(ListGroupCode groupCode, int orderId, int departmentId, int times, Collection<LogScanStages> list);
 
         void updateNumberGroup(int logId, int numberGroup);
 
         void detachedCode(int orderId, int departmentId, int times, ListGroupCode list);
 
-        void removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages,int orderId, int departmentId, int times);
-
+        void removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages, int orderId, int departmentId, int times);
     }
 }

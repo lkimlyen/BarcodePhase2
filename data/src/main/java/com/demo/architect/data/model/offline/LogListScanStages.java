@@ -82,7 +82,13 @@ public class LogListScanStages extends RealmObject {
                     .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).findFirst();
             if (logListScanStages != null) {
                 list = realm.copyFromRealm(logListScanStages.getList());
+                for (ListGroupCode listGroupCode : logListScanStages.getListGroupCodes()){
+                    list.addAll(realm.copyFromRealm(listGroupCode.getList()));
+                }
+
             }
+
+
         }
         return list;
     }
@@ -110,6 +116,7 @@ public class LogListScanStages extends RealmObject {
                         .equalTo("status", Constants.WAITING_UPLOAD)
                         .equalTo("departmentId", departmentId)
                         .equalTo("times", times)
+                        .equalTo("date", DateUtils.getShortDateCurrent())
                         .equalTo("userId", userId).findFirst();
                 if (logListScanStages == null) {
                     realm.beginTransaction();
@@ -136,14 +143,14 @@ public class LogListScanStages extends RealmObject {
         return logListScanStages;
     }
 
-    public static RealmResults<LogScanStages> getListScanStagesByModule(Realm realm, int orderId, int departmentId, int userId, int times,String module) {
+    public static RealmResults<LogScanStages> getListScanStagesByModule(Realm realm, int orderId, int departmentId, int userId, int times, String module) {
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         LogListScanStages logListScanStages = logListScanStagesMain.getList().where()
                 .equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("departmentId", departmentId)
                 .equalTo("times", times)
                 .equalTo("userId", userId).findFirst();
-        RealmResults<LogScanStages> results = logListScanStages.getList().where().equalTo("module",module).findAll();
+        RealmResults<LogScanStages> results = logListScanStages.getList().where().equalTo("module", module).findAll();
 
         return results;
     }
@@ -237,7 +244,7 @@ public class LogListScanStages extends RealmObject {
                 .equalTo("departmentId", departmentId)
                 .equalTo("times", times)
                 .equalTo("userId", userId).findFirst();
-        RealmResults<ListGroupCode> results = logListScanStages.getListGroupCodes().where().equalTo("module",module).findAll();
+        RealmResults<ListGroupCode> results = logListScanStages.getListGroupCodes().where().equalTo("module", module).findAll();
 
         return results;
     }

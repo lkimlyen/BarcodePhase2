@@ -113,7 +113,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void groupCode(int orderId, int departmentId, int times, Collection<LogScanStages> list) {
+    public void groupCode(int orderId, int departmentId, int times,String module, Collection<LogScanStages> list) {
         view.showProgressBar();
         final LogScanStages[] listSelect = new LogScanStages[list.size()];
         list.toArray(listSelect);
@@ -135,7 +135,8 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_group_code_success));
+                                        view.backScanStages(CoreApplication.getInstance().getString(R.string.text_group_code_success));
+
                                     }
                                 });
                     }
@@ -193,7 +194,8 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_group_code_success));
+                                        view.backScanStages(CoreApplication.getInstance().getString(R.string.text_group_code_success));
+
                                     }
                                 });
                     }
@@ -232,7 +234,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_detached_code_success));
+                                    view.backScanStages(CoreApplication.getInstance().getString(R.string.text_detached_code_success));
                                     }
                                 });
                     }
@@ -268,7 +270,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_remove_item_in_group_code_success));
+                                        view.backScanStages(CoreApplication.getInstance().getString(R.string.text_remove_item_in_group_code_success));
                                     }
                                 });
                     }

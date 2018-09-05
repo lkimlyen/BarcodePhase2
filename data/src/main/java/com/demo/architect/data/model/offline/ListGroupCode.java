@@ -59,4 +59,9 @@ public class ListGroupCode extends RealmObject {
     public void setModule(String module) {
         this.module = module;
     }
+
+    @Override
+    public String toString() {
+        return groupCode;
+    }
 }

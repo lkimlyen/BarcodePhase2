@@ -25,10 +25,10 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
 public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
-    private boolean inChooseMode = true;
+    private boolean inChooseMode = false;
     private Set<LogScanStages> countersToSelect = new HashSet<LogScanStages>();
 
-    void enableDeletionMode(boolean enabled) {
+    public void enableSelectMode(boolean enabled) {
         inChooseMode = enabled;
         if (!enabled) {
             countersToSelect.clear();
@@ -36,7 +36,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
         notifyDataSetChanged();
     }
 
-   public Set<LogScanStages> getCountersToSelect() {
+    public Set<LogScanStages> getCountersToSelect() {
         return countersToSelect;
     }
 
@@ -121,23 +121,24 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
         });
 
         if (inChooseMode) {
-            holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked){
-                        countersToSelect.add(item);
-                    }else {
-                        countersToSelect.remove(item);
-                    }
-
-                }
-            });
+            holder.cbSelect.setChecked(true);
+            countersToSelect.add(item);
         } else {
+            holder.cbSelect.setChecked(false);
             holder.cbSelect.setOnCheckedChangeListener(null);
         }
-        holder.cbSelect.setChecked(countersToSelect.contains(item));
-        holder.cbSelect.setVisibility(inChooseMode ? View.VISIBLE : View.GONE);
+        holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    countersToSelect.add(item);
+                } else {
+                    countersToSelect.remove(item);
+                }
 
+            }
+        });
+       // holder.cbSelect.setChecked(countersToSelect.contains(item));
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {

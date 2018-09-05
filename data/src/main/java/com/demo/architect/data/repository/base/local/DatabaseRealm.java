@@ -380,7 +380,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final ListGroupCode list) {
+    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final  ListGroupCode list) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override

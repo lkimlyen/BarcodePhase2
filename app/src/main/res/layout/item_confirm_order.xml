@@ -51,6 +51,7 @@
             android:inputType="number"
             android:fontFamily="serif"
             android:gravity="center"
+            android:selectAllOnFocus="true"
             android:text="@string/text_number_receive"
             android:textColor="#000"
             android:textSize="@dimen/text_12sp" />

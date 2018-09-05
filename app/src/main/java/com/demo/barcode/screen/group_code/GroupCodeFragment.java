@@ -1,14 +1,24 @@
 package com.demo.barcode.screen.group_code;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,19 +26,24 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.GroupCodeAdapter;
+import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.GroupCodeLVAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 /**
@@ -43,9 +58,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     public static final String GROUP_CODE = "group_code";
     private GroupCodeContract.Presenter mPresenter;
     private GroupCodeLVAdapter lvAdapter;
-    private GroupCodeAdapter adapter;
+    private Set<ListGroupCode> countersToSelect = new HashSet<ListGroupCode>();
+    private List<RadioButton> radioButtonList = new ArrayList<>();
     private int orderId = 0;
     private int departmentId = 0;
+    private String module;
     private int times = 0;
     private boolean groupCode;
     @Bind(R.id.ss_serial_module)
@@ -60,14 +77,17 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @Bind(R.id.lv_code)
     ListView lvCode;
 
-    @Bind(R.id.elv_code)
-    AnimatedExpandableListView elvCode;
-
     @Bind(R.id.txt_title)
     TextView txtTitle;
 
     @Bind(R.id.btn_group_code)
     Button btnGroupCode;
+
+    @Bind(R.id.cb_all)
+    CheckBox cbAll;
+
+    @Bind(R.id.layoutContent)
+    LinearLayout layoutContent;
 
     public GroupCodeFragment() {
         // Required empty public constructor
@@ -108,6 +128,29 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             txtTitle.setText(getString(R.string.text_detached_code));
             btnGroupCode.setText(getString(R.string.text_detached_code));
         }
+        ssModule.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+
+            }
+        });
+        mPresenter.getListModule(orderId);
+        mPresenter.getListOrderDetail(orderId);
+        cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (lvAdapter != null) {
+                    lvAdapter.enableSelectMode(isChecked);
+                } else {
+                    cbAll.setChecked(false);
+                }
+
+            }
+        });
+
+
     }
 
 
@@ -167,6 +210,25 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     public void showListModule(List<String> list) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssModule.setAdapter(adapter);
+        ssModule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                module = list.get(position);
+                if (groupCode) {
+                    mPresenter.getListGroupCode(orderId, departmentId, times, list.get(position));
+
+                    mPresenter.getListScanStages(orderId, departmentId, times, list.get(position));
+                } else {
+                    mPresenter.getListGroupCode(orderId, departmentId, times, list.get(position));
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -187,26 +249,113 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showGroupCode(RealmResults<ListGroupCode> groupCodes) {
-        adapter = new GroupCodeAdapter(getContext(), groupCodes, new GroupCodeAdapter.OnItemClearListener() {
+        layoutContent.removeAllViews();
+        for (ListGroupCode item : groupCodes) {
+            setLayout(item, item.getList());
+        }
+        if (groupCodes.size() > 0) {
+            layoutContent.setVisibility(View.VISIBLE);
+
+        } else {
+            layoutContent.setVisibility(View.GONE);
+        }
+    }
+
+    private void setLayout(ListGroupCode item, RealmList<LogScanStages> list) {
+        LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.item_content_group, null);
+        TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
+        RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
+        rbSelect.setTag(item);
+        radioButtonList.add(rbSelect);
+        final ListView lvCode = (ListView) v.findViewById(R.id.lv_code);
+        rbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(ListGroupCode groupCode, LogScanStages item) {
-                mPresenter.removeItemInGroup(groupCode, item,orderId,departmentId,times);
+            public void onClick(View v) {
+                // rbSelect.getTag().equals(countersToSelect.iterator().next()))
+                if (countersToSelect.size() > 0) {
+                    for (RadioButton radioButton : radioButtonList) {
+                        if (radioButton.getTag().equals(countersToSelect.iterator().next())) {
+                            radioButton.setChecked(false);
+                            break;
+                        }
+                    }
+                }
+                countersToSelect.clear();
+                countersToSelect.add((ListGroupCode) rbSelect.getTag());
 
             }
         });
-        elvCode.setAdapter(adapter);
-        if (groupCodes.size() > 0) {
-            elvCode.setVisibility(View.VISIBLE);
+        txtTitle.setText(item.getGroupCode());
+        GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
+            @Override
+            public void onRemove(ListGroupCode groupCode,LogScanStages item) {
+                mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
+            }
+        });
+
+        islandContentAdapter.setListGroupCode(item);
+        lvCode.setAdapter(islandContentAdapter);
+
+        lvCode.post(new Runnable() {
+            @Override
+            public void run() {
+                setListViewHeightBasedOnItems(lvCode);
+            }
+        });
+
+//        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+//        param.gravity = Gravity.CENTER;
+//        v.setLayoutParams(param);
+        layoutContent.addView(v);
+    }
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
 
         } else {
-            elvCode.setVisibility(View.GONE);
+            return false;
         }
+
     }
 
     @Override
     public void showSODetail(SOEntity soEntity) {
         txtCodeSO.setText(soEntity.getCodeSO());
         txtCustomerName.setText(soEntity.getCustomerName());
+    }
+
+    @Override
+    public void backScanStages(String message) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("Message", message);
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        getActivity().finish();
     }
 
 
@@ -219,45 +368,53 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
+        if (lvAdapter != null) {
+            if (lvAdapter.getCountersToSelect().size() > 0) {
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_cancel_group_code))
+                        .setConfirmText(getString(R.string.text_yes))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                getActivity().finish();
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_no))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
 
-        if (lvAdapter.getCountersToSelect().size() > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_cancel_group_code))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                            getActivity().finish();
-                        }
-                    })
-                    .show();
+                            }
+                        })
+                        .show();
+            } else {
+                getActivity().finish();
+            }
         } else {
             getActivity().finish();
         }
+
     }
 
     @OnClick(R.id.btn_group_code)
     public void groupCode() {
         if (groupCode) {
-            if (lvAdapter.getCountersToSelect().size() > 0 && adapter.getListGroupCodeSelect() == null) {
-                mPresenter.groupCode(orderId, departmentId, times, lvAdapter.getCountersToSelect());
-            } else if (lvAdapter.getCountersToSelect().size() > 0 && adapter.getListGroupCodeSelect() != null) {
-                mPresenter.updateGroupCode(adapter.getListGroupCodeSelect(), orderId,
+            if (lvAdapter.getCountersToSelect().size() > 1 && countersToSelect.size() == 0) {
+                mPresenter.groupCode(orderId, departmentId, times, module, lvAdapter.getCountersToSelect());
+            } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
+                mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
                         departmentId, times, lvAdapter.getCountersToSelect());
+            } else {
+                showError(getString(R.string.text_not_product_upload));
             }
         } else {
-            if (adapter.getListGroupCodeSelect() != null) {
-                mPresenter.detachedCode(orderId, departmentId, times, adapter.getListGroupCodeSelect());
+            if (countersToSelect.size() > 0) {
+                mPresenter.detachedCode(orderId, departmentId, times, countersToSelect.iterator().next());
+            } else {
+                showError(getString(R.string.text_not_product_detached));
             }
         }
 

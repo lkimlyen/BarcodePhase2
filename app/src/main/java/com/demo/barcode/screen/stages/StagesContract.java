@@ -44,6 +44,7 @@ public interface StagesContract {
         void clearDataNoProduct(boolean chooseType);
 
         void showGroupCode(RealmList<ListGroupCode> list);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -61,7 +62,7 @@ public interface StagesContract {
 
         void deleteScanStages(int stagesId);
 
-        void updateNumberScanStages(int stagesId, int numberInput);
+        void updateNumberScanStages(int stagesId, int numberInput, boolean update);
 
         void getListScanStages(int orderId, int departmentId, int times);
 
@@ -72,6 +73,7 @@ public interface StagesContract {
         void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
                 productEntity, String barcode, int departmentId);
 
+        void getListGroupCode(int orderId);
 
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -48,10 +48,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/distance_5dp"
-                android:visibility="gone"
                 android:layout_toStartOf="@+id/img_upload"
                 android:padding="@dimen/distance_10dp"
-                android:src="@drawable/ic_refresh" />
+                android:src="@drawable/ic_refresh"
+                android:visibility="gone" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
@@ -114,7 +114,6 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,9 +134,9 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_serial_module"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_serial_module"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_serial_module" />
 
         </LinearLayout>
 
@@ -147,6 +146,7 @@
             android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:weightSum="5">
 
             <TextView
@@ -170,16 +170,17 @@
             android:id="@+id/btn_group_code"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
+            android:layout_marginBottom="5dp"
             android:layout_weight="0"
             android:background="@drawable/bg_button_blue_small"
             android:gravity="center"
             android:text="@string/text_group_code"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:layout_marginBottom="5dp"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
+
     <TableLayout
         android:id="@+id/table_layout"
         android:layout_width="match_parent"
@@ -193,16 +194,16 @@
             android:gravity="center_vertical">
 
             <CheckBox
-                android:id="@+id/name"
+                android:id="@+id/cb_all"
                 android:layout_width="@dimen/size_70dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:fontFamily="serif"
                 android:gravity="center"
-                android:layout_weight="0"
-                android:textStyle="bold"
                 android:text="@string/text_all"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/age"
@@ -211,40 +212,42 @@
                 android:layout_weight="1"
                 android:fontFamily="serif"
                 android:gravity="center"
-                android:textStyle="bold"
                 android:text="@string/text_name_detail"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="@dimen/size_100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="serif"
-                android:textStyle="bold"
                 android:gravity="center"
                 android:text="@string/text_number_scan"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/position"
                 android:layout_width="@dimen/size_100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="serif"
-                android:textStyle="bold"
                 android:gravity="center"
                 android:text="@string/text_number_group"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
+
             <ImageButton
                 android:id="@+id/btn_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
+                android:src="@drawable/ic_remove"
                 android:text="@string/text_number"
-                android:visibility="invisible"
-                android:src="@drawable/ic_remove"/>
+                android:visibility="invisible" />
 
         </TableRow>
 
@@ -253,28 +256,38 @@
             android:layout_height="3dip"
             android:background="#ff0000" />
     </TableLayout>
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="vertical"
         android:layout_weight="1">
-        <com.demo.barcode.widgets.AnimatedExpandableListView
-            android:id="@+id/elv_code"
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layoutContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+        </ScrollView>
+
         <ListView
             android:id="@+id/lv_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:focusable="true"
-        android:visibility="gone"
         android:focusableInTouchMode="true"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/btn_scan"
