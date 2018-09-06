@@ -1,10 +1,5 @@
 package com.demo.architect.data.model.offline;
 
-import com.demo.architect.data.helper.Constants;
-import com.demo.architect.utils.view.DateUtils;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -15,25 +10,27 @@ public class ListGroupCode extends RealmObject {
     private int id;
     private String groupCode;
     @SuppressWarnings("unused")
-    private RealmList<LogScanStages> list;
+    private RealmList<GroupCode> list;
     private String module;
+    private int status;
 
     public ListGroupCode() {
     }
-    public ListGroupCode(int id, String groupCode, String module) {
+
+    public ListGroupCode(int id, String groupCode, String module, int status) {
         this.id = id;
         this.groupCode = groupCode;
         this.module = module;
+        this.status = status;
     }
 
-    public RealmList<LogScanStages> getList() {
+    public RealmList<GroupCode> getList() {
         return list;
     }
 
-    public void setList(RealmList<LogScanStages> list) {
+    public void setList(RealmList<GroupCode> list) {
         this.list = list;
     }
-
 
 
     public static int id(Realm realm) {

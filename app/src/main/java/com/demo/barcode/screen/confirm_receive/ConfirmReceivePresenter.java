@@ -3,7 +3,6 @@ package com.demo.barcode.screen.confirm_receive;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -11,12 +10,13 @@ import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
+import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListOrderConfirmManager;
-import com.demo.barcode.manager.ListProductManager;
+import com.demo.barcode.manager.ListProductGroupManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.google.gson.Gson;
@@ -41,16 +41,18 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     private final GetListSOUsecase getListSOUsecase;
     private final GetInputUnConfirmedUsecase getInputUnConfirmedUsecase;
     private final ConfirmInputUsecase confirmInputUsecase;
+    private final GetListProductDetailGroupUsecase getListProductDetailGroupUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     ConfirmReceivePresenter(@NonNull ConfirmReceiveContract.View view, GetListSOUsecase getListSOUsecase,
-                            GetInputUnConfirmedUsecase getInputUnConfirmedUsecase, ConfirmInputUsecase confirmInputUsecase) {
+                            GetInputUnConfirmedUsecase getInputUnConfirmedUsecase, ConfirmInputUsecase confirmInputUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase) {
         this.view = view;
         this.getListSOUsecase = getListSOUsecase;
         this.getInputUnConfirmedUsecase = getInputUnConfirmedUsecase;
         this.confirmInputUsecase = confirmInputUsecase;
+        this.getListProductDetailGroupUsecase = getListProductDetailGroupUsecase;
     }
 
     @Inject
@@ -237,6 +239,34 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 });
             }
         });
+    }
+
+    @Override
+    public void getListGroupCode(int orderId) {
+        view.showProgressBar();
+        getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,
+                        GetListProductDetailGroupUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
+//                        localRepository.updateStatusScanStagesByOrder(orderId).subscribe(new Action1<String>() {
+//                            @Override
+//                            public void call(String s) {
+//                                view.showSuccess(successResponse.getDescription());
+//                                getListScanStages(orderId, departmentId, times);
+//                            }
+//                        });
+                    }
+
+                    @Override
+                    public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        ListProductGroupManager.getInstance().setListProduct(new ArrayList<>());
+                        //  view.showError(errorResponse.getDescription());
+                    }
+                });
     }
 
     public void saveConfirm(int orderId, int marterOutputId, int departmentIdOut, int times) {

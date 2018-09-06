@@ -10,6 +10,7 @@ import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -130,7 +131,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
                 try {
                     RealmResults<LogScanStages> list = databaseRealm.getListScanStagesByModule(orderId,
-                            departmentIdOut,times,module);
+                            departmentIdOut, times, module);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -141,13 +142,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<ListGroupCode>> getListGroupCode(final int orderId, final int departmentIdOut, final int times, final String module) {
-        return Observable.create(new Observable.OnSubscribe<RealmResults<ListGroupCode>>() {
+    public Observable<RealmResults<GroupCode>> getListGroupCode(final int orderId, final String module) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<GroupCode>>() {
             @Override
-            public void call(Subscriber<? super RealmResults<ListGroupCode>> subscriber) {
+            public void call(Subscriber<? super RealmResults<GroupCode>> subscriber) {
                 try {
-                    RealmResults<ListGroupCode> list = databaseRealm.getListGroupCodeByModule(orderId,
-                            departmentIdOut,times,module);
+                    RealmResults<GroupCode> list = databaseRealm.getListGroupCodeByModule(orderId,module);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -157,13 +157,15 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+
+
     @Override
-    public Observable<String> addLogScanStagesAsync(final LogScanStages model) {
+    public Observable<String> addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addLogScanStagesAsync(model);
+                    databaseRealm.addLogScanStagesAsync(model, productEntity);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -385,12 +387,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusAndServerIdImage(final int id, final int imageId,final int serverId) {
+    public Observable<String> updateStatusAndServerIdImage(final int id, final int imageId, final int serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusAndServerIdImage(id,imageId, serverId);
+                    databaseRealm.updateStatusAndServerIdImage(id, imageId, serverId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -406,7 +408,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addImageModel(id,pathFile);
+                    databaseRealm.addImageModel(id, pathFile);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -438,8 +440,8 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super RealmResults<LogScanPackaging>> subscriber) {
                 try {
-                    RealmResults<LogScanPackaging> listScanPackaging =  databaseRealm.getListScanPackaging(soEntity,
-                            moduleEntity,apartment,codePack);
+                    RealmResults<LogScanPackaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity,
+                            moduleEntity, apartment, codePack);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -455,8 +457,8 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super List<LogScanPackaging>> subscriber) {
                 try {
-                    List<LogScanPackaging> listScanPackaging =  databaseRealm.getListScanPackaging(orderId,
-                            apartmentId,moduleId,serialPack);
+                    List<LogScanPackaging> listScanPackaging = databaseRealm.getListScanPackaging(orderId,
+                            apartmentId, moduleId, serialPack);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -467,14 +469,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-
     @Override
     public Observable<String> saveBarcodeScanPackaging(final ProductPackagingEntity product, final String barcode, final int orderId, final int apartmentId, final int moduleId, final String packCode, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addBarcodeScanPackaging(product,barcode,orderId,apartmentId,moduleId,packCode,serialPack);
+                    databaseRealm.addBarcodeScanPackaging(product, barcode, orderId, apartmentId, moduleId, packCode, serialPack);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -517,12 +518,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ProductPackagingModel> findProductPackaging(final int productId,final String serialPack) {
+    public Observable<ProductPackagingModel> findProductPackaging(final int productId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<ProductPackagingModel>() {
             @Override
             public void call(Subscriber<? super ProductPackagingModel> subscriber) {
                 try {
-                    ProductPackagingModel model =  databaseRealm.findProductPackaging(productId,serialPack);
+                    ProductPackagingModel model = databaseRealm.findProductPackaging(productId, serialPack);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -538,7 +539,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super LogListOrderPackaging> subscriber) {
                 try {
-                    LogListOrderPackaging model =  databaseRealm.findOrderPackaging(orderId);
+                    LogListOrderPackaging model = databaseRealm.findOrderPackaging(orderId);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -554,7 +555,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    int total =  databaseRealm.getTotalScanBySerialPack(orderId,apartmentId,moduleId,serialPack);
+                    int total = databaseRealm.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
                     subscriber.onNext(total);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -565,12 +566,28 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addGroupCode(final String groupCode,final int orderId, final int departmentId, final int times, final LogScanStages[] listSelect) {
+    public Observable<String> addGroupCode(final String groupCode, final int orderId, final int departmentId, final int times, final LogScanStages[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                  databaseRealm.addGroupCode(groupCode,orderId,departmentId,times,listSelect);
+                    databaseRealm.addGroupCode(groupCode, orderId, departmentId, times, listSelect);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addGroupCode(final String groupCode, final LogScanStages logScanStages, final ProductEntity productEntity) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addGroupCode(groupCode, logScanStages, productEntity);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -586,7 +603,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateNumberGroup(logId,numberGroup);
+                    databaseRealm.updateNumberGroup(logId, numberGroup);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -602,7 +619,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.detachedCodeStages(orderId,departmentId,times,list);
+                    databaseRealm.detachedCodeStages(orderId, departmentId, times, list);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -618,7 +635,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.removeItemInGroup(groupCode,logScanStages,orderId,departmentId,times);
+                    databaseRealm.removeItemInGroup(groupCode, logScanStages, orderId, departmentId, times);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -682,7 +699,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super RealmResults<QualityControlModel>> subscriber) {
                 try {
-                    RealmResults<QualityControlModel> results =  databaseRealm.getListQualityControl(orderId,departmentId);
+                    RealmResults<QualityControlModel> results = databaseRealm.getListQualityControl(orderId, departmentId);
                     subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -698,7 +715,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super QualityControlModel> subscriber) {
                 try {
-                    QualityControlModel results =  databaseRealm.getDetailQualityControl(id);
+                    QualityControlModel results = databaseRealm.getDetailQualityControl(id);
                     subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -714,7 +731,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super RealmList<Integer>> subscriber) {
                 try {
-                    RealmList<Integer> results =  databaseRealm.getListReasonQualityControl(id);
+                    RealmList<Integer> results = databaseRealm.getListReasonQualityControl(id);
                     subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -730,7 +747,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                   databaseRealm.saveBarcodeQC(orderId,departmentId,productEntity);
+                    databaseRealm.saveBarcodeQC(orderId, departmentId, productEntity);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -746,7 +763,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateDetailErrorQC(id,numberFailed,description,idList);
+                    databaseRealm.updateDetailErrorQC(id, numberFailed, description, idList);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -762,7 +779,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super List<QualityControlModel>> subscriber) {
                 try {
-                    List<QualityControlModel> result =  databaseRealm.getListQualityControlUpload();
+                    List<QualityControlModel> result = databaseRealm.getListQualityControlUpload();
                     subscriber.onNext(result);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -773,12 +790,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateImageIdAndStatus(final int qcId,final int id, final int imageId) {
+    public Observable<String> updateImageIdAndStatus(final int qcId, final int id, final int imageId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateImageIdAndStatus(qcId,id,imageId);
+                    databaseRealm.updateImageIdAndStatus(qcId, id, imageId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -803,6 +820,39 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+    @Override
+    public Observable<String> addGroupCode(final ProductEntity productEntity) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addGroupCode(productEntity);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkProductExistInGroupCode(final ProductEntity model) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                   boolean b = databaseRealm.checkProductExistInGroupCode(model);
+                    subscriber.onNext(b);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 
     @Override
     public Observable<IPAddress> findIPAddress() {

@@ -24,12 +24,8 @@ public class GroupCodeActivity extends BaseActivity {
 
     GroupCodeFragment fragment;
 
-    public static void start(Activity context, boolean groupType, int orderId, int departmentId, int times) {
+    public static void start(Activity context) {
         Intent intent = new Intent(context, GroupCodeActivity.class);
-        intent.putExtra(GroupCodeFragment.GROUP_CODE, groupType);
-        intent.putExtra(GroupCodeFragment.DEPARTMENT_ID, departmentId);
-        intent.putExtra(GroupCodeFragment.ORDER_ID, orderId);
-        intent.putExtra(GroupCodeFragment.TIMES, times);
         context.startActivityForResult(intent, REQUEST_CODE);
     }
 

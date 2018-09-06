@@ -3,6 +3,7 @@ package com.demo.barcode.screen.quality_control;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ImageModel;

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
@@ -24,9 +25,9 @@ import java.util.Set;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements ListAdapter {
     private boolean inChooseMode = false;
-    private Set<LogScanStages> countersToSelect = new HashSet<LogScanStages>();
+    private Set<GroupCode> countersToSelect = new HashSet<GroupCode>();
 
     public void enableSelectMode(boolean enabled) {
         inChooseMode = enabled;
@@ -36,14 +37,14 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
         notifyDataSetChanged();
     }
 
-    public Set<LogScanStages> getCountersToSelect() {
+    public Set<GroupCode> getCountersToSelect() {
         return countersToSelect;
     }
 
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public GroupCodeLVAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
+    public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
         super(realmResults);
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
@@ -63,14 +64,14 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
         }
 
         if (adapterData != null) {
-            final LogScanStages item = adapterData.get(position);
+            final GroupCode item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, LogScanStages item) {
+    private void setDataToViews(HistoryHolder holder, GroupCode item) {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -85,30 +86,30 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    int numberInput = Integer.parseInt(s.toString());
-                    if (numberInput <= 0) {
-                        holder.edtNumberGroup.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
-                        return;
-
-                    }
-                    if (numberInput > item.getNumberInput()) {
-                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_number_scan).toString());
-                        return;
-                    }
-                    if (numberInput == item.getNumberGroup()) {
-                        return;
-                    }
-                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+//                    int numberInput = Integer.parseInt(s.toString());
+//                    if (numberInput <= 0) {
+//                        holder.edtNumberGroup.setText(item.getNumberInput() + "");
+//                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+//                        return;
+//
+//                    }
+//                    if (numberInput > item.getNumberInput()) {
+//                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_number_scan).toString());
+//                        return;
+//                    }
+//                    if (numberInput == item.getNumberGroup()) {
+//                        return;
+//                    }
+//                    onEditTextChangeListener.onEditTextChange(item, numberInput);
 
                 } catch (Exception e) {
 
                 }
             }
         };
-        holder.txtNameDetail.setText(item.getProductDetail().getProductName());
-        holder.edtNumberGroup.setText(String.valueOf(item.getNumberGroup()));
-        holder.txtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.txtNameDetail.setText(item.getProductDetailName());
+        holder.edtNumberGroup.setText(String.valueOf(item.getNumber()));
+        holder.txtNumberScan.setText(String.valueOf(item.getNumberTotal()));
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -159,7 +160,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<LogScanStages> implemen
     }
 
     public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanStages item, int number);
+        void onEditTextChange(GroupCode item, int number);
     }
 
     public interface onErrorListener {

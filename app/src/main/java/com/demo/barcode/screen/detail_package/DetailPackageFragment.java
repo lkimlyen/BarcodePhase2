@@ -35,6 +35,7 @@ import com.demo.barcode.adapter.PrintStampAdapter;
 import com.demo.barcode.adapter.ProductHistoryAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
@@ -256,6 +257,19 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     public void showOrder(SOEntity so) {
         txtCustomerName.setText(so.getCustomerName());
         txtCodeSO.setText(so.getCodeSO());
+    }
+
+    @Override
+    public void showDialogCreateIPAddress() {
+        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
+        dialog.show(getActivity().getFragmentManager(), TAG);
+        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
+            @Override
+            public void onSave(String ipAddress, int port) {
+                mPresenter.saveIPAddress(ipAddress, port, 0, edtNote.getText().toString(), packageId);
+                dialog.dismiss();
+            }
+        });
     }
 
 

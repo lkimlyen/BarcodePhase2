@@ -167,7 +167,12 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
                     @Override
                     public void onSuccess(GetListPrintPackageHistoryUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        view.showListHistory(successResponse.getEntity());
+                        if(successResponse.getEntity().size() == 0){
+                            view.showError(CoreApplication.getInstance().getString(R.string.text_no_data));
+                        }else {
+                            view.showListHistory(successResponse.getEntity());
+                        }
+
                         ListHistoryManager.getInstance().setListHitory(successResponse.getEntity());
                     }
 

@@ -1,8 +1,13 @@
 package com.demo.barcode.screen.group_code;
 
+import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -23,21 +28,31 @@ public interface GroupCodeContract {
 
         void showListModule(List<String> list);
 
-        void showListScanStages(RealmResults<LogScanStages> results);
-
         void showGroupCode(RealmResults<ListGroupCode> groupCodes);
+        void showGroupCodeScanList(RealmResults<GroupCode> groupCodes);
+
 
         void showSODetail(SOEntity soEntity);
 
+        void showListSO(List<SOEntity> list);
+
         void backScanStages(String message);
+        void startMusicError();
+
+        void startMusicSuccess();
+
+        void turnOnVibrator();
+
+
     }
 
     interface Presenter extends BasePresenter {
         void getListModule(int orderId);
 
-        void getListScanStages(int orderId, int departmentId, int times, String module);
 
-        void getListGroupCode(int orderId, int departmentId, int times, String module);
+        void getListGroupCode(int orderId, String module);
+
+        void getGroupCodeScanList(int orderId, String module);
 
         void getListOrderDetail(int orderId);
 
@@ -49,6 +64,12 @@ public interface GroupCodeContract {
 
         void detachedCode(int orderId, int departmentId, int times, ListGroupCode list);
 
-        void removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages, int orderId, int departmentId, int times);
+        void removeItemInGroup(String groupCode, LogScanStages logScanStages, int orderId, int departmentId, int times);
+
+        void getListSO(int orderType);
+
+        void getListProduct(int orderId);
+
+        void checkBarcode(String barcode, int departmentId, int times);
     }
 }

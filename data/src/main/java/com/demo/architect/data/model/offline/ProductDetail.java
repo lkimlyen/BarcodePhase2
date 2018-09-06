@@ -72,7 +72,7 @@ public class ProductDetail extends RealmObject {
     }
 
     public static ProductDetail create(Realm realm, ProductEntity productEntity, int userId) {
-        ProductDetail productDetail = new ProductDetail(id(realm)+1, productEntity.getProductDetailID(),
+        ProductDetail productDetail = new ProductDetail(id(realm) + 1, productEntity.getProductDetailID(),
                 productEntity.getProductDetailName(), productEntity.getProductDetailCode(), userId);
         productDetail = realm.copyToRealm(productDetail);
         RealmList<NumberInputModel> numberInputModels = productDetail.getListInput();
@@ -95,29 +95,25 @@ public class ProductDetail extends RealmObject {
             productDetail = ProductDetail.create(realm, productEntity, userId);
             realm.commitTransaction();
         } else {
-            if (productDetail.getListInput().size() < productEntity.getListInput().size()) {
-                realm.beginTransaction();
-                RealmList<NumberInputModel> list = productDetail.getListInput();
-                for (NumberInput numberInput : productEntity.getListInput()) {
+            realm.beginTransaction();
+            RealmList<NumberInputModel> list = productDetail.getListInput();
+            for (NumberInput numberInput : productEntity.getListInput()) {
 
-                    NumberInputModel numberInputModel = list.where().equalTo("times", numberInput.getTimesInput()).findFirst();
-                    if (numberInputModel == null) {
-                        list.add(NumberInputModel.create(realm, numberInput));
-                    } else {
-                        int numberTotalOld = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
-                        numberInputModel.setNumberTotal(numberTotalOld);
-                        numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotalOld);
-
-                        int numberScanSuccessOld = numberInput.getNumberSuccess() - numberInputModel.getNumberSuccess();
-                        numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
-                        numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + numberScanSuccessOld);
+                NumberInputModel numberInputModel = list.where().equalTo("times", numberInput.getTimesInput()).findFirst();
+                if (numberInputModel == null) {
+                    list.add(NumberInputModel.create(realm, numberInput));
+                } else {
+                    numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
+                    numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
+                    if (numberInput.getNumberWaitting() != numberInputModel.getNumberRest()) {
+                        int numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
+                        numberInputModel.setNumberScanned(numberScanSuccessOld);
                         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
-
                     }
-
                 }
-                realm.commitTransaction();
+
             }
+            realm.commitTransaction();
 
         }
         return productDetail;

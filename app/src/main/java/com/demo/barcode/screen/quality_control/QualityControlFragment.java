@@ -294,7 +294,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                     mPresenter.getListProduct(orderId, departmentId);
                     mPresenter.getListQualityControl(orderId, departmentId);
 
-
                 }
 
             }
@@ -354,11 +353,9 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 orderId = list.get(position).getOrderId();
                 if (departmentId > 0) {
                     mPresenter.getListProduct(orderId, departmentId);
-//                    //mPresenter.getListTimes(orderId);
-//
-//                    if (departmentId > 0 && times > 0) {
-//                        mPresenter.getListScanStages(orderId, departmentId, times);
-//                    }
+                    if (orderId > 0){
+                        mPresenter.getListQualityControl(orderId, departmentId);
+                    }
                 }
 
 
@@ -380,7 +377,15 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.btn_save)
     public void save() {
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
 
+        if (departmentId == 0){
+            showError("Bạn chưa chọn bộ phận lỗi");
+            return;
+        }
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -410,10 +415,17 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
             return;
         }
+
+        if (departmentId == 0){
+            showError("Bạn chưa chọn bộ phận lỗi");
+            return;
+        }
+
+
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);

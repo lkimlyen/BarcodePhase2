@@ -43,6 +43,14 @@ public class HistoryEntity {
         return total;
     }
 
+    public int totalQuantity() {
+        int total = 0;
+        for (ProductPackagingEntity productPackagingEntity : list) {
+            total += productPackagingEntity.getNumber();
+        }
+        return total;
+    }
+
     public List<ProductPackagingEntity> getList() {
         return list;
     }

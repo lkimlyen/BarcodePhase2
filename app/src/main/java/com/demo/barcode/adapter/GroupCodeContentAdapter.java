@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
@@ -16,11 +17,10 @@ import com.demo.barcode.R;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
+public class GroupCodeContentAdapter extends RealmBaseAdapter<GroupCode> implements ListAdapter {
     private OnRemoveListener onRemoveListener;
-    private ListGroupCode listGroupCode;
 
-    public GroupCodeContentAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnRemoveListener onRemoveListener) {
+    public GroupCodeContentAdapter(OrderedRealmCollection<GroupCode> realmResults, OnRemoveListener onRemoveListener) {
         super(realmResults);
         this.onRemoveListener = onRemoveListener;
     }
@@ -39,35 +39,28 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> imp
         }
 
         if (adapterData != null) {
-            final LogScanStages item = adapterData.get(position);
+            final GroupCode item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, LogScanStages item) {
+    private void setDataToViews(HistoryHolder holder, GroupCode item) {
 
-        holder.txtNameDetail.setText(item.getProductDetail().getProductName());
-        holder.txtNumberGroup.setText(String.valueOf(item.getNumberGroup()));
-        holder.txtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.txtNameDetail.setText(item.getProductDetailName());
+        holder.txtNumberGroup.setText(String.valueOf(item.getNumber()));
+        holder.txtNumberScan.setText(String.valueOf(item.getNumberTotal()));
         holder.imgRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRemoveListener.onRemove(listGroupCode,item);
+                onRemoveListener.onRemove(item);
             }
         });
 
 
     }
 
-    public void setListGroupCode(ListGroupCode listGroupCode) {
-        this.listGroupCode = listGroupCode;
-    }
-
-    public ListGroupCode getListGroupCode() {
-        return listGroupCode;
-    }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
@@ -88,6 +81,6 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<LogScanStages> imp
 
 
     public interface OnRemoveListener {
-        void onRemove(ListGroupCode groupCode,LogScanStages item);
+        void onRemove(GroupCode item);
     }
 }

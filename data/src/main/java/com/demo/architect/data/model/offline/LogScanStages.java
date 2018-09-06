@@ -1,13 +1,13 @@
 package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -176,7 +176,7 @@ public class LogScanStages extends RealmObject {
     }
 
 
-    public static void addLogScanStages(Realm realm, LogScanStages scanStages) {
+    public static void addLogScanStages(Realm realm, LogScanStages scanStages, ProductEntity productEntity) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
 
         LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
@@ -184,7 +184,9 @@ public class LogScanStages extends RealmObject {
         RealmList<LogScanStages> parentList = parent.getList();
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", scanStages.getProductDetailId())
                 .equalTo("userId", scanStages.getUserId()).findFirst();
-
+        if (productDetail == null) {
+            productDetail = ProductDetail.create(realm, productEntity, scanStages.userId);
+        }
         LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
                 .equalTo("module", scanStages.getModule()).equalTo("times", scanStages.getTimes()).findFirst();
         if (logScanStages == null) {
@@ -242,50 +244,50 @@ public class LogScanStages extends RealmObject {
         ListGroupCode groupCodeList = listGroupCodes.where().equalTo("groupCode", groupCode)
                 .findFirst();
         if (groupCodeList == null) {
-            groupCodeList = new ListGroupCode(ListGroupCode.id(realm) + 1, groupCode, listSelect[0].getModule());
+            groupCodeList = new ListGroupCode(ListGroupCode.id(realm) + 1, groupCode, listSelect[0].getModule(), Constants.WAITING_UPLOAD);
             groupCodeList = realm.copyToRealm(groupCodeList);
             listGroupCodes.add(groupCodeList);
         }
 
-        RealmList<LogScanStages> logScanStageGroupList = groupCodeList.getList();
-        for (LogScanStages logScanStages : listSelect) {
-            LogScanStages log = realm.where(LogScanStages.class).equalTo("id", logScanStages.getId()).findFirst();
-            LogScanStages logInGroup = logScanStageGroupList.where().equalTo("barcode", logScanStages.barcode).findFirst();
 
-            if (logScanStages.getNumberInput() == logScanStages.getNumberGroup()) {
-                parentList.remove(log);
-                if (logInGroup != null) {
-                    logInGroup.setNumberGroup(log.getNumberGroup() + logInGroup.getNumberGroup());
-                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
-                } else {
-                    logScanStageGroupList.add(log);
-                }
-            } else {
-                int number = logScanStages.getNumberInput() - logScanStages.getNumberGroup();
-                log.setNumberInput(number);
-                //    log.setNumberGroup(number);
-                if (logInGroup != null) {
-                    logInGroup.setNumberGroup(log.getNumberGroup() + logInGroup.getNumberGroup());
-                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
-                } else {
-                    LogScanStages logScanStagesNew = new LogScanStages(logScanStages.getOrderId(),
-                            logScanStages.getDepartmentIdIn(), logScanStages.getDepartmentIdOut(),
-                            logScanStages.getProductDetailId(), logScanStages.getBarcode(),
-                            logScanStages.module, logScanStages.numberGroup, logScanStages.times,
-                            logScanStages.dateScan, logScanStages.userId, logScanStages.getNumberGroup());
-                    logScanStagesNew.setId(id(realm) + 1);
-                    logScanStagesNew.setProductDetail(logScanStages.getProductDetail());
-                    logScanStagesNew = realm.copyToRealm(logScanStagesNew);
-                    logScanStageGroupList.add(logScanStagesNew);
-                }
-
-                log.setNumberGroup(number);
-
-            }
-
-
-        }
+//        for (LogScanStages logScanStages : listSelect) {
+//            LogScanStages log = realm.where(LogScanStages.class).equalTo("id", logScanStages.getId()).findFirst();
+//            LogScanStages logInGroup = logScanStageGroupList.where().equalTo("barcode", logScanStages.barcode).findFirst();
+//
+//            if (logScanStages.getNumberInput() == logScanStages.getNumberGroup()) {
+//                parentList.remove(log);
+//                if (logInGroup != null) {
+//                    logInGroup.setNumberGroup(log.getNumberGroup() + logInGroup.getNumberGroup());
+//                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
+//                } else {
+//                    logScanStageGroupList.add(log);
+//                }
+//            } else {
+//                int number = logScanStages.getNumberInput() - logScanStages.getNumberGroup();
+//                log.setNumberInput(number);
+//                //    log.setNumberGroup(number);
+//                if (logInGroup != null) {
+//                    logInGroup.setNumberGroup(log.getNumberGroup() + logInGroup.getNumberGroup());
+//                    logInGroup.setNumberInput(logInGroup.getNumberGroup());
+//                } else {
+//                    LogScanStages logScanStagesNew = new LogScanStages(logScanStages.getOrderId(),
+//                            logScanStages.getDepartmentIdIn(), logScanStages.getDepartmentIdOut(),
+//                            logScanStages.getProductDetailId(), logScanStages.getBarcode(),
+//                            logScanStages.module, logScanStages.numberGroup, logScanStages.times,
+//                            logScanStages.dateScan, logScanStages.userId, logScanStages.getNumberGroup());
+//                    logScanStagesNew.setId(id(realm) + 1);
+//                    logScanStagesNew.setProductDetail(logScanStages.getProductDetail());
+//                    logScanStagesNew = realm.copyToRealm(logScanStagesNew);
+//                    logScanStageGroupList.add(logScanStagesNew);
+//                }
+//
+//                log.setNumberGroup(number);
+//
+//            }
+//
     }
+
+
 
     public static void updateNumberGroup(Realm realm, int logId, int numberGroup) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", logId).findFirst();
@@ -302,27 +304,27 @@ public class LogScanStages extends RealmObject {
         ListGroupCode groupCodeList = listGroupCodes.where().equalTo("id", list.getId())
                 .findFirst();
 
-        RealmList<LogScanStages> listScanStagesGroup = groupCodeList.getList();
-        List<Integer> idRemoveList = new ArrayList<>();
-         for (LogScanStages log : list.getList()) {
-            LogScanStages logCheck = parentList.where().equalTo("barcode", log.barcode).findFirst();
-            LogScanStages logMain = realm.where(LogScanStages.class).equalTo("id", log.getId()).findFirst();
-            if (logCheck == null) {
-                parentList.add(logMain);
-                idRemoveList.add(logMain.id);
-            } else {
-                logCheck.setNumberInput(log.getNumberGroup() + logCheck.getNumberGroup());
-            }
-        }
-
-        if (idRemoveList.size() > 0){
-             for (Integer id : idRemoveList){
-                 LogScanStages logScanStages = listScanStagesGroup.where().equalTo("id",id).findFirst();
-                 listScanStagesGroup.remove(logScanStages);
-             }
-        }
-        listScanStagesGroup.deleteAllFromRealm();
-        groupCodeList.deleteFromRealm();
+//        RealmList<LogScanStages> listScanStagesGroup = groupCodeList.getList();
+//        List<Integer> idRemoveList = new ArrayList<>();
+//        for (LogScanStages log : list.getList()) {
+//            LogScanStages logCheck = parentList.where().equalTo("barcode", log.barcode).findFirst();
+//            LogScanStages logMain = realm.where(LogScanStages.class).equalTo("id", log.getId()).findFirst();
+//            if (logCheck == null) {
+//                parentList.add(logMain);
+//                idRemoveList.add(logMain.id);
+//            } else {
+//                logCheck.setNumberInput(log.getNumberGroup() + logCheck.getNumberGroup());
+//            }
+//        }
+//
+//        if (idRemoveList.size() > 0) {
+//            for (Integer id : idRemoveList) {
+//                LogScanStages logScanStages = listScanStagesGroup.where().equalTo("id", id).findFirst();
+//                listScanStagesGroup.remove(logScanStages);
+//            }
+//        }
+//        listScanStagesGroup.deleteAllFromRealm();
+//        groupCodeList.deleteFromRealm();
 
 
     }
@@ -337,16 +339,55 @@ public class LogScanStages extends RealmObject {
         ListGroupCode groupCodeList = listGroupCodes.where().equalTo("id", groupCode.getId())
                 .findFirst();
 
-        RealmList<LogScanStages> listScanStagesGroup = groupCodeList.getList();
+//        RealmList<LogScanStages> listScanStagesGroup = groupCodeList.getList();
+//
+//        LogScanStages logInGroup = listScanStagesGroup.where().equalTo("id", logScanStages.getId()).findFirst();
+//
+//        LogScanStages logCheck = parentList.where().equalTo("barcode", logScanStages.getBarcode()).findFirst();
+//        if (logCheck == null) {
+//            parentList.add(logInGroup);
+//        } else {
+//            logCheck.setNumberInput(logCheck.getNumberInput() + logInGroup.getNumberGroup());
+//            logCheck.setNumberGroup(logInGroup.getNumberInput());
+//        }
+//        listScanStagesGroup.remove(logInGroup);
+    }
 
-        LogScanStages logInGroup = listScanStagesGroup.where().equalTo("barcode", logScanStages.getBarcode()).findFirst();
+    public static void addGroupCode(Realm realm, String groupCode, LogScanStages scanStages, ProductEntity productEntity, int userId) {
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
 
-        LogScanStages logCheck = parentList.where().equalTo("barcode", groupCode.getId()).findFirst();
-        if (logCheck == null) {
-            parentList.add(logInGroup);
-        } else {
-            logCheck.setNumberInput(logCheck.getNumberInput() + logInGroup.getNumberGroup());
+        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
+                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        RealmList<LogScanStages> parentList = parent.getList();
+        ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", scanStages.getProductDetailId())
+                .equalTo("userId", scanStages.getUserId()).findFirst();
+        if (productDetail == null) {
+            productDetail = ProductDetail.create(realm, productEntity, userId);
         }
-        listScanStagesGroup.remove(logInGroup);
+
+
+        RealmList<ListGroupCode> listGroupCodes = parent.getListGroupCodes();
+        ListGroupCode groupCodeList = listGroupCodes.where().equalTo("groupCode", groupCode)
+                .findFirst();
+        if (groupCodeList == null) {
+            groupCodeList = new ListGroupCode(ListGroupCode.id(realm) + 1, groupCode, scanStages.getModule(), Constants.WAITING_UPLOAD);
+            groupCodeList = realm.copyToRealm(groupCodeList);
+            listGroupCodes.add(groupCodeList);
+        }
+
+//        RealmList<LogScanStages> logScanStageGroupList = groupCodeList.getList();
+//        LogScanStages logScanStagesNew = new LogScanStages(scanStages.getOrderId(),
+//                scanStages.getDepartmentIdIn(), scanStages.getDepartmentIdOut(),
+//                scanStages.getProductDetailId(), scanStages.getBarcode(),
+//                scanStages.module, scanStages.numberGroup, scanStages.times,
+//                scanStages.dateScan, scanStages.userId, scanStages.getNumberGroup());
+//
+//        logScanStagesNew.setProductDetail(productDetail);
+//        logScanStagesNew.setId(id(realm) + 1);
+//        logScanStagesNew = realm.copyToRealm(logScanStagesNew);
+//        logScanStageGroupList.add(logScanStagesNew);
+//        NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", scanStages.getTimes()).findFirst();
+//        numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + scanStages.getNumberInput());
+//        numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
     }
 }

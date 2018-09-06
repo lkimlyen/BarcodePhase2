@@ -38,6 +38,7 @@ import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.StagesAdapter;
+import com.demo.barcode.adapter.StagesInGroupAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
@@ -96,14 +97,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
 
-    @Bind(R.id.btn_group_code)
-    Button btnGroupCode;
+    @Bind(R.id.txt_hint)
+    TextView txtHint;
 
-    @Bind(R.id.btn_detached_code)
-    Button btnDetachedCode;
+    @Bind(R.id.txt_hint2)
+    TextView txtHint2;
 
-    @Bind(R.id.layoutContent)
-    LinearLayout layoutContent;
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;
@@ -132,8 +131,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
         if (requestCode == 178) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra("message");
+                String result = data.getStringExtra("Message");
                 showSuccess(result);
+                mPresenter.getListScanStages(orderId, departmentId, times);
+                mPresenter.getListGroupCode(orderId);
                 return;
             }
         }
@@ -164,14 +165,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private void initView() {
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        UserEntity user = UserManager.getInstance().getUser();
-        if (user.getRole() == 6 || user.getRole() == 8) {
-            btnDetachedCode.setVisibility(View.VISIBLE);
-            btnGroupCode.setVisibility(View.VISIBLE);
-        } else {
-            btnDetachedCode.setVisibility(View.GONE);
-            btnGroupCode.setVisibility(View.GONE);
-        }
+
         // Vibrate for 500 milliseconds
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
@@ -342,6 +336,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListLogScanStages(LogListScanStages parent) {
+
         adapter = new StagesAdapter(parent.getList(), new StagesAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanStages item) {
@@ -354,6 +349,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
                                 mPresenter.deleteScanStages(item.getId());
+
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -406,6 +402,13 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         });
         rvCode.setAdapter(adapter);
+        rvCode.post(new Runnable() {
+            @Override
+            public void run() {
+                setListViewHeightBasedOnItems(rvCode);
+            }
+        });
+
 
     }
 
@@ -470,7 +473,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity, barcode, departmentId);
+                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity, barcode, 1, departmentId);
                         sweetAlertDialog.dismiss();
 
                     }
@@ -527,19 +530,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
-    @Override
-    public void showGroupCode(RealmList<ListGroupCode> list) {
-        layoutContent.removeAllViews();
-        for (ListGroupCode item : list) {
-            setLayout(item, item.getList());
-        }
-        if (list.size() > 0) {
-            layoutContent.setVisibility(View.VISIBLE);
-
-        } else {
-            layoutContent.setVisibility(View.GONE);
-        }
-    }
 
     @Override
     public void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId) {
@@ -575,43 +565,15 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
                         mPresenter.saveBarcodeToDataBase(numberInput, productEntity,
-                                barcode, departmentId);
+                                barcode, 1, departmentId);
                     }
                 })
                 .show();
     }
 
-    private void setLayout(ListGroupCode item, RealmList<LogScanStages> list) {
-        LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inf.inflate(R.layout.item_content_group, null);
-        TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
-        RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
-        rbSelect.setVisibility(View.GONE);
-        final ListView lvCode = (ListView) v.findViewById(R.id.lv_code);
-
-        txtTitle.setText(item.getGroupCode());
-        GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
-            @Override
-            public void onRemove(ListGroupCode groupCode, LogScanStages item) {
-                // mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
-            }
-        });
-
-        islandContentAdapter.setListGroupCode(item);
-        lvCode.setAdapter(islandContentAdapter);
-
-        lvCode.post(new Runnable() {
-            @Override
-            public void run() {
-                setListViewHeightBasedOnItems(lvCode);
-            }
-        });
-
-//        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-//        param.gravity = Gravity.CENTER;
-//        v.setLayoutParams(param);
-        layoutContent.addView(v);
+    @Override
+    public void setHeightListView() {
+        setListViewHeightBasedOnItems(rvCode);
     }
 
     @OnClick(R.id.ic_refresh)
@@ -771,54 +733,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         integrator.initiateScan();
     }
 
-    @OnClick(R.id.btn_group_code)
-    public void groupCode() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_group_code_scan))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        GroupCodeActivity.start(getActivity(), true, orderId, departmentId, times);
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .show();
-
-    }
-
-    @OnClick(R.id.btn_detached_code)
-    public void detachedCode() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_detached_code_scan))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        GroupCodeActivity.start(getActivity(), false, orderId, departmentId, times);
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .show();
-    }
 
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
 

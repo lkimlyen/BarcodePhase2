@@ -43,10 +43,9 @@ public interface StagesContract {
 
         void clearDataNoProduct(boolean chooseType);
 
-        void showGroupCode(RealmList<ListGroupCode> list);
-
         void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId);
 
+        void setHeightListView();
     }
 
     interface Presenter extends BasePresenter {
@@ -73,7 +72,7 @@ public interface StagesContract {
         void uploadDataAll(int orderId, int departmentId, int times);
 
         void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
-                productEntity, String barcode, int departmentId);
+                productEntity, String barcode,int number, int departmentId);
 
         void getListGroupCode(int orderId);
 

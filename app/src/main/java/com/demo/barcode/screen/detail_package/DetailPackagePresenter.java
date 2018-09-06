@@ -21,6 +21,7 @@ import com.demo.barcode.manager.ListHistoryManager;
 import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
+import com.demo.barcode.util.ConvertUtils;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
     @Override
     public void getTotalScan(int packageId) {
-        int total = ListHistoryManager.getInstance().getHistoryById(packageId).getTotal();
+        int total = ListHistoryManager.getInstance().getHistoryById(packageId).totalQuantity();
         view.showTotalNumberScan(total);
     }
 
@@ -85,6 +86,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
+                if (address == null) {
+                    //view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
+                    view.showDialogCreateIPAddress();
+                    return;
+                }
                 view.showProgressBar();
                 ConnectSocket connectSocket = new ConnectSocket(address.getIpAddress(), address.getPortNumber(),
                         serverId, new ConnectSocket.onPostExecuteResult() {
@@ -128,5 +134,18 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     public void getCodePack(String serialPack) {
         CodePackEntity codePack = ListCodePackManager.getInstance().getCodePackById(serialPack);
         view.showCodePack(codePack.getPackCode());
+    }
+
+    @Override
+    public void saveIPAddress(String ipAddress, int port, int serverId, String note, int packageId) {
+        int userId = UserManager.getInstance().getUser().getId();
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                //  view.showIPAddress(address);
+                printTemp(serverId,note,packageId);
+            }
+        });
     }
 }

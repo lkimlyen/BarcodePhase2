@@ -56,6 +56,8 @@ public interface ConfirmReceiveContract {
         void updateNumberConfirm(int orderId,int masterOutputId, int departmentIdOut, int times, int numberScan);
 
         void uploadData(int orderId, int departmentIdOut, int times);
+        void getListGroupCode(int orderId);
+
 
     }
 }

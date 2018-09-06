@@ -57,7 +57,7 @@ public class HistoryAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.txtDateCreate.setText(list.get(position).getDateTime());
-        holder.txtTotal.setText(String.valueOf(list.get(position).getTotal()));
+        holder.txtTotal.setText(String.valueOf(list.get(position).totalQuantity()));
 
         return convertView;
     }

@@ -12,6 +12,7 @@ import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -25,6 +26,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.security.acl.Group;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -149,12 +151,12 @@ public class DatabaseRealm {
     }
 
 
-    public void addLogScanStagesAsync(final LogScanStages model) {
+    public void addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addLogScanStages(realm, model);
+                LogScanStages.addLogScanStages(realm, model, productEntity);
             }
         });
     }
@@ -191,9 +193,9 @@ public class DatabaseRealm {
         return logListScanStages;
     }
 
-    public RealmResults<ListGroupCode> getListGroupCodeByModule(int orderId, int departmentId, int times, String module) {
+    public RealmResults<GroupCode> getListGroupCodeByModule(int orderId, String module) {
         Realm realm = getRealmInstance();
-        RealmResults<ListGroupCode> results = LogListScanStages.getListGroupCodeByModule(realm, orderId, departmentId, userId, times, module);
+        RealmResults<GroupCode> results = GroupCode.getListGroupCodeByModule(realm, orderId, userId, module);
         return results;
     }
 
@@ -287,7 +289,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateListImage(realm,id, pathFile);
+                QualityControlModel.updateListImage(realm, id, pathFile);
             }
         });
     }
@@ -302,12 +304,12 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusAndServerIdImage(final int id,final int imageId, final int serverId) {
+    public void updateStatusAndServerIdImage(final int id, final int imageId, final int serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateStatusAndServerId(realm, id,imageId, serverId);
+                QualityControlModel.updateStatusAndServerId(realm, id, imageId, serverId);
             }
         });
     }
@@ -380,7 +382,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final  ListGroupCode list) {
+    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final ListGroupCode list) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -463,7 +465,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.create(realm,orderId,departmentId,productEntity,userId);
+                QualityControlModel.create(realm, orderId, departmentId, productEntity, userId);
             }
         });
     }
@@ -473,23 +475,23 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateDetailErrorQC(realm,id,numberFailed,description,idList);
+                QualityControlModel.updateDetailErrorQC(realm, id, numberFailed, description, idList);
             }
         });
     }
 
     public List<QualityControlModel> getListQualityControlUpload() {
         Realm realm = getRealmInstance();
-        List<QualityControlModel>  result  =  QualityControlModel.getListQualityControlUpload(realm,userId);
+        List<QualityControlModel> result = QualityControlModel.getListQualityControlUpload(realm, userId);
         return result;
     }
 
-    public void updateImageIdAndStatus(final int qcId,final int id, final int imageId) {
+    public void updateImageIdAndStatus(final int qcId, final int id, final int imageId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateImageIdAndStatus(realm,qcId,id,imageId);
+                QualityControlModel.updateImageIdAndStatus(realm, qcId, id, imageId);
             }
         });
     }
@@ -499,8 +501,34 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateStatusQC(realm,userId);
+                QualityControlModel.updateStatusQC(realm, userId);
             }
         });
+    }
+
+    public void addGroupCode(final String groupCode, final LogScanStages logScanStages, final ProductEntity productEntity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.addGroupCode(realm, groupCode, logScanStages, productEntity, userId);
+            }
+        });
+    }
+
+    public void addGroupCode(final ProductEntity productEntity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                GroupCode.create(realm, productEntity, userId);
+            }
+        });
+    }
+
+    public boolean checkProductExistInGroupCode(ProductEntity model) {
+        Realm realm = getRealmInstance();
+        boolean exist = GroupCode.checkProductExistInGroupCode(realm,model,userId);
+        return exist;
     }
 }

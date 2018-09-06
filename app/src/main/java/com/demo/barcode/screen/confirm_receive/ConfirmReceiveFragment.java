@@ -319,6 +319,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListTimes(orderId);
+                mPresenter.getListGroupCode(orderId);
             }
 
             @Override

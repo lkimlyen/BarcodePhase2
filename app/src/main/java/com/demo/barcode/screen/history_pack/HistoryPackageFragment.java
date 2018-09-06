@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.detail_package.DetailPackageActivity;
+import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
@@ -35,6 +37,8 @@ import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.Result;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -95,23 +99,12 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == DetailPackageActivity.REQUEST_CODE) {
-//            if(resultCode == Activity.RESULT_OK){
-//                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DELETE){
-//                    showSuccess(getString(R.string.text_delete_success));
-//                }
-//                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.PRINT){
-//                    showSuccess(getString(R.string.text_print_success));
-//                }
-//
-//                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DONE){
-//                    showSuccess(getString(R.string.text_done_pack_success));
-//                }
-//
-//
-//            }
-//        }
+        if (requestCode == DetailPackageActivity.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                showSuccess(getString(R.string.text_print_success));
+            }
 
+        }
     }
 
     @Override
@@ -314,7 +307,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
                 serialPack = list.get(position).getSttPack();
                 codePack = list.get(position).getPackCode();
-                mPresenter.getListHistory(orderId, moduleId, apartmentId, codePack, serialPack);
             }
 
             @Override
@@ -331,7 +323,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailPackageActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack,list.get(position).getPackageId());
+                DetailPackageActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, list.get(position).getPackageId());
             }
         });
     }
@@ -348,6 +340,28 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     public void back() {
         getActivity().finish();
 
+    }
+
+    @OnClick(R.id.btn_search)
+    public void search() {
+        if (TextUtils.isEmpty(serialPack)) {
+            showError(getString(R.string.text_serial_pack_null));
+            return;
+        }
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
+        if (moduleId == 0) {
+            showError(getString(R.string.text_module_is_empty));
+            return;
+        }
+        if (apartmentId == 0) {
+            showError(getString(R.string.text_apartment_null));
+            return;
+        }
+
+        mPresenter.getListHistory(orderId, moduleId, apartmentId, codePack, serialPack);
     }
 
 

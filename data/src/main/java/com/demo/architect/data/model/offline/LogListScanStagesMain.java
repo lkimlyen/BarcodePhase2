@@ -10,6 +10,7 @@ public class LogListScanStagesMain extends RealmObject {
     @SuppressWarnings("unused")
     private RealmList<LogListScanStages> stagesList;
 
+    private RealmList<ListModule> listModule;
     public LogListScanStagesMain() {
     }
 
@@ -23,5 +24,14 @@ public class LogListScanStagesMain extends RealmObject {
 
     public RealmList<LogListScanStages> getList() {
         return stagesList;
+    }
+
+
+    public RealmList<ListModule> getListModule() {
+        return listModule;
+    }
+
+    public void setListModule(RealmList<ListModule> listModule) {
+        this.listModule = listModule;
     }
 }

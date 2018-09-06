@@ -267,67 +267,15 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <Button
-                android:id="@+id/btn_group_code"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_marginRight="2.5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_blue_small"
-                android:gravity="center"
-                android:text="@string/text_group_code"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_detached_code"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_marginLeft="2.5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_blue_small"
-                android:gravity="center"
-                android:text="@string/text_detached_code"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </LinearLayout>
-
 
     </LinearLayout>
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/lv_code"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/layoutContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
-        </ScrollView>
-
-        <ListView
-            android:id="@+id/lv_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#E6E6FA" />
-    </LinearLayout>
-
+        android:background="#E6E6FA" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -38,6 +38,8 @@ public interface DetailPackageContract {
         void showCodePack(String codePack);
 
         void showOrder(SOEntity soEntity);
+
+        void showDialogCreateIPAddress();
     }
 
     interface Presenter extends BasePresenter {
@@ -54,5 +56,7 @@ public interface DetailPackageContract {
         void getModule(int moduleId);
 
         void getCodePack(String serialPack);
+        void saveIPAddress(String ipAddress, int port, int serverId, String note, int packageId);
+
     }
 }

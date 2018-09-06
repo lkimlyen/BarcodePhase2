@@ -10,6 +10,7 @@ import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -47,10 +48,10 @@ public interface LocalRepository {
 
     Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module);
 
-    Observable<RealmResults<ListGroupCode>> getListGroupCode(final int orderId, final int departmentIdOut, final int times, final String module);
+    Observable<RealmResults<GroupCode>> getListGroupCode(final int orderId, String module);
 
 
-    Observable<String> addLogScanStagesAsync(final LogScanStages model);
+    Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
 
     Observable<ProductDetail> getProductDetail(ProductEntity productEntity);
 
@@ -78,7 +79,7 @@ public interface LocalRepository {
 
     Observable<String> updateStatusScanStages();
 
-    Observable<String> updateStatusAndServerIdImage(final int id,final int imageId, int serverId);
+    Observable<String> updateStatusAndServerIdImage(final int id, final int imageId, int serverId);
 
     Observable<String> addImageModel(final int id, final String pathFile);
 
@@ -89,7 +90,7 @@ public interface LocalRepository {
     Observable<List<LogScanPackaging>> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack);
 
 
-    Observable<String> saveBarcodeScanPackaging(ProductPackagingEntity product, String barcode, int orderId, int apartmentId, int moduleId, String packCode,String serialPack);
+    Observable<String> saveBarcodeScanPackaging(ProductPackagingEntity product, String barcode, int orderId, int apartmentId, int moduleId, String packCode, String serialPack);
 
     Observable<String> deleteScanPackaging(int logId);
 
@@ -101,15 +102,18 @@ public interface LocalRepository {
 
     Observable<Integer> getTotalScanBySerialPack(final int orderId, final int apartmentId, final int moduleId, final String serialPack);
 
-    Observable<String> addGroupCode(String groupCode,int orderId, int departmentId, int times, LogScanStages[] listSelect);
+    Observable<String> addGroupCode(String groupCode, int orderId, int departmentId, int times, LogScanStages[] listSelect);
+
+    Observable<String> addGroupCode(String groupCode,  LogScanStages logScanStages,ProductEntity productEntity);
 
     Observable<String> updateNumberGroup(int logId, int numberGroup);
 
     Observable<String> detachedCodeStages(int orderId, int departmentId, int times, ListGroupCode list);
 
-    Observable<String> removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages,int orderId, int departmentId, int times);
+    Observable<String> removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages, int orderId, int departmentId, int times);
 
     Observable<IPAddress> findIPAddress();
+
     Observable<IPAddress> insertOrUpdateIpAddress(final IPAddress model);
 
     Observable<String> updateStatusScanPackaging(int serverId);
@@ -131,4 +135,8 @@ public interface LocalRepository {
     Observable<String> updateImageIdAndStatus(int qcId, int id, int imageId);
 
     Observable<String> updateStatusQC();
+
+    Observable<String> addGroupCode(final ProductEntity productEntity);
+
+    Observable<Boolean>  checkProductExistInGroupCode(ProductEntity model);
 }
