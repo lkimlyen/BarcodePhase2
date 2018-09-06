@@ -566,12 +566,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addGroupCode(final String groupCode, final int orderId, final int departmentId, final int times, final LogScanStages[] listSelect) {
+    public Observable<String> addGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addGroupCode(groupCode, orderId, departmentId, times, listSelect);
+                    databaseRealm.addGroupCode(groupCode, orderId, module,listSelect);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -598,13 +598,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberGroup(final int logId, final int numberGroup) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+    public Observable<Boolean> updateNumberGroup(final ProductEntity productEntity,final int group, final int numberGroup) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void call(Subscriber<? super Boolean> subscriber) {
                 try {
-                    databaseRealm.updateNumberGroup(logId, numberGroup);
-                    subscriber.onNext("success");
+                  boolean b =  databaseRealm.updateNumberGroup(productEntity,group, numberGroup);
+                    subscriber.onNext(b);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -844,6 +844,22 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
                    boolean b = databaseRealm.checkProductExistInGroupCode(model);
+                    subscriber.onNext(b);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkNumberProductInGroupCode(final ProductEntity model) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    boolean b = databaseRealm.checkNumberProductInGroupCode(model);
                     subscriber.onNext(b);
                     subscriber.onCompleted();
                 } catch (Exception e) {

@@ -200,6 +200,8 @@
     <string name="text_detached_code_success">Tách mã thành công</string>
     <string name="text_remove_item_in_group_code_success">Xoá sản phẩm trong nhóm thành công</string>
     <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng đã quét</string>
+
+    <string name="text_number_bigger_number_request">Số lượng nhập vào lớn hơn số lượng yêu cầu</string>
     <string name="text_reason_error">Nguyên nhân lỗi</string>
     <string name="text_description_reason_error">Mô tả lỗi:</string>
     <string name="text_choose_code_pack">Chọn mã gói</string>
@@ -226,6 +228,8 @@
     <string name="text_apartment_null">Bạn chưa chọn căn!</string>
     <string name="text_number_total">SL tổng</string>
     <string name="text_product_scanned">Sản phẩm đã được quét!</string>
+    <string name="text_product_not_in_module">Sản phẩm không có trong module!</string>
+    <string name="text_number_scan_enough">Số lượng quét đã đủ!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

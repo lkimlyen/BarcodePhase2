@@ -19,33 +19,31 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
-import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.GroupCodeLVAdapter;
 import com.demo.barcode.app.base.BaseFragment;
+import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
+import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -54,6 +52,8 @@ import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -69,6 +69,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     private GroupCodeLVAdapter lvAdapter;
     private Set<ListGroupCode> countersToSelect = new HashSet<ListGroupCode>();
     private List<RadioButton> radioButtonList = new ArrayList<>();
+    private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private int orderId = 0;
     private String module;
 
@@ -120,6 +121,15 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() != null) {
+                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
+                String barcode = contents.replace("DEMO", "");
+                mPresenter.checkBarcode(barcode, module);
+            }
+        }
     }
 
     @Override
@@ -145,8 +155,23 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
             }
         });
-        mPresenter.getListModule(orderId);
-        mPresenter.getListOrderDetail(orderId);
+        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+//                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
+//                    return true;
+//                }
+                return false;
+            }
+        });
+
+        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                // uploadData();
+            }
+        });
+
         cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -159,15 +184,39 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
             }
         });
+        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+//                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
+//                    return true;
+//                }
+                return false;
+            }
+        });
+        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
+            @Override
+            public void uploadData() {
+                uploadData();
+            }
+        });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
         adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         ssTypeProduct.setAdapter(adapter);
 
+        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
-
 
     @Override
     public void setPresenter(GroupCodeContract.Presenter presenter) {
@@ -229,9 +278,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 module = list.get(position);
-              //  mPresenter.getListGroupCode(orderId, departmentId, times, list.get(position));
-
-
+                mPresenter.getGroupCodeScanList(orderId, list.get(position));
 
 
             }
@@ -242,7 +289,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             }
         });
     }
-
 
 
     @Override
@@ -264,7 +310,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         lvAdapter = new GroupCodeLVAdapter(groupCodes, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(GroupCode item, int number) {
-                mPresenter.updateNumberGroup(item.getId(), number);
+                mPresenter.updateNumberGroup(item.getProductDetailId(), item.getId(), number);
             }
         }, new GroupCodeLVAdapter.onErrorListener() {
             @Override
@@ -280,6 +326,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         View v = inf.inflate(R.layout.item_content_group, null);
         TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
         RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
+        EditText edtNumberGroup = (EditText) v.findViewById(R.id.edt_number_group);
+        edtNumberGroup.setText(String.valueOf(item.getNumber()));
         rbSelect.setTag(item);
         radioButtonList.add(rbSelect);
         final ListView lvCode = (ListView) v.findViewById(R.id.lv_code);
@@ -289,7 +337,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 // rbSelect.getTag().equals(countersToSelect.iterator().next()))
                 if (countersToSelect.size() > 0) {
                     for (RadioButton radioButton : radioButtonList) {
-                        if (radioButton.getTag().equals(countersToSelect.iterator().next()) && !((RadioButton)v).getTag().equals(countersToSelect.iterator().next())) {
+                        if (radioButton.getTag().equals(countersToSelect.iterator().next()) && !((RadioButton) v).getTag().equals(countersToSelect.iterator().next())) {
                             radioButton.setChecked(false);
                             break;
                         }
@@ -303,7 +351,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         txtTitle.setText(item.getGroupCode());
         GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
             @Override
-            public void onRemove( GroupCode item) {
+            public void onRemove(GroupCode item) {
                 //mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
             }
         });
@@ -358,11 +406,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     }
 
     @Override
-    public void showSODetail(SOEntity soEntity) {
-        txtCustomerName.setText(soEntity.getCustomerName());
-    }
-
-    @Override
     public void showListSO(List<SOEntity> list) {
         ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
 
@@ -374,8 +417,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
                     mPresenter.getListProduct(orderId);
-                    //mPresenter.getListTimes(orderId);
-                    //mPresenter.getListGroupCode(orderId);
 
                 }
 
@@ -465,14 +506,14 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             showError(getString(R.string.text_module_is_empty));
             return;
         }
-//        if (lvAdapter.getCountersToSelect().size() > 1 && countersToSelect.size() == 0) {
-//            mPresenter.groupCode(orderId, departmentId, times, module, lvAdapter.getCountersToSelect());
-//        } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
+        if (lvAdapter.getCountersToSelect().size() > 1 && countersToSelect.size() == 0) {
+            mPresenter.groupCode(orderId, module, lvAdapter.getCountersToSelect());
+        } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
 //            mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
 //                    departmentId, times, lvAdapter.getCountersToSelect());
-//        } else {
-//            showError(getString(R.string.text_not_product_upload));
-//        }
+        } else {
+            showError(getString(R.string.text_not_product_upload));
+        }
 
 
     }
@@ -488,8 +529,45 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         } else {
             showError(getString(R.string.text_not_product_detached));
         }
-
     }
 
+    @OnClick(R.id.btn_save)
+    public void save() {
+        if (TextUtils.isEmpty(edtBarcode.getText().toString())) {
+            return;
+        }
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
 
+        if (TextUtils.isEmpty(module)) {
+            showError(getString(R.string.text_module_is_empty));
+            return;
+        }
+        mPresenter.checkBarcode(edtBarcode.getText().toString(), module);
+    }
+
+    @OnClick(R.id.btn_scan)
+    public void scan() {
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (TextUtils.isEmpty(module)) {
+            showError(getString(R.string.text_module_is_empty));
+            return;
+        }
+        integrator = new IntentIntegrator(getActivity());
+        integrator.setCaptureActivity(ScanActivity.class);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Đặt mã cần quét vào khung");
+        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.setOrientationLocked(false);
+        integrator.initiateScan();
+    }
 }
+

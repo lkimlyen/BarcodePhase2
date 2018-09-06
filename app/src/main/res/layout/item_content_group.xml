@@ -37,6 +37,28 @@
             android:textColor="#000"
             android:textSize="@dimen/text_12sp" />
 
+        <EditText
+            android:id="@+id/edt_number_group"
+            android:layout_width="@dimen/size_80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:text="@string/text_number_group"
+            android:inputType="number"
+            android:textColor="#000"
+            android:textSize="@dimen/text_12sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_remove"
+            android:text="@string/text_number"
+            android:visibility="invisible" />
+
     </LinearLayout>
 
     <View

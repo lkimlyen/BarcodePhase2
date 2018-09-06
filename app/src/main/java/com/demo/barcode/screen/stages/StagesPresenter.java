@@ -126,33 +126,33 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     List<ProductGroupEntity> groupRemove = new ArrayList<>();
                                     if (groupEntityList.size() > 0) {
                                         NumberInputModel finalNumberInput1 = numberInput;
-                                        localRepository.getListGroupCode(model.getOrderId(), departmentId, times, model.getModule()).subscribe(new Action1<RealmResults<ListGroupCode>>() {
-                                            @Override
-                                            public void call(RealmResults<ListGroupCode> groupCodes) {
-                                                for (ListGroupCode listGroupCode : groupCodes) {
-                                                    for (ProductGroupEntity productGroupEntity : groupEntityList) {
-                                                        if (listGroupCode.getGroupCode().equals(productGroupEntity.getGroupCode())) {
-                                                            groupRemove.add(productGroupEntity);
-                                                        }
-                                                    }
-
-                                                }
-
-                                                if (groupRemove.size() == 0) {
-                                                    view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
-                                                } else {
-                                                    for (ProductGroupEntity productGroupEntity : groupRemove) {
-                                                        groupEntityList.remove(productGroupEntity);
-                                                    }
-                                                    if (groupEntityList.size() == 0) {
-                                                        saveBarcodeToDataBase(finalNumberInput1, model, barcode, 1, departmentId);
-                                                    } else {
-                                                        view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
-                                                    }
-
-                                                }
-                                            }
-                                        });
+//                                        localRepository.getListGroupCode(model.getOrderId(), departmentId, times, model.getModule()).subscribe(new Action1<RealmResults<ListGroupCode>>() {
+//                                            @Override
+//                                            public void call(RealmResults<ListGroupCode> groupCodes) {
+//                                                for (ListGroupCode listGroupCode : groupCodes) {
+//                                                    for (ProductGroupEntity productGroupEntity : groupEntityList) {
+//                                                        if (listGroupCode.getGroupCode().equals(productGroupEntity.getGroupCode())) {
+//                                                            groupRemove.add(productGroupEntity);
+//                                                        }
+//                                                    }
+//
+//                                                }
+//
+//                                                if (groupRemove.size() == 0) {
+//                                                    view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
+//                                                } else {
+//                                                    for (ProductGroupEntity productGroupEntity : groupRemove) {
+//                                                        groupEntityList.remove(productGroupEntity);
+//                                                    }
+//                                                    if (groupEntityList.size() == 0) {
+//                                                        saveBarcodeToDataBase(finalNumberInput1, model, barcode, 1, departmentId);
+//                                                    } else {
+//                                                        view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
+//                                                    }
+//
+//                                                }
+//                                            }
+//                                        });departmentId
 
 
                                     } else {
@@ -443,6 +443,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         ListSOManager.getInstance().setListSO(successResponse.getEntity());
                         view.hideProgressBar();
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_so_success));
+
                     }
 
                     @Override

@@ -12,12 +12,12 @@ import android.widget.TextView;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.CreateStampPackagingAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
+import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
 import com.demo.barcode.screen.login.LoginActivity;
 import com.demo.barcode.screen.quality_control.QualityControlActivity;
@@ -205,5 +205,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @OnClick(R.id.btn_quality_control)
     public void qualityControl(){
         QualityControlActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_group_code)
+    public void groupCode(){
+        GroupCodeActivity.start(getContext());
     }
 }

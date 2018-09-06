@@ -15,10 +15,8 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -26,9 +24,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
-import java.security.acl.Group;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
@@ -362,24 +358,20 @@ public class DatabaseRealm {
         return total;
     }
 
-    public void addGroupCode(final String groupCode, final int orderId, final int departmentId, final int times, final LogScanStages[] listSelect) {
+    public void addGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addGroupCode(realm, groupCode, orderId, departmentId, times, listSelect, userId);
+                GroupCode.addGroupCode(realm, groupCode, orderId, module, listSelect, userId);
             }
         });
     }
 
-    public void updateNumberGroup(final int logId, final int numberGroup) {
+    public boolean updateNumberGroup(final ProductEntity productEntity, final int groupId, final int numberGroup) {
         Realm realm = getRealmInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                LogScanStages.updateNumberGroup(realm, logId, numberGroup);
-            }
-        });
+        boolean b = GroupCode.updateNumberGroup(realm, productEntity, groupId, numberGroup, userId);
+        return b;
     }
 
     public void detachedCodeStages(final int orderId, final int departmentId, final int times, final ListGroupCode list) {
@@ -387,7 +379,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.detachedCodeStages(realm, orderId, departmentId, times, list, userId);
+           //     LogScanStages.detachedCodeStages(realm, orderId, departmentId, times, list, userId);
             }
         });
     }
@@ -397,7 +389,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.removeItemInGroup(realm, groupCode, logScanStages, orderId, departmentId, times, userId);
+              //  LogScanStages.removeItemInGroup(realm, groupCode, logScanStages, orderId, departmentId, times, userId);
             }
         });
     }
@@ -511,7 +503,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addGroupCode(realm, groupCode, logScanStages, productEntity, userId);
+              //  LogScanStages.addGroupCode(realm, groupCode, logScanStages, productEntity, userId);
             }
         });
     }
@@ -528,7 +520,13 @@ public class DatabaseRealm {
 
     public boolean checkProductExistInGroupCode(ProductEntity model) {
         Realm realm = getRealmInstance();
-        boolean exist = GroupCode.checkProductExistInGroupCode(realm,model,userId);
+        boolean exist = GroupCode.checkProductExistInGroupCode(realm, model, userId);
         return exist;
+    }
+
+    public boolean checkNumberProductInGroupCode(ProductEntity model) {
+        Realm realm = getRealmInstance();
+        boolean number = GroupCode.checkNumberProductInGroupCode(realm, model, userId);
+        return number;
     }
 }

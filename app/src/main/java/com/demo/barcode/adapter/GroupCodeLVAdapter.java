@@ -13,9 +13,6 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.GroupCode;
-import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
@@ -86,21 +83,17 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-//                    int numberInput = Integer.parseInt(s.toString());
-//                    if (numberInput <= 0) {
-//                        holder.edtNumberGroup.setText(item.getNumberInput() + "");
-//                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
-//                        return;
-//
-//                    }
-//                    if (numberInput > item.getNumberInput()) {
-//                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_number_scan).toString());
-//                        return;
-//                    }
-//                    if (numberInput == item.getNumberGroup()) {
-//                        return;
-//                    }
-//                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+                    int numberInput = Integer.parseInt(s.toString());
+                    if (numberInput <= 0) {
+                        holder.edtNumberGroup.setText(item.getNumber() + "");
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        return;
+
+                    }
+                    if (numberInput == item.getNumber()) {
+                        return;
+                    }
+                    onEditTextChangeListener.onEditTextChange(item, numberInput);
 
                 } catch (Exception e) {
 
@@ -109,7 +102,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         };
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.edtNumberGroup.setText(String.valueOf(item.getNumber()));
-        holder.txtNumberScan.setText(String.valueOf(item.getNumberTotal()));
+        holder.txtNumberTotal.setText(String.valueOf(item.getNumberTotal()));
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -146,14 +139,14 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
         TextView txtNameDetail;
         EditText edtNumberGroup;
-        TextView txtNumberScan;
+        TextView txtNumberTotal;
         CheckBox cbSelect;
 
         private HistoryHolder(View v) {
             super(v);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
             edtNumberGroup = (EditText) v.findViewById(R.id.edt_number);
-            txtNumberScan = (TextView) v.findViewById(R.id.txt_number_scan);
+            txtNumberTotal = (TextView) v.findViewById(R.id.txt_number_total);
             cbSelect = (CheckBox) v.findViewById(R.id.cb_select);
         }
 

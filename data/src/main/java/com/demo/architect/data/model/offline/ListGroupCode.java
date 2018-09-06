@@ -12,15 +12,17 @@ public class ListGroupCode extends RealmObject {
     @SuppressWarnings("unused")
     private RealmList<GroupCode> list;
     private String module;
+    private int number;
     private int status;
 
     public ListGroupCode() {
     }
 
-    public ListGroupCode(int id, String groupCode, String module, int status) {
+    public ListGroupCode(int id, String groupCode, String module, int number, int status) {
         this.id = id;
         this.groupCode = groupCode;
         this.module = module;
+        this.number = number;
         this.status = status;
     }
 
@@ -60,5 +62,13 @@ public class ListGroupCode extends RealmObject {
     @Override
     public String toString() {
         return groupCode;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

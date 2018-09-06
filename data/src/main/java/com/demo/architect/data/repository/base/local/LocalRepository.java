@@ -102,11 +102,11 @@ public interface LocalRepository {
 
     Observable<Integer> getTotalScanBySerialPack(final int orderId, final int apartmentId, final int moduleId, final String serialPack);
 
-    Observable<String> addGroupCode(String groupCode, int orderId, int departmentId, int times, LogScanStages[] listSelect);
+    Observable<String> addGroupCode(String groupCode, int orderId,String module, GroupCode[] listSelect);
 
     Observable<String> addGroupCode(String groupCode,  LogScanStages logScanStages,ProductEntity productEntity);
 
-    Observable<String> updateNumberGroup(int logId, int numberGroup);
+    Observable<Boolean> updateNumberGroup(final ProductEntity productEntity,int groupId, int numberGroup);
 
     Observable<String> detachedCodeStages(int orderId, int departmentId, int times, ListGroupCode list);
 
@@ -139,4 +139,6 @@ public interface LocalRepository {
     Observable<String> addGroupCode(final ProductEntity productEntity);
 
     Observable<Boolean>  checkProductExistInGroupCode(ProductEntity model);
+
+    Observable<Boolean>  checkNumberProductInGroupCode(ProductEntity model);
 }

@@ -97,12 +97,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
 
-    @Bind(R.id.txt_hint)
-    TextView txtHint;
-
-    @Bind(R.id.txt_hint2)
-    TextView txtHint2;
-
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;

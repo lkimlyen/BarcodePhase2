@@ -185,10 +185,94 @@ public class GroupCode extends RealmObject {
     public static RealmResults<GroupCode> getListGroupCodeByModule(Realm realm, int orderId, int userId, String module) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
+        if (mainParent == null) {
+            realm.beginTransaction();
+            mainParent = new LogListScanStagesMain(orderId);
+            mainParent = realm.copyToRealm(mainParent);
+            realm.commitTransaction();
+
+        }
+        RealmList<ListModule> listModules = mainParent.getListModule();
+        ListModule listModule = listModules.where().equalTo("module", module)
+                .equalTo("userId", userId).findFirst();
+        if (listModule == null) {
+            realm.beginTransaction();
+            listModule = ListModule.create(realm, module, userId);
+            listModules.add(listModule);
+            realm.commitTransaction();
+
+        }
+        RealmResults<GroupCode> parentList = listModule.getGroupCodeRealmList().where().equalTo("userId", userId)
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        return parentList;
+    }
+
+    public static boolean checkNumberProductInGroupCode(Realm realm, ProductEntity productEntity, int userId) {
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", productEntity.getOrderId()).findFirst();
+
+        ListModule module = mainParent.getListModule().where().equalTo("module", productEntity.getModule())
+                .equalTo("userId", userId).findFirst();
+        RealmResults<ListGroupCode> parentList = module.getListGroupCodes().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
+
+        int rest = 0;
+        if (parentList.size() > 0) {
+            for (ListGroupCode listGroupCode : parentList) {
+                GroupCode groupCode = listGroupCode.getList().where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
+                rest += (groupCode.getNumberTotal() - groupCode.getNumber());
+            }
+        }
+
+        return rest > 0;
+    }
+
+    public static boolean updateNumberGroup(Realm realm, ProductEntity productEntity, int groupId, int numberGroup, int userId) {
+
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", groupId).findFirst();
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", productEntity.getOrderId()).findFirst();
+
+        ListModule module = mainParent.getListModule().where().equalTo("module", productEntity.getModule())
+                .equalTo("userId", userId).findFirst();
+        RealmResults<ListGroupCode> parentList = module.getListGroupCodes().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
+
+        int rest = 0;
+        if (parentList.size() > 0) {
+            for (ListGroupCode listGroupCode : parentList) {
+                GroupCode gv = listGroupCode.getList().where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
+                rest += (gv.getNumberTotal() - gv.getNumber());
+            }
+
+        } else {
+            rest = groupCode.getNumberTotal() - groupCode.getNumber();
+
+        }
+        if (numberGroup - groupCode.getNumber() <= rest) {
+            realm.beginTransaction();
+            groupCode.setNumber(numberGroup);
+            realm.commitTransaction();
+        }
+
+        return numberGroup - groupCode.getNumber() <= rest;
+
+    }
+
+    public static void addGroupCode(Realm realm, String groupCode, int orderId, String module, GroupCode[] listSelect, int userId) {
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
+
         ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
                 .equalTo("userId", userId).findFirst();
-        RealmResults<GroupCode> parentList = listModule.getGroupCodeRealmList().where().equalTo("userId",userId)
-                .equalTo("status",Constants.WAITING_UPLOAD).findAll();
-        return parentList;
+        RealmList<GroupCode> groupCodeRealmList = listModule.getGroupCodeRealmList();
+        RealmList<ListGroupCode> listGroupCodes = listModule.getListGroupCodes();
+        ListGroupCode listGroupCode = new ListGroupCode(ListGroupCode.id(realm) + 1, groupCode, module, 1, Constants.WAITING_UPLOAD);
+        listGroupCode = realm.copyToRealm(listGroupCode);
+        listGroupCodes.add(listGroupCode);
+        RealmList<GroupCode> parentList = listGroupCode.getList();
+        for (GroupCode item : listSelect) {
+            GroupCode gv = realm.where(GroupCode.class).equalTo("id", item.getId()).findFirst();
+            groupCodeRealmList.remove(gv);
+            parentList.add(gv);
+
+        }
+
+
     }
 }

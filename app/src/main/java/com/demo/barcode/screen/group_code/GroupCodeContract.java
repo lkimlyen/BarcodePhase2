@@ -31,9 +31,6 @@ public interface GroupCodeContract {
         void showGroupCode(RealmResults<ListGroupCode> groupCodes);
         void showGroupCodeScanList(RealmResults<GroupCode> groupCodes);
 
-
-        void showSODetail(SOEntity soEntity);
-
         void showListSO(List<SOEntity> list);
 
         void backScanStages(String message);
@@ -49,18 +46,14 @@ public interface GroupCodeContract {
     interface Presenter extends BasePresenter {
         void getListModule(int orderId);
 
-
+        void groupCode(int orderId,  String module, Collection<GroupCode> list);
         void getListGroupCode(int orderId, String module);
 
         void getGroupCodeScanList(int orderId, String module);
 
-        void getListOrderDetail(int orderId);
-
-        void groupCode(int orderId, int departmentId, int times, String module, Collection<LogScanStages> list);
-
         void updateGroupCode(ListGroupCode groupCode, int orderId, int departmentId, int times, Collection<LogScanStages> list);
 
-        void updateNumberGroup(int logId, int numberGroup);
+        void updateNumberGroup(int productId,int groupId, int numberGroup);
 
         void detachedCode(int orderId, int departmentId, int times, ListGroupCode list);
 
@@ -70,6 +63,6 @@ public interface GroupCodeContract {
 
         void getListProduct(int orderId);
 
-        void checkBarcode(String barcode, int departmentId, int times);
+        void checkBarcode(String barcode, String module);
     }
 }

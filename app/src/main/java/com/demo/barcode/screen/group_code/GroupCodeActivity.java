@@ -24,9 +24,9 @@ public class GroupCodeActivity extends BaseActivity {
 
     GroupCodeFragment fragment;
 
-    public static void start(Activity context) {
+    public static void start(Context context) {
         Intent intent = new Intent(context, GroupCodeActivity.class);
-        context.startActivityForResult(intent, REQUEST_CODE);
+        context.startActivity(intent);
     }
 
     @Override
