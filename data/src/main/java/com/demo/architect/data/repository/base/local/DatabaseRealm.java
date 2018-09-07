@@ -24,6 +24,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -374,22 +375,22 @@ public class DatabaseRealm {
         return b;
     }
 
-    public void detachedCodeStages(final int orderId, final int departmentId, final int times, final ListGroupCode list) {
+    public void detachedCodeStages(final int orderId, final String module, final ListGroupCode list) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-           //     LogScanStages.detachedCodeStages(realm, orderId, departmentId, times, list, userId);
+                GroupCode.detachedCode(realm, orderId, module, list, userId);
             }
         });
     }
 
-    public void removeItemInGroup(final ListGroupCode groupCode, final LogScanStages logScanStages, final int orderId, final int departmentId, final int times) {
+    public void removeItemInGroup(final String groupCode, final GroupCode logScanStages, final int orderId, final String module) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-              //  LogScanStages.removeItemInGroup(realm, groupCode, logScanStages, orderId, departmentId, times, userId);
+                GroupCode.removeItemInGroup(realm, groupCode, logScanStages, orderId, module, userId);
             }
         });
     }
@@ -503,7 +504,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-              //  LogScanStages.addGroupCode(realm, groupCode, logScanStages, productEntity, userId);
+                //  LogScanStages.addGroupCode(realm, groupCode, logScanStages, productEntity, userId);
             }
         });
     }
@@ -528,5 +529,37 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         boolean number = GroupCode.checkNumberProductInGroupCode(realm, model, userId);
         return number;
+    }
+
+    public RealmResults<ListGroupCode> getListGroupCode(int orderId, String module) {
+        Realm realm = getRealmInstance();
+        RealmResults<ListGroupCode> results = GroupCode.getListGroupCode(realm, orderId, module, userId);
+        return results;
+    }
+
+    public void updateGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                GroupCode.updateGroupCode(realm, groupCode, orderId, module, listSelect, userId);
+            }
+        });
+    }
+
+    private List<GroupCode>groupCodeList;
+
+    public List<GroupCode> updateNumberGroup(final int id, final int number) {
+        groupCodeList = new ArrayList<>();
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                groupCodeList = GroupCode.updateNumberGroup(realm, id, number);
+
+            }
+        });
+
+        return groupCodeList;
     }
 }

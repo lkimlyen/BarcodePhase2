@@ -100,7 +100,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     @Override
     public void getListTimes(int orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
-        view.showListTimes(soEntity.getListTimesOutput());
+        view.showListTimes(soEntity.getListTimesInput());
     }
 
     @Override

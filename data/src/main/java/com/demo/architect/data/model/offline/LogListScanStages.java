@@ -1,7 +1,6 @@
 package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.utils.view.DateUtils;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class LogListScanStages extends RealmObject {
 
     @SuppressWarnings("unused")
     private RealmList<LogScanStages> list;
-
 
 
     public LogListScanStages() {
@@ -149,6 +147,7 @@ public class LogListScanStages extends RealmObject {
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         RealmResults<LogListScanStages> logListScanStages = null;
         if (logListScanStagesMain != null) {
+
             if (logListScanStagesMain.getList() != null) {
                 logListScanStages = logListScanStagesMain.getList().where()
                         .equalTo("status", Constants.WAITING_UPLOAD)
@@ -157,6 +156,9 @@ public class LogListScanStages extends RealmObject {
                 for (LogListScanStages log : logListScanStages) {
                     log.setStatus(Constants.COMPLETE);
                 }
+
+
+
 
             }
         }

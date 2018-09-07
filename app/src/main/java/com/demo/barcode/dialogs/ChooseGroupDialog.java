@@ -53,12 +53,8 @@ public class ChooseGroupDialog extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getActivity());
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-                , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         dialog.setContentView(R.layout.dialog_choose_group);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black_hex_11);
 
         LinearLayout layoutContent  =  (LinearLayout) dialog.findViewById(R.id.layoutContent);
         for (ProductGroupEntity productGroupEntity : list){

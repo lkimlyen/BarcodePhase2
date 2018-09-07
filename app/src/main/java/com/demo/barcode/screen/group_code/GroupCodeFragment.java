@@ -8,14 +8,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -91,10 +93,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Bind(R.id.lv_code)
     ListView lvCode;
-
-    @Bind(R.id.btn_group_code)
-    Button btnGroupCode;
-
     @Bind(R.id.cb_all)
     CheckBox cbAll;
 
@@ -279,7 +277,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 module = list.get(position);
                 mPresenter.getGroupCodeScanList(orderId, list.get(position));
-
+                mPresenter.getListGroupCode(orderId, module);
 
             }
 
@@ -315,10 +313,16 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }, new GroupCodeLVAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
-
+                showSuccess(message);
             }
         });
         lvCode.setAdapter(lvAdapter);
+        lvCode.post(new Runnable() {
+            @Override
+            public void run() {
+           setListViewHeightBasedOnItems(lvCode);
+            }
+        });
     }
 
     private void setLayout(ListGroupCode item, RealmList<GroupCode> list) {
@@ -327,10 +331,33 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
         RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
         EditText edtNumberGroup = (EditText) v.findViewById(R.id.edt_number_group);
+        edtNumberGroup.setTag(item);
+        edtNumberGroup.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    mPresenter.updateNumberListGroup(((ListGroupCode)edtNumberGroup.getTag()).getId(),Integer.parseInt(editable.toString()) );
+                }catch (NumberFormatException e){
+
+                }
+
+
+            }
+        });
         edtNumberGroup.setText(String.valueOf(item.getNumber()));
         rbSelect.setTag(item);
         radioButtonList.add(rbSelect);
-        final ListView lvCode = (ListView) v.findViewById(R.id.lv_code);
+        final ListView lvCodes = (ListView) v.findViewById(R.id.lv_code);
         rbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -352,18 +379,18 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
             @Override
             public void onRemove(GroupCode item) {
-                //mPresenter.removeItemInGroup(groupCode, item, orderId, departmentId, times);
+                mPresenter.removeItemInGroup(item.getGroupCode(),item,orderId,module);
             }
         });
 
-        lvCode.setAdapter(islandContentAdapter);
+        lvCodes.setAdapter(islandContentAdapter);
 
-        lvCode.post(new Runnable() {
+        lvCodes.postDelayed(new Runnable() {
             @Override
             public void run() {
-                setListViewHeightBasedOnItems(lvCode);
+                setListViewHeightBasedOnItems(lvCodes);
             }
-        });
+        },1000);
 
 //        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
 //                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
@@ -469,34 +496,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (lvAdapter != null) {
-            if (lvAdapter.getCountersToSelect().size() > 0) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_cancel_group_code))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                getActivity().finish();
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
 
-                            }
-                        })
-                        .show();
-            } else {
-                getActivity().finish();
-            }
-        } else {
             getActivity().finish();
-        }
 
     }
 
@@ -509,8 +510,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         if (lvAdapter.getCountersToSelect().size() > 1 && countersToSelect.size() == 0) {
             mPresenter.groupCode(orderId, module, lvAdapter.getCountersToSelect());
         } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
-//            mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
-//                    departmentId, times, lvAdapter.getCountersToSelect());
+            mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
+                    module, lvAdapter.getCountersToSelect());
         } else {
             showError(getString(R.string.text_not_product_upload));
         }
@@ -525,7 +526,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             return;
         }
         if (countersToSelect.size() > 0) {
-//            mPresenter.detachedCode(orderId, departmentId, times, countersToSelect.iterator().next());
+            mPresenter.detachedCode(orderId, module, countersToSelect.iterator().next());
         } else {
             showError(getString(R.string.text_not_product_detached));
         }

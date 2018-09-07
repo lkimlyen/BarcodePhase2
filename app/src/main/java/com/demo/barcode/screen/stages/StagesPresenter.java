@@ -7,7 +7,6 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
@@ -34,7 +33,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.realm.RealmResults;
 import rx.functions.Action1;
 
 /**
@@ -123,36 +121,9 @@ public class StagesPresenter implements StagesContract.Presenter {
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
                                     List<ProductGroupEntity> groupEntityList = ListProductGroupManager.getInstance().getListProductById(model.getProductDetailID());
-                                    List<ProductGroupEntity> groupRemove = new ArrayList<>();
+
                                     if (groupEntityList.size() > 0) {
-                                        NumberInputModel finalNumberInput1 = numberInput;
-//                                        localRepository.getListGroupCode(model.getOrderId(), departmentId, times, model.getModule()).subscribe(new Action1<RealmResults<ListGroupCode>>() {
-//                                            @Override
-//                                            public void call(RealmResults<ListGroupCode> groupCodes) {
-//                                                for (ListGroupCode listGroupCode : groupCodes) {
-//                                                    for (ProductGroupEntity productGroupEntity : groupEntityList) {
-//                                                        if (listGroupCode.getGroupCode().equals(productGroupEntity.getGroupCode())) {
-//                                                            groupRemove.add(productGroupEntity);
-//                                                        }
-//                                                    }
-//
-//                                                }
-//
-//                                                if (groupRemove.size() == 0) {
-//                                                    view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
-//                                                } else {
-//                                                    for (ProductGroupEntity productGroupEntity : groupRemove) {
-//                                                        groupEntityList.remove(productGroupEntity);
-//                                                    }
-//                                                    if (groupEntityList.size() == 0) {
-//                                                        saveBarcodeToDataBase(finalNumberInput1, model, barcode, 1, departmentId);
-//                                                    } else {
-//                                                        view.showChooseGroup(finalNumberInput1, groupEntityList, model, barcode, departmentId);
-//                                                    }
-//
-//                                                }
-//                                            }
-//                                        });departmentId
+                                        view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
 
 
                                     } else {
@@ -290,7 +261,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     public void getListTimes(int orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
         if (soEntity != null) {
-            view.showListTimes(soEntity.getListTimesInput());
+            view.showListTimes(soEntity.getListTimesOutput());
         }
 
     }
@@ -365,13 +336,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
-//                        localRepository.updateStatusScanStagesByOrder(orderId).subscribe(new Action1<String>() {
-//                            @Override
-//                            public void call(String s) {
-//                                view.showSuccess(successResponse.getDescription());
-//                                getListScanStages(orderId, departmentId, times);
-//                            }
-//                        });
                     }
 
                     @Override
@@ -387,39 +351,12 @@ public class StagesPresenter implements StagesContract.Presenter {
     public void saveListWithGroupCode(NumberInputModel inputModel, ProductGroupEntity productGroupEntity, String barcode, int departmentId) {
         List<ProductGroupEntity> list = ListProductGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
         UserEntity user = UserManager.getInstance().getUser();
-        if (user.getRole() == 6) {
-            for (ProductGroupEntity item : list) {
-                ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
 
+        for (ProductGroupEntity item : list) {
+            final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+            saveBarcodeToDataBase(inputModel, productEntity, productEntity.getBarcode(), item.getNumber(), departmentId);
 
-                LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), departmentId, user.getRole(), productEntity.getProductDetailID(),
-                        productEntity.getBarcode(), productEntity.getModule(), item.getNumber(), inputModel.getTimes(), ConvertUtils.getDateTimeCurrent(), user.getId(), item.getNumber());
-                localRepository.addGroupCode(productGroupEntity.getGroupCode(), logScanStages,productEntity)
-                        .subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String s) {
-                                getListScanStages(productEntity.getOrderId(),departmentId,inputModel.getTimes());
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                view.startMusicSuccess();
-                                view.turnOnVibrator();
-                                view.hideProgressBar();
-                                view.setHeightListView();
-
-                            }
-                        });
-
-            }
-
-        } else
-
-        {
-            for (ProductGroupEntity item : list) {
-                final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                saveBarcodeToDataBase(inputModel, productEntity, productEntity.getBarcode(), item.getNumber(), departmentId);
-
-            }
         }
-
     }
 
 

@@ -24,6 +24,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.security.acl.Group;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface LocalRepository {
 
     Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module);
 
-    Observable<RealmResults<GroupCode>> getListGroupCode(final int orderId, String module);
+    Observable<RealmResults<GroupCode>> getListGroupCodeScan(final int orderId, String module);
 
 
     Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
@@ -108,9 +109,9 @@ public interface LocalRepository {
 
     Observable<Boolean> updateNumberGroup(final ProductEntity productEntity,int groupId, int numberGroup);
 
-    Observable<String> detachedCodeStages(int orderId, int departmentId, int times, ListGroupCode list);
+    Observable<String> detachedCodeStages(int orderId, final String module,  ListGroupCode list);
 
-    Observable<String> removeItemInGroup(ListGroupCode groupCode, LogScanStages logScanStages, int orderId, int departmentId, int times);
+    Observable<String> removeItemInGroup(String groupCode, GroupCode logScanStages, int orderId, final String module);
 
     Observable<IPAddress> findIPAddress();
 
@@ -141,4 +142,10 @@ public interface LocalRepository {
     Observable<Boolean>  checkProductExistInGroupCode(ProductEntity model);
 
     Observable<Boolean>  checkNumberProductInGroupCode(ProductEntity model);
+
+    Observable<RealmResults<ListGroupCode>> getListGroupCode(int orderId, String module);
+
+    Observable<String> updateGroupCode(String groupCode, int orderId,  String module, GroupCode[] listSelect);
+
+    Observable<List<GroupCode>> updateNumberGroup(int id, int number);
 }

@@ -62,85 +62,84 @@
         android:orientation="vertical"
         android:padding="@dimen/distance_8dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="5">
+                android:layout_weight="1.5"
+                android:text="@string/text_type_product"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:text="@string/text_type_product"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp"
-                    android:textStyle="bold" />
-
-                <com.demo.barcode.widgets.spinner.SearchableSpinner
-                    android:id="@+id/ss_type_product"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3.5"
-                    android:spinnerMode="dialog"
-                    app:hintText="@string/text_choose_type_product" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_type_product"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="5">
+                android:layout_weight="3.5"
+                android:spinnerMode="dialog"
+                app:hintText="@string/text_choose_type_product" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:text="@string/text_code_so"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-                <com.demo.barcode.widgets.spinner.SearchableSpinner
-                    android:id="@+id/ss_code_so"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3.5"
-                    app:hintText="@string/text_choose_code_so" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
 
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="5">
+                android:layout_weight="1.5"
+                android:text="@string/text_code_so"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:text="@string/text_customer_name"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp"
-                    android:textStyle="bold" />
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_code_so"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_code_so" />
 
-                <TextView
-                    android:id="@+id/txt_customer_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3.5"
-                    android:textSize="@dimen/text_16sp" />
-            </LinearLayout>
+        </LinearLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_customer_name"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_customer_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                android:textSize="@dimen/text_16sp" />
+        </LinearLayout>
 
 
         <LinearLayout
@@ -168,41 +167,40 @@
                 app:hintText="@string/text_choose_serial_module" />
 
         </LinearLayout>
-            <LinearLayout
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <EditText
+                android:id="@+id/edt_barcode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:layout_height="@dimen/size_40dp"
+                android:layout_marginEnd="@dimen/distance_5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edittext_stroke_white"
+                android:hint="Nhập mã barcode"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/distance_5dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp" />
 
-                <EditText
-                    android:id="@+id/edt_barcode"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginEnd="@dimen/distance_5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_edittext_stroke_white"
-                    android:hint="Nhập mã barcode"
-                    android:inputType="textMultiLine"
-                    android:padding="@dimen/distance_5dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
-
-                <Button
-                    android:id="@+id/btn_save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_weight="0"
-                    android:background="@drawable/bg_button_blue_small"
-                    android:gravity="center"
-                    android:text="@string/text_add"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_weight="0"
+                android:background="@drawable/bg_button_blue_small"
+                android:gravity="center"
+                android:text="@string/text_add"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
 
 
         <LinearLayout
@@ -301,6 +299,7 @@
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp"
                 android:textStyle="bold" />
+
             <TextView
                 android:layout_width="@dimen/size_100dp"
                 android:layout_height="wrap_content"
@@ -342,30 +341,33 @@
             android:background="#ff0000" />
     </TableLayout>
 
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/layoutContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"></LinearLayout>
 
-            </LinearLayout>
-        </ScrollView>
+            <ListView
+                android:id="@+id/lv_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <ListView
-            android:id="@+id/lv_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
 
     <LinearLayout
         android:layout_width="match_parent"
