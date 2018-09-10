@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -21,8 +22,8 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
 public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel> implements ListAdapter {
-
     private OnItemClearListener listener;
+
     public QualityControlAdapter(OrderedRealmCollection<QualityControlModel> realmResults, OnItemClearListener listener) {
         super(realmResults);
         this.listener = listener;
@@ -63,6 +64,9 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
             }
         });
 
+        holder.layoutMain.setBackgroundColor(item.isEdit() ? CoreApplication.getInstance().getResources().getColor(R.color.colorGreen)
+        : CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
@@ -72,6 +76,7 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
         TextView txtModule;
         ImageView imgDelete;
         TextView txtTotal;
+        LinearLayout layoutMain;
 
         private HistoryHolder(View v) {
             super(v);
@@ -80,6 +85,7 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
             imgDelete = (ImageView) v.findViewById(R.id.img_delete);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
             txtTotal = (TextView) v.findViewById(R.id.txt_number_order);
+            layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
         }
 
     }

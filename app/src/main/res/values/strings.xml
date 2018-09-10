@@ -230,6 +230,11 @@
     <string name="text_product_scanned">Sản phẩm đã được quét!</string>
     <string name="text_product_not_in_module">Sản phẩm không có trong module!</string>
     <string name="text_number_scan_enough">Số lượng quét đã đủ!</string>
+    <string name="text_no_image_in_detail">Bạn chưa chụp hình ảnh lỗi!</string>
+    <string name="text_no_reason_selected">Bạn chưa chọn nguyên nhân lỗi!</string>
+    <string name="text_no_description">Bạn chưa nhập mô tả lỗi!</string>
+    <string name="text_no_number_failed">Số lượng lỗi không được để trống</string>
+    <string name="text_number_failed_bigger_zero">Số lượng lỗi phải lớn hơn 0</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

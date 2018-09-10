@@ -1,16 +1,12 @@
 package com.demo.architect.data.model.offline;
 
-import android.media.Image;
 import android.text.TextUtils;
-import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,10 +65,20 @@ public class QualityControlModel extends RealmObject {
 
     private int status;
 
+    public boolean isEdit() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+    private boolean edit;
+
     public QualityControlModel() {
     }
 
-    public QualityControlModel(int id, String barcode, String module, int departmentId, int orderId, int productDetailId, String productName, int totalNumber, int number, int userId, int status) {
+    public QualityControlModel(int id, String barcode, String module, int departmentId, int orderId, int productDetailId, String productName, int totalNumber, int number, int userId, int status, boolean edit) {
         this.id = id;
         this.barcode = barcode;
         this.module = module;
@@ -81,6 +87,7 @@ public class QualityControlModel extends RealmObject {
         this.productDetailId = productDetailId;
         this.productName = productName;
         this.totalNumber = totalNumber;
+        this.edit = edit;
         this.listReason = listReason;
         this.description = description;
         this.imageList = imageList;
@@ -218,7 +225,7 @@ public class QualityControlModel extends RealmObject {
         RealmList<QualityControlModel> parentList = listDepartmentQualityControl.getList();
         QualityControlModel qualityControlModel = new QualityControlModel(id(realm) + 1, product.getBarcode(), product.getModule(), departmentId,
                 product.getOrderId(), product.getProductDetailID(), product.getProductDetailName(), product.getNumberTotalOrder(),
-                1, userId, Constants.WAITING_UPLOAD);
+                1, userId, Constants.WAITING_UPLOAD, false);
         qualityControlModel = realm.copyToRealm(qualityControlModel);
         parentList.add(qualityControlModel);
     }
@@ -258,6 +265,8 @@ public class QualityControlModel extends RealmObject {
         qualityControlModel.setListReason(sId.substring(0, sId.lastIndexOf(",")));
         qualityControlModel.setDescription(description);
         qualityControlModel.setNumber(numberFailed);
+        qualityControlModel.setEdit(true);
+
     }
 
     public static void updateListImage(Realm realm, int id, String filePath) {
@@ -309,7 +318,7 @@ public class QualityControlModel extends RealmObject {
 
     public static List<QualityControlModel> getListQualityControlUpload(Realm realm, int userId) {
         RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
-                .equalTo("userId", userId).findAll();
+                .equalTo("userId", userId).equalTo("edit", true).findAll();
         return realm.copyFromRealm(results);
     }
 

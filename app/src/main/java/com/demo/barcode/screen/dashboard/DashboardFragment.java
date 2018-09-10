@@ -61,6 +61,8 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Bind(R.id.btn_quality_control)
     Button btnQC;
 
+    @Bind(R.id.btn_group_code)
+    Button btnGroupCode;
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -130,7 +132,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     public void showUser(UserEntity user) {
         txtName.setText(user.getName());
         if (user.getRole() > 0 && user.getRole() <= 9) {
-            txtPosition.setText(ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
+            if (user.getRole() == 6){
+                btnGroupCode.setVisibility(View.VISIBLE);
+            }
+            txtPosition.setText("Công đoạn: " +ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
             btnScanPackaging.setVisibility(View.GONE);
             btnHistory.setVisibility(View.GONE);
             if (user.getRole() == 9) {
@@ -203,12 +208,12 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     }
 
     @OnClick(R.id.btn_quality_control)
-    public void qualityControl(){
+    public void qualityControl() {
         QualityControlActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_group_code)
-    public void groupCode(){
+    public void groupCode() {
         GroupCodeActivity.start(getContext());
     }
 }

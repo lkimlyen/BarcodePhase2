@@ -140,7 +140,6 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
         List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
 
-
         if (list.size() == 0) {
             showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
 

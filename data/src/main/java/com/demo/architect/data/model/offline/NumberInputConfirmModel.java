@@ -39,32 +39,39 @@ public class NumberInputConfirmModel extends RealmObject {
         return nextId;
     }
 
-    public static RealmList<NumberInputConfirmModel> createOrUpdate(Realm realm, List<NumberInputConfirm> list, int masterDetailId, int numberOut) {
+    public static RealmList<NumberInputConfirmModel> createOrUpdate(Realm realm, List<NumberInputConfirm> list, int masterDetailId, int numberOut, int numberTotal, int sumTotalScan) {
         RealmList<NumberInputConfirmModel> realmList = new RealmList<>();
         RealmResults<NumberInputConfirmModel> results = realm.where(NumberInputConfirmModel.class).equalTo("masterDetailId", masterDetailId).findAll();
-        if ( results.size()==0) {
+        if (results.size() == 0) {
             for (NumberInputConfirm numberInput : list) {
-                NumberInputConfirmModel numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
-                        numberOut, numberOut, numberInput.getTimesInput());
-                realm.copyToRealm(numberInputModel);
-                realmList.add(numberInputModel);
-            }
-        } else {
-            int numberOutCurrent = results.max("numberOut").intValue();
-            for (NumberInputConfirmModel numberInputConfirmModel : results) {
-                numberInputConfirmModel.setNumberOut(numberOut);
-                numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() + (numberOut - numberOutCurrent));
-                realmList.add(numberInputConfirmModel);
-            }
-            if (list.size() > results.size()) {
-                int position = results.size();
-                for (int i = position; i < list.size(); i++) {
+                if (numberInput.getNumberConfirmed() < numberTotal) {
                     NumberInputConfirmModel numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
-                            numberOut, numberOutCurrent, list.get(position).getTimesInput());
+                            numberOut, numberOut - numberInput.getNumberConfirmed(), numberInput.getTimesInput());
                     numberInputModel = realm.copyToRealm(numberInputModel);
                     realmList.add(numberInputModel);
                 }
+
             }
+        } else {
+            // int numberOutCurrent = results.max("numberOut").intValue();
+            for (NumberInputConfirm numberInputConfirm : list) {
+                if (numberInputConfirm.getNumberConfirmed() < numberTotal) {
+                    NumberInputConfirmModel numberInputConfirmModel = results.where().equalTo("timesInput", numberInputConfirm.getTimesInput()).findFirst();
+                    if (numberInputConfirmModel == null) {
+                        NumberInputConfirmModel numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
+                                numberOut, numberOut - numberInputConfirm.getNumberConfirmed(), numberInputConfirm.getTimesInput());
+                        numberInputModel = realm.copyToRealm(numberInputModel);
+                        realmList.add(numberInputModel);
+                    } else {
+                        if (sumTotalScan < numberOut) {
+                            numberInputConfirmModel.setNumberOut(numberOut);
+                            numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut()+(numberOut - sumTotalScan));
+                        }
+                        realmList.add(numberInputConfirmModel);
+                    }
+                }
+            }
+
         }
 
         return realmList;

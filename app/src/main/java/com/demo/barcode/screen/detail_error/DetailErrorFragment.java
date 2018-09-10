@@ -23,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -76,6 +77,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     private Vibrator vibrate;
     private String mCurrentPhotoPath;
     private ReasonAdapter rsAdapter;
+    private boolean edit;
     private int id;
 
     @Bind(R.id.txt_barcode)
@@ -334,6 +336,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         txtNumberOrder.setText(String.valueOf(qualityControlModel.getTotalNumber()));
         edtNumberFailed.setText(String.valueOf(qualityControlModel.getNumber()));
         edtDescription.setText(qualityControlModel.getDescription());
+        edit = qualityControlModel.isEdit();
     }
 
     @Override
@@ -359,8 +362,13 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @OnClick(R.id.img_back)
     public void back() {
+        if (edit) {
+            if (imAdapter.getItemCount() == 0) {
+                showError(getString(R.string.text_no_image_in_detail));
+                return;
+            }
+        }
         getActivity().finish();
-
     }
 
     @OnClick(R.id.txt_add_image)
@@ -473,6 +481,40 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @OnClick(R.id.btn_save)
     public void save() {
-        mPresenter.save(id, Integer.parseInt(edtNumberFailed.getText().toString()), edtDescription.getText().toString(),rsAdapter.getCountersToSelect());
+        if (imAdapter == null) {
+            showError(getString(R.string.text_no_image_in_detail));
+            return;
+        }
+
+        if (imAdapter.getItemCount() == 0) {
+            showError(getString(R.string.text_no_image_in_detail));
+            return;
+        }
+
+        if (rsAdapter.getCountersToSelect().size() == 0) {
+            showError(getString(R.string.text_no_reason_selected));
+            return;
+        }
+
+        if (TextUtils.isEmpty(edtDescription.getText().toString())) {
+            showError(getString(R.string.text_no_description));
+            return;
+        }
+
+        if (TextUtils.isEmpty(edtNumberFailed.getText().toString())) {
+            showError(getString(R.string.text_no_number_failed));
+            return;
+        }
+
+        if (TextUtils.isEmpty(edtNumberFailed.getText().toString())) {
+            showError(getString(R.string.text_no_number_failed));
+            return;
+        }
+
+        if (Integer.parseInt(edtNumberFailed.getText().toString()) == 0) {
+            showError(getString(R.string.text_number_failed_bigger_zero));
+            return;
+        }
+        mPresenter.save(id, Integer.parseInt(edtNumberFailed.getText().toString()), edtDescription.getText().toString(), rsAdapter.getCountersToSelect());
     }
 }

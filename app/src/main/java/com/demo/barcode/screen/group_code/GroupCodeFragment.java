@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -27,7 +28,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -43,6 +43,7 @@ import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -293,7 +294,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     public void showGroupCode(RealmResults<ListGroupCode> groupCodes) {
         layoutContent.removeAllViews();
         for (ListGroupCode item : groupCodes) {
-            setLayout(item, item.getList());
+            setLayoutGroup(item, item.getList());
         }
         if (groupCodes.size() > 0) {
             layoutContent.setVisibility(View.VISIBLE);
@@ -320,17 +321,18 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         lvCode.post(new Runnable() {
             @Override
             public void run() {
-           setListViewHeightBasedOnItems(lvCode);
+                setListViewHeightBasedOnItems(lvCode);
             }
         });
     }
 
-    private void setLayout(ListGroupCode item, RealmList<GroupCode> list) {
+    private void setLayoutGroup(ListGroupCode item, RealmList<GroupCode> list) {
         LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.item_content_group, null);
         TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
         RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
         EditText edtNumberGroup = (EditText) v.findViewById(R.id.edt_number_group);
+        LinearLayout layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
         edtNumberGroup.setTag(item);
         edtNumberGroup.addTextChangedListener(new TextWatcher() {
             @Override
@@ -346,8 +348,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             @Override
             public void afterTextChanged(Editable editable) {
                 try {
-                    mPresenter.updateNumberListGroup(((ListGroupCode)edtNumberGroup.getTag()).getId(),Integer.parseInt(editable.toString()) );
-                }catch (NumberFormatException e){
+                    mPresenter.updateNumberListGroup(((ListGroupCode) edtNumberGroup.getTag()).getId(), Integer.parseInt(editable.toString()));
+                } catch (NumberFormatException e) {
 
                 }
 
@@ -357,7 +359,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         edtNumberGroup.setText(String.valueOf(item.getNumber()));
         rbSelect.setTag(item);
         radioButtonList.add(rbSelect);
-        final ListView lvCodes = (ListView) v.findViewById(R.id.lv_code);
+
         rbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -376,28 +378,28 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             }
         });
         txtTitle.setText(item.getGroupCode());
-        GroupCodeContentAdapter islandContentAdapter = new GroupCodeContentAdapter(list, new GroupCodeContentAdapter.OnRemoveListener() {
-            @Override
-            public void onRemove(GroupCode item) {
-                mPresenter.removeItemInGroup(item.getGroupCode(),item,orderId,module);
-            }
-        });
+        for (GroupCode groupCode : list) {
+            View view = inf.inflate(R.layout.item_code_in_group, null);
+            TextView txtNameDetail = (TextView) view.findViewById(R.id.txt_name_detail);
+            TextView txtNumberGroup = (TextView) view.findViewById(R.id.txt_number_group);
+            TextView txtNumberScan = (TextView) view.findViewById(R.id.txt_number_scan);
+            ImageButton imgRemove = (ImageButton) view.findViewById(R.id.btn_remove);
+            txtNameDetail.setText(groupCode.getProductDetailName());
+            txtNumberGroup.setText(String.valueOf(groupCode.getNumber()));
+            txtNumberScan.setText(String.valueOf(groupCode.getNumberTotal()));
+            imgRemove.setTag(groupCode);
+            imgRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPresenter.removeItemInGroup(((GroupCode) v.getTag()).getGroupCode(), (GroupCode) v.getTag(), orderId, module);
+                }
+            });
+            layoutMain.addView(view);
+        }
 
-        lvCodes.setAdapter(islandContentAdapter);
-
-        lvCodes.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setListViewHeightBasedOnItems(lvCodes);
-            }
-        },1000);
-
-//        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-//        param.gravity = Gravity.CENTER;
-//        v.setLayoutParams(param);
         layoutContent.addView(v);
     }
+
 
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
@@ -497,7 +499,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @OnClick(R.id.img_back)
     public void back() {
 
-            getActivity().finish();
+        getActivity().finish();
 
     }
 

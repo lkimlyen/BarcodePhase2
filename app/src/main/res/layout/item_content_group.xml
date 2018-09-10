@@ -44,8 +44,8 @@
             android:layout_weight="0"
             android:fontFamily="serif"
             android:gravity="center"
-            android:text="@string/text_number_group"
             android:inputType="number"
+            android:text="@string/text_number_group"
             android:textColor="#000"
             android:textSize="@dimen/text_12sp"
             android:textStyle="bold" />
@@ -66,8 +66,15 @@
         android:layout_height="1dp"
         android:background="@color/colorPrimaryDark" />
 
+    <LinearLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
+
     <ListView
         android:id="@+id/lv_code"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

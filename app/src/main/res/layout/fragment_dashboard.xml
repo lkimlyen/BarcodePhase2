@@ -126,6 +126,7 @@
                     android:id="@+id/btn_group_code"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_60dp"
+                    android:visibility="gone"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_history_create_pack"
                     android:drawablePadding="@dimen/distance_16dp"

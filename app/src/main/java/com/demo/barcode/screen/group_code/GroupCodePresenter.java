@@ -12,11 +12,13 @@ import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
+import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListProductGroupManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
@@ -44,13 +46,14 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     private final DeactiveProductDetailGroupUsecase deactiveProductDetailGroupUsecase;
     private final GetInputForProductDetailUsecase getInputForProductDetail;
     private final GetListSOUsecase getListSOUsecase;
+    private final GetListProductDetailGroupUsecase getListProductDetailGroupUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     GroupCodePresenter(@NonNull GroupCodeContract.View view, GroupProductDetailUsecase groupProductDetailUsecase,
                        UpdateProductDetailGroupUsecase updateProductDetailGroupUsecase,
-                       DeactiveProductDetailGroupUsecase deactiveProductDetailGroupUsecase, GetInputForProductDetailUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase) {
+                       DeactiveProductDetailGroupUsecase deactiveProductDetailGroupUsecase, GetInputForProductDetailUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase) {
         this.view = view;
 
         this.groupProductDetailUsecase = groupProductDetailUsecase;
@@ -58,6 +61,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
         this.deactiveProductDetailGroupUsecase = deactiveProductDetailGroupUsecase;
         this.getInputForProductDetail = getInputForProductDetail;
         this.getListSOUsecase = getListSOUsecase;
+        this.getListProductDetailGroupUsecase = getListProductDetailGroupUsecase;
     }
 
     @Inject
@@ -441,6 +445,26 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void getListProductDetailInGroupCode(int orderId) {
+        view.showProgressBar();
+        getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,GetListProductDetailGroupUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
+                    }
+
+                    @Override
+                    public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+
+                        ListProductGroupManager.getInstance().setListProduct(new ArrayList<>());
+                    }
+                });
     }
 
     public void showError(String error) {
