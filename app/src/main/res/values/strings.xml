@@ -235,6 +235,11 @@
     <string name="text_no_description">Bạn chưa nhập mô tả lỗi!</string>
     <string name="text_no_number_failed">Số lượng lỗi không được để trống</string>
     <string name="text_number_failed_bigger_zero">Số lượng lỗi phải lớn hơn 0</string>
+    <string name="text_confirm_all">Xác nhận tất cả</string>
+    <string name="text_confirm_all_scan">Bạn có muốn xác nhận tất cả không?</string>
+    <string name="text_confirm_all_success">Xác nhận tất cả thành công</string>
+    <string name="text_type_scan">Loại quét</string>
+    <string name="text_default">Không gộp mã</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,10 +98,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
 
+    @Bind(R.id.radioGroup)
+    RadioGroup radioGroup;
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;
-    private Location mLocation;
+    private boolean scanGroup;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -137,7 +140,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, departmentId, times);
+                mPresenter.checkBarcode(barcode, departmentId, times,scanGroup);
             }
         }
 
@@ -241,7 +244,19 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         });
         mPresenter.getListDepartment();
-
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb_default:
+                        scanGroup = false;
+                        break;
+                    case R.id.rb_group:
+                        scanGroup = true;
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -396,12 +411,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         });
         rvCode.setAdapter(adapter);
-        rvCode.post(new Runnable() {
-            @Override
-            public void run() {
-                setListViewHeightBasedOnItems(rvCode);
-            }
-        });
 
 
     }
@@ -565,10 +574,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .show();
     }
 
-    @Override
-    public void setHeightListView() {
-        setListViewHeightBasedOnItems(rvCode);
-    }
 
     @OnClick(R.id.ic_refresh)
     public void refresh() {
@@ -629,7 +634,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times,scanGroup);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -728,36 +733,5 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
 
-    public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
-
-            int numberOfItems = listAdapter.getCount();
-
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight();
-            }
-
-            // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
-
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalItemsHeight + totalDividersHeight;
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-
-            return true;
-
-        } else {
-            return false;
-        }
-
-    }
 }

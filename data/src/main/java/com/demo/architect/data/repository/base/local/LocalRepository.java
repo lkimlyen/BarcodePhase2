@@ -109,7 +109,7 @@ public interface LocalRepository {
 
     Observable<Boolean> updateNumberGroup(final ProductEntity productEntity,int groupId, int numberGroup);
 
-    Observable<String> detachedCodeStages(int orderId, final String module,  ListGroupCode list);
+    Observable<String> detachedCodeStages(int orderId, final String module,  String groupCode);
 
     Observable<String> removeItemInGroup(String groupCode, GroupCode logScanStages, int orderId, final String module);
 
@@ -148,4 +148,6 @@ public interface LocalRepository {
     Observable<String> updateGroupCode(String groupCode, int orderId,  String module, GroupCode[] listSelect);
 
     Observable<List<GroupCode>> updateNumberGroup(int id, int number);
+
+    Observable<String> confirmAllProductReceive(int orderId, int departmentId, int times);
 }

@@ -53,7 +53,7 @@ public class NumberInputConfirmModel extends RealmObject {
 
             }
         } else {
-            // int numberOutCurrent = results.max("numberOut").intValue();
+            int numberRest = numberOut - sumTotalScan;
             for (NumberInputConfirm numberInputConfirm : list) {
                 if (numberInputConfirm.getNumberConfirmed() < numberTotal) {
                     NumberInputConfirmModel numberInputConfirmModel = results.where().equalTo("timesInput", numberInputConfirm.getTimesInput()).findFirst();
@@ -65,7 +65,15 @@ public class NumberInputConfirmModel extends RealmObject {
                     } else {
                         if (sumTotalScan < numberOut) {
                             numberInputConfirmModel.setNumberOut(numberOut);
-                            numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut()+(numberOut - sumTotalScan));
+                            if (numberInputConfirmModel.getNumberScanOut() + numberInputConfirmModel.getNumberConfirmed() + numberRest <= numberTotal) {
+                                numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() + numberRest);
+                            } else {
+                                int numberRestInModel = (numberTotal - numberInputConfirmModel.getNumberConfirmed()-numberInputConfirmModel.getNumberScanOut());
+                                if (numberRestInModel > 0 && numberRestInModel < numberRest) {
+                                    numberInputConfirmModel.setNumberScanOut(numberTotal - numberInputConfirmModel.getNumberConfirmed()-numberInputConfirmModel.getNumberScanOut());
+                                }
+                            }
+
                         }
                         realmList.add(numberInputConfirmModel);
                     }

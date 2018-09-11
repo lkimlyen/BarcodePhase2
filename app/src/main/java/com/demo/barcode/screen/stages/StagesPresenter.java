@@ -79,7 +79,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void checkBarcode(String barcode, int departmentId, int times) {
+    public void checkBarcode(String barcode, int departmentId, int times,boolean groupCode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -117,14 +117,12 @@ public class StagesPresenter implements StagesContract.Presenter {
                                 }
                             }
 
-
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
                                     List<ProductGroupEntity> groupEntityList = ListProductGroupManager.getInstance().getListProductById(model.getProductDetailID());
 
-                                    if (groupEntityList.size() > 0) {
+                                    if (groupEntityList.size() > 0 && groupCode) {
                                         view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
-
 
                                     } else {
                                         saveBarcodeToDataBase(numberInput, model, barcode, 1, departmentId);
@@ -222,7 +220,6 @@ public class StagesPresenter implements StagesContract.Presenter {
             public void call(String s) {
                 view.hideProgressBar();
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
-                view.setHeightListView();
             }
         });
     }
@@ -320,7 +317,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                 view.startMusicSuccess();
                 view.turnOnVibrator();
                 view.hideProgressBar();
-                view.setHeightListView();
             }
         });
 

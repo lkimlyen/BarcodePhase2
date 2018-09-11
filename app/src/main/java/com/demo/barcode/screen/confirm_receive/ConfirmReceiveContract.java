@@ -53,11 +53,12 @@ public interface ConfirmReceiveContract {
 
         void checkBarcode(int orderId, String barcode, int departmentId, int times);
 
-        void updateNumberConfirm(int orderId,int masterOutputId, int departmentIdOut, int times, int numberScan);
+        void updateNumberConfirm(int orderId, int masterOutputId, int departmentIdOut, int times, int numberScan);
 
         void uploadData(int orderId, int departmentIdOut, int times);
+
         void getListGroupCode(int orderId);
 
-
+        void confirmAll(int orderId, int departmentId, int times);
     }
 }

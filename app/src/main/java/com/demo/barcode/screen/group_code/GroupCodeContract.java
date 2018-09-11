@@ -12,6 +12,7 @@ import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -28,7 +29,7 @@ public interface GroupCodeContract {
 
         void showListModule(List<String> list);
 
-        void showGroupCode(RealmResults<ListGroupCode> groupCodes);
+        void showGroupCode(HashMap<String,List<ProductGroupEntity>> groupCodes);
 
         void showGroupCodeScanList(RealmResults<GroupCode> groupCodes);
 
@@ -54,11 +55,11 @@ public interface GroupCodeContract {
 
         void getGroupCodeScanList(int orderId, String module);
 
-        void updateGroupCode(ListGroupCode groupCode, int orderId, String module, Collection<GroupCode> list);
+        void updateGroupCode(String groupCode, int orderId, String module, Collection<GroupCode> list);
 
         void updateNumberGroup(int productId, int groupId, int numberGroup);
 
-        void detachedCode(int orderId, String module, ListGroupCode list);
+        void detachedCode(int orderId, String module, String groupCode);
 
         void removeItemInGroup(String groupCode, GroupCode logScanStages, int orderId, String module);
 

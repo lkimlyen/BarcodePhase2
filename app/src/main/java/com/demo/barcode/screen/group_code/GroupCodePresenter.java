@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.demo.architect.data.model.GroupCodeEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -26,6 +27,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -98,13 +100,12 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
     @Override
     public void getListGroupCode(int orderId, String module) {
-        localRepository.getListGroupCode(orderId, module).subscribe(new Action1<RealmResults<ListGroupCode>>() {
-            @Override
-            public void call(RealmResults<ListGroupCode> listGroupCodes) {
-                view.showGroupCode(listGroupCodes);
-            }
-        });
-
+        HashMap<String, List<ProductGroupEntity>> result = new HashMap<>();
+        List<String> groupCodeList = ListProductGroupManager.getInstance().getListGroupCodeByModule(module);
+        for (String groupCode : groupCodeList) {
+            result.put(groupCode, ListProductGroupManager.getInstance().getListProductByGroupCode(groupCode));
+        }
+        view.showGroupCode(result);
     }
 
     @Override
@@ -119,17 +120,18 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void updateGroupCode(ListGroupCode groupCode, int orderId, String module, Collection<GroupCode> list) {
+    public void updateGroupCode(String groupCode, int orderId, String module, Collection<GroupCode> list) {
         view.showProgressBar();
         final GroupCode[] listSelect = new GroupCode[list.size()];
         list.toArray(listSelect);
         List<GroupCodeEntity> groupCodeList = new ArrayList<>();
         List<GroupCodeEntity> groupCodeUpdateList = new ArrayList<>();
+        List<ProductGroupEntity> productGroupList = ListProductGroupManager.getInstance().getListProductByGroupCode(groupCode);
         for (GroupCode logScanStages : listSelect) {
             int numberInput = 0;
             boolean exist = false;
-            for (GroupCode logCheck : groupCode.getList()) {
-                if (logCheck.getProductDetailId() == (logScanStages.getProductDetailId())) {
+            for (ProductGroupEntity logCheck : productGroupList) {
+                if (logCheck.getProductDetailID() == (logScanStages.getProductDetailId())) {
                     exist = true;
                     numberInput = logCheck.getNumber();
                     break;
@@ -151,14 +153,14 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
         String jsonUpdate = gson.toJson(groupCodeUpdateList);
         UserEntity user = UserManager.getInstance().getUser();
         updateProductDetailGroupUsecase.executeIO(
-                new UpdateProductDetailGroupUsecase.RequestValue(groupCode.getGroupCode(), jsonNew,
+                new UpdateProductDetailGroupUsecase.RequestValue(groupCode, jsonNew,
                         jsonUpdate, null, user.getId()),
                 new BaseUseCase.UseCaseCallback<UpdateProductDetailGroupUsecase.ResponseValue,
                         UpdateProductDetailGroupUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(UpdateProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.updateGroupCode(groupCode.getGroupCode(), orderId, module, listSelect)
+                        localRepository.updateGroupCode(groupCode, orderId, module, listSelect)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
@@ -232,17 +234,17 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void detachedCode(int orderId, String module, ListGroupCode list) {
+    public void detachedCode(int orderId, String module, String groupCode) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         deactiveProductDetailGroupUsecase.executeIO(
-                new DeactiveProductDetailGroupUsecase.RequestValue(list.getGroupCode(), user.getId()),
+                new DeactiveProductDetailGroupUsecase.RequestValue(groupCode, user.getId()),
                 new BaseUseCase.UseCaseCallback<DeactiveProductDetailGroupUsecase.ResponseValue,
                         DeactiveProductDetailGroupUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(DeactiveProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.detachedCodeStages(orderId, module, list)
+                        localRepository.detachedCodeStages(orderId, module, groupCode)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
@@ -451,7 +453,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     public void getListProductDetailInGroupCode(int orderId) {
         view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
-                new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,GetListProductDetailGroupUsecase.ErrorValue>() {
+                new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue, GetListProductDetailGroupUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();

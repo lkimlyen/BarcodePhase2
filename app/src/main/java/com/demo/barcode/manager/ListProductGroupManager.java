@@ -25,7 +25,7 @@ public class ListProductGroupManager {
         this.listProduct = listProduct;
     }
 
-    public  List<ProductGroupEntity> getListProductById(int productId) {
+    public List<ProductGroupEntity> getListProductById(int productId) {
         List<ProductGroupEntity> list = new ArrayList<>();
         for (ProductGroupEntity requestEntity : listProduct) {
             if (requestEntity.getProductDetailID() == productId) {
@@ -34,11 +34,25 @@ public class ListProductGroupManager {
         }
         return list;
     }
-    public  List<ProductGroupEntity> getListProductByGroupCode(String groupCode) {
+
+    public List<ProductGroupEntity> getListProductByGroupCode(String groupCode) {
         List<ProductGroupEntity> list = new ArrayList<>();
         for (ProductGroupEntity requestEntity : listProduct) {
             if (requestEntity.getGroupCode().equals(groupCode)) {
                 list.add(requestEntity);
+            }
+        }
+        return list;
+    }
+
+    public List<String> getListGroupCodeByModule(String module) {
+        List<String> list = new ArrayList<>();
+        for (ProductGroupEntity requestEntity : listProduct) {
+            if (requestEntity.getModule().equals(module)) {
+                if (!list.equals(requestEntity.getGroupCode())){
+                    list.add(requestEntity.getGroupCode());
+                }
+
             }
         }
         return list;

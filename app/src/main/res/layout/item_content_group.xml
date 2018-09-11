@@ -44,6 +44,7 @@
             android:layout_weight="0"
             android:fontFamily="serif"
             android:gravity="center"
+            android:visibility="gone"
             android:inputType="number"
             android:text="@string/text_number_group"
             android:textColor="#000"

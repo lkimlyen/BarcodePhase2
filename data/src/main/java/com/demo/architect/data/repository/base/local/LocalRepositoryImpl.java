@@ -610,12 +610,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> detachedCodeStages(final int orderId, final String module, final ListGroupCode list) {
+    public Observable<String> detachedCodeStages(final int orderId, final String module, final String groupCode) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.detachedCodeStages(orderId, module, list);
+                    databaseRealm.detachedCodeStages(orderId, module, groupCode);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -905,6 +905,22 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     List<GroupCode>  aBoolean =databaseRealm.updateNumberGroup(id,number);
                     subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                   databaseRealm.confirmAllProductReceive(orderId,departmentId,times);
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

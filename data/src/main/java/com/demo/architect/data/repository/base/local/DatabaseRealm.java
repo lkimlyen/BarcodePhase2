@@ -375,12 +375,12 @@ public class DatabaseRealm {
         return b;
     }
 
-    public void detachedCodeStages(final int orderId, final String module, final ListGroupCode list) {
+    public void detachedCodeStages(final int orderId, final String module, final String groupCode) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.detachedCode(realm, orderId, module, list, userId);
+                GroupCode.detachedCode(realm, orderId, module, groupCode, userId);
             }
         });
     }
@@ -561,5 +561,15 @@ public class DatabaseRealm {
         });
 
         return groupCodeList;
+    }
+
+    public void confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirm.confirmAllReceive(realm, orderId, departmentId,times, userId);
+            }
+        });
     }
 }

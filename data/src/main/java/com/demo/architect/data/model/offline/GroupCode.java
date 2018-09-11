@@ -221,7 +221,7 @@ public class GroupCode extends RealmObject {
         if (parentList.size() > 0) {
             for (ListGroupCode listGroupCode : parentList) {
                 GroupCode groupCode = listGroupCode.getList().where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
-                if (groupCode != null){
+                if (groupCode != null) {
                     rest += (groupCode.getNumberTotal() - groupCode.getNumber());
                 }
 
@@ -245,17 +245,17 @@ public class GroupCode extends RealmObject {
         if (parentList.size() > 0) {
             for (ListGroupCode listGroupCode : parentList) {
                 GroupCode gv = listGroupCode.getList().where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
-                if (gv!=null){
+                if (gv != null) {
                     rest += (gv.getNumberTotal() - gv.getNumber());
-                    exist =true;
+                    exist = true;
                 }
 
             }
 
         }
-            if (!exist){
-                rest = groupCode.getNumberTotal() - groupCode.getNumber();
-            }
+        if (!exist) {
+            rest = groupCode.getNumberTotal() - groupCode.getNumber();
+        }
 
         if (numberGroup - groupCode.getNumber() <= rest) {
             realm.beginTransaction();
@@ -323,42 +323,42 @@ public class GroupCode extends RealmObject {
         }
     }
 
-    public static void detachedCode(Realm realm, int orderId, String module, ListGroupCode list, int userId) {
+    public static void detachedCode(Realm realm, int orderId, String module, String groupCode, int userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
         ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
                 .equalTo("userId", userId).findFirst();
         RealmList<ListGroupCode> listGroupCodes = listModule.getListGroupCodes();
-        ListGroupCode groupCodeList = listGroupCodes.where().equalTo("id", list.getId())
+        ListGroupCode groupCodeList = listGroupCodes.where().equalTo("groupCode", groupCode)
                 .findFirst();
+        if (groupCodeList != null) {
+            RealmList<GroupCode> inGroupList = groupCodeList.getList();
+            RealmList<GroupCode> outGroupList = listModule.getGroupCodeRealmList();
+            List<Integer> idRemoveList = new ArrayList<>();
+            for (GroupCode log : groupCodeList.getList()) {
+                GroupCode inGroup = inGroupList.where().equalTo("productDetailId", log.getProductDetailId()).findFirst();
+                GroupCode outGroup = outGroupList.where().equalTo("productDetailId", log.getProductDetailId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
-        RealmList<GroupCode> inGroupList = groupCodeList.getList();
-        RealmList<GroupCode> outGroupList = listModule.getGroupCodeRealmList();
-        List<Integer> idRemoveList = new ArrayList<>();
-        for (GroupCode log : list.getList()) {
-            GroupCode inGroup = inGroupList.where().equalTo("productDetailId", log.getProductDetailId()).findFirst();
-            GroupCode outGroup = outGroupList.where().equalTo("productDetailId", log.getProductDetailId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                if (outGroup == null) {
+                    inGroup.setGroupCode("");
+                    outGroupList.add(inGroup);
 
-            if (outGroup == null) {
-            inGroup.setGroupCode("");
-                outGroupList.add(inGroup);
-
-            } else {
-                outGroup.setNumber(log.getNumber() + outGroup.getNumber());
+                } else {
+                    outGroup.setNumber(log.getNumber() + outGroup.getNumber());
+                }
+                idRemoveList.add(inGroup.id);
             }
-            idRemoveList.add(inGroup.id);
-        }
 
-        if (idRemoveList.size() > 0) {
-            for (Integer id : idRemoveList) {
-                GroupCode logScanStages = inGroupList.where().equalTo("id", id).findFirst();
-                inGroupList.remove(logScanStages);
+            if (idRemoveList.size() > 0) {
+                for (Integer id : idRemoveList) {
+                    GroupCode logScanStages = inGroupList.where().equalTo("id", id).findFirst();
+                    inGroupList.remove(logScanStages);
+                }
             }
+            inGroupList.deleteAllFromRealm();
+            groupCodeList.deleteFromRealm();
+
         }
-        inGroupList.deleteAllFromRealm();
-        groupCodeList.deleteFromRealm();
-
-
     }
 
     public static void removeItemInGroup(Realm realm, String listGroupCode, GroupCode groupCode, int orderId, String module, int userId) {
@@ -367,7 +367,7 @@ public class GroupCode extends RealmObject {
         ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
                 .equalTo("userId", userId).findFirst();
 
-        ListGroupCode listGroupCodes = listModule.getListGroupCodes().where().equalTo("groupCode", listGroupCode).equalTo("status",Constants.WAITING_UPLOAD ).findFirst();
+        ListGroupCode listGroupCodes = listModule.getListGroupCodes().where().equalTo("groupCode", listGroupCode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
         RealmList<GroupCode> inGroupList = listGroupCodes.getList();
 
         RealmList<GroupCode> outGroupList = listModule.getGroupCodeRealmList();
@@ -398,15 +398,15 @@ public class GroupCode extends RealmObject {
             }
         }
 
-        if (!bigger){
+        if (!bigger) {
 
             for (GroupCode groupCode : list) {
                 int numberFirst = groupCode.getNumber() / listGroupCode.getNumber();
-               groupCode.setNumber(numberFirst*number);
+                groupCode.setNumber(numberFirst * number);
 
             }
             listGroupCode.setNumber(number);
         }
-            return !bigger ? realm.copyFromRealm(list):new ArrayList<GroupCode>();
+        return !bigger ? realm.copyFromRealm(list) : new ArrayList<GroupCode>();
     }
 }

@@ -149,6 +149,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             }
         });
     }
+
     int count = 0;
 
     @Override
@@ -180,9 +181,9 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 if (logScanConfirm == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
-                    if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()){
+                    if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()) {
                         showError(CoreApplication.getInstance().getString(R.string.text_number_confirm_residual));
-                    }else {
+                    } else {
                         saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
                     }
 
@@ -267,6 +268,19 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         //  view.showError(errorResponse.getDescription());
                     }
                 });
+    }
+
+    @Override
+    public void confirmAll(int orderId, int departmentId, int times) {
+        localRepository.confirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_confirm_all_success));
+                view.startMusicSuccess();
+                view.turnOnVibrator();
+                view.hideProgressBar();
+            }
+        });
     }
 
     public void saveConfirm(int orderId, int marterOutputId, int departmentIdOut, int times) {

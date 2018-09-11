@@ -12,6 +12,14 @@ public class ProductGroupEntity {
     @Expose
     private int productDetailID;
 
+    @SerializedName("ProductDetailName")
+    @Expose
+    private String productDetailName;
+
+    @SerializedName("Module")
+    @Expose
+    private String Module;
+
     @SerializedName("GroupCode")
     @Expose
     private String groupCode;
@@ -34,5 +42,13 @@ public class ProductGroupEntity {
 
     public int getNumber() {
         return number;
+    }
+
+    public String getProductDetailName() {
+        return productDetailName;
+    }
+
+    public String getModule() {
+        return Module;
     }
 }

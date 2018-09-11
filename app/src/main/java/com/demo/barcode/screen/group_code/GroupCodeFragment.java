@@ -28,6 +28,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -45,8 +46,10 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -70,7 +73,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     public static final String GROUP_CODE = "group_code";
     private GroupCodeContract.Presenter mPresenter;
     private GroupCodeLVAdapter lvAdapter;
-    private Set<ListGroupCode> countersToSelect = new HashSet<ListGroupCode>();
+    private Set<String> countersToSelect = new HashSet<String>();
     private List<RadioButton> radioButtonList = new ArrayList<>();
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private int orderId = 0;
@@ -277,7 +280,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 module = list.get(position);
-                mPresenter.getGroupCodeScanList(orderId, list.get(position));
+                mPresenter.getGroupCodeScanList(orderId, module);
                 mPresenter.getListGroupCode(orderId, module);
 
             }
@@ -289,12 +292,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         });
     }
 
-
     @Override
-    public void showGroupCode(RealmResults<ListGroupCode> groupCodes) {
+    public void showGroupCode(HashMap<String, List<ProductGroupEntity>> groupCodes) {
         layoutContent.removeAllViews();
-        for (ListGroupCode item : groupCodes) {
-            setLayoutGroup(item, item.getList());
+        for (Map.Entry<String, List<ProductGroupEntity>> map : groupCodes.entrySet()) {
+            setLayoutGroup(map.getKey(), map.getValue());
         }
         if (groupCodes.size() > 0) {
             layoutContent.setVisibility(View.VISIBLE);
@@ -303,6 +305,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             layoutContent.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public void showGroupCodeScanList(RealmResults<GroupCode> groupCodes) {
@@ -326,38 +329,16 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         });
     }
 
-    private void setLayoutGroup(ListGroupCode item, RealmList<GroupCode> list) {
+    private void setLayoutGroup(String groupCode, List<ProductGroupEntity> list) {
         LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.item_content_group, null);
         TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
         RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
-        EditText edtNumberGroup = (EditText) v.findViewById(R.id.edt_number_group);
+
         LinearLayout layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
-        edtNumberGroup.setTag(item);
-        edtNumberGroup.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                try {
-                    mPresenter.updateNumberListGroup(((ListGroupCode) edtNumberGroup.getTag()).getId(), Integer.parseInt(editable.toString()));
-                } catch (NumberFormatException e) {
-
-                }
-
-
-            }
-        });
-        edtNumberGroup.setText(String.valueOf(item.getNumber()));
-        rbSelect.setTag(item);
+       // edtNumberGroup.setText(String.valueOf(item.getNumber()));
+        rbSelect.setTag(groupCode);
         radioButtonList.add(rbSelect);
 
         rbSelect.setOnClickListener(new View.OnClickListener() {
@@ -373,20 +354,20 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                     }
                 }
                 countersToSelect.clear();
-                countersToSelect.add((ListGroupCode) rbSelect.getTag());
+                countersToSelect.add((String) rbSelect.getTag());
 
             }
         });
-        txtTitle.setText(item.getGroupCode());
-        for (GroupCode groupCode : list) {
+        txtTitle.setText(groupCode);
+        for (ProductGroupEntity product : list) {
             View view = inf.inflate(R.layout.item_code_in_group, null);
             TextView txtNameDetail = (TextView) view.findViewById(R.id.txt_name_detail);
             TextView txtNumberGroup = (TextView) view.findViewById(R.id.txt_number_group);
             TextView txtNumberScan = (TextView) view.findViewById(R.id.txt_number_scan);
             ImageButton imgRemove = (ImageButton) view.findViewById(R.id.btn_remove);
-            txtNameDetail.setText(groupCode.getProductDetailName());
-            txtNumberGroup.setText(String.valueOf(groupCode.getNumber()));
-            txtNumberScan.setText(String.valueOf(groupCode.getNumberTotal()));
+            txtNameDetail.setText(product.getProductDetailName());
+            txtNumberGroup.setText(String.valueOf(product.getNumber()));
+          //  txtNumberScan.setText(String.valueOf(product.getNumberTotal()));
             imgRemove.setTag(groupCode);
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -446,7 +427,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
                     mPresenter.getListProduct(orderId);
-
+                    mPresenter.getListProductDetailInGroupCode(orderId);
                 }
 
 

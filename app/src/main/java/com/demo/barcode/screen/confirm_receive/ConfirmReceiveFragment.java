@@ -120,7 +120,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(orderId,barcode,departmentId,times);
+                mPresenter.checkBarcode(orderId, barcode, departmentId, times);
                 checkPermissionLocation();
 
             }
@@ -145,7 +145,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -154,13 +154,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId,departmentId ,times );
+                mPresenter.uploadData(orderId, departmentId, times);
             }
         });
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -169,13 +169,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId,departmentId ,times );
+                mPresenter.uploadData(orderId, departmentId, times);
             }
         });
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -184,13 +184,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId,departmentId ,times );
+                mPresenter.uploadData(orderId, departmentId, times);
             }
         });
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId,departmentId ,times ) > 0){
+                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                     return true;
                 }
                 return false;
@@ -199,7 +199,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId,departmentId ,times );
+                mPresenter.uploadData(orderId, departmentId, times);
             }
         });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
@@ -606,5 +606,29 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         integrator.setBarcodeImageEnabled(true);
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
+    }
+
+    @OnClick(R.id.btn_confirm_all)
+    public void confirmAll() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_confirm_all_scan))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.confirmAll(orderId, departmentId, times);
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
     }
 }

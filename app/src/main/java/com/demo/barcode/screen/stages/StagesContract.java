@@ -45,7 +45,6 @@ public interface StagesContract {
 
         void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId);
 
-        void setHeightListView();
     }
 
     interface Presenter extends BasePresenter {
@@ -55,7 +54,7 @@ public interface StagesContract {
 
         void getListProduct(int orderId);
 
-        void checkBarcode(String barcode, int departmentId, int times);
+        void checkBarcode(String barcode, int departmentId, int times,boolean groupCode);
 
         int countLogScanStages(int orderId, int departmentId, int times);
 
