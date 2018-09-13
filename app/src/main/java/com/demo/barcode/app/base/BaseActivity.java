@@ -61,13 +61,6 @@ public class BaseActivity extends AppCompatActivity
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
         Window window = this.getWindow();
-
-// clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
 // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(getResources().getColor(R.color.colorPrimary));
@@ -87,16 +80,6 @@ public class BaseActivity extends AppCompatActivity
             wifiManager.setWifiEnabled(true);
         }
         checkPermission();
-    }
-
-    public int getStatusBarHeight() {
-//        int result = 0;
-//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            result = getResources().getDimensionPixelSize(resourceId);
-//        }
-//        return result;
-        return 0;
     }
 
     @Override

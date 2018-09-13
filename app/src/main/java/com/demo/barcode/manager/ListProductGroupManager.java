@@ -25,14 +25,13 @@ public class ListProductGroupManager {
         this.listProduct = listProduct;
     }
 
-    public List<ProductGroupEntity> getListProductById(int productId) {
-        List<ProductGroupEntity> list = new ArrayList<>();
+    public ProductGroupEntity getProductById(int productId) {
         for (ProductGroupEntity requestEntity : listProduct) {
             if (requestEntity.getProductDetailID() == productId) {
-                list.add(requestEntity);
+                return requestEntity;
             }
         }
-        return list;
+        return null;
     }
 
     public List<ProductGroupEntity> getListProductByGroupCode(String groupCode) {
@@ -49,7 +48,7 @@ public class ListProductGroupManager {
         List<String> list = new ArrayList<>();
         for (ProductGroupEntity requestEntity : listProduct) {
             if (requestEntity.getModule().equals(module)) {
-                if (!list.equals(requestEntity.getGroupCode())){
+                if (!list.equals(requestEntity.getGroupCode())) {
                     list.add(requestEntity.getGroupCode());
                 }
 

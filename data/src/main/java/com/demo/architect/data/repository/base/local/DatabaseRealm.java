@@ -10,6 +10,7 @@ import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
@@ -369,28 +370,33 @@ public class DatabaseRealm {
         });
     }
 
-    public boolean updateNumberGroup(final ProductEntity productEntity, final int groupId, final int numberGroup) {
-        Realm realm = getRealmInstance();
-        boolean b = GroupCode.updateNumberGroup(realm, productEntity, groupId, numberGroup, userId);
-        return b;
-    }
-
-    public void detachedCodeStages(final int orderId, final String module, final String groupCode) {
+    public void updateNumberGroup( final int groupId, final int numberGroup) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.detachedCode(realm, orderId, module, groupCode, userId);
+                GroupCode.updateNumberGroup(realm, groupId, numberGroup, userId);
+            }
+        });
+
+    }
+
+    public void detachedCodeStages(final List<ProductGroupEntity> list, final int orderId, final String module, final String groupCode) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                GroupCode.detachedCode(realm,list, orderId, module, userId);
             }
         });
     }
 
-    public void removeItemInGroup(final String groupCode, final GroupCode logScanStages, final int orderId, final String module) {
+    public void removeItemInGroup(final ProductGroupEntity logScanStages, final int orderId, final String module) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.removeItemInGroup(realm, groupCode, logScanStages, orderId, module, userId);
+                GroupCode.removeItemInGroup(realm, logScanStages, orderId, module, userId);
             }
         });
     }
@@ -519,22 +525,10 @@ public class DatabaseRealm {
         });
     }
 
-    public boolean checkProductExistInGroupCode(ProductEntity model) {
-        Realm realm = getRealmInstance();
-        boolean exist = GroupCode.checkProductExistInGroupCode(realm, model, userId);
-        return exist;
-    }
-
     public boolean checkNumberProductInGroupCode(ProductEntity model) {
         Realm realm = getRealmInstance();
         boolean number = GroupCode.checkNumberProductInGroupCode(realm, model, userId);
         return number;
-    }
-
-    public RealmResults<ListGroupCode> getListGroupCode(int orderId, String module) {
-        Realm realm = getRealmInstance();
-        RealmResults<ListGroupCode> results = GroupCode.getListGroupCode(realm, orderId, module, userId);
-        return results;
     }
 
     public void updateGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
@@ -547,21 +541,7 @@ public class DatabaseRealm {
         });
     }
 
-    private List<GroupCode>groupCodeList;
 
-    public List<GroupCode> updateNumberGroup(final int id, final int number) {
-        groupCodeList = new ArrayList<>();
-        Realm realm = getRealmInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                groupCodeList = GroupCode.updateNumberGroup(realm, id, number);
-
-            }
-        });
-
-        return groupCodeList;
-    }
 
     public void confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
         Realm realm = getRealmInstance();

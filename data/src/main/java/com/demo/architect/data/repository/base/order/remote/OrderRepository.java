@@ -35,4 +35,6 @@ public interface OrderRepository {
     Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(int orderId, int productId,
                                                                  int apartmentId, String packCode,
                                                                  String sttPack);
+    Observable<BaseListResponse<String>> getListModuleByOrder(int orderId);
+
 }

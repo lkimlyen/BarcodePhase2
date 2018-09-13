@@ -90,6 +90,12 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
                         return;
 
                     }
+
+                    if (numberInput > item.getNumberTotal()) {
+                        holder.edtNumberGroup.setText(item.getNumber() + "");
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
+                        return;
+                    }
                     if (numberInput == item.getNumber()) {
                         return;
                     }
@@ -132,7 +138,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
             }
         });
-       // holder.cbSelect.setChecked(countersToSelect.contains(item));
+        // holder.cbSelect.setChecked(countersToSelect.contains(item));
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {

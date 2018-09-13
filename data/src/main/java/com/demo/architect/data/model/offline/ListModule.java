@@ -17,11 +17,6 @@ public class ListModule extends RealmObject {
     }
 
 
-
-
-    @SuppressWarnings("unused")
-    private RealmList<ListGroupCode> listGroupCodes;
-
     public RealmList<GroupCode> getGroupCodeRealmList() {
         return groupCodeRealmList;
     }
@@ -32,14 +27,6 @@ public class ListModule extends RealmObject {
 
     @SuppressWarnings("unused")
     private RealmList<GroupCode> groupCodeRealmList;
-
-    public RealmList<ListGroupCode> getListGroupCodes() {
-        return listGroupCodes;
-    }
-
-    public void setListGroupCodes(RealmList<ListGroupCode> listGroupCodes) {
-        this.listGroupCodes = listGroupCodes;
-    }
 
     public ListModule(int id, String module, int userId) {
         this.id = id;

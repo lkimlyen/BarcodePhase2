@@ -103,7 +103,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private Vibrator vibrate;
     private int orderId = 0;
     private int departmentId = 0;
-    private boolean scanGroup;
+    private int typeScan = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -140,7 +140,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, departmentId, times,scanGroup);
+                mPresenter.checkBarcode(barcode, departmentId, times, typeScan == 1);
             }
         }
 
@@ -249,10 +249,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.rb_default:
-                        scanGroup = false;
+                        typeScan = 1;
                         break;
                     case R.id.rb_group:
-                        scanGroup = true;
+                        typeScan = 2;
                         break;
                 }
             }
@@ -533,7 +533,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
-
     @Override
     public void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId) {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -577,32 +576,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.ic_refresh)
     public void refresh() {
-//        if (mPresenter.countListScan(orderId) > 0) {
-//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                    .setTitleText(getString(R.string.text_title_noti))
-//                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
-//                    .setConfirmText(getString(R.string.text_yes))
-//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            mPresenter.deleteAllItemLog();
-//                            sweetAlertDialog.dismiss();
-//                            mPresenter.getData();
-//                        }
-//                    })
-//                    .setCancelText(getString(R.string.text_no))
-//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            sweetAlertDialog.dismiss();
-//                        }
-//                    })
-//                    .show();
-//
-//        } else {
-//
-//            mPresenter.getData();
-//        }
     }
 
     public void showToast(String message) {
@@ -634,7 +607,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times,scanGroup);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times, typeScan == 1);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -707,6 +680,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.btn_scan)
     public void scan() {
+
         if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
             return;
@@ -721,6 +695,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             showError(getString(R.string.text_times_id_null));
             return;
         }
+
+        if (typeScan == 0){
+            showError(getString(R.string.text_type_scan_null));
+            return;
+        }
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
@@ -731,7 +710,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
     }
-
 
 
 }

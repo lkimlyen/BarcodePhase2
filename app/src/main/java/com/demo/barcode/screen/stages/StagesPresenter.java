@@ -84,10 +84,6 @@ public class StagesPresenter implements StagesContract.Presenter {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-        if (barcode.length() < 10 || barcode.length() > 13) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
-            return;
-        }
 
         List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
 
@@ -119,10 +115,10 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
-                                    List<ProductGroupEntity> groupEntityList = ListProductGroupManager.getInstance().getListProductById(model.getProductDetailID());
+                                    ProductGroupEntity groupEntity = ListProductGroupManager.getInstance().getProductById(model.getProductDetailID());
 
-                                    if (groupEntityList.size() > 0 && groupCode) {
-                                        view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
+                                    if (groupEntity!= null && groupCode) {
+                                       // view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
 
                                     } else {
                                         saveBarcodeToDataBase(numberInput, model, barcode, 1, departmentId);

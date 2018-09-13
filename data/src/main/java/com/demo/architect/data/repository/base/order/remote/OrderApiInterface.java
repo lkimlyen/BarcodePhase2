@@ -68,4 +68,8 @@ public interface OrderApiInterface {
                                                            @Field("pCodePack") String packCode,
                                                            @Field("pSTTPack") String sttPack);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<String>> getListModuleByOrder(@Url String url, @Field("pOrderID") int orderId);
+
 }

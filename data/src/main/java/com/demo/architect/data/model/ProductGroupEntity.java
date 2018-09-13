@@ -24,9 +24,14 @@ public class ProductGroupEntity {
     @Expose
     private String groupCode;
 
+    @SerializedName("NumberTotalDetail")
+    private int numberTotal;
+
     @SerializedName("Number")
     @Expose
     private int number;
+
+
 
     public int getOrderId() {
         return orderId;
@@ -50,5 +55,13 @@ public class ProductGroupEntity {
 
     public String getModule() {
         return Module;
+    }
+
+    public int getNumberTotal() {
+        return numberTotal;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

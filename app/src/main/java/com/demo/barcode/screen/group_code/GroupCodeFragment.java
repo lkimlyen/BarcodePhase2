@@ -1,6 +1,5 @@
 package com.demo.barcode.screen.group_code;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -31,10 +30,9 @@ import android.widget.Toast;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.GroupCodeLVAdapter;
+import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
@@ -44,7 +42,6 @@ import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,7 +53,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -68,13 +64,15 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 public class GroupCodeFragment extends BaseFragment implements GroupCodeContract.View {
     private final String TAG = GroupCodeFragment.class.getName();
     public static final String ORDER_ID = "order_id";
-    public static final String DEPARTMENT_ID = "department_id";
-    public static final String TIMES = "times";
-    public static final String GROUP_CODE = "group_code";
     private GroupCodeContract.Presenter mPresenter;
     private GroupCodeLVAdapter lvAdapter;
     private Set<String> countersToSelect = new HashSet<String>();
     private List<RadioButton> radioButtonList = new ArrayList<>();
+    private HashMap<String, List<ImageButton>> deleteButtonList = new HashMap<>();
+    private HashMap<Integer, ProductGroupEntity> productUpdateList = new HashMap<>();
+    private HashMap<String, List<EditText>> editTextList = new HashMap<>();
+    private HashMap<String, List<TextView>> textViewList = new HashMap<>();
+
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private int orderId = 0;
     private String module;
@@ -154,7 +152,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             @Override
             public boolean onClick() {
                 return false;
-
             }
         });
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
@@ -334,10 +331,88 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         View v = inf.inflate(R.layout.item_content_group, null);
         TextView txtTitle = (TextView) v.findViewById(R.id.txt_name_detail);
         RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
-
         LinearLayout layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
+        ImageButton btnEdit = (ImageButton) v.findViewById(R.id.btn_edit);
+        btnEdit.setTag(groupCode);
+        ImageButton btnSave = (ImageButton) v.findViewById(R.id.btn_save);
+        btnSave.setTag(groupCode);
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productUpdateList.clear();
+                if (btnSave.getTag().equals(v.getTag())) {
+                    btnSave.setVisibility(View.VISIBLE);
+                }
+                v.setVisibility(View.GONE);
 
-       // edtNumberGroup.setText(String.valueOf(item.getNumber()));
+                for (Map.Entry<String, List<ImageButton>> map : deleteButtonList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (ImageButton imageButton : map.getValue()) {
+                            imageButton.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    }
+                }
+                for (Map.Entry<String, List<EditText>> map : editTextList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (EditText editText : map.getValue()) {
+                            editText.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    }
+                }
+                for (Map.Entry<String, List<TextView>> map : textViewList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (TextView textView : map.getValue()) {
+                            textView.setVisibility(View.GONE);
+                        }
+                        break;
+                    }
+                }
+
+            }
+        });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btnEdit.getTag().equals(v.getTag())) {
+                    btnEdit.setVisibility(View.VISIBLE);
+                }
+
+                v.setVisibility(View.GONE);
+
+                for (Map.Entry<String, List<ImageButton>> map : deleteButtonList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (ImageButton imageButton : map.getValue()) {
+                            imageButton.setVisibility(View.INVISIBLE);
+                        }
+                        break;
+                    }
+                }
+                for (Map.Entry<String, List<EditText>> map : editTextList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (EditText editText : map.getValue()) {
+                            editText.setVisibility(View.GONE);
+                        }
+                        break;
+                    }
+                }
+                for (Map.Entry<String, List<TextView>> map : textViewList.entrySet()) {
+                    if (map.getKey().equals(v.getTag())) {
+                        for (TextView textView : map.getValue()) {
+                            textView.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    }
+                }
+                if (productUpdateList.size() == 0) {
+                    return;
+                }
+                mPresenter.updateNumberInGroup((String) v.getTag(), orderId, module, productUpdateList.values());
+
+            }
+        });
         rbSelect.setTag(groupCode);
         radioButtonList.add(rbSelect);
 
@@ -359,31 +434,90 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             }
         });
         txtTitle.setText(groupCode);
+
+        List<ImageButton> listDelete = new ArrayList<>();
+        List<EditText> listEditText = new ArrayList<>();
+        List<TextView> listTextView = new ArrayList<>();
+
         for (ProductGroupEntity product : list) {
             View view = inf.inflate(R.layout.item_code_in_group, null);
             TextView txtNameDetail = (TextView) view.findViewById(R.id.txt_name_detail);
             TextView txtNumberGroup = (TextView) view.findViewById(R.id.txt_number_group);
+            EditText edtNumberGroup = (EditText) view.findViewById(R.id.edt_number_group);
             TextView txtNumberScan = (TextView) view.findViewById(R.id.txt_number_scan);
             ImageButton imgRemove = (ImageButton) view.findViewById(R.id.btn_remove);
             txtNameDetail.setText(product.getProductDetailName());
             txtNumberGroup.setText(String.valueOf(product.getNumber()));
-          //  txtNumberScan.setText(String.valueOf(product.getNumberTotal()));
-            imgRemove.setTag(groupCode);
+            edtNumberGroup.setText(String.valueOf(product.getNumber()));
+            edtNumberGroup.setTag(product);
+            txtNumberScan.setTag(product);
+            txtNumberScan.setText(String.valueOf(product.getNumberTotal()));
+            imgRemove.setTag(product);
+            listDelete.add(imgRemove);
+            listEditText.add(edtNumberGroup);
+            listTextView.add(txtNumberGroup);
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPresenter.removeItemInGroup(((GroupCode) v.getTag()).getGroupCode(), (GroupCode) v.getTag(), orderId, module);
+                    mPresenter.removeItemInGroup((ProductGroupEntity) v.getTag(), orderId, module);
+                }
+            });
+
+            edtNumberGroup.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                    try {
+                        int numberInput = Integer.parseInt(s.toString());
+                        ProductGroupEntity productGroupEntity = (ProductGroupEntity) edtNumberGroup.getTag();
+                        if (numberInput <= 0) {
+                            if (edtNumberGroup.getTag().equals(productGroupEntity)) {
+                                edtNumberGroup.setText(productGroupEntity.getNumber() + "");
+                            }
+                            showError(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                            return;
+                        }
+
+                        if (numberInput > productGroupEntity.getNumberTotal()) {
+                            if (edtNumberGroup.getTag().equals(productGroupEntity)) {
+                                edtNumberGroup.setText(productGroupEntity.getNumber() + "");
+                            }
+                            showError(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
+                            return;
+                        }
+
+                        if (numberInput == productGroupEntity.getNumber()) {
+                            productUpdateList.remove(productGroupEntity.getProductDetailID());
+                            return;
+                        }
+                        ProductGroupEntity productGroupEntity1 = productGroupEntity;
+                        productGroupEntity1.setNumber(numberInput);
+                        productUpdateList.put(productGroupEntity1.getProductDetailID(), productGroupEntity1);
+                    } catch (Exception e) {
+
+                    }
                 }
             });
             layoutMain.addView(view);
         }
-
+        deleteButtonList.put(groupCode, listDelete);
+        editTextList.put(groupCode, listEditText);
+        textViewList.put(groupCode, listTextView);
         layoutContent.addView(v);
     }
 
 
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
-
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter != null) {
 
@@ -427,10 +561,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
                     mPresenter.getListProduct(orderId);
-                    mPresenter.getListProductDetailInGroupCode(orderId);
+                    mPresenter.getListProductDetailInGroupCode(orderId, null);
                 }
-
-
             }
 
             @Override
@@ -438,14 +570,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
             }
         });
-    }
-
-    @Override
-    public void backScanStages(String message) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("Message", message);
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
     }
 
 
@@ -469,6 +593,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }
     }
 
+    @Override
+    public void setHeightListView() {
+        setListViewHeightBasedOnItems(lvCode);
+    }
+
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -479,9 +608,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
-
         getActivity().finish();
-
     }
 
     @OnClick(R.id.btn_group_code)
@@ -492,9 +619,15 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }
         if (lvAdapter.getCountersToSelect().size() > 1 && countersToSelect.size() == 0) {
             mPresenter.groupCode(orderId, module, lvAdapter.getCountersToSelect());
+            cbAll.setChecked(false);
+            lvAdapter.enableSelectMode(false);
+            countersToSelect.clear();
         } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
             mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
                     module, lvAdapter.getCountersToSelect());
+            cbAll.setChecked(false);
+            lvAdapter.enableSelectMode(false);
+            countersToSelect.clear();
         } else {
             showError(getString(R.string.text_not_product_upload));
         }
@@ -510,6 +643,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }
         if (countersToSelect.size() > 0) {
             mPresenter.detachedCode(orderId, module, countersToSelect.iterator().next());
+            countersToSelect.clear();
         } else {
             showError(getString(R.string.text_not_product_detached));
         }

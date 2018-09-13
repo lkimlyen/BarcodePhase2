@@ -29,13 +29,11 @@ public interface GroupCodeContract {
 
         void showListModule(List<String> list);
 
-        void showGroupCode(HashMap<String,List<ProductGroupEntity>> groupCodes);
+        void showGroupCode(HashMap<String, List<ProductGroupEntity>> groupCodes);
 
         void showGroupCodeScanList(RealmResults<GroupCode> groupCodes);
 
         void showListSO(List<SOEntity> list);
-
-        void backScanStages(String message);
 
         void startMusicError();
 
@@ -43,6 +41,7 @@ public interface GroupCodeContract {
 
         void turnOnVibrator();
 
+        void setHeightListView();
 
     }
 
@@ -57,11 +56,13 @@ public interface GroupCodeContract {
 
         void updateGroupCode(String groupCode, int orderId, String module, Collection<GroupCode> list);
 
+        void updateNumberInGroup(String group, int orderId, String module,Collection<ProductGroupEntity> listUpdate);
+
         void updateNumberGroup(int productId, int groupId, int numberGroup);
 
         void detachedCode(int orderId, String module, String groupCode);
 
-        void removeItemInGroup(String groupCode, GroupCode logScanStages, int orderId, String module);
+        void removeItemInGroup(ProductGroupEntity logScanStages, int orderId, String module);
 
         void getListSO(int orderType);
 
@@ -69,8 +70,6 @@ public interface GroupCodeContract {
 
         void checkBarcode(String barcode, String module);
 
-        void updateNumberListGroup(int id, int number);
-
-        void getListProductDetailInGroupCode(int orderId);
+        void getListProductDetailInGroupCode(int orderId, String module);
     }
 }

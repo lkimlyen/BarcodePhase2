@@ -240,6 +240,9 @@
     <string name="text_confirm_all_success">Xác nhận tất cả thành công</string>
     <string name="text_type_scan">Loại quét</string>
     <string name="text_default">Không gộp mã</string>
+    <string name="text_type_scan_null">Bạn chưa chọn loại quét</string>
+    <string name="text_number_group_bigger_number_total">Số lượng gộp không được vượt quá số lượng tổng</string>
+    <string name="text_product_is_grouped">Sản phẩm đã có trong danh sách gộp</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
