@@ -261,16 +261,14 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_default"
                     android:layout_weight="1"
-                    android:id="@+id/rb_default"
-                    android:checked="true" />
+                    android:id="@+id/rb_default" />
 
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/text_group_code"
                     android:layout_weight="1"
-                    android:id="@+id/rb_group"
-                    android:checked="false" />
+                    android:id="@+id/rb_group" />
             </RadioGroup>
         </LinearLayout>
 

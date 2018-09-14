@@ -27,6 +27,7 @@ public class LogScanConfirm extends RealmObject {
     private int orderId;
     private int departmentIDIn;
     private int departmentIDOut;
+    private int productDetailId;
     private String productDetailName;
     private String module;
     private String barcode;
@@ -36,6 +37,8 @@ public class LogScanConfirm extends RealmObject {
     @Expose
     private int numberConfirmed;
 
+    private int numberConfirmedAll;
+    private boolean all;
     @SerializedName("pUserID")
     @Expose
     private int userId;
@@ -58,50 +61,29 @@ public class LogScanConfirm extends RealmObject {
     }
 
     public LogScanConfirm(int id, int masterOutputID, int orderId, int departmentIDIn, int departmentIDOut,
-                          String productDetailName, String module, String barcode,
+                          int productDetailId, String productDetailName, String module, String barcode,
                           int numberTotalOrder, int numberConfirmed,
-                          int userId, int timesInput, int numberOut, int status, String lastTimeGetData) {
+                          int numberConfirmedAll, boolean all, int userId, int timesInput, int numberOut, int status, String lastTimeGetData) {
         this.id = id;
         this.masterOutputID = masterOutputID;
         this.orderId = orderId;
         this.departmentIDIn = departmentIDIn;
         this.departmentIDOut = departmentIDOut;
+        this.productDetailId = productDetailId;
         this.productDetailName = productDetailName;
         this.module = module;
         this.barcode = barcode;
         this.numberTotalOrder = numberTotalOrder;
         this.numberConfirmed = numberConfirmed;
+        this.numberConfirmedAll = numberConfirmedAll;
         this.userId = userId;
         this.timesInput = timesInput;
         this.status = status;
         this.numberOut = numberOut;
         this.lastTimeGetData = lastTimeGetData;
+        this.all = all;
     }
 
-    public LogScanConfirm(int id, int masterOutputID, int orderId, int departmentIDIn,
-                          int departmentIDOut, String productDetailName, String module,
-                          String barcode, int numberTotalOrder, int numberConfirmed,
-                          int userId, int timesInput, int status, int statusConfirm,
-                          int numberOut, int numberScanOut, String dateConfirm, String lastTimeGetData) {
-        this.id = id;
-        this.masterOutputID = masterOutputID;
-        this.orderId = orderId;
-        this.departmentIDIn = departmentIDIn;
-        this.departmentIDOut = departmentIDOut;
-        this.productDetailName = productDetailName;
-        this.module = module;
-        this.barcode = barcode;
-        this.numberTotalOrder = numberTotalOrder;
-        this.numberConfirmed = numberConfirmed;
-        this.userId = userId;
-        this.timesInput = timesInput;
-        this.status = status;
-        this.statusConfirm = statusConfirm;
-        this.numberOut = numberOut;
-        this.numberScanOut = numberScanOut;
-        this.dateConfirm = dateConfirm;
-        this.lastTimeGetData = lastTimeGetData;
-    }
 
     public static int id(Realm realm) {
         int nextId = 0;
@@ -113,9 +95,8 @@ public class LogScanConfirm extends RealmObject {
 
     public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, int userId) {
         List<NumberInputConfirm> confirmList = orderConfirmEntity.getListInputConfirmed();
-        RealmList<NumberInputConfirmModel> results = NumberInputConfirmModel.createOrUpdate(realm,
-                confirmList, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getNumberOut(),
-                orderConfirmEntity.getNumberTotalOrder(), sumNumberScan(realm, orderConfirmEntity.getOrderId(), orderConfirmEntity.getProductDetailID(), userId, orderConfirmEntity.getDepartmentIDIn()));
+        RealmList<NumberInputConfirmModel> list = new RealmList<>();
+        RealmList<LogScanConfirm> logScanConfirms = new RealmList<>();
         for (NumberInputConfirm input : confirmList) {
             if (input.getNumberConfirmed() < orderConfirmEntity.getNumberTotalOrder()) {
                 LogScanConfirm logScanConfirm = realm.where(LogScanConfirm.class)
@@ -127,25 +108,36 @@ public class LogScanConfirm extends RealmObject {
                 if (logScanConfirm == null) {
                     logScanConfirm = new LogScanConfirm(id(realm) + 1, orderConfirmEntity.getMasterOutputID(),
                             orderConfirmEntity.getOrderId(), orderConfirmEntity.getDepartmentIDIn(), orderConfirmEntity.getDepartmentIDOut(),
-                            orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
+                            orderConfirmEntity.getProductDetailID(), orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
                             orderConfirmEntity.getNumberTotalOrder(),
-                            0, userId, input.getTimesInput(), orderConfirmEntity.getNumberOut(),
+                            0, 0, false, userId, input.getTimesInput(), orderConfirmEntity.getNumberOut(),
                             Constants.WAITING_UPLOAD, orderConfirmEntity.getLastTimeGetData());
                     logScanConfirm = realm.copyToRealm(logScanConfirm);
-                    RealmList<NumberInputConfirmModel> parentList = logScanConfirm.getList();
-                    parentList.clear();
-                    parentList.addAll(results);
 
                 } else {
                     logScanConfirm.setNumberOut(orderConfirmEntity.getNumberOut());
-                    RealmList<NumberInputConfirmModel> parentList = logScanConfirm.getList();
-                    parentList.clear();
-                    parentList.addAll(results);
                     logScanConfirm.setLastTimeGetData(orderConfirmEntity.getLastTimeGetData());
 
                 }
                 RealmList<NumberInputConfirmModel> parentList = logScanConfirm.getList();
                 NumberInputConfirmModel numberInputConfirm = parentList.where().equalTo("timesInput", logScanConfirm.getTimesInput()).findFirst();
+                if (numberInputConfirm == null) {
+                    numberInputConfirm = NumberInputConfirmModel.create(realm, input, logScanConfirm.masterOutputID, orderConfirmEntity.getNumberOut(), orderConfirmEntity.getNumberTotalOrder());
+                    parentList.add(numberInputConfirm);
+                } else {
+                    numberInputConfirm.setNumberOut(orderConfirmEntity.getNumberOut());
+                    int sum = sumNumberScan(realm, orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), userId, orderConfirmEntity.getDepartmentIDOut());
+                    int numberRest = orderConfirmEntity.getNumberOut() - sum;
+                    if (numberRest > 0) {
+                        if (numberInputConfirm.getNumberScanOut() < numberRest && numberRest <= orderConfirmEntity.getNumberTotalOrder() - input.getNumberConfirmed()) {
+                            numberInputConfirm.setNumberScanOut(numberRest);
+                        } else if (numberRest > orderConfirmEntity.getNumberTotalOrder() - input.getNumberConfirmed()) {
+                            numberInputConfirm.setNumberScanOut(orderConfirmEntity.getNumberTotalOrder() - input.getNumberConfirmed());
+                        }
+                    }
+                }
+
+                list.add(numberInputConfirm);
                 logScanConfirm.setNumberScanOut(numberInputConfirm.getNumberScanOut());
                 if (logScanConfirm.getNumberConfirmed() > 0) {
                     if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
@@ -158,20 +150,18 @@ public class LogScanConfirm extends RealmObject {
                 } else {
                     logScanConfirm.setStatusConfirm(-1);
                 }
+                logScanConfirms.add(logScanConfirm);
             }
 
-
+            for (LogScanConfirm logScanConfirm : logScanConfirms) {
+                RealmList<NumberInputConfirmModel> parentList = logScanConfirm.getList();
+                parentList.clear();
+                parentList.addAll(list);
+            }
         }
     }
 
-    //    public static LogScanConfirm findLogWaitingUploadbyTimes(Realm realm, int productDetailID, int userId, int times, int departmentId) {
-//        LogScanConfirm results = realm.where(LogScanConfirm.class).equalTo("masterOutputID", productDetailID)
-//                .equalTo("status", Constants.WAITING_UPLOAD)
-//                .equalTo("userId", userId).equalTo("timesInput", times)
-//                .equalTo("departmentIDOut", departmentId).findFirst();
-//        return results;
-//    }
-//
+
     public static List<LogScanConfirm> getListLogScanConfirm(Realm realm, int userId) {
         RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
                 .equalTo("status", Constants.WAITING_UPLOAD)
@@ -180,29 +170,6 @@ public class LogScanConfirm extends RealmObject {
         return realm.copyFromRealm(results);
 
     }
-//
-//    public static void updateStatusConfirm(Realm realm, int orderId, int productDetailID, int userId, int departmentId) {
-//        RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
-//                .equalTo("orderId", orderId)
-//                .equalTo("masterOutputID", productDetailID)
-//                .equalTo("status", Constants.WAITING_UPLOAD)
-//                .equalTo("userId", userId).equalTo("departmentIDOut", departmentId).findAll();
-//        int sum = results.sum("numberConfirmed").intValue();
-//        for (LogScanConfirm logScanConfirm : results) {
-//            if (sum > 0 && logScanConfirm.getNumberConfirmed() > 0) {
-//                if (logScanConfirm.getNumberOut() > sum) {
-//                    logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
-//                } else if (logScanConfirm.getNumberOut() == sum) {
-//                    logScanConfirm.setStatusConfirm(Constants.FULL);
-//                } else {
-//                    logScanConfirm.setStatusConfirm(Constants.RESIDUAL);
-//                }
-//            } else {
-//                logScanConfirm.setStatusConfirm(-1);
-//                logScanConfirm.setNumberScanOut(logScanConfirm.getNumberOut());
-//            }
-//        }
-//    }
 
     public static int sumNumberScan(Realm realm, int orderId, int productDetailID, int userId, int departmentId) {
         RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
@@ -228,11 +195,11 @@ public class LogScanConfirm extends RealmObject {
         RealmList<NumberInputConfirmModel> realmList = scanConfirm.getList();
         if (scan) {
             scanConfirm.setNumberConfirmed(scanConfirm.getNumberConfirmed() + numberScan);
-
+            scanConfirm.setAll(false);
             if (scanConfirm.getNumberConfirmed() <= scanConfirm.getNumberScanOut()) {
                 for (NumberInputConfirmModel numberInputConfirmModel : realmList) {
                     if (numberInputConfirmModel.getTimesInput() == times) {
-                        numberInputConfirmModel.setNumberConfirmed(scanConfirm.getNumberConfirmed());
+                        numberInputConfirmModel.setNumberInput(scanConfirm.getNumberConfirmed());
                     } else {
                         numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() - 1);
                     }
@@ -253,31 +220,17 @@ public class LogScanConfirm extends RealmObject {
                         logScanConfirm.setNumberScanOut(logScanConfirm.getNumberOut());
                     }
                 }
-
             }
 
         } else {
-            int numberRest = scanConfirm.getNumberOut() - numberScan;
             int numberCurrent = numberScan - scanConfirm.getNumberConfirmed();
             scanConfirm.setNumberConfirmed(numberScan);
             for (NumberInputConfirmModel numberInputConfirmModel : realmList) {
                 if (numberInputConfirmModel.getTimesInput() == times) {
-                    numberInputConfirmModel.setNumberConfirmed(scanConfirm.getNumberConfirmed());
+                    numberInputConfirmModel.setNumberInput(scanConfirm.getNumberConfirmed());
                 } else {
-                    if (numberCurrent >= 0) {
-                        if (numberRest < numberInputConfirmModel.getNumberScanOut()) {
-                            numberInputConfirmModel.setNumberScanOut(numberRest);
-                        }
-                    }else {
-                        if (numberRest + numberInputConfirmModel.getNumberConfirmed() < scanConfirm.getNumberTotalOrder()) {
-                            numberInputConfirmModel.setNumberScanOut(numberRest + numberInputConfirmModel.getNumberScanOut());
-                        } else {
-                            if ((scanConfirm.getNumberTotalOrder() - numberInputConfirmModel.getNumberConfirmed()) < numberRest) {
-                                numberInputConfirmModel.setNumberScanOut(scanConfirm.getNumberTotalOrder() - numberInputConfirmModel.getNumberConfirmed());
-                            }
-                        }
-                    }
-
+                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
+                    numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
                 }
             }
 
@@ -510,25 +463,66 @@ public class LogScanConfirm extends RealmObject {
                 .equalTo("orderId", orderId).equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findAll();
         for (LogScanConfirm logScanConfirm : results) {
-            int numberRest = logScanConfirm.getNumberOut() - logScanConfirm.getNumberScanOut();
-            int numberCurrent = logScanConfirm.getNumberScanOut() - logScanConfirm.getNumberConfirmed();
-            logScanConfirm.setNumberConfirmed(logScanConfirm.getNumberScanOut());
-            for (NumberInputConfirmModel numberInputConfirmModel : logScanConfirm.getList()) {
-                if (numberInputConfirmModel.getTimesInput() != times) {
-                    if (numberCurrent >= 0) {
-                        if (numberRest < numberInputConfirmModel.getNumberScanOut()) {
-                            numberInputConfirmModel.setNumberScanOut(numberRest);
-                        }
-                    }else {
-                        if (numberRest + numberInputConfirmModel.getNumberConfirmed() < logScanConfirm.getNumberTotalOrder()) {
-                            numberInputConfirmModel.setNumberScanOut(numberRest + numberInputConfirmModel.getNumberScanOut());
-                        } else {
-                            if ((logScanConfirm.getNumberTotalOrder() - numberInputConfirmModel.getNumberConfirmed()) < numberRest) {
-                                numberInputConfirmModel.setNumberScanOut(logScanConfirm.getNumberTotalOrder() - numberInputConfirmModel.getNumberConfirmed());
-                            }
-                        }
-                    }
 
+            int numberOld = logScanConfirm.numberConfirmed;
+            logScanConfirm.setNumberConfirmedAll(logScanConfirm.getNumberConfirmed());
+            logScanConfirm.setNumberConfirmed(logScanConfirm.getNumberScanOut());
+            int numberCurrent = logScanConfirm.numberConfirmed - numberOld;
+            logScanConfirm.setAll(true);
+            for (NumberInputConfirmModel numberInputConfirmModel : logScanConfirm.getList()) {
+                if (numberInputConfirmModel.getTimesInput() == times) {
+                    numberInputConfirmModel.setNumberInput(logScanConfirm.getNumberConfirmed());
+                } else {
+                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
+                    numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
+                }
+
+            }
+        }
+
+        for (LogScanConfirm logScanConfirm : resultAll) {
+            NumberInputConfirmModel numberInputConfirmModel = logScanConfirm.getList().where().equalTo("timesInput", logScanConfirm.getTimesInput()).findFirst();
+            logScanConfirm.setNumberScanOut(numberInputConfirmModel.getNumberScanOut());
+            if (logScanConfirm.getNumberConfirmed() > 0) {
+                if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
+                    logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
+                } else if (logScanConfirm.getNumberScanOut() == logScanConfirm.getNumberConfirmed()) {
+                    logScanConfirm.setStatusConfirm(Constants.FULL);
+                } else {
+                    logScanConfirm.setStatusConfirm(Constants.RESIDUAL);
+                }
+            } else {
+                logScanConfirm.setStatusConfirm(-1);
+            }
+        }
+    }
+
+    public static void cancelConfirmAllReceive(Realm realm, int orderId, int departmentId, int times, int userId) {
+        RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
+                .equalTo("departmentIDOut", departmentId)
+                .equalTo("timesInput", times)
+                .equalTo("orderId", orderId).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("userId", userId).findAll();
+
+        RealmResults<LogScanConfirm> resultAll = realm.where(LogScanConfirm.class)
+                .equalTo("departmentIDOut", departmentId)
+                .equalTo("orderId", orderId).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("userId", userId).findAll();
+        for (LogScanConfirm logScanConfirm : results) {
+
+            int numberCurrent = logScanConfirm.getNumberConfirmedAll() - logScanConfirm.getNumberConfirmed();
+
+            logScanConfirm.setNumberConfirmed(logScanConfirm.getNumberConfirmedAll());
+            logScanConfirm.setNumberConfirmedAll(0);
+            logScanConfirm.setAll(false);
+            int sum = results.sum("numberConfirmed").intValue();
+
+            for (NumberInputConfirmModel numberInputConfirmModel : logScanConfirm.getList()) {
+                if (numberInputConfirmModel.getTimesInput() == times) {
+                    numberInputConfirmModel.setNumberInput(logScanConfirm.getNumberConfirmed());
+                } else {
+                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
+                    numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
                 }
             }
         }
@@ -548,5 +542,29 @@ public class LogScanConfirm extends RealmObject {
                 logScanConfirm.setStatusConfirm(-1);
             }
         }
+    }
+
+    public int getProductDetailId() {
+        return productDetailId;
+    }
+
+    public void setProductDetailId(int productDetailId) {
+        this.productDetailId = productDetailId;
+    }
+
+    public boolean isAll() {
+        return all;
+    }
+
+    public void setAll(boolean all) {
+        this.all = all;
+    }
+
+    public int getNumberConfirmedAll() {
+        return numberConfirmedAll;
+    }
+
+    public void setNumberConfirmedAll(int numberConfirmedAll) {
+        this.numberConfirmedAll = numberConfirmedAll;
     }
 }

@@ -552,4 +552,14 @@ public class DatabaseRealm {
             }
         });
     }
+
+    public void cancelConfirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirm.cancelConfirmAllReceive(realm, orderId, departmentId,times, userId);
+            }
+        });
+    }
 }

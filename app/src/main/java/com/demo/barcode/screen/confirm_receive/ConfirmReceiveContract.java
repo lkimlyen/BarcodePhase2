@@ -51,7 +51,7 @@ public interface ConfirmReceiveContract {
 
         int countListConfirmByTimesWaitingUpload(int orderId, int deparmentId, int times);
 
-        void checkBarcode(int orderId, String barcode, int departmentId, int times);
+        void checkBarcode(int orderId, String barcode, int departmentId, int times, boolean groupCode);
 
         void updateNumberConfirm(int orderId, int masterOutputId, int departmentIdOut, int times, int numberScan);
 
@@ -60,5 +60,7 @@ public interface ConfirmReceiveContract {
         void getListGroupCode(int orderId);
 
         void confirmAll(int orderId, int departmentId, int times);
+
+        void cancelConfirmAll(int orderId, int departmentId, int times);
     }
 }

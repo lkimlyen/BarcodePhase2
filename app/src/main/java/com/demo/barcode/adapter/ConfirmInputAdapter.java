@@ -73,7 +73,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
-                    if (numberInput > item.getNumberScanOut()){
+                    if (numberInput > item.getNumberScanOut()) {
                         holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
@@ -93,6 +93,8 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.txtNumberDelivery.setText(String.valueOf(item.getNumberScanOut()));
         holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
+
+
         switch (item.getStatusConfirm()) {
             case Constants.FULL:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_full));

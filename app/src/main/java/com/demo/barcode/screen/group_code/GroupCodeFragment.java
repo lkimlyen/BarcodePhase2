@@ -641,9 +641,32 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             showError(getString(R.string.text_module_is_empty));
             return;
         }
+
         if (countersToSelect.size() > 0) {
-            mPresenter.detachedCode(orderId, module, countersToSelect.iterator().next());
-            countersToSelect.clear();
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_want_detached_code_scan))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                            sweetAlertDialog.dismiss();
+                            mPresenter.detachedCode(orderId, module, countersToSelect.iterator().next());
+                            countersToSelect.clear();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
+
+                        }
+                    })
+                    .show();
+
         } else {
             showError(getString(R.string.text_not_product_detached));
         }

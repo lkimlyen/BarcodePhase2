@@ -140,7 +140,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, departmentId, times, typeScan == 1);
+                mPresenter.checkBarcode(barcode, departmentId, times, typeScan == 2);
             }
         }
 
@@ -607,7 +607,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times, typeScan == 1);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times, typeScan == 2);
                         sweetAlertDialog.dismiss();
                     }
                 })

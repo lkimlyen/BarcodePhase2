@@ -145,4 +145,6 @@ public interface LocalRepository {
     Observable<String> updateGroupCode(String groupCode, int orderId,  String module, GroupCode[] listSelect);
 
     Observable<String> confirmAllProductReceive(int orderId, int departmentId, int times);
+
+    Observable<String> cancelConfirmAllProductReceive(int orderId, int departmentId, int times);
 }

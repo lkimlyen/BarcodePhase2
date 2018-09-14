@@ -19,8 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +64,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
-    private FusedLocationProviderClient mFusedLocationClient;
     private int departmentId = 0;
     private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
@@ -87,9 +89,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
 
+    @Bind(R.id.radioGroup)
+    RadioGroup radioGroup;
+
+    @Bind(R.id.cb_all)
+    CheckBox cbConfirmAll;
+    private int typeScan = 0;
     private Vibrator vibrate;
     private int orderId = 0;
-    private Location mLocation;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -106,22 +113,18 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2000) {
-            checkPermissionLocation();
-        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(orderId, barcode, departmentId, times);
-                checkPermissionLocation();
+                mPresenter.checkBarcode(orderId, barcode, departmentId, times, true);
 
             }
         }
@@ -221,7 +224,29 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         });
 
         mPresenter.getListDepartment();
-
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb_default:
+                        typeScan = 1;
+                        break;
+                    case R.id.rb_group:
+                        typeScan = 2;
+                        break;
+                }
+            }
+        });
+        cbConfirmAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mPresenter.confirmAll(orderId, departmentId, times);
+                } else {
+                    mPresenter.cancelConfirmAll(orderId, departmentId, times);
+                }
+            }
+        });
     }
 
 
@@ -374,6 +399,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListConfirm(RealmResults<LogScanConfirm> list) {
+        cbConfirmAll.setChecked(false);
         adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
@@ -400,8 +426,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             orderId = 0;
 
         }
-
-
         ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
         ssTimes.setAdapter(adapterTimes);
         times = 0;
@@ -462,7 +486,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             showError(getString(R.string.text_times_id_null));
             return;
         }
-        checkPermissionLocation();
+
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -470,7 +494,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times);
+                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times, true);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -483,48 +507,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 })
                 .show();
 
-    }
-
-    public void checkPermissionLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_LOCATION_REQUEST_CODE);
-        } else {
-            // Access to the location has been granted to the app.
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                mLocation = location;  // Logic to handle location object
-                            }
-                        }
-                    }).addOnFailureListener(getActivity(), new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    showError(e.getMessage());
-                }
-            });
-
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkPermissionLocation();
-            } else {
-                // Permission was denied. Display an error message.
-            }
-        }
     }
 
     @OnClick(R.id.img_back)

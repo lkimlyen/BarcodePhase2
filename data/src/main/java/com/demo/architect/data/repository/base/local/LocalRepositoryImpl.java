@@ -885,6 +885,22 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<String> cancelConfirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.cancelConfirmAllProductReceive(orderId,departmentId,times);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 
     @Override
     public Observable<IPAddress> findIPAddress() {

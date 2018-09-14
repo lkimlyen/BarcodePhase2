@@ -207,6 +207,50 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_type_scan"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+            <RadioGroup
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                android:orientation="horizontal"
+                android:id="@+id/radioGroup">
+
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default"
+                    android:layout_weight="1"
+                    android:id="@+id/rb_default" />
+
+                <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_group_code"
+                    android:layout_weight="1"
+                    android:id="@+id/rb_group" />
+            </RadioGroup>
+        </LinearLayout>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_confirm_all"
+            android:id="@+id/cb_all"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="1">
@@ -236,10 +280,12 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
         </LinearLayout>
+
         <Button
             android:id="@+id/btn_confirm_all"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
+            android:visibility="gone"
             android:layout_weight="0"
             android:background="@drawable/bg_button_blue_small"
             android:gravity="center"

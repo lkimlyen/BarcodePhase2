@@ -79,7 +79,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void checkBarcode(String barcode, int departmentId, int times,boolean groupCode) {
+    public void checkBarcode(String barcode, int departmentId, int times, boolean groupCode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -112,14 +112,17 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     break;
                                 }
                             }
-
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
                                     ProductGroupEntity groupEntity = ListProductGroupManager.getInstance().getProductById(model.getProductDetailID());
 
-                                    if (groupEntity!= null && groupCode) {
-                                       // view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
-
+                                    if (groupEntity == null && groupCode){
+                                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
+                                        return;
+                                    }
+                                    if (groupEntity != null && groupCode) {
+                                        // view.showChooseGroup(numberInput, groupEntityList, model, barcode, departmentId);
+                                        saveListWithGroupCode(numberInput, groupEntity, barcode, departmentId);
                                     } else {
                                         saveBarcodeToDataBase(numberInput, model, barcode, 1, departmentId);
                                     }
@@ -132,8 +135,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                             } else {
                                 showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                             }
-
-
                         }
 
                     });

@@ -3,6 +3,7 @@ package com.demo.barcode.screen.confirm_receive;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -165,7 +166,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void checkBarcode(int orderId, String barcode, int departmentId, int times) {
+    public void checkBarcode(int orderId, String barcode, int departmentId, int times,boolean groupCode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -174,7 +175,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             return;
         }
-
         localRepository.findConfirmByBarcode(orderId, departmentId, times, barcode).subscribe(new Action1<LogScanConfirm>() {
             @Override
             public void call(LogScanConfirm logScanConfirm) {
@@ -184,7 +184,17 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()) {
                         showError(CoreApplication.getInstance().getString(R.string.text_number_confirm_residual));
                     } else {
-                        saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
+                        if (groupCode){
+                            ProductGroupEntity productGroupEntity = ListProductGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
+                            if (productGroupEntity == null){
+                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
+                                return;
+                            }else {
+                            }
+                        }else {
+                            saveConfirm(orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times);
+                        }
+
                     }
 
                 }
@@ -252,20 +262,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
-//                        localRepository.updateStatusScanStagesByOrder(orderId).subscribe(new Action1<String>() {
-//                            @Override
-//                            public void call(String s) {
-//                                view.showSuccess(successResponse.getDescription());
-//                                getListScanStages(orderId, departmentId, times);
-//                            }
-//                        });
                     }
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         ListProductGroupManager.getInstance().setListProduct(new ArrayList<>());
-                        //  view.showError(errorResponse.getDescription());
                     }
                 });
     }
@@ -276,6 +278,19 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_confirm_all_success));
+                view.startMusicSuccess();
+                view.turnOnVibrator();
+                view.hideProgressBar();
+            }
+        });
+    }
+
+    @Override
+    public void cancelConfirmAll(int orderId, int departmentId, int times) {
+        localRepository.cancelConfirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_cancle_confirm_all_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
                 view.hideProgressBar();
