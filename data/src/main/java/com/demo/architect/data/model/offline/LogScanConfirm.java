@@ -223,18 +223,22 @@ public class LogScanConfirm extends RealmObject {
             }
 
         } else {
+
             int numberCurrent = numberScan - scanConfirm.getNumberConfirmed();
             scanConfirm.setNumberConfirmed(numberScan);
+            int sum = results.sum("numberConfirmed").intValue();
+            int numberRest = scanConfirm.getNumberOut() - sum;
             for (NumberInputConfirmModel numberInputConfirmModel : realmList) {
                 if (numberInputConfirmModel.getTimesInput() == times) {
                     numberInputConfirmModel.setNumberInput(scanConfirm.getNumberConfirmed());
                 } else {
-                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
-                    numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
+                    if (numberInputConfirmModel.getNumberRest() < numberRest) {
+                        numberInputConfirmModel.setNumberScanOut(numberRest - numberInputConfirmModel.getNumberRest());
+                    } else {
+
+                    }
                 }
             }
-
-
         }
 
 
@@ -473,7 +477,7 @@ public class LogScanConfirm extends RealmObject {
                 if (numberInputConfirmModel.getTimesInput() == times) {
                     numberInputConfirmModel.setNumberInput(logScanConfirm.getNumberConfirmed());
                 } else {
-                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
+                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() + (numberInputConfirmModel.getNumberRest() - numberCurrent));
                     numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
                 }
 
@@ -515,13 +519,12 @@ public class LogScanConfirm extends RealmObject {
             logScanConfirm.setNumberConfirmed(logScanConfirm.getNumberConfirmedAll());
             logScanConfirm.setNumberConfirmedAll(0);
             logScanConfirm.setAll(false);
-            int sum = results.sum("numberConfirmed").intValue();
 
             for (NumberInputConfirmModel numberInputConfirmModel : logScanConfirm.getList()) {
                 if (numberInputConfirmModel.getTimesInput() == times) {
                     numberInputConfirmModel.setNumberInput(logScanConfirm.getNumberConfirmed());
                 } else {
-                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() +( numberInputConfirmModel.getNumberRest()-numberCurrent));
+                    numberInputConfirmModel.setNumberScanOut(numberInputConfirmModel.getNumberScanOut() + (numberInputConfirmModel.getNumberRest() - numberCurrent));
                     numberInputConfirmModel.setNumberRest(numberInputConfirmModel.getNumberRest() - numberCurrent);
                 }
             }

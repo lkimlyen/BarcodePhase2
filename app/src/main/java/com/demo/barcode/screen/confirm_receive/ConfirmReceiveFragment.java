@@ -399,7 +399,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListConfirm(RealmResults<LogScanConfirm> list) {
-        cbConfirmAll.setChecked(false);
         adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {

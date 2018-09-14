@@ -43,12 +43,13 @@ public class NumberInputConfirmModel extends RealmObject {
     public static NumberInputConfirmModel create(Realm realm, NumberInputConfirm numberInputConfirm, int masterDetailId, int numberOut, int numberTotal) {
         int numberRest = numberTotal - numberInputConfirm.getNumberConfirmed();
         NumberInputConfirmModel numberInputModel = null;
+        int numberRestInTimes = numberOut - numberRest;
         if (numberRest >= numberOut) {
             numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
-                    numberInputConfirm.getNumberConfirmed(), 0, numberOut, numberOut, numberInputConfirm.getTimesInput());
+                    numberInputConfirm.getNumberConfirmed(), numberRestInTimes, numberOut, numberOut, numberInputConfirm.getTimesInput());
             numberInputModel = realm.copyToRealm(numberInputModel);
         } else {
-            int numberRestInTimes = numberOut - numberRest;
+
             numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
                     numberInputConfirm.getNumberConfirmed(), numberRestInTimes, numberOut, numberRest, numberInputConfirm.getTimesInput());
             numberInputModel = realm.copyToRealm(numberInputModel);
