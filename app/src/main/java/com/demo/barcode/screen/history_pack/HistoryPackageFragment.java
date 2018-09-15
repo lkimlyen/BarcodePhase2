@@ -21,6 +21,9 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
+import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.HistoryAdapter;
@@ -36,6 +39,7 @@ import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.transform.Result;
@@ -59,12 +63,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
 
-    @Bind(R.id.ss_module)
-    SearchableSpinner ssModule;
-
-    @Bind(R.id.ss_code_pack)
-    SearchableSpinner ssCodePack;
-
     @Bind(R.id.ss_apartment)
     SearchableSpinner ssApartment;
 
@@ -72,14 +70,10 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     TextView txtCustomerName;
 
     @Bind(R.id.lv_history)
-    ListView lvHistory;
-
-    private String serialPack;
-    private String codePack;
+    AnimatedExpandableListView lvHistory;
     private int orderId = 0;
     private int apartmentId = 0;
     private int orderType = 0;
-    private int moduleId = 0;
 
     public HistoryPackageFragment() {
         // Required empty public constructor
@@ -122,9 +116,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         // Vibrate for 500 milliseconds
         ssCodeSO.setPrintStamp(true);
         ssTypeProduct.setPrintStamp(true);
-        ssCodePack.setPrintStamp(true);
         ssApartment.setPrintStamp(true);
-        ssModule.setPrintStamp(true);
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
@@ -140,13 +132,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             }
         });
 
-        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
-
         ssApartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
@@ -154,12 +139,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             }
         });
 
-        ssModule.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
 
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
@@ -267,7 +246,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 apartmentId = list.get(position).getApartmentID();
-                mPresenter.getListModule(orderId, orderType, apartmentId);
             }
 
             @Override
@@ -277,55 +255,32 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         });
     }
 
-    @Override
-    public void showListModule(List<ModuleEntity> list) {
-        ArrayAdapter<ModuleEntity> adapter = new ArrayAdapter<ModuleEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssModule.setAdapter(adapter);
-        ssModule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                moduleId = list.get(position).getProductId();
-                mPresenter.getListCodePack(orderId, orderType, list.get(position).getProductId());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    @Override
-    public void showListCodePack(List<CodePackEntity> list) {
-        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssCodePack.setAdapter(adapter);
-        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                serialPack = list.get(position).getSttPack();
-                codePack = list.get(position).getPackCode();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
 
     @Override
     public void showListHistory(List<HistoryEntity> list) {
-        adapter = new HistoryAdapter(getContext(), list);
-        lvHistory.setAdapter(adapter);
-        lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailPackageActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, list.get(position).getPackageId());
+        HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
+        HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
+        List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
+        for (HistoryEntity historyEntity : list) {
+            listContent.clear();
+            for (PackageEntity packageEntity : historyEntity.getPackageList()) {
+                map.clear();
+                for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
+                    map.put(productPackagingEntity, packageEntity);
+                }
+                listContent.add(map);
             }
-        });
+            hashMap.put(historyEntity, listContent);
+        }
+        adapter = new HistoryAdapter(getContext(), list, hashMap);
+        lvHistory.setAdapter(adapter);
+        lvHistory.setGroupIndicator(null);
+//        lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//               // DetailPackageActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, list.get(position).getPackageId());
+//            }
+//        });
     }
 
 
@@ -344,16 +299,8 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
     @OnClick(R.id.btn_search)
     public void search() {
-        if (TextUtils.isEmpty(serialPack)) {
-            showError(getString(R.string.text_serial_pack_null));
-            return;
-        }
         if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
-            return;
-        }
-        if (moduleId == 0) {
-            showError(getString(R.string.text_module_is_empty));
             return;
         }
         if (apartmentId == 0) {
@@ -361,7 +308,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             return;
         }
 
-        mPresenter.getListHistory(orderId, moduleId, apartmentId, codePack, serialPack);
+        mPresenter.getListHistory(orderId, apartmentId);
     }
 
 

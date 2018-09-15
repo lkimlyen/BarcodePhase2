@@ -23,11 +23,8 @@ public class GetListPrintPackageHistoryUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         int orderId = ((RequestValue) requestValues).orderId;
-        int productId = ((RequestValue) requestValues).productId;
         int apartmentId = ((RequestValue) requestValues).apartmentId;
-        String packCode = ((RequestValue) requestValues).packCode;
-        String sttPack = ((RequestValue) requestValues).sttPack;
-        return remoteRepository.getListPrintPackageHistory(orderId, productId, apartmentId,packCode,sttPack);
+        return remoteRepository.getListPrintPackageHistory(orderId, apartmentId);
     }
 
     @Override
@@ -63,18 +60,12 @@ public class GetListPrintPackageHistoryUsecase extends BaseUseCase {
 
     public static final class RequestValue implements RequestValues {
         private final int orderId;
-        private final int productId;
         private final int apartmentId;
-        private final String packCode;
-        private final String sttPack;
 
 
-        public RequestValue(int orderId, int productId, int apartmentId, String packCode, String sttPack) {
+        public RequestValue(int orderId, int apartmentId) {
             this.orderId = orderId;
-            this.productId = productId;
             this.apartmentId = apartmentId;
-            this.packCode = packCode;
-            this.sttPack = sttPack;
         }
 
     }

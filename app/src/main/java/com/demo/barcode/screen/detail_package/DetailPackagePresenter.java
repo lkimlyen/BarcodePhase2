@@ -71,14 +71,14 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
     @Override
     public void getTotalScan(int packageId) {
-        int total = ListHistoryManager.getInstance().getHistoryById(packageId).totalQuantity();
-        view.showTotalNumberScan(total);
+        //int total = ListHistoryManager.getInstance().getHistoryById(packageId).totalQuantity();
+//        view.showTotalNumberScan(total);
     }
 
     @Override
     public void getListProductHistory(int packageId) {
-        List<ProductPackagingEntity> list = ListHistoryManager.getInstance().getHistoryById(packageId).getList();
-        view.showListProductHistory(list);
+//        List<ProductPackagingEntity> list = ListHistoryManager.getInstance().getHistoryById(packageId).getList();
+//        view.showListProductHistory(list);
     }
 
     @Override

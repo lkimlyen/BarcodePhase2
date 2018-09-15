@@ -27,10 +27,6 @@ public interface HistoryPackageContract {
 
         void showListApartment(List<ApartmentEntity> list);
 
-        void showListModule(List<ModuleEntity> list);
-
-        void showListCodePack(List<CodePackEntity> list);
-
         void showListHistory(List<HistoryEntity> list);
 
     }
@@ -40,11 +36,7 @@ public interface HistoryPackageContract {
 
         void getListApartment(int orderId);
 
-        void getListModule(int orderId, int orderType, int apartmentId);
-
-        void getListCodePack(int orderId, int orderType, int productId);
-
-        void getListHistory(int orderId, int productId, int apartmentId, String packCode, String sttPack);
+        void getListHistory(int orderId,int apartmentId);
 
 
     }

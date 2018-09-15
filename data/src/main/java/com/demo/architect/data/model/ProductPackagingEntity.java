@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ProductPackagingEntity {
-    @SerializedName("Code")
+    @SerializedName("BarCode")
     @Expose
     private String barcode;
 
@@ -56,22 +56,12 @@ public class ProductPackagingEntity {
         return number;
     }
 
-    private String serialPack;
-
     public String getBarcode() {
         return barcode;
     }
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
-    }
-
-    public String getSerialPack() {
-        return serialPack;
-    }
-
-    public void setSerialPack(String serialPack) {
-        this.serialPack = serialPack;
     }
 
     public int getId() {

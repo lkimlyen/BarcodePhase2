@@ -33,20 +33,16 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
     private final GetListSOUsecase getListSOUsecase;
     private final GetListPrintPackageHistoryUsecase getListPrintPackageHistoryUsecase;
     private final GetApartmentUsecase getApartmentUsecase;
-    private final GetModuleUsecase getModuleUsecase;
-    private final GetCodePackUsecase getCodePackUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    HistoryPackagePresenter(@NonNull HistoryPackageContract.View view, GetListSOUsecase getListSOUsecase, GetListPrintPackageHistoryUsecase getListPrintPackageHistoryUsecase, GetApartmentUsecase getApartmentUsecase, GetModuleUsecase getModuleUsecase, GetCodePackUsecase getCodePackUsecase) {
+    HistoryPackagePresenter(@NonNull HistoryPackageContract.View view, GetListSOUsecase getListSOUsecase, GetListPrintPackageHistoryUsecase getListPrintPackageHistoryUsecase, GetApartmentUsecase getApartmentUsecase) {
         this.view = view;
 
         this.getListSOUsecase = getListSOUsecase;
         this.getListPrintPackageHistoryUsecase = getListPrintPackageHistoryUsecase;
         this.getApartmentUsecase = getApartmentUsecase;
-        this.getModuleUsecase = getModuleUsecase;
-        this.getCodePackUsecase = getCodePackUsecase;
     }
 
     @Inject
@@ -115,53 +111,11 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
                 });
     }
 
-    @Override
-    public void getListModule(int orderId, int orderType, int apartmentId) {
-        view.showProgressBar();
-        getModuleUsecase.executeIO(new GetModuleUsecase.RequestValue(orderId, orderType, apartmentId),
-                new BaseUseCase.UseCaseCallback<GetModuleUsecase.ResponseValue,
-                        GetModuleUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetModuleUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        view.showListModule(successResponse.getEntity());
-                        ListModuleManager.getInstance().setListModule(successResponse.getEntity());
-                    }
-
-                    @Override
-                    public void onError(GetModuleUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
-                    }
-                });
-    }
 
     @Override
-    public void getListCodePack(int orderId, int orderType, int productId) {
+    public void getListHistory(int orderId, int apartmentId) {
         view.showProgressBar();
-        getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId, orderType, productId),
-                new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
-                        GetCodePackUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        view.showListCodePack(successResponse.getEntity());
-                        ListCodePackManager.getInstance().setListCodePack(successResponse.getEntity());
-                    }
-
-                    @Override
-                    public void onError(GetCodePackUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
-                    }
-                });
-    }
-
-    @Override
-    public void getListHistory(int orderId, int productId, int apartmentId, String packCode, String sttPack) {
-        view.showProgressBar();
-        getListPrintPackageHistoryUsecase.executeIO(new GetListPrintPackageHistoryUsecase.RequestValue(orderId, productId, apartmentId,
-                        packCode,sttPack),
+        getListPrintPackageHistoryUsecase.executeIO(new GetListPrintPackageHistoryUsecase.RequestValue(orderId, apartmentId),
                 new BaseUseCase.UseCaseCallback<GetListPrintPackageHistoryUsecase.ResponseValue,
                         GetListPrintPackageHistoryUsecase.ErrorValue>() {
                     @Override

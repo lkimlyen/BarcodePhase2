@@ -275,14 +275,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(final int orderId, final int productId, final int apartmentId, final String packCode, final String sttPack) {
+    public Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(final int orderId, final int apartmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<HistoryEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<HistoryEntity>> subscriber) {
                 handleHistoryResponse(mRemoteApiInterface.getListPrintPackageHistory(
-                        server + "/WS/api/GD2GetListPrintPackageHistory", orderId, productId, apartmentId,
-                        packCode, sttPack), subscriber);
+                        server + "/WS/api/GD2GetListPrintPackageHistory", orderId, apartmentId), subscriber);
             }
         });
     }

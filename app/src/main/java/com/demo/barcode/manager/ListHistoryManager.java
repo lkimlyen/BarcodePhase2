@@ -28,10 +28,10 @@ public class ListHistoryManager {
     public HistoryEntity getHistoryById(int packageId) {
         HistoryEntity historyEntity = null;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getPackageId() == packageId) {
-                historyEntity = list.get(i);
-                break;
-            }
+//            if (list.get(i).getPackageId() == packageId) {
+//                historyEntity = list.get(i);
+//                break;
+//            }
         }
         return historyEntity;
 

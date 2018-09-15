@@ -6,9 +6,13 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class HistoryEntity {
-    @SerializedName("PackageID")
+    @SerializedName("Module")
     @Expose
-    private int packageId;
+    private String module;
+
+    @SerializedName("ProductID")
+    @Expose
+    private int productId;
 
     @SerializedName("CustomerName")
     @Expose
@@ -18,17 +22,16 @@ public class HistoryEntity {
     @Expose
     private String dateTime;
 
-    @SerializedName("Total")
-    @Expose
-    private int total;
-
     @SerializedName("DataList")
     @Expose
-    private List<ProductPackagingEntity> list;
+    private List<PackageEntity> packageList;
 
+    public String getModule() {
+        return module;
+    }
 
-    public int getPackageId() {
-        return packageId;
+    public int getProductId() {
+        return productId;
     }
 
     public String getCustomerName() {
@@ -39,19 +42,7 @@ public class HistoryEntity {
         return dateTime;
     }
 
-    public int getTotal() {
-        return total;
-    }
-
-    public int totalQuantity() {
-        int total = 0;
-        for (ProductPackagingEntity productPackagingEntity : list) {
-            total += productPackagingEntity.getNumber();
-        }
-        return total;
-    }
-
-    public List<ProductPackagingEntity> getList() {
-        return list;
+    public List<PackageEntity> getPackageList() {
+        return packageList;
     }
 }

@@ -63,10 +63,7 @@ public interface OrderApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(@Url String url, @Field("pOrderID") int orderId,
-                                                           @Field("pProductID") int productId,
-                                                           @Field("pApartmentID") int apartmentId,
-                                                           @Field("pCodePack") String packCode,
-                                                           @Field("pSTTPack") String sttPack);
+                                                           @Field("pApartmentID") int apartmentId);
 
     @FormUrlEncoded
     @POST
