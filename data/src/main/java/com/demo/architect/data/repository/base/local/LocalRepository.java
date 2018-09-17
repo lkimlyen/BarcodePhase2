@@ -4,9 +4,11 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -87,12 +89,13 @@ public interface LocalRepository {
 
     Observable<String> deleteImageModel(final int id);
 
-    Observable<RealmResults<LogScanPackaging>> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack);
+    Observable<RealmResults<LogListModulePagkaging>> getListScanPackaging(SOEntity soEntity,ApartmentEntity apartment);
 
     Observable<List<LogScanPackaging>> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack);
 
 
-    Observable<String> saveBarcodeScanPackaging(ProductPackagingEntity product, String barcode, int orderId, int apartmentId, int moduleId, String packCode, String serialPack);
+
+    Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentI);
 
     Observable<String> deleteScanPackaging(int logId);
 
@@ -118,7 +121,7 @@ public interface LocalRepository {
 
     Observable<IPAddress> insertOrUpdateIpAddress(final IPAddress model);
 
-    Observable<String> updateStatusScanPackaging(int serverId);
+    Observable<String> updateStatusScanPackaging(int orderId, int apartmentId, int moduleId,String serialPack,int serverId);
 
     Observable<String> deleteAllItemLogScanPackaging();
 

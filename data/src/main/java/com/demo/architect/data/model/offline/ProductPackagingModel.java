@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
 public class ProductPackagingModel extends RealmObject {
     @PrimaryKey
     private int id;
-    private int productId;
+    private int productDetailId;
     private String productName;
     private String productColor;
     private String serialPack;
@@ -24,9 +24,9 @@ public class ProductPackagingModel extends RealmObject {
     public ProductPackagingModel() {
     }
 
-    public ProductPackagingModel(int id, int productId, String productName, String productColor, String serialPack, int width, int length, int height, int numberTotal, int numberScan, int numberRest, int status) {
+    public ProductPackagingModel(int id, int productDetailId, String productName, String productColor, String serialPack, int width, int length, int height, int numberTotal, int numberScan, int numberRest, int status) {
         this.id = id;
-        this.productId = productId;
+        this.productDetailId = productDetailId;
         this.productName = productName;
         this.productColor = productColor;
         this.serialPack = serialPack;
@@ -39,12 +39,12 @@ public class ProductPackagingModel extends RealmObject {
         this.status = status;
     }
 
-    public int getProductId() {
-        return productId;
+    public int getProductDetailId() {
+        return productDetailId;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductDetailId(int productDetailId) {
+        this.productDetailId = productDetailId;
     }
 
     public String getProductName() {
@@ -83,7 +83,7 @@ public class ProductPackagingModel extends RealmObject {
 
     public static ProductPackagingModel findProductPackaging(Realm realm, int productId, String serialPack) {
         ProductPackagingModel productPackagingModel = realm.where(ProductPackagingModel.class)
-                .equalTo("productId", productId).equalTo("serialPack",serialPack).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                .equalTo("productDetailId", productId).equalTo("serialPack", serialPack).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
         return productPackagingModel;
 
     }
@@ -118,14 +118,6 @@ public class ProductPackagingModel extends RealmObject {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public String getSerialPack() {
-        return serialPack;
-    }
-
-    public void setSerialPack(String serialPack) {
-        this.serialPack = serialPack;
     }
 
     public int getStatus() {

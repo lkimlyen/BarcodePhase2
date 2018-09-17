@@ -5,14 +5,17 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.SocketRespone;
-import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
+import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
@@ -37,12 +40,14 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
     private final String TAG = DetailPackagePresenter.class.getName();
     private final DetailPackageContract.View view;
+    private final GetCodePackUsecase getCodePackUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    DetailPackagePresenter(@NonNull DetailPackageContract.View view) {
+    DetailPackagePresenter(@NonNull DetailPackageContract.View view, GetCodePackUsecase getCodePackUsecase) {
         this.view = view;
+        this.getCodePackUsecase = getCodePackUsecase;
     }
 
     @Inject
@@ -65,24 +70,28 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
     @Override
     public void getOrderPackaging(int orderId) {
-       SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
-       view.showOrder(soEntity);
+        SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
+        view.showOrder(soEntity);
     }
 
     @Override
-    public void getTotalScan(int packageId) {
-        //int total = ListHistoryManager.getInstance().getHistoryById(packageId).totalQuantity();
-//        view.showTotalNumberScan(total);
+    public void getListHistoryBySerialPack(HistoryEntity historyEntity, String serialPack) {
+        int countExist = 0;
+        for (PackageEntity packageEntity : historyEntity.getPackageList()) {
+            if (packageEntity.getSerialPack().equals(serialPack)) {
+                countExist++;
+                view.showListProductHistory(packageEntity);
+                return;
+            }
+        }
+        if (countExist == 0) {
+            view.showListProductHistory(null);
+        }
     }
 
-    @Override
-    public void getListProductHistory(int packageId) {
-//        List<ProductPackagingEntity> list = ListHistoryManager.getInstance().getHistoryById(packageId).getList();
-//        view.showListProductHistory(list);
-    }
 
     @Override
-    public void printTemp(int serverId, String note, int packageId) {
+    public void printTemp(int serverId, int packageId) {
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
@@ -98,7 +107,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
-                                printTemp(packageId, note, packageId);
+                                printTemp(packageId, packageId);
 
                             } else {
                                 view.hideProgressBar();
@@ -125,26 +134,34 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void getModule(int moduleId) {
-        ModuleEntity module = ListModuleManager.getInstance().getModuleById(moduleId);
-        view.showModuleName(module.getModuleName());
+    public void getListCodePack(int orderId, int orderType, int productId) {
+        view.showProgressBar();
+        getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId, orderType, productId),
+                new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
+                        GetCodePackUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        view.showListCodePack(successResponse.getEntity());
+                    }
+
+                    @Override
+                    public void onError(GetCodePackUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
 
     @Override
-    public void getCodePack(String serialPack) {
-        CodePackEntity codePack = ListCodePackManager.getInstance().getCodePackById(serialPack);
-        view.showCodePack(codePack.getPackCode());
-    }
-
-    @Override
-    public void saveIPAddress(String ipAddress, int port, int serverId, String note, int packageId) {
+    public void saveIPAddress(String ipAddress, int port, int serverId, int packageId) {
         int userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                printTemp(serverId,note,packageId);
+                printTemp(serverId, packageId);
             }
         });
     }

@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.product.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -57,10 +58,7 @@ public interface ProductApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") int orderId,
-                                                                           @Field("pProductID") int productId,
-                                                                           @Field("pApartmentID") int apartmentId,
-                                                                           @Field("pCodePack") String packCode,
-                                                                           @Field("pSTTPack") String sttPack);
+    Call<BaseListResponse<ListModuleEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") int orderId,
+                                                                     @Field("pApartmentID") int apartmentId);
 
 }

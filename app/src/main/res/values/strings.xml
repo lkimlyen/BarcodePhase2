@@ -248,6 +248,10 @@
     <string name="text_cancle_confirm_all_success">Hủy xác nhận tất cả thành công</string>
     <string name="text_module" formatted="true">Module: %s</string>
     <string name="text_number_scanned">Số lượng:</string>
+    <string name="text_no_data_print">Không có dữ liệu để in</string>
+    <string name="text_incomplete_pack">Bạn chưa quét xong gói hiện tại!</string>
+    <string name="text_pack_scan_enough">Gói này đã được quét đủ</string>
+    <string name="text_data_scan_not_print">Còn dữ liệu chưa in, bạn có muốn thoát không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

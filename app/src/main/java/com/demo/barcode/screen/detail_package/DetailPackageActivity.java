@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
+import com.demo.architect.data.model.HistoryEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseActivity;
@@ -25,14 +26,12 @@ public class DetailPackageActivity extends BaseActivity {
 
     DetailPackageFragment fragment;
 
-    public static void start(Activity activity, int orderId, int apartmentId, int moduleId, String serialPack, int packageId) {
+    public static void start(Activity activity, int orderId, int apartmentId,int orderType, HistoryEntity historyEntity) {
         Intent intent = new Intent(activity, DetailPackageActivity.class);
         intent.putExtra(DetailPackageFragment.ORDER_ID, orderId);
         intent.putExtra(DetailPackageFragment.APARTMENT_ID, apartmentId);
-        intent.putExtra(DetailPackageFragment.MODULE_ID, moduleId);
-        intent.putExtra(DetailPackageFragment.SERIAL_PACK, serialPack);
-        intent.putExtra(DetailPackageFragment.PACKAGE_ID, packageId);
-
+        intent.putExtra(DetailPackageFragment.ORDER_TYPE,orderType);
+        intent.putExtra(DetailPackageFragment.HISTORY, historyEntity);
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -47,12 +46,6 @@ public class DetailPackageActivity extends BaseActivity {
         CoreApplication.getInstance().getApplicationComponent()
                 .plus(new DetailPackageModule(fragment))
                 .inject(this);
-
-//        Window w = getWindow(); // in Activity's onCreate() for instance
-//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-//        }
     }
 
     private void initFragment() {

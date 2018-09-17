@@ -7,8 +7,10 @@ import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -16,6 +18,7 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -312,10 +315,10 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<LogScanPackaging> getListScanPackaging(SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
+    public RealmResults<LogListModulePagkaging> getListScanPackaging(SOEntity soEntity, ApartmentEntity apartment) {
         Realm realm = getRealmInstance();
-        RealmResults<LogScanPackaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
-                soEntity, moduleEntity, apartment, codePack);
+        RealmResults<LogListModulePagkaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
+                soEntity, apartment);
         return listScanPackaging;
     }
 
@@ -401,13 +404,12 @@ public class DatabaseRealm {
         });
     }
 
-    public void addBarcodeScanPackaging(final ProductPackagingEntity product, final String barcode, final int orderId, final int apartmentId, final int moduleId, final String packCode, final String serialPack) {
+    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity,final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.createOrUpdateLogScanPackaging(realm, product, barcode, orderId, apartmentId,
-                        moduleId, packCode, serialPack);
+                LogScanPackaging.createOrUpdateLogScanPackaging(realm, module,packageEntity,productPackagingEntity, orderId, apartmentId, userId);
             }
         });
 
@@ -420,12 +422,12 @@ public class DatabaseRealm {
         return result;
     }
 
-    public void updateStatusScanPackaging(final int serverId) {
+    public void updateStatusScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack, final int serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.updateStatusScanPackaging(realm, serverId);
+                LogScanPackaging.updateStatusScanPackaging(realm,orderId,apartmentId,moduleId,serialPack, serverId);
             }
         });
 

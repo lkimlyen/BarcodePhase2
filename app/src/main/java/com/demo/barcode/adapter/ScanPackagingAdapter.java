@@ -41,7 +41,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         HistoryHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_stages, parent, false);
+                    .inflate(R.layout.item_scan_create_pack, parent, false);
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -95,6 +95,8 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
             }
         };
         holder.txtBarcode.setText(item.getBarcode());
+        holder.txtPackCode.setText(item.getCodePack());
+        holder.txtSerialPack.setText(item.getSttPack());
         holder.txtNameDetail.setText(productPackagingModel.getProductName());
         holder.txtQuantityProduct.setText(productPackagingModel.getNumberTotal() + "");
         holder.txtQuantityRest.setText(productPackagingModel.getNumberRest() + "");
@@ -120,18 +122,21 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         });
         if (item.getStatusScan() == Constants.FULL) {
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
+
         } else {
             holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
         }
 
         holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+        holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
         TextView txtBarcode;
         TextView txtNameDetail;
-        TextView txtModule;
+        TextView txtSerialPack;
+        TextView txtPackCode;
         ImageView imgDelete;
         TextView txtQuantityProduct;
         TextView txtQuantityRest;
@@ -143,14 +148,14 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         private HistoryHolder(View v) {
             super(v);
             txtBarcode = (TextView) v.findViewById(R.id.txt_barcode);
-            txtModule = (TextView) v.findViewById(R.id.txt_module);
+            txtSerialPack = (TextView) v.findViewById(R.id.txt_serial_pack);
+            txtPackCode = (TextView) v.findViewById(R.id.txt_pack_code);
             imgDelete = (ImageView) v.findViewById(R.id.img_delete);
-            txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
+            txtNameDetail = (TextView) v.findViewById(R.id.txt_name_product);
             txtQuantityProduct = (TextView) v.findViewById(R.id.txt_quantity_product);
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
-            txtModule.setVisibility(View.GONE);
             layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
         }
 

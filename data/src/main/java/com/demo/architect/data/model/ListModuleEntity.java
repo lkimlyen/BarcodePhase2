@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class HistoryEntity implements Serializable {
+public class ListModuleEntity implements Serializable {
     @SerializedName("Module")
     @Expose
     private String module;
@@ -15,18 +15,13 @@ public class HistoryEntity implements Serializable {
     @Expose
     private int productId;
 
-    @SerializedName("CustomerName")
+    @SerializedName("NumberRequired")
     @Expose
-    private String customerName;
-
-    @SerializedName("DateTime")
-    @Expose
-    private String dateTime;
+    private int numberRequired;
 
     @SerializedName("DataList")
     @Expose
     private List<PackageEntity> packageList;
-
     public String getModule() {
         return module;
     }
@@ -35,12 +30,8 @@ public class HistoryEntity implements Serializable {
         return productId;
     }
 
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public String getDateTime() {
-        return dateTime;
+    public int getNumberRequired() {
+        return numberRequired;
     }
 
     public List<PackageEntity> getPackageList() {

@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.print_stamp;
 
+import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
@@ -33,7 +34,7 @@ public interface PrintStempContract {
 
         void showModuleName(String module);
 
-        void showCodePack(String codePack);
+        void showListCodePack(List<CodePackEntity> list);
     }
 
     interface Presenter extends BasePresenter {
@@ -44,16 +45,14 @@ public interface PrintStempContract {
 
         void getListScanStages(int orderId, int apartmentId, int moduleId, String serialPack);
 
-        void printTemp(int serverId, String note);
+        void printTemp(int orderId, int apartmentId, int moduleId,String serialPack,int serverId);
 
         void getApartment(int apartmentId);
 
         void getModule(int moduleId);
 
-        void saveIPAddress(String ipAddress, int port, int serverId, String note);
-
-        void getCodePack(String serialPack);
-
-
+        void saveIPAddress(String ipAddress, int port,int orderId, int apartmentId, int moduleId,String serialPack, int serverId);
+        void getListCodePack(int orderId, int orderType, int productId);
+        boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack);
     }
 }

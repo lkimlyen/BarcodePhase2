@@ -4,9 +4,11 @@ import android.content.Context;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -14,6 +16,7 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -432,13 +435,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogScanPackaging>> getListScanPackaging(final SOEntity soEntity, final ModuleEntity moduleEntity, final ApartmentEntity apartment, final CodePackEntity codePack) {
-        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanPackaging>>() {
+    public Observable<RealmResults<LogListModulePagkaging>> getListScanPackaging(final SOEntity soEntity, final ApartmentEntity apartment) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogListModulePagkaging>>() {
             @Override
-            public void call(Subscriber<? super RealmResults<LogScanPackaging>> subscriber) {
+            public void call(Subscriber<? super RealmResults<LogListModulePagkaging>> subscriber) {
                 try {
-                    RealmResults<LogScanPackaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity,
-                            moduleEntity, apartment, codePack);
+                    RealmResults<LogListModulePagkaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity, apartment);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -467,12 +469,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> saveBarcodeScanPackaging(final ProductPackagingEntity product, final String barcode, final int orderId, final int apartmentId, final int moduleId, final String packCode, final String serialPack) {
+    public Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addBarcodeScanPackaging(product, barcode, orderId, apartmentId, moduleId, packCode, serialPack);
+                    databaseRealm.addBarcodeScanPackaging(module, packageEntity,productPackagingEntity, orderId, apartmentId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -659,12 +661,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusScanPackaging(final int serverId) {
+    public Observable<String> updateStatusScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack, final int serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusScanPackaging(serverId);
+                    databaseRealm.updateStatusScanPackaging(orderId,apartmentId,moduleId,serialPack,serverId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

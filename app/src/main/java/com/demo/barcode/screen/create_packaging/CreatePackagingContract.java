@@ -30,16 +30,13 @@ public interface CreatePackagingContract {
 
         void turnOnVibrator();
 
-        void showListScan(RealmResults<LogScanPackaging> log);
+        void showListScan(RealmResults<LogListModulePagkaging> log);
 
         void showListSO(List<SOEntity> list);
 
         void showListApartment(List<ApartmentEntity> list);
 
-        void showListModule(List<ModuleEntity> list);
-
-        void showListCodePack(List<CodePackEntity> list);
-
+        void setHeightListView();
     }
 
     interface Presenter extends BasePresenter {
@@ -48,23 +45,17 @@ public interface CreatePackagingContract {
 
         void getListApartment(int orderId);
 
-        void getListModule(int orderId, int orderType, int apartmentId);
-
-        void getListScan(int orderId, int productId, int apartmentId, String sttPack);
+        void getListScan(int orderId, int apartmentId);
 
         void deleteLogScan(int id);
 
         void updateNumberScan(int id, int number);
 
-        void getListCodePack(int orderId, int orderType, int productId);
+        void checkBarcode(String barcode, int orderId, int apartmentId);
 
-        void checkBarcode(String barcode, int orderId, int productId, int apartmentId, String packCode, String sttPack);
-
-        void getListProduct(int orderId, int productId, int apartmentId, String packCode, String sttPack);
+        void getListProduct(int orderId, int apartmentId);
 
         boolean countListScanInPack(int sizeList);
-
-        boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack);
 
         void deleteAllItemLog();
     }

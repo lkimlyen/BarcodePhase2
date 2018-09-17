@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.UserEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ public class SharedPreferenceHelper {
     private static final String MY_PREFERENCE = "com.demo.uyminhduc.MAIN.MY_PREFERENCE";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String USER = "USER";
+    private static final String POSITION_SCAN = "POSITION_SCAN";
     private static final String DEPARTMENT = "DEPARTMENT";
     private static final String WAS_STARTED = "WAS_STARTED";
     private SharedPreferences sharedPreferences;
@@ -105,6 +108,28 @@ public class SharedPreferenceHelper {
         List<DepartmentEntity> obj = null;
         if (!TextUtils.isEmpty(json)) {
             obj = gson.fromJson(json, new TypeToken<List<DepartmentEntity>>(){}.getType());
+        }
+        return obj;
+    }
+
+    public void pushListPositionScanObject(List<PositionScan> object) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        String json = "";
+        if (object != null) {
+            Gson gson = new Gson();
+            json = gson.toJson(object);
+        }
+        prefsEditor.putString(POSITION_SCAN, json);
+        prefsEditor.commit();
+    }
+
+
+    public List<PositionScan> getListPositionScanObject() {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(POSITION_SCAN, "");
+        List<PositionScan> obj = new ArrayList<>();
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson(json, new TypeToken<List<PositionScan>>(){}.getType());
         }
         return obj;
     }

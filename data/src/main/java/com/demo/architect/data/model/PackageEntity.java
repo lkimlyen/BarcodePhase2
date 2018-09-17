@@ -3,9 +3,10 @@ package com.demo.architect.data.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PackageEntity {
+public class PackageEntity implements Serializable {
 
     @SerializedName("PackageID")
     @Expose
@@ -18,6 +19,10 @@ public class PackageEntity {
     @SerializedName("STTPack")
     @Expose
     private String serialPack;
+
+    @SerializedName("Current")
+    @Expose
+    private int numberScan;
 
     @SerializedName("Total")
     @Expose
@@ -45,5 +50,9 @@ public class PackageEntity {
 
     public List<ProductPackagingEntity> getProductPackagingEntityList() {
         return productPackagingEntityList;
+    }
+
+    public int getNumberScan() {
+        return numberScan;
     }
 }

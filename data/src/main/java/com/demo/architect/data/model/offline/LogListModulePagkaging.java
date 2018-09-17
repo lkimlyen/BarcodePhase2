@@ -13,8 +13,10 @@ public class LogListModulePagkaging extends RealmObject {
     @PrimaryKey
     private int id;
     private String module;
+
     @SuppressWarnings("unused")
-    private RealmList<LogListSerialPackPagkaging> list;
+    private RealmList<LogScanPackaging> logScanPackagingList;
+
 
     public LogListModulePagkaging() {
     }
@@ -40,14 +42,6 @@ public class LogListModulePagkaging extends RealmObject {
         this.module = module;
     }
 
-    public RealmList<LogListSerialPackPagkaging> getList() {
-        return list;
-    }
-
-    public void setList(RealmList<LogListSerialPackPagkaging> list) {
-        this.list = list;
-    }
-
     public static int id(Realm realm) {
         int nextId = 0;
         Number maxValue = realm.where(LogListModulePagkaging.class).max("id");
@@ -56,10 +50,18 @@ public class LogListModulePagkaging extends RealmObject {
         return nextId;
     }
 
-    public static LogListModulePagkaging create(Realm realm, ModuleEntity moduleEntity) {
-        LogListModulePagkaging log = new LogListModulePagkaging(moduleEntity.getProductId(),moduleEntity.getModuleName());
+    public static LogListModulePagkaging create(Realm realm, String module, int productId) {
+        LogListModulePagkaging log = new LogListModulePagkaging(productId, module);
         log = realm.copyToRealm(log);
         return log;
+    }
+
+    public RealmList<LogScanPackaging> getLogScanPackagingList() {
+        return logScanPackagingList;
+    }
+
+    public void setLogScanPackagingList(RealmList<LogScanPackaging> logScanPackagingList) {
+        this.logScanPackagingList = logScanPackagingList;
     }
 
 

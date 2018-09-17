@@ -1,59 +1,43 @@
 package com.demo.barcode.screen.detail_package;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.HistoryEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.PrintStampAdapter;
 import com.demo.barcode.adapter.ProductHistoryAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
-import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -65,21 +49,15 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     private ProductHistoryAdapter adapter;
     public static final String ORDER_ID = "order_id";
     public static final String APARTMENT_ID = "apartment_id";
-    public static final String MODULE_ID = "module_id";
-    public static final String SERIAL_PACK = "serial_pack";
-    public static final String PACKAGE_ID = "package_id";
+    public static final String ORDER_TYPE = "order_type";
+    public static final String HISTORY = "history";
     private int orderId;
     private int apartmentId;
-    private int packageId;
-    private int moduleId;
-    private String serialPack;
+    private HistoryEntity historyEntity;
     public MediaPlayer mp1, mp2;
     private Vibrator vibrate;
     @Bind(R.id.lv_codes)
     ListView lvCode;
-
-    @Bind(R.id.edt_note)
-    EditText edtNote;
 
     @Bind(R.id.txt_code_pack)
     TextView txtCodePack;
@@ -89,21 +67,22 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
-
+    @Bind(R.id.ss_code_pack)
+    SearchableSpinner ssCodePack;
     @Bind(R.id.txt_total)
     TextView txtTotal;
 
     @Bind(R.id.txt_date_create)
     TextView txtDate;
 
-    @Bind(R.id.txt_serial_pack)
-    TextView txtSerialPack;
-
     @Bind(R.id.txt_serial_module)
     TextView txtSerialModule;
 
     @Bind(R.id.txt_floor)
     TextView txtFloor;
+
+    private int packageId;
+    private int orderType;
 
     public DetailPackageFragment() {
         // Required empty public constructor
@@ -135,23 +114,26 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
-        moduleId = getActivity().getIntent().getIntExtra(MODULE_ID, 0);
+        historyEntity = (HistoryEntity) getActivity().getIntent().getSerializableExtra(HISTORY);
         apartmentId = getActivity().getIntent().getIntExtra(APARTMENT_ID, 0);
-        packageId = getActivity().getIntent().getIntExtra(PACKAGE_ID, 0);
-        serialPack = getActivity().getIntent().getStringExtra(SERIAL_PACK);
+        orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
         initView();
         return view;
     }
 
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
-        txtSerialPack.setText(serialPack);
+        txtSerialModule.setText(historyEntity.getModule());
         mPresenter.getOrderPackaging(orderId);
-        mPresenter.getListProductHistory(packageId);
         mPresenter.getApartment(apartmentId);
-        mPresenter.getModule(moduleId);
-        mPresenter.getCodePack(serialPack);
-        mPresenter.getTotalScan(packageId);
+        mPresenter.getListCodePack(orderId, orderType, historyEntity.getProductId());
+        ssCodePack.setPrintStamp(true);
+        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
     }
 
 
@@ -220,14 +202,19 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
-    public void showTotalNumberScan(int sum) {
-        txtTotal.setText(String.valueOf(sum));
-    }
-
-    @Override
-    public void showListProductHistory(List<ProductPackagingEntity> list) {
-        adapter = new ProductHistoryAdapter(list);
+    public void showListProductHistory(PackageEntity packageEntity) {
+        if (packageEntity == null){
+            packageId = 0;
+            showError(getString(R.string.text_no_data));
+            adapter = new ProductHistoryAdapter(new ArrayList<>());
+            lvCode.setAdapter(adapter);
+            return;
+        }
+        adapter = new ProductHistoryAdapter(packageEntity.getProductPackagingEntityList());
         lvCode.setAdapter(adapter);
+        txtTotal.setText(String.valueOf(packageEntity.getTotal()));
+        txtCodePack.setText(packageEntity.getPackCode());
+        packageId = packageEntity.getPackageId();
     }
 
     @Override
@@ -242,21 +229,29 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         txtFloor.setText(apartmentName);
     }
 
-    @Override
-    public void showModuleName(String module) {
-        txtSerialModule.setText(module);
-    }
-
-    @Override
-    public void showCodePack(String codePack) {
-        txtCodePack.setText(codePack);
-    }
-
 
     @Override
     public void showOrder(SOEntity so) {
         txtCustomerName.setText(so.getCustomerName());
         txtCodeSO.setText(so.getCodeSO());
+    }
+
+    @Override
+    public void showListCodePack(List<CodePackEntity> list) {
+        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodePack.setAdapter(adapter);
+        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.getListHistoryBySerialPack(historyEntity, list.get(position).getSttPack());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -266,7 +261,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
             @Override
             public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port, 0, edtNote.getText().toString(), packageId);
+                mPresenter.saveIPAddress(ipAddress, port, 0, packageId);
                 dialog.dismiss();
             }
         });
@@ -277,7 +272,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
-
     }
 
 
@@ -289,7 +283,11 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @OnClick(R.id.btn_print)
     public void print() {
-        mPresenter.printTemp(0, edtNote.getText().toString(), packageId);
+        if (packageId == 0){
+            showError(getString(R.string.text_no_data_print));
+            return;
+        }
+        mPresenter.printTemp(0, packageId);
     }
 
 

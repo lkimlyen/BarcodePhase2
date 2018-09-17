@@ -15,17 +15,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.ScanPackagingAdapter;
+import com.demo.barcode.adapter.ModuleAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
@@ -55,7 +55,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = CreatePackagingFragment.class.getName();
     private CreatePackagingContract.Presenter mPresenter;
-    private ScanPackagingAdapter adapter;
+    private ModuleAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -63,12 +63,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
-
-    @Bind(R.id.ss_module)
-    SearchableSpinner ssModule;
-
-    @Bind(R.id.ss_code_pack)
-    SearchableSpinner ssCodePack;
 
     @Bind(R.id.ss_apartment)
     SearchableSpinner ssApartment;
@@ -86,12 +80,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     TextView txtDateScan;
 
     private Vibrator vibrate;
-    private String serialPack;
-    private String codePack;
     private int orderId = 0;
     private int apartmentId = 0;
-    private int orderType = 0;
-    private int moduleId = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -119,7 +109,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, orderId, moduleId, apartmentId, codePack, serialPack);
+                mPresenter.checkBarcode(barcode, orderId, apartmentId);
             }
         }
 
@@ -151,13 +141,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         // Vibrate for 500 milliseconds
         ssCodeSO.setPrintStamp(true);
         ssTypeProduct.setPrintStamp(true);
-        ssCodePack.setPrintStamp(true);
         ssApartment.setPrintStamp(true);
-        ssModule.setPrintStamp(true);
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null){
+                if (adapter != null) {
                     if (adapter.getCount() > 0) {
                         return true;
                     }
@@ -169,7 +157,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null){
+                if (adapter != null) {
                     if (adapter.getCount() > 0) {
                         return true;
                     }
@@ -179,22 +167,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             }
         });
 
-        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (adapter != null){
-                    if (adapter.getCount() > 0) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
         ssApartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null){
+                if (adapter != null) {
                     if (adapter.getCount() > 0) {
                         return true;
                     }
@@ -203,17 +180,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             }
         });
 
-        ssModule.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (adapter != null){
-                    if (adapter.getCount() > 0) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
@@ -223,7 +189,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
-                orderType = TypeSOManager.getInstance().getValueByPositon(position);
 
             }
 
@@ -322,9 +287,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     @Override
-    public void showListScan(RealmResults<LogScanPackaging> results) {
-        adapter = new ScanPackagingAdapter(results,
-                new ScanPackagingAdapter.OnItemClearListener() {
+    public void showListScan(RealmResults<LogListModulePagkaging> log) {
+        adapter = new ModuleAdapter(log,
+                new ModuleAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -347,23 +312,38 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                                 })
                                 .show();
                     }
-                }, new ScanPackagingAdapter.OnEditTextChangeListener() {
+                }, new ModuleAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
                 mPresenter.updateNumberScan(item.getId(), number);
             }
-        }, new ScanPackagingAdapter.onErrorListener() {
+        }, new ModuleAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
                 startMusicError();
                 turnOnVibrator();
             }
-        }
-        );
-        lvCode.setAdapter(adapter);
+        },
+                new ModuleAdapter.onPrintListener() {
+                    @Override
+                    public void onPrint(int module) {
+//                        if (!mPresenter.countListScanInPack(adapter.getCount())) {
+//                            showNotification(getString(R.string.text_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
+//                            return;
+//                        }
 
+//        if (!mPresenter.checkNumberProduct(orderId, apartmentId)) {
+//            showNotification(getString(R.string.text_quality_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
+//            return;
+//        }
+
+                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module);
+                    }
+                });
+        lvCode.setAdapter(adapter);
     }
+
 
     @Override
     public void showListSO(List<SOEntity> list) {
@@ -375,12 +355,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
-                if (orderId > 0) {
-                    mPresenter.getListApartment(orderId);
-//
-//                    if (departmentId > 0 && times > 0) {
-//                        mPresenter.getListScanStages(orderId, departmentId, times);
-//                    }
+                mPresenter.getListApartment(orderId);
+                if (apartmentId > 0) {
+                    mPresenter.getListScan(orderId, apartmentId);
+                    mPresenter.getListProduct(orderId, apartmentId);
                 }
 
 
@@ -402,7 +380,11 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 apartmentId = list.get(position).getApartmentID();
-                mPresenter.getListModule(orderId, orderType, apartmentId);
+                if (orderId > 0) {
+                    mPresenter.getListScan(orderId, apartmentId);
+                    mPresenter.getListProduct(orderId, apartmentId);
+                }
+
             }
 
             @Override
@@ -413,46 +395,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     @Override
-    public void showListModule(List<ModuleEntity> list) {
-        ArrayAdapter<ModuleEntity> adapter = new ArrayAdapter<ModuleEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssModule.setAdapter(adapter);
-        ssModule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                moduleId = list.get(position).getProductId();
-                mPresenter.getListCodePack(orderId, orderType, list.get(position).getProductId());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+    public void setHeightListView() {
+        adapter.setRefresh(true);
     }
-
-    @Override
-    public void showListCodePack(List<CodePackEntity> list) {
-        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssCodePack.setAdapter(adapter);
-        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                serialPack = list.get(position).getSttPack();
-                codePack = list.get(position).getPackCode();
-                mPresenter.getListProduct(orderId, moduleId, apartmentId, codePack, serialPack);
-                mPresenter.getListScan(orderId, moduleId, apartmentId, serialPack);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -465,7 +410,13 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (apartmentId == 0) {
+            showError(getString(R.string.text_apartment_null));
             return;
         }
 
@@ -476,7 +427,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, moduleId, apartmentId, codePack, serialPack);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, apartmentId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -494,16 +445,15 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @OnClick(R.id.img_back)
     public void back() {
-
         if (adapter != null && adapter.getCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
+                    .setContentText(getString(R.string.text_data_scan_not_print))
                     .setConfirmText(getString(R.string.text_yes))
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog();
+
                             sweetAlertDialog.dismiss();
                             getActivity().finish();
                         }
@@ -524,7 +474,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @OnClick(R.id.img_print)
     public void print() {
-        if (adapter == null){
+        if (adapter == null) {
             return;
         }
         if (!mPresenter.countListScanInPack(adapter.getCount())) {
@@ -532,18 +482,23 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             return;
         }
 
-        if (!mPresenter.checkNumberProduct(orderId, moduleId, apartmentId, serialPack)) {
-            showNotification(getString(R.string.text_quality_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
-            return;
-        }
+//        if (!mPresenter.checkNumberProduct(orderId, apartmentId)) {
+//            showNotification(getString(R.string.text_quality_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
+//            return;
+//        }
 
-        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack);
+//        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack);
     }
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        if (ssCodeSO.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+        if (orderId == 0) {
             showError(getString(R.string.text_order_id_null));
+            return;
+        }
+
+        if (apartmentId == 0) {
+            showError(getString(R.string.text_apartment_null));
             return;
         }
         integrator = new IntentIntegrator(getActivity());
@@ -556,4 +511,37 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
     }
+
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
+
 }

@@ -3,6 +3,7 @@ package com.demo.barcode.screen.print_stamp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,18 +15,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.PrintStampAdapter;
+import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -41,19 +45,17 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public static final String ORDER_ID = "order_id";
     public static final String APARTMENT_ID = "apartment_id";
     public static final String MODULE_ID = "module_id";
-    public static final String SERIAL_PACK = "serial_pack";
+    public static final String ORDER_TYPE = "order_type";
     private final String TAG = PrintStempFragment.class.getName();
     private PrintStempContract.Presenter mPresenter;
     private PrintStampAdapter adapter;
     private int orderId;
     private int apartmentId;
     private int moduleId;
+    private int orderType;
     private String serialPack;
     @Bind(R.id.lv_codes)
     ListView lvCode;
-
-    @Bind(R.id.edt_note)
-    EditText edtNote;
 
     @Bind(R.id.txt_code_pack)
     TextView txtCodePack;
@@ -70,8 +72,8 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Bind(R.id.txt_date_create)
     TextView txtDate;
 
-    @Bind(R.id.txt_serial_pack)
-    TextView txtSerialPack;
+    @Bind(R.id.ss_code_pack)
+    SearchableSpinner ssCodePack;
 
     @Bind(R.id.txt_serial_module)
     TextView txtSerialModule;
@@ -109,20 +111,25 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
         moduleId = getActivity().getIntent().getIntExtra(MODULE_ID, 0);
         apartmentId = getActivity().getIntent().getIntExtra(APARTMENT_ID, 0);
-        serialPack = getActivity().getIntent().getStringExtra(SERIAL_PACK);
+        orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
         initView();
         return view;
     }
 
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
-        txtSerialPack.setText(serialPack);
         mPresenter.getOrderPackaging(orderId);
-        mPresenter.getListScanStages(orderId, apartmentId, moduleId, serialPack);
         mPresenter.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
         mPresenter.getApartment(apartmentId);
         mPresenter.getModule(moduleId);
-        mPresenter.getCodePack(serialPack);
+        mPresenter.getListCodePack(orderId, orderType, moduleId);
+        ssCodePack.setPrintStamp(true);
+        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
     }
 
 
@@ -192,6 +199,12 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @Override
     public void showListScanPackaging(List<LogScanPackaging> list) {
+        if (list.size() == 0) {
+            adapter = new PrintStampAdapter(getContext(), new ArrayList<>());
+            lvCode.setAdapter(adapter);
+            showError(getString(R.string.text_no_data));
+            return;
+        }
         adapter = new PrintStampAdapter(getContext(), list);
         lvCode.setAdapter(adapter);
     }
@@ -203,8 +216,29 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
             @Override
             public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port, 0, edtNote.getText().toString());
+                mPresenter.saveIPAddress(ipAddress, port,orderId,apartmentId,moduleId,serialPack, 0);
                 dialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void showListCodePack(List<CodePackEntity> list) {
+        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssCodePack.setAdapter(adapter);
+        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                serialPack = list.get(position).getSttPack();
+                txtCodePack.setText(list.get(position).getPackCode());
+                mPresenter.getListScanStages(orderId, apartmentId, moduleId, serialPack);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -226,12 +260,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         txtSerialModule.setText(module);
     }
 
-    @Override
-    public void showCodePack(String codePack) {
-        txtCodePack.setText(codePack);
-    }
-
-
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -246,7 +274,16 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
-        mPresenter.printTemp(0, edtNote.getText().toString());
+        if (!TextUtils.isEmpty(serialPack)) {
+            showError(CoreApplication.getInstance().getString(R.string.text_serial_pack_null));
+            return;
+        }
+
+        if (!mPresenter.checkNumberProduct(orderId, moduleId, apartmentId, serialPack)) {
+            showError(getString(R.string.text_quality_product_not_enough_in_package));
+            return;
+        }
+        mPresenter.printTemp(orderId,apartmentId,moduleId,serialPack,0);
     }
 
     @Override

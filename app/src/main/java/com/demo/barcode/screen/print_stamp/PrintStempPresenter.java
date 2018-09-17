@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
@@ -14,18 +14,18 @@ import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
 import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
-import com.demo.barcode.manager.ListCodePackManager;
 import com.demo.barcode.manager.ListModuleManager;
+import com.demo.barcode.manager.ListModulePackagingManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,14 +41,16 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     private final String TAG = PrintStempPresenter.class.getName();
     private final PrintStempContract.View view;
     private final PostListCodeProductDetailUsecase postListCodeProductDetailUsecase;
+    private final GetCodePackUsecase getCodePackUsecase;
     private String jsonUpload;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    PrintStempPresenter(@NonNull PrintStempContract.View view, PostListCodeProductDetailUsecase postListCodeProductDetailUsecase) {
+    PrintStempPresenter(@NonNull PrintStempContract.View view, PostListCodeProductDetailUsecase postListCodeProductDetailUsecase, GetCodePackUsecase getCodePackUsecase) {
         this.view = view;
         this.postListCodeProductDetailUsecase = postListCodeProductDetailUsecase;
+        this.getCodePackUsecase = getCodePackUsecase;
     }
 
     @Inject
@@ -81,7 +83,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     @Override
     public void getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack) {
-        localRepository.getTotalScanBySerialPack(orderId,apartmentId,moduleId,serialPack).subscribe(new Action1<Integer>() {
+        localRepository.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 view.showTotalNumberScan(integer);
@@ -105,7 +107,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void printTemp(int serverId,String note) {
+    public void printTemp(int orderId, int apartmentId, int moduleId,String serialPack,int serverId) {
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
@@ -123,12 +125,12 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
                                 postListCodeProductDetailUsecase.executeIO(new PostListCodeProductDetailUsecase.RequestValue(jsonUpload, user.getId(),
-                                        note), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
+                                        null), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
                                         PostListCodeProductDetailUsecase.ErrorValue>() {
                                     @Override
                                     public void onSuccess(PostListCodeProductDetailUsecase.ResponseValue successResponse) {
 
-                                        printTemp(successResponse.getId(),note);
+                                        printTemp(orderId,apartmentId,moduleId,serialPack,successResponse.getId());
                                     }
 
                                     @Override
@@ -139,7 +141,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                                 });
 
                             } else {
-                                localRepository.updateStatusScanPackaging(serverId).subscribe(new Action1<String>() {
+                                localRepository.updateStatusScanPackaging(orderId,apartmentId,moduleId,serialPack,serverId).subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.hideProgressBar();
@@ -162,33 +164,62 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     @Override
     public void getApartment(int apartmentId) {
-        ApartmentEntity apartment= ListApartmentManager.getInstance().getApartmentById(apartmentId);
+        ApartmentEntity apartment = ListApartmentManager.getInstance().getApartmentById(apartmentId);
         view.showApartmentName(apartment.getApartmentName());
     }
 
     @Override
     public void getModule(int moduleId) {
-        ModuleEntity module= ListModuleManager.getInstance().getModuleById(moduleId);
-        view.showModuleName(module.getModuleName());
+        ListModuleEntity module = ListModulePackagingManager.getInstance().getModuleById(moduleId);
+        view.showModuleName(module.getModule());
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port,int serverId,String note) {
+    public void saveIPAddress(String ipAddress, int port,int orderId, int apartmentId, int moduleId,String serialPack, int serverId) {
         int userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                printTemp(serverId,note);
+                printTemp(orderId,apartmentId,moduleId,serialPack,serverId);
             }
         });
     }
 
     @Override
-    public void getCodePack(String serialPack) {
-        CodePackEntity codePack = ListCodePackManager.getInstance().getCodePackById(serialPack);
-        view.showCodePack(codePack.getPackCode());
+    public void getListCodePack(int orderId, int orderType, int productId) {
+        view.showProgressBar();
+        getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId, orderType, productId),
+                new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
+                        GetCodePackUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        view.showListCodePack(successResponse.getEntity());
+                    }
+
+                    @Override
+                    public void onError(GetCodePackUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
+
+    private int numberProduct = 0;
+
+    @Override
+    public boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack) {
+        numberProduct = 0;
+        localRepository.getTotalScanBySerialPack(orderId, apartmentId, productId, sttPack).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                numberProduct = integer;
+            }
+        });
+        return ListModulePackagingManager.getInstance().getPackingBySerialPack(productId, sttPack).getNumberScan() == numberProduct;
+    }
+
 
 }

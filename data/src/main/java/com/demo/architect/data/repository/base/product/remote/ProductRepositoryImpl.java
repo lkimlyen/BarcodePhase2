@@ -6,6 +6,7 @@ import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -145,6 +146,26 @@ public class ProductRepositoryImpl implements ProductRepository {
         }
     }
 
+    private void handleModulePackagingResponse(Call<BaseListResponse<ListModuleEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<ListModuleEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
     @Override
     public Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(final int orderId, final int departmentId) {
 
@@ -222,14 +243,13 @@ public class ProductRepositoryImpl implements ProductRepository {
         });
     }
     @Override
-    public Observable<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(final int orderId, final int productId, final int apartmentId, final String packCode, final String sttPack) {
+    public Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(final int orderId,final int apartmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductPackagingEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ListModuleEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseListResponse<ProductPackagingEntity>> subscriber) {
-                handleProductPackagingResponse(mRemoteApiInterface.getListProductInPackage(
-                        server + "/WS/api/GD2GetListProductInPackage", orderId, productId, apartmentId,
-                        packCode, sttPack), subscriber);
+            public void call(Subscriber<? super BaseListResponse<ListModuleEntity>> subscriber) {
+                handleModulePackagingResponse(mRemoteApiInterface.getListProductInPackage(
+                        server + "/WS/api/GD2GetListProductInPackage", orderId,  apartmentId), subscriber);
             }
         });
     }

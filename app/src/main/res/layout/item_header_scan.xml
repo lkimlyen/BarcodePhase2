@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/distance_5dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txt_module"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/distance_5dp"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="@dimen/text_14sp" />
+
+        <ImageButton
+            android:id="@+id/btn_print"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_print_blue" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <ListView
+        android:id="@+id/lv_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

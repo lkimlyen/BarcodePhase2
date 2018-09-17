@@ -3,6 +3,7 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
@@ -23,16 +24,13 @@ public class GetListProductInPackageUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         int orderId = ((RequestValue) requestValues).orderId;
-        int productId = ((RequestValue) requestValues).productId;
         int apartmentId = ((RequestValue) requestValues).apartmentId;
-        String packCode = ((RequestValue) requestValues).packCode;
-        String sttPack = ((RequestValue) requestValues).sttPack;
-        return remoteRepository.getListProductInPackage(orderId, productId, apartmentId,packCode,sttPack);
+        return remoteRepository.getListProductInPackage(orderId,  apartmentId);
     }
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseListResponse<ProductPackagingEntity>>() {
+        return new Subscriber<BaseListResponse<ListModuleEntity>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -47,10 +45,10 @@ public class GetListProductInPackageUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseListResponse<ProductPackagingEntity> data) {
+            public void onNext(BaseListResponse<ListModuleEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    List<ProductPackagingEntity> result = data.getData();
+                    List<ListModuleEntity> result = data.getData();
                     if (result != null && data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
@@ -63,30 +61,24 @@ public class GetListProductInPackageUsecase extends BaseUseCase {
 
     public static final class RequestValue implements RequestValues {
         private final int orderId;
-        private final int productId;
         private final int apartmentId;
-        private final String packCode;
-        private final String sttPack;
 
 
-        public RequestValue(int orderId, int productId, int apartmentId, String packCode, String sttPack) {
+        public RequestValue(int orderId,int apartmentId) {
             this.orderId = orderId;
-            this.productId = productId;
             this.apartmentId = apartmentId;
-            this.packCode = packCode;
-            this.sttPack = sttPack;
         }
 
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private List<ProductPackagingEntity> entity;
+        private List<ListModuleEntity> entity;
 
-        public ResponseValue(List<ProductPackagingEntity> entity) {
+        public ResponseValue(List<ListModuleEntity> entity) {
             this.entity = entity;
         }
 
-        public List<ProductPackagingEntity> getEntity() {
+        public List<ListModuleEntity> getEntity() {
             return entity;
         }
     }

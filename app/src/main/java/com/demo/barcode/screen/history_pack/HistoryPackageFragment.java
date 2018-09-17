@@ -1,48 +1,34 @@
 package com.demo.barcode.screen.history_pack;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.HistoryEntity;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.HistoryAdapter;
-import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.detail_package.DetailPackageActivity;
-import com.demo.barcode.screen.print_stamp.PrintStempActivity;
-import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.AnimatedExpandableListView;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.transform.Result;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -70,7 +56,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     TextView txtCustomerName;
 
     @Bind(R.id.lv_history)
-    AnimatedExpandableListView lvHistory;
+    ExpandableListView lvHistory;
     private int orderId = 0;
     private int apartmentId = 0;
     private int orderType = 0;
@@ -259,12 +245,12 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     @Override
     public void showListHistory(List<HistoryEntity> list) {
         HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
-        HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
-        List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
+
+
         for (HistoryEntity historyEntity : list) {
-            listContent.clear();
+            List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
             for (PackageEntity packageEntity : historyEntity.getPackageList()) {
-                map.clear();
+                HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
                 for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
                     map.put(productPackagingEntity, packageEntity);
                 }
@@ -272,15 +258,15 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             }
             hashMap.put(historyEntity, listContent);
         }
-        adapter = new HistoryAdapter(getContext(), list, hashMap);
+        adapter = new HistoryAdapter(getContext(), list, hashMap, new HistoryAdapter.OnClickPrintListener() {
+            @Override
+            public void onClickPrint(HistoryEntity historyEntity) {
+                DetailPackageActivity.start(getActivity(), orderId, apartmentId,orderType, historyEntity);
+            }
+        });
         lvHistory.setAdapter(adapter);
+
         lvHistory.setGroupIndicator(null);
-//        lvHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//               // DetailPackageActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, list.get(position).getPackageId());
-//            }
-//        });
     }
 
 

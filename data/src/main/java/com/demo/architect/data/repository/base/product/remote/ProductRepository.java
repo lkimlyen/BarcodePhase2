@@ -2,6 +2,7 @@ package com.demo.architect.data.repository.base.product.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
@@ -33,9 +34,8 @@ public interface ProductRepository {
 
     Observable<BaseResponse<Integer>> postListCodeProductDetail(String key, String json,
                                                       int userId,String note);
-    Observable<BaseListResponse<ProductPackagingEntity>> getListProductInPackage(int orderId, int productId,
-                                                                          int apartmentId, String packCode,
-                                                                          String sttPack);
+    Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(int orderId,
+                                                                           int apartmentId);
 
 
 

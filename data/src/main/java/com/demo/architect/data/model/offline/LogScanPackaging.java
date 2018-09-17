@@ -2,8 +2,8 @@ package com.demo.architect.data.model.offline;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
-import com.demo.architect.data.model.ModuleEntity;
+import com.demo.architect.data.model.ListModuleEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.utils.view.DateUtils;
@@ -48,11 +48,12 @@ public class LogScanPackaging extends RealmObject {
     private int serverId;
     private int statusScan;
     private int status;
+    private int userId;
 
     public LogScanPackaging() {
     }
 
-    public LogScanPackaging(int id, int apartmentId, int productDetailId, String codePack, String sttPack, String barcode, ProductPackagingModel productPackagingModel, int numberInput, String dateScan, int statusScan, int status) {
+    public LogScanPackaging(int id, int apartmentId, int productDetailId, String codePack, String sttPack, String barcode, ProductPackagingModel productPackagingModel, int numberInput, String dateScan, int statusScan, int status, int userId) {
         this.id = id;
         this.apartmentId = apartmentId;
         this.productDetailId = productDetailId;
@@ -64,6 +65,7 @@ public class LogScanPackaging extends RealmObject {
         this.dateScan = dateScan;
         this.statusScan = statusScan;
         this.status = status;
+        this.userId = userId;
     }
 
     public int getId() {
@@ -106,7 +108,7 @@ public class LogScanPackaging extends RealmObject {
         this.dateScan = dateScan;
     }
 
-    public static RealmResults<LogScanPackaging> getListScanPackaging(Realm realm, SOEntity soEntity, ModuleEntity moduleEntity, ApartmentEntity apartment, CodePackEntity codePack) {
+    public static RealmResults<LogListModulePagkaging> getListScanPackaging(Realm realm, SOEntity soEntity, ApartmentEntity apartment) {
 
         LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
                 .equalTo("orderId", soEntity.getOrderId()).findFirst();
@@ -126,28 +128,8 @@ public class LogScanPackaging extends RealmObject {
             realm.commitTransaction();
         }
 
-        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleEntity.getProductId())
-                .findFirst();
-        if (logListModulePagkaging == null) {
-            realm.beginTransaction();
-            logListModulePagkaging = LogListModulePagkaging.create(realm, moduleEntity);
-            RealmList<LogListModulePagkaging> logListModulePagkagings = logListFloorPagkaging.getList();
-            logListModulePagkagings.add(logListModulePagkaging);
-            realm.commitTransaction();
-        }
 
-        LogListSerialPackPagkaging logListSerialPackPagkaging = logListModulePagkaging.getList().where().equalTo("serialPack", codePack.getSttPack())
-                .equalTo("codeProduct", codePack.getPackCode()).findFirst();
-        if (logListSerialPackPagkaging == null) {
-            realm.beginTransaction();
-            logListSerialPackPagkaging = LogListSerialPackPagkaging.create(realm, codePack);
-            RealmList<LogListSerialPackPagkaging> logListSerialPackPagkagings = logListModulePagkaging.getList();
-            logListSerialPackPagkagings.add(logListSerialPackPagkaging);
-
-            realm.commitTransaction();
-        }
-        RealmResults<LogScanPackaging> results = logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
-        return results;
+        return logListFloorPagkaging.getList().where().findAll();
 
     }
 
@@ -179,6 +161,7 @@ public class LogScanPackaging extends RealmObject {
         LogScanPackaging logScanPackaging = realm.where(LogScanPackaging.class).equalTo("id", logId).findFirst();
 
         int numberCurrent = number - logScanPackaging.getNumberInput();
+        logScanPackaging.setNumberInput(number);
         ProductPackagingModel productPackagingModel = logScanPackaging.getProductPackagingModel();
         productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() + numberCurrent);
         productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
@@ -215,34 +198,39 @@ public class LogScanPackaging extends RealmObject {
         this.status = status;
     }
 
-    public static void createOrUpdateLogScanPackaging(Realm realm, ProductPackagingEntity product, String barcode, int orderId, int apartmentId, int moduleId, String packCode, String serialPack) {
+    public static void createOrUpdateLogScanPackaging(Realm realm, ListModuleEntity moduleEntity, PackageEntity packageEntity, ProductPackagingEntity productPackagingEntity, int orderId, int apartmentId, int userId) {
         LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
                 .equalTo("orderId", orderId).findFirst();
 
         LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("id", apartmentId)
                 .findFirst();
 
-        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleId)
+        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleEntity.getProductId())
                 .findFirst();
 
-        LogListSerialPackPagkaging logListSerialPackPagkaging = logListModulePagkaging.getList().where()
-                .equalTo("serialPack", serialPack)
-                .equalTo("codeProduct", packCode).findFirst();
+        if (logListModulePagkaging == null) {
+            logListModulePagkaging = LogListModulePagkaging.create(realm, moduleEntity.getModule(), moduleEntity.getProductId());
+            logListFloorPagkaging.getList().add(logListModulePagkaging);
+        }
 
-        RealmList<LogScanPackaging> parentList = logListSerialPackPagkaging.getList();
-        LogScanPackaging logScanPackaging = parentList.where().equalTo("barcode", barcode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-        ProductPackagingModel productPackagingModel = realm.where(ProductPackagingModel.class).equalTo("productId", product.getId()).equalTo("serialPack", serialPack)
+        RealmList<LogScanPackaging> parentList = logListModulePagkaging.getLogScanPackagingList();
+        LogScanPackaging logScanPackaging = parentList.where().equalTo("barcode", productPackagingEntity.getBarcode()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        ProductPackagingModel productPackagingModel = realm.where(ProductPackagingModel.class).equalTo("productDetailId", productPackagingEntity.getId()).equalTo("serialPack", packageEntity.getSerialPack())
                 .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
         if (productPackagingModel == null) {
-            productPackagingModel = new ProductPackagingModel(id(realm) + 1, product.getId(), product.getProductName(),
-                    product.getProductColor(), serialPack, product.getWidth(), product.getLength(), product.getHeight(), product.getNumber(), 0, product.getNumber(), Constants.WAITING_UPLOAD);
+            productPackagingModel = new ProductPackagingModel(id(realm) + 1, productPackagingEntity.getId(), productPackagingEntity.getProductName(),
+                    productPackagingEntity.getProductColor(), packageEntity.getSerialPack(), productPackagingEntity.getWidth(),
+                    productPackagingEntity.getLength(), productPackagingEntity.getHeight(),
+                    productPackagingEntity.getNumber(), 0, productPackagingEntity.getNumber(), Constants.WAITING_UPLOAD);
 
             productPackagingModel = realm.copyToRealm(productPackagingModel);
         }
 
         if (logScanPackaging == null) {
             //add productPackingModel
-            logScanPackaging = new LogScanPackaging(id(realm) + 1, apartmentId, product.getId(), packCode, serialPack, barcode, productPackagingModel, 1, DateUtils.getDateTimeCurrent(), Constants.INCOMPLETE, Constants.WAITING_UPLOAD);
+            logScanPackaging = new LogScanPackaging(id(realm) + 1, apartmentId, productPackagingEntity.getId(), packageEntity.getPackCode(),
+                    packageEntity.getSerialPack(), productPackagingEntity.getBarcode(), productPackagingModel, 1,
+                    DateUtils.getDateTimeCurrent(), Constants.INCOMPLETE, Constants.WAITING_UPLOAD, userId);
             logScanPackaging = realm.copyToRealm(logScanPackaging);
             parentList.add(logScanPackaging);
             logScanPackaging.setProductPackagingModel(productPackagingModel);
@@ -269,17 +257,23 @@ public class LogScanPackaging extends RealmObject {
 
         LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleId)
                 .findFirst();
-
-        LogListSerialPackPagkaging logListSerialPackPagkaging = logListModulePagkaging.getList().where().equalTo("serialPack", serialPack).findFirst();
-
-        RealmResults<LogScanPackaging> realmList = logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        RealmResults<LogScanPackaging> realmList = logListModulePagkaging.getLogScanPackagingList().where().equalTo("sttPack", serialPack).equalTo("status", Constants.WAITING_UPLOAD).findAll();
 
         return realm.copyFromRealm(realmList);
 
     }
 
-    public static void updateStatusScanPackaging(Realm realm, int serverId) {
-        RealmResults<LogScanPackaging> results = realm.where(LogScanPackaging.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+    public static void updateStatusScanPackaging(Realm realm, int orderId, int apartmentId, int moduleId,String serialPack, int serverId) {
+        LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
+                .equalTo("orderId", orderId).findFirst();
+
+        LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("id", apartmentId)
+                .findFirst();
+
+        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleId)
+                .findFirst();
+        RealmResults<LogScanPackaging> results = logListModulePagkaging.getLogScanPackagingList().where().equalTo("sttPack", serialPack).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+
         for (LogScanPackaging logScanPackaging : results) {
             logScanPackaging.setStatus(Constants.COMPLETE);
             logScanPackaging.setServerId(serverId);
@@ -296,9 +290,7 @@ public class LogScanPackaging extends RealmObject {
 
         LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleId)
                 .findFirst();
-
-        LogListSerialPackPagkaging logListSerialPackPagkaging = logListModulePagkaging.getList().where().equalTo("serialPack", serialPack).findFirst();
-        RealmResults<LogScanPackaging> results = logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        RealmResults<LogScanPackaging> results = logListModulePagkaging.getLogScanPackagingList().where().equalTo("sttPack", serialPack).equalTo("status", Constants.WAITING_UPLOAD).findAll();
 
         int sum = results.sum("numberInput").intValue();
         return sum;
@@ -318,5 +310,13 @@ public class LogScanPackaging extends RealmObject {
             logScanPackaging.setStatus(Constants.CANCEL);
             logScanPackaging.getProductPackagingModel().setStatus(Constants.CANCEL);
         }
+    }
+
+    public String getCodePack() {
+        return codePack;
+    }
+
+    public String getSttPack() {
+        return sttPack;
     }
 }

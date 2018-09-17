@@ -5,11 +5,9 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.HistoryEntity;
@@ -17,22 +15,25 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.screen.detail_package.DetailPackageActivity;
 import com.demo.barcode.widgets.AnimatedExpandableListView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HistoryAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
+public class HistoryAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<HistoryEntity> listModule;
     private HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> listProduct;
+    private OnClickPrintListener listener;
 
     public HistoryAdapter(Context context, List<HistoryEntity> listDataHeader,
-                          HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> listChildData) {
+                          HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> listChildData, OnClickPrintListener listener) {
         this.context = context;
         this.listModule = listDataHeader;
         this.listProduct = listChildData;
+        this.listener = listener;
     }
 
     @Override
@@ -47,9 +48,60 @@ public class HistoryAdapter extends AnimatedExpandableListView.AnimatedExpandabl
     }
 
     @Override
-    public View getRealChildView(int groupPosition, final int childPosition,
-                                 boolean isLastChild, View convertView, ViewGroup parent) {
+    public Object getGroup(int groupPosition) {
+        return this.listModule.get(groupPosition);
+    }
 
+    @Override
+    public int getGroupCount() {
+        return this.listModule.size();
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return this.listProduct.get(this.listModule.get(groupPosition))
+                .size();
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded,
+                             View convertView, ViewGroup parent) {
+        HistoryEntity headerContent = (HistoryEntity) getGroup(groupPosition);
+        if (convertView == null) {
+            LayoutInflater infalInflater = (LayoutInflater) this.context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.item_header_history, null);
+        }
+
+        TextView lblListHeader = (TextView) convertView
+                .findViewById(R.id.txt_module);
+        lblListHeader.setTypeface(null, Typeface.NORMAL);
+        lblListHeader.setText(String.format(CoreApplication.getInstance().getString(R.string.text_module), headerContent.getModule()));
+
+        TextView txtDate = (TextView) convertView
+                .findViewById(R.id.txt_date);
+        txtDate.setText(headerContent.getDateTime());
+
+        ImageButton btnPrint = (ImageButton) convertView.findViewById(R.id.btn_print);
+        btnPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClickPrint(headerContent);
+            }
+        });
+        ExpandableListView mExpandableListView = (ExpandableListView) parent;
+        mExpandableListView.expandGroup(groupPosition);
+
+        return convertView;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final HashMap<ProductPackagingEntity, PackageEntity> childContent = (HashMap<ProductPackagingEntity, PackageEntity>) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
@@ -83,47 +135,6 @@ public class HistoryAdapter extends AnimatedExpandableListView.AnimatedExpandabl
     }
 
     @Override
-    public int getRealChildrenCount(int groupPosition) {
-        return this.listProduct.get(this.listModule.get(groupPosition))
-                .size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        return this.listModule.get(groupPosition);
-    }
-
-    @Override
-    public int getGroupCount() {
-        return this.listModule.size();
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
-        HistoryEntity headerContent = (HistoryEntity) getGroup(groupPosition);
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.item_header_history, null);
-        }
-
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.txt_module);
-        lblListHeader.setTypeface(null, Typeface.NORMAL);
-        lblListHeader.setText(String.format(CoreApplication.getInstance().getString(R.string.text_module),headerContent.getModule()));
-        ExpandableListView mExpandableListView = (ExpandableListView) parent;
-        mExpandableListView.expandGroup(groupPosition);
-
-        return convertView;
-    }
-
-    @Override
     public boolean hasStableIds() {
         return false;
     }
@@ -131,6 +142,10 @@ public class HistoryAdapter extends AnimatedExpandableListView.AnimatedExpandabl
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public interface OnClickPrintListener {
+        void onClickPrint(HistoryEntity historyEntity);
     }
 
 }
