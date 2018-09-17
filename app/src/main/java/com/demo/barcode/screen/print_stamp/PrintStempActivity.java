@@ -20,17 +20,20 @@ public class PrintStempActivity extends BaseActivity {
     public static final String ORDER_ID = "order_id";
     public static final String APARTMENT_ID = "apartment_id";
     public static final String MODULE_ID = "module_id";
+    public static final String ORDER_TYPE = "order_type";
+
     public static final int REQUEST_CODE = 117;
     @Inject
     PrintStempPresenter PrintStempPresenter;
 
     PrintStempFragment fragment;
 
-    public static void start(Activity context, int orderId, int apartmentId, int moduleId) {
+    public static void start(Activity context, int orderId, int apartmentId, int moduleId, int orderType) {
         Intent intent = new Intent(context, PrintStempActivity.class);
         intent.putExtra(ORDER_ID, orderId);
         intent.putExtra(APARTMENT_ID, apartmentId);
         intent.putExtra(MODULE_ID, moduleId);
+        intent.putExtra(ORDER_TYPE,orderType);
         context.startActivityForResult(intent,REQUEST_CODE);
     }
 

@@ -82,6 +82,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     private Vibrator vibrate;
     private int orderId = 0;
     private int apartmentId = 0;
+    private int orderType = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -188,6 +189,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                orderType = TypeSOManager.getInstance().getValueByPositon(position);
                 mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
 
             }
@@ -338,7 +340,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 //            return;
 //        }
 
-                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module);
+                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module,orderType);
                     }
                 });
         lvCode.setAdapter(adapter);
