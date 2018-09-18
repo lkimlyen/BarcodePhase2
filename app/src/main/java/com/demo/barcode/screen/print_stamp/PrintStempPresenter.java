@@ -218,7 +218,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                 numberProduct = integer;
             }
         });
-        return ListModulePackagingManager.getInstance().getPackingBySerialPack(productId, sttPack).getNumberScan() == numberProduct;
+        return ListModulePackagingManager.getInstance().getPackingBySerialPack(productId, sttPack).getTotal() == numberProduct;
     }
 
 

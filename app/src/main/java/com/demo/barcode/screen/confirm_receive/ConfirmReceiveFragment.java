@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
@@ -68,6 +69,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
+    private boolean change;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
 
@@ -124,7 +126,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(orderId, barcode, departmentId, times, true);
+                mPresenter.checkBarcode(orderId, barcode, departmentId, times, typeScan == 2);
 
             }
         }
@@ -240,11 +242,17 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         cbConfirmAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mPresenter.confirmAll(orderId, departmentId, times);
+                if (!change) {
+                    if (isChecked) {
+                        mPresenter.confirmAll(orderId, departmentId, times);
+                    } else {
+
+                        mPresenter.cancelConfirmAll(orderId, departmentId, times);
+                    }
                 } else {
-                    mPresenter.cancelConfirmAll(orderId, departmentId, times);
+                    change = false;
                 }
+
             }
         });
     }
@@ -343,8 +351,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
-                mPresenter.getListTimes(orderId);
                 mPresenter.getListGroupCode(orderId);
+
+                if (departmentId > 0) {
+                    mPresenter.getListConfirm(orderId, departmentId, times, false);
+                }
             }
 
             @Override
@@ -384,7 +395,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
-                mPresenter.getListConfirm(orderId, departmentId);
+                mPresenter.getListConfirm(orderId, departmentId, times, false);
                 if (orderId > 0 && times > 0) {
                     mPresenter.getListConfirmByTimes(orderId, departmentId, times);
                 }
@@ -429,6 +440,40 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTimes.setAdapter(adapterTimes);
         times = 0;
         lvConfirm.setAdapter(null);
+    }
+
+    @Override
+    public void showDialogConfirm(List<ProductGroupEntity> list, int times) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_number_in_group_exceed_number_received_save_enough))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        mPresenter.saveListWithGroupCodeEnough(times, list);
+
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void setCheckedAll(boolean checkedAll) {
+        if (cbConfirmAll.isChecked() != checkedAll) {
+            change = true;
+            cbConfirmAll.setChecked(checkedAll);
+        }
+
+
     }
 
     @OnClick(R.id.ic_refresh)
@@ -493,7 +538,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times, true);
+                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times, typeScan == 2);
                         sweetAlertDialog.dismiss();
                     }
                 })

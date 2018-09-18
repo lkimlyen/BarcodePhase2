@@ -54,10 +54,13 @@ public class OrderConfirmEntity {
     @Expose
     private int numberOut;
 
-    @SerializedName("LastTimeGetData")
+    @SerializedName("State")
     @Expose
-    private String lastTimeGetData;
+    private boolean state;
 
+    @SerializedName("LastIDOutput")
+    @Expose
+    private long lastIDOutput;
     public int getMasterOutputID() {
         return masterOutputID;
     }
@@ -106,7 +109,11 @@ public class OrderConfirmEntity {
         return numberOut;
     }
 
-    public String getLastTimeGetData() {
-        return lastTimeGetData;
+    public boolean isState() {
+        return state;
+    }
+
+    public long getLastIDOutput() {
+        return lastIDOutput;
     }
 }

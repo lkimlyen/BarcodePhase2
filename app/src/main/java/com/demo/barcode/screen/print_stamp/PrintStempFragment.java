@@ -119,7 +119,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         mPresenter.getOrderPackaging(orderId);
-        mPresenter.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
+
         mPresenter.getApartment(apartmentId);
         mPresenter.getModule(moduleId);
         mPresenter.getListCodePack(orderId, orderType, moduleId);
@@ -233,6 +233,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
                 serialPack = list.get(position).getSttPack();
                 txtCodePack.setText(list.get(position).getPackCode());
                 mPresenter.getListScanStages(orderId, apartmentId, moduleId, serialPack);
+                mPresenter.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
 
             }
 
@@ -274,7 +275,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (!TextUtils.isEmpty(serialPack)) {
+        if (TextUtils.isEmpty(serialPack)) {
             showError(CoreApplication.getInstance().getString(R.string.text_serial_pack_null));
             return;
         }

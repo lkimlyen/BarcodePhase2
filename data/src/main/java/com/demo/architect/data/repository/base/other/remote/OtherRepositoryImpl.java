@@ -10,6 +10,7 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
 import java.io.File;
@@ -92,7 +93,24 @@ public class OtherRepositoryImpl implements OtherRepository {
         }
     }
 
-
+    private void handleTimesResponse(Call<BaseResponse<TimesEntity>> call, Subscriber subscriber) {
+        try {
+            BaseResponse<TimesEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
 
     private void handleUploadResponse(Call<BaseResponse<UploadEntity>> call, Subscriber subscriber) {
         try {
@@ -194,6 +212,18 @@ public class OtherRepositoryImpl implements OtherRepository {
             public void call(Subscriber<? super BaseListResponse<ApartmentEntity>> subscriber) {
                 handleApartmentResponse(mRemoteApiInterface.getApartment(
                         server + "/WS/api/GD2GetApartment",orderId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(final int orderId, final int departmentId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<TimesEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse<TimesEntity>> subscriber) {
+                handleTimesResponse(mRemoteApiInterface.getTimesInputAndOutputByDepartment(
+                        server + "/WS/api/GD2GetTimesInputAndOutputByDepartment",orderId,departmentId), subscriber);
             }
         });
     }

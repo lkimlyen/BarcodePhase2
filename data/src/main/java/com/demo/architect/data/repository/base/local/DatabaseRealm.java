@@ -15,6 +15,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
@@ -373,7 +374,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateNumberGroup( final int groupId, final int numberGroup) {
+    public void updateNumberGroup(final int groupId, final int numberGroup) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -389,7 +390,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.detachedCode(realm,list, orderId, module, userId);
+                GroupCode.detachedCode(realm, list, orderId, module, userId);
             }
         });
     }
@@ -404,12 +405,12 @@ public class DatabaseRealm {
         });
     }
 
-    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity,final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
+    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.createOrUpdateLogScanPackaging(realm, module,packageEntity,productPackagingEntity, orderId, apartmentId, userId);
+                LogScanPackaging.createOrUpdateLogScanPackaging(realm, module, packageEntity, productPackagingEntity, orderId, apartmentId, userId);
             }
         });
 
@@ -427,7 +428,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.updateStatusScanPackaging(realm,orderId,apartmentId,moduleId,serialPack, serverId);
+                LogScanPackaging.updateStatusScanPackaging(realm, orderId, apartmentId, moduleId, serialPack, serverId);
             }
         });
 
@@ -544,13 +545,12 @@ public class DatabaseRealm {
     }
 
 
-
     public void confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.confirmAllReceive(realm, orderId, departmentId,times, userId);
+                LogScanConfirm.confirmAllReceive(realm, orderId, departmentId, times, userId);
             }
         });
     }
@@ -560,8 +560,15 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.cancelConfirmAllReceive(realm, orderId, departmentId,times, userId);
+                LogScanConfirm.cancelConfirmAllReceive(realm, orderId, departmentId, times, userId);
             }
         });
     }
+
+    public boolean getCheckedConfirmAll(final int orderId, final int departmentId, final int times) {
+        Realm realm = getRealmInstance();
+        boolean b = TimesConfirm.getCheckedConfirmAll(realm, orderId, departmentId, times, userId);
+        return b;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.confirm_receive;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.app.base.BasePresenter;
@@ -36,14 +37,18 @@ public interface ConfirmReceiveContract {
 
         void clearDataNoProduct(boolean chooseType);
 
+        void showDialogConfirm(List<ProductGroupEntity> list,int times);
+
+        void setCheckedAll(boolean checkedAll);
+
     }
 
     interface Presenter extends BasePresenter {
         void getListSO(int orderType);
 
-        void getListTimes(int orderId);
+        void getListTimes(int orderId, int departmentId);
 
-        void getListConfirm(int orderId, int departmentIdOut);
+        void getListConfirm(int orderId, int departmentIdOut, int times, boolean refresh);
 
         void getListDepartment();
 
@@ -62,5 +67,8 @@ public interface ConfirmReceiveContract {
         void confirmAll(int orderId, int departmentId, int times);
 
         void cancelConfirmAll(int orderId, int departmentId, int times);
+
+        void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list);
+
     }
 }

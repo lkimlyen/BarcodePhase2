@@ -24,13 +24,17 @@ public class ListOrderConfirmManager {
         this.listOrder = listOrder;
     }
 
+    public OrderConfirmEntity getDetailByProductDetailId(int productDetailID) {
+        for (OrderConfirmEntity requestEntity : listOrder) {
+            if (requestEntity.getProductDetailID() == productDetailID) {
+                return requestEntity;
+            }
+        }
+        return null;
+    }
+
 //    public OrderConfirmEntity getOrderById(int id) {
-//        for (OrderConfirmEntity requestEntity : listOrder) {
-//            if (requestEntity.get() == id) {
-//                return requestEntity;
-//            }
-//        }
-//        return null;
+//
 //    }
 
 }

@@ -150,4 +150,5 @@ public interface LocalRepository {
     Observable<String> confirmAllProductReceive(int orderId, int departmentId, int times);
 
     Observable<String> cancelConfirmAllProductReceive(int orderId, int departmentId, int times);
+    Observable<Boolean> getCheckedConfirmAll(final int orderId, final int departmentIdOut, final int times);
 }

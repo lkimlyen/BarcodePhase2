@@ -293,7 +293,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             @Override
             public void call(Subscriber<? super BaseListResponse<String>> subscriber) {
                 handleListStringResponse(mRemoteApiInterface.getListModuleByOrder(
-                        server + "/WS/api/GD2_GetListModuleByOrder", orderId), subscriber);
+                        server + "/WS/api/GD2GetListModuleByOrder", orderId), subscriber);
             }
         });
     }

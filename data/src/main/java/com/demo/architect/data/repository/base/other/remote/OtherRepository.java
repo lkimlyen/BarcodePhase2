@@ -6,10 +6,13 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
 import java.io.File;
 
+import retrofit2.http.Field;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -26,4 +29,5 @@ public interface OtherRepository {
     Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, int orderId,
                                                        int departmentId, String fileName, int userId);
     Observable<BaseListResponse<ApartmentEntity>> getApartment(int orderId);
+    Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(int orderId, int departmentId);
 }

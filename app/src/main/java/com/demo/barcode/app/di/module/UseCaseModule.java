@@ -23,6 +23,7 @@ import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetModuleUsecase;
+import com.demo.architect.domain.GetTimesInputAndOutputByDepartmentUsecase;
 import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.PostCheckBarCodeUsecase;
@@ -168,6 +169,11 @@ public class UseCaseModule {
     @Provides
     GetListModuleByOrderUsecase provideGetListModuleByOrderUsecase(OrderRepository orderRepository) {
         return new GetListModuleByOrderUsecase(orderRepository);
+    }
+
+    @Provides
+    GetTimesInputAndOutputByDepartmentUsecase provideGetTimesInputAndOutputByDepartmentUsecase(OtherRepository otherRepository) {
+        return new GetTimesInputAndOutputByDepartmentUsecase(otherRepository);
     }
 }
 

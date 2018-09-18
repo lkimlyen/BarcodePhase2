@@ -71,7 +71,6 @@ public class ListModulePackagingManager {
         for (ListModuleEntity requestEntity : list) {
 
             if (requestEntity.getProductId() == moduleId) {
-
                 for (PackageEntity packageEntity : requestEntity.getPackageList()) {
                     if (packageEntity.getSerialPack().equals(serialPack)) {
                         return packageEntity;

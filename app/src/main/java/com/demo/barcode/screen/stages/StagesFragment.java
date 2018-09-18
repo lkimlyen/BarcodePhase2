@@ -426,7 +426,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
-                    mPresenter.getListProduct(orderId);
+                    mPresenter.getListProduct(orderId,false);
                     //mPresenter.getListTimes(orderId);
                     mPresenter.getListGroupCode(orderId);
                     if (departmentId > 0 && times > 0) {
@@ -466,8 +466,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidual(NumberInputModel numberInput, ProductEntity
-            productEntity, String barcode, int departmentId) {
+    public void showCheckResidual(int times, ProductEntity
+            productEntity, int departmentId) {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
                 .setContentText(getString(R.string.text_exceed_the_number_of_requests))
@@ -476,7 +476,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity, barcode, 1, departmentId);
+                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId);
                         sweetAlertDialog.dismiss();
 
                     }
@@ -490,6 +490,51 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 })
                 .show();
 
+    }
+
+    @Override
+    public void showCheckResidualInGroup(int times, List<ProductGroupEntity> productGroupEntityList, int departmentId) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_exceed_the_number_of_requests_in_group))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.text_title_noti))
+                                .setContentText(getString(R.string.text_get_residual_or_enough))
+                                .setConfirmText(getString(R.string.text_get_residual))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                        mPresenter.saveListWithGroupCode(times,productGroupEntityList,departmentId);
+                                        sweetAlertDialog.dismiss();
+
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_get_enough))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.saveListWithGroupCodeEnough(times,productGroupEntityList,departmentId);
+                                        sweetAlertDialog.dismiss();
+                                    }
+                                })
+                                .show();
+
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
     }
 
 
@@ -531,46 +576,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         times = 0;
         rvCode.setAdapter(null);
 
-    }
-
-    @Override
-    public void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.dialog_default_title))
-                .setContentText(getString(R.string.text_product_in_group))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        // mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, times);
-                        if (groupEntityList.size() == 1) {
-                            mPresenter.saveListWithGroupCode(numberInput, groupEntityList.get(0),
-                                    barcode, departmentId);
-                        } else {
-                            ChooseGroupDialog chooseGroupDialog = new ChooseGroupDialog();
-                            chooseGroupDialog.show(getActivity().getFragmentManager(), TAG);
-                            chooseGroupDialog.setList(groupEntityList);
-                            chooseGroupDialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
-                                @Override
-                                public void onSave(ProductGroupEntity productGroupEntity) {
-                                    mPresenter.saveListWithGroupCode(numberInput, productGroupEntity,
-                                            barcode, departmentId);
-                                }
-                            });
-                        }
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        mPresenter.saveBarcodeToDataBase(numberInput, productEntity,
-                                barcode, 1, departmentId);
-                    }
-                })
-                .show();
     }
 
 
@@ -696,7 +701,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             return;
         }
 
-        if (typeScan == 0){
+        if (typeScan == 0) {
             showError(getString(R.string.text_type_scan_null));
             return;
         }

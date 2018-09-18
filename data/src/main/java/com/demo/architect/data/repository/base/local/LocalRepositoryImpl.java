@@ -474,7 +474,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addBarcodeScanPackaging(module, packageEntity,productPackagingEntity, orderId, apartmentId);
+                    databaseRealm.addBarcodeScanPackaging(module, packageEntity, productPackagingEntity, orderId, apartmentId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -618,7 +618,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.detachedCodeStages(list,orderId, module, groupCode);
+                    databaseRealm.detachedCodeStages(list, orderId, module, groupCode);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -634,7 +634,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.removeItemInGroup( logScanStages, orderId, module);
+                    databaseRealm.removeItemInGroup(logScanStages, orderId, module);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -666,7 +666,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusScanPackaging(orderId,apartmentId,moduleId,serialPack,serverId);
+                    databaseRealm.updateStatusScanPackaging(orderId, apartmentId, moduleId, serialPack, serverId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -853,7 +853,6 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-
     @Override
     public Observable<String> updateGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
@@ -877,7 +876,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                   databaseRealm.confirmAllProductReceive(orderId,departmentId,times);
+                    databaseRealm.confirmAllProductReceive(orderId, departmentId, times);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -893,7 +892,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.cancelConfirmAllProductReceive(orderId,departmentId,times);
+                    databaseRealm.cancelConfirmAllProductReceive(orderId, departmentId, times);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -920,4 +919,19 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<Boolean> getCheckedConfirmAll(final int orderId, final int departmentIdOut, final int times) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean aBoolean = databaseRealm.getCheckedConfirmAll(orderId, departmentIdOut, times);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 }

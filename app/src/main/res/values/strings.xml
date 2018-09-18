@@ -51,8 +51,10 @@
     <string name="text_barcode_error_type">Mã quét loại này không đúng! Xin chọn mã khác!</string>
     <string name="text_barcode_error_lenght">Độ dài mã quét không đúng, Hãy kiểm tra lại!</string>
     <string name="text_number_confirm_residual">Số lượng đã nhận vượt quá số lượng giao.</string>
+    <string name="text_number_confirm_residual_in_group">Có sản phẩm trong group vượt quá số lượng đã giao</string>
     <string name="text_product_empty">Không có SP nào trong SO này, Vui lòng tải lại!</string>
     <string name="text_barcode_no_exist">Mã quét không tồn tại trong SO này! Vui lòng thử mã khác!</string>
+    <string name="text_barcode_in_group_no_exist">Có mã quét trong group không tồn tại trong SO này!</string>
     <string name="text_save_barcode_success">Hợp lệ! Lưu Thành Công</string>
     <string name="text_update_barcode_success">Chỉnh sửa Thành Công</string>
     <string name="text_add">Thêm</string>
@@ -94,6 +96,7 @@
     <string name="text_delete_pack">Bạn có muốn xóa gói này không?</string>
     <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
     <string name="text_exceed_the_number_of_requests">Số lượng bạn nhập vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
+    <string name="text_exceed_the_number_of_requests_in_group">Có số lượng sản phẩm trong group vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
     <string name="text_delete_success">Xóa thành công</string>
     <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
     <string name="text_print_pack">Bạn có muốn in gói này không?</string>
@@ -252,6 +255,13 @@
     <string name="text_incomplete_pack">Bạn chưa quét xong gói hiện tại!</string>
     <string name="text_pack_scan_enough">Gói này đã được quét đủ</string>
     <string name="text_data_scan_not_print">Còn dữ liệu chưa in, bạn có muốn thoát không?</string>
+    <string name="no_product_in_group_to_department">Không có sản phẩm nào trong nhóm đi qua công đoạn này</string>
+    <string name="text_get_residual_or_enough">Bạn muốn lấy dư hay chỉ lấy đủ số lượng đã nhận?</string>
+    <string name="text_get_residual">Lấy dư</string>
+    <string name="text_get_enough">Lấy đủ</string>
+    <string name="text_number_in_group_exceed_number_received">Số lượng trong nhóm vượt quá số lượng đã nhận!</string>
+    <string name="text_number_in_group_exceed_number_received_save_enough">Số lượng trong nhóm vượt quá số lượng đã nhận!
+    Bạn có muốn lưu số lượng vừa đủ nhận không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

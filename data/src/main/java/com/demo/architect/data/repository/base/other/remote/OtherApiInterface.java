@@ -7,6 +7,7 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
 import okhttp3.MultipartBody;
@@ -50,4 +51,9 @@ public interface OtherApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") int orderId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(@Url String url, @Field("pOrderID") int orderId
+            , @Field("pDepartmentID") int departmentId);
 }

@@ -28,10 +28,18 @@ public class ListProductManager {
     public  ProductEntity getProductById(int productId) {
         for (ProductEntity requestEntity : listProduct) {
             if (requestEntity.getProductDetailID() == productId) {
-               return requestEntity;
+                return requestEntity;
             }
         }
         return null;
     }
 
+    public  ProductEntity getProductByBarcode(String barcode) {
+        for (ProductEntity requestEntity : listProduct) {
+            if (requestEntity.getBarcode().equals(barcode)) {
+                return requestEntity;
+            }
+        }
+        return null;
+    }
 }

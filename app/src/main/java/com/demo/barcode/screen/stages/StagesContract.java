@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.GroupCodeEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
@@ -36,14 +37,15 @@ public interface StagesContract {
 
         void turnOnVibrator();
 
-        void showCheckResidual(NumberInputModel numberInput, ProductEntity
-                productEntity, String barcode, int departmentId);
+        void showCheckResidual(int times, ProductEntity
+                productEntity, int departmentId);
+
+        void showCheckResidualInGroup(int times, List<ProductGroupEntity>
+                productGroupEntityList,int departmentId);
 
         void showListTimes(List<Integer> list);
 
         void clearDataNoProduct(boolean chooseType);
-
-        void showChooseGroup(NumberInputModel numberInput, List<ProductGroupEntity> groupEntityList, ProductEntity productEntity, String barcode, int departmentId);
 
     }
 
@@ -52,7 +54,7 @@ public interface StagesContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(int orderId);
+        void getListProduct(int orderId,boolean refresh);
 
         void checkBarcode(String barcode, int departmentId, int times,boolean groupCode);
 
@@ -66,17 +68,17 @@ public interface StagesContract {
 
         void getListScanStages(int orderId, int departmentId, int times);
 
-        void getListTimes(int orderId);
+        void getListTimes(int orderId,int departmentId);
 
         void uploadDataAll(int orderId, int departmentId, int times);
 
-        void saveBarcodeToDataBase(NumberInputModel numberInput, ProductEntity
-                productEntity, String barcode,int number, int departmentId);
+        void saveBarcodeToDataBase(int times, ProductEntity
+                productEntity, int number, int departmentId);
 
         void getListGroupCode(int orderId);
 
-        void saveListWithGroupCode(NumberInputModel inputModel,ProductGroupEntity productGroupEntity,String barcode, int departmentId);
+        void saveListWithGroupCode(int times, List<ProductGroupEntity> list, int departmentId);
 
-
+        void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId);
     }
 }
