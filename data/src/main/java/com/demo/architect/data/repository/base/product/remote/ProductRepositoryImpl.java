@@ -6,6 +6,7 @@ import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -51,9 +52,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         }
     }
 
-    private void handleProductGroupResponse(Call<BaseListResponse<ProductGroupEntity>> call, Subscriber subscriber) {
+    private void handleProductGroupResponse(Call<BaseListResponse<GroupEntity>> call, Subscriber subscriber) {
         try {
-            BaseListResponse<ProductGroupEntity> response = call.execute().body();
+            BaseListResponse<GroupEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -192,11 +193,11 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ProductGroupEntity>> getListProductDetailGroup(final int orderId) {
+    public Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(final int orderId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductGroupEntity>>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<GroupEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseListResponse<ProductGroupEntity>> subscriber) {
+            public void call(Subscriber<? super BaseListResponse<GroupEntity>> subscriber) {
                 handleProductGroupResponse(mRemoteApiInterface.getListProductDetailGroup(
                         server + "/WS/api/GD2GetListProductDetailGroup", orderId), subscriber);
             }
@@ -204,19 +205,31 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseResponse> deactiveProductDetailGroup(final String key, final String groupCode, final int userId) {
+    public Observable<BaseListResponse<GroupEntity>> checkUpdateForGroup(final String json) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<GroupEntity>>() {
             @Override
-            public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.deactiveProductDetailGroup(
-                        server + "/WS/api/GD2DeactiveProductDetailGroup", key, groupCode, userId), subscriber);
+            public void call(Subscriber<? super BaseListResponse<GroupEntity>> subscriber) {
+                handleProductGroupResponse(mRemoteApiInterface.checkUpdateForGroup(
+                        server + "/WS/api/GD2CheckUpdateForGroup", json), subscriber);
             }
         });
     }
 
     @Override
-    public Observable<BaseResponse> updateProductDetailGroup(final String key, final String groupCode,
+    public Observable<BaseResponse> deactiveProductDetailGroup(final String key, final int masterGroupId, final int userId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.deactiveProductDetailGroup(
+                        server + "/WS/api/GD2DeactiveProductDetailGroup", key, masterGroupId, userId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseResponse> updateProductDetailGroup(final String key, final int masterGroupId,
                                                              final String jsonNew, final String jsonUpdate,
                                                              final String jsonDelete, final int userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
@@ -224,7 +237,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.updateProductDetailGroup(
-                        server + "/WS/api/GD2UpdateProductDetailGroup", key, groupCode,
+                        server + "/WS/api/GD2UpdateProductDetailGroup", key, masterGroupId,
                         jsonNew, jsonUpdate, jsonDelete, userId), subscriber);
             }
         });

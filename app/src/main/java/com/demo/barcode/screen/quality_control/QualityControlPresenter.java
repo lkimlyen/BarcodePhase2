@@ -20,7 +20,6 @@ import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
-import com.facebook.core.Core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -76,13 +75,6 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
 
     @Override
-    public void getListDepartment() {
-        view.showListDepartment(ListDepartmentManager.getInstance().getListDepartment(
-                UserManager.getInstance().getUser().getRole()
-        ));
-    }
-
-    @Override
     public void getListSO(int orderType) {
         view.showProgressBar();
         getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(orderType),
@@ -106,9 +98,10 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void getListProduct(int orderId, int departmentId) {
+    public void getListProduct(int orderId) {
         view.showProgressBar();
-        getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, departmentId),
+        UserEntity userEntity = UserManager.getInstance().getUser();
+        getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, userEntity.getRole()),
                 new BaseUseCase.UseCaseCallback<GetInputForProductDetailUsecase.ResponseValue,
                         GetInputForProductDetailUsecase.ErrorValue>() {
                     @Override
@@ -128,7 +121,8 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void checkBarcode(String barcode, int orderId, int departmentId) {
+    public void checkBarcode(String barcode, int orderId) {
+        UserEntity userEntity = UserManager.getInstance().getUser();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -151,8 +145,8 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
         for (ProductEntity model : list) {
             if (model.getBarcode().equals(barcode)) {
                 checkBarcode++;
-                if (model.getListDepartmentID().contains(departmentId)) {
-                    saveBarcode(orderId, departmentId, model);
+                if (model.getListDepartmentID().contains(userEntity.getRole())) {
+                    saveBarcode(orderId, userEntity.getRole(), model);
                 } else {
                     showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
                 }
@@ -167,8 +161,9 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void getListQualityControl(int orderId, int departmentId) {
-        localRepository.getListQualityControl(orderId, departmentId).subscribe(new Action1<RealmResults<QualityControlModel>>() {
+    public void getListQualityControl(int orderId) {
+        UserEntity userEntity = UserManager.getInstance().getUser();
+        localRepository.getListQualityControl(orderId, userEntity.getRole()).subscribe(new Action1<RealmResults<QualityControlModel>>() {
             @Override
             public void call(RealmResults<QualityControlModel> qualityControlModels) {
                 view.showListQualityControl(qualityControlModels);

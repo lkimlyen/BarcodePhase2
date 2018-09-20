@@ -184,7 +184,6 @@ public class LogScanConfirm extends RealmObject {
                 .equalTo("status", Constants.WAITING_UPLOAD)
                 .notEqualTo("statusConfirm", -1)
                 .greaterThan("numberConfirmed",0)
-                .greaterThan("numberScanOut",0)
                 .equalTo("userId", userId).findAll();
         return realm.copyFromRealm(results);
 

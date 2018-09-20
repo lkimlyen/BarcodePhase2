@@ -6,12 +6,10 @@ import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class LogScanStages extends RealmObject {
@@ -32,6 +30,9 @@ public class LogScanStages extends RealmObject {
     private int productDetailId;
 
     private ProductDetail productDetail;
+
+    private int masterGroupId;
+    private String groupCode;
     @Expose
     @SerializedName("pBarcode")
     private String barcode;
@@ -40,6 +41,10 @@ public class LogScanStages extends RealmObject {
     @Expose
     @SerializedName("pNumberScan")
     private int numberInput;
+
+    @Expose
+    @SerializedName("pTypeScan")
+    private Boolean typeScan;
     @Expose
     @SerializedName("pTimes")
     private int times;
@@ -56,14 +61,17 @@ public class LogScanStages extends RealmObject {
     }
 
 
-    public LogScanStages(int orderId, int departmentIdIn, int departmentIdOut, int productDetailId, String barcode, String module, int numberInput, int times, String dateScan, int userId, int numberGroup) {
+    public LogScanStages(int orderId, int departmentIdIn, int departmentIdOut, int productDetailId, int masterGroupId, String groupCode, String barcode, String module, int numberInput, Boolean typeScan, int times, String dateScan, int userId, int numberGroup) {
         this.orderId = orderId;
         this.departmentIdIn = departmentIdIn;
         this.departmentIdOut = departmentIdOut;
         this.productDetailId = productDetailId;
+        this.masterGroupId = masterGroupId;
+        this.groupCode = groupCode;
         this.barcode = barcode;
         this.module = module;
         this.numberInput = numberInput;
+        this.typeScan = typeScan;
         this.times = times;
         this.dateScan = dateScan;
         this.userId = userId;
@@ -181,6 +189,8 @@ public class LogScanStages extends RealmObject {
 
         LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
                 .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+
         RealmList<LogScanStages> parentList = parent.getList();
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", scanStages.getProductDetailId())
                 .equalTo("userId", scanStages.getUserId()).findFirst();
@@ -188,7 +198,7 @@ public class LogScanStages extends RealmObject {
             productDetail = ProductDetail.create(realm, productEntity, scanStages.userId);
         }
         LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
-                .equalTo("module", scanStages.getModule()).equalTo("times", scanStages.getTimes()).findFirst();
+                .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
         if (logScanStages == null) {
             scanStages.setProductDetail(productDetail);
             scanStages.setId(id(realm) + 1);
@@ -218,11 +228,28 @@ public class LogScanStages extends RealmObject {
 
     public static void deleteScanStages(Realm realm, int stagesId) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
-        ProductDetail productDetail = logScanStages.getProductDetail();
-        NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
-        numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() - logScanStages.getNumberInput());
-        numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
-        logScanStages.deleteFromRealm();
+
+        if (!logScanStages.getTypeScan()) {
+            RealmResults<LogScanStages> scanStages = realm.where(LogScanStages.class).equalTo("groupCode", logScanStages.getGroupCode())
+                    .equalTo("userId", logScanStages.getUserId())
+                    .findAll();
+            for (LogScanStages item : scanStages) {
+                ProductDetail productDetail = item.getProductDetail();
+                NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
+                numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() - logScanStages.getNumberInput());
+                numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+            }
+
+            scanStages.deleteAllFromRealm();
+        } else {
+            ProductDetail productDetail = logScanStages.getProductDetail();
+            NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
+            numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() - logScanStages.getNumberInput());
+            numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+            logScanStages.deleteFromRealm();
+        }
+
+
     }
 
 
@@ -235,7 +262,27 @@ public class LogScanStages extends RealmObject {
     }
 
 
+    public String getGroupCode() {
+        return groupCode;
+    }
 
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
 
+    public Boolean getTypeScan() {
+        return typeScan;
+    }
 
+    public void setTypeScan(Boolean typeScan) {
+        this.typeScan = typeScan;
+    }
+
+    public int getMasterGroupId() {
+        return masterGroupId;
+    }
+
+    public void setMasterGroupId(int masterGroupId) {
+        this.masterGroupId = masterGroupId;
+    }
 }

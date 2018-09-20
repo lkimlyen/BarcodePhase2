@@ -56,4 +56,5 @@ public interface OtherApiInterface {
     @POST
     Call<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(@Url String url, @Field("pOrderID") int orderId
             , @Field("pDepartmentID") int departmentId);
+
 }

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.ModuleEntity;
@@ -14,6 +15,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -45,10 +47,11 @@ public interface LocalRepository {
     Observable<List<MessageModel>> findAll();
 
     Observable<Integer> countLogScanStages(final int orderId, final int departmentId, final int times);
+    Observable<Integer> countAllDetailWaitingUpload(final int orderId);
 
     Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId);
 
-    Observable<List<LogScanStages>> getListLogScanStagesUpdate();
+    Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate();
 
     Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module);
 
@@ -142,6 +145,8 @@ public interface LocalRepository {
     Observable<String> updateStatusQC();
 
     Observable<String> addGroupCode(final ProductEntity productEntity);
+
+    Observable<String> addGroupScan(final List<GroupEntity> list);
 
     Observable<Boolean>  checkNumberProductInGroupCode(ProductEntity model);
 

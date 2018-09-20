@@ -3,16 +3,18 @@ package com.demo.barcode.screen.stages;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
-import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.UserEntity;
+import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
@@ -21,7 +23,7 @@ import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
-import com.demo.barcode.manager.ListProductGroupManager;
+import com.demo.barcode.manager.ListGroupManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
@@ -30,7 +32,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -49,19 +54,21 @@ public class StagesPresenter implements StagesContract.Presenter {
     private final ScanProductDetailOutUsecase scanProductDetailOutUsecase;
     private final GetListProductDetailGroupUsecase getListProductDetailGroupUsecase;
     private final GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase;
+    private final CheckUpdateForGroupUsecase checkUpdateForGroupUsecase;
 
     @Inject
     LocalRepository localRepository;
 
     @Inject
     StagesPresenter(@NonNull StagesContract.View view,
-                    GetInputForProductDetailUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase, ScanProductDetailOutUsecase scanProductDetailOutUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase, GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase) {
+                    GetInputForProductDetailUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase, ScanProductDetailOutUsecase scanProductDetailOutUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase, GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase, CheckUpdateForGroupUsecase checkUpdateForGroupUsecase) {
         this.view = view;
         this.getInputForProductDetail = getInputForProductDetail;
         this.getListSOUsecase = getListSOUsecase;
         this.scanProductDetailOutUsecase = scanProductDetailOutUsecase;
         this.getListProductDetailGroupUsecase = getListProductDetailGroupUsecase;
         this.getTimesInputAndOutputByDepartmentUsecase = getTimesInputAndOutputByDepartmentUsecase;
+        this.checkUpdateForGroupUsecase = checkUpdateForGroupUsecase;
     }
 
     @Inject
@@ -115,7 +122,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
 
-                                    saveBarcodeToDataBase(times, model, 1, departmentId);
+                                    saveBarcodeToDataBase(times, model, 1, departmentId, null, true);
 
                                 } else {
                                     view.showCheckResidual(times, model, departmentId);
@@ -133,62 +140,66 @@ public class StagesPresenter implements StagesContract.Presenter {
                     showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
                 }
             } else {
-                ProductGroupEntity groupEntity = ListProductGroupManager.getInstance().getProductById(model.getProductDetailID());
+                ProductGroupEntity groupEntity = ListGroupManager.getInstance().getProductById(model.getProductDetailID());
                 if (groupEntity == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
                     return;
                 }
 
-                List<ProductGroupEntity> productGroupList = ListProductGroupManager.getInstance().getListProductByGroupCode(groupEntity.getGroupCode());
+                GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupEntity.getGroupCode());
 
                 boolean existDepartment = false;
-                for (ProductGroupEntity item : productGroupList) {
+                for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
                     ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                    if (productEntity.getListDepartmentID().contains(departmentId)) {
-                        existDepartment = true;
-                        break;
+                    if (productEntity != null){
+                        if (productEntity.getListDepartmentID().contains(departmentId)) {
+                            existDepartment = true;
+                            break;
+                        }
                     }
+
                 }
                 allowedToSave = true;
                 if (existDepartment) {
-                    for (ProductGroupEntity item : productGroupList) {
+                    for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
                         ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                        localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
-                            @Override
-                            public void call(ProductDetail productDetail) {
-                                NumberInputModel numberInput = null;
-                                for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                                    NumberInputModel input = productDetail.getListInput().get(i);
-                                    if (input.getTimes() == times) {
-                                        numberInput = input;
-                                        break;
+                        if (productEntity != null){
+                            localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
+                                @Override
+                                public void call(ProductDetail productDetail) {
+                                    NumberInputModel numberInput = null;
+                                    for (int i = 0; i < productDetail.getListInput().size(); i++) {
+                                        NumberInputModel input = productDetail.getListInput().get(i);
+                                        if (input.getTimes() == times) {
+                                            numberInput = input;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (numberInput != null) {
-                                    if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() == item.getNumber()) {
-                                        allowedToSave = true;
+                                    if (numberInput != null) {
+                                        if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() == item.getNumber()) {
+                                            allowedToSave = true;
+                                        } else {
+                                            allowedToSave = false;
+                                            view.showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
+                                        }
                                     } else {
-                                        allowedToSave = false;
-                                        view.showCheckResidualInGroup(times, productGroupList, departmentId);
+                                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                                     }
-                                } else {
-                                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                                 }
-                            }
 
-                        });
+                            });
+                        }
+
 
                         if (!allowedToSave) {
                             return;
                         }
                     }
 
-                    saveListWithGroupCode(times, productGroupList, departmentId);
+                    saveListWithGroupCode(times, groupEntityList, departmentId);
                 } else {
                     showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
                 }
-                //  saveListWithGroupCode(numberInput, groupEntity, barcode, departmentId);
-
             }
         } else {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
@@ -216,41 +227,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void uploadData(int orderId, int departmentId, int times) {
-        view.showProgressBar();
-        localRepository.getListLogScanStagesUpdate(orderId).subscribe(new Action1<List<LogScanStages>>() {
-            @Override
-            public void call(List<LogScanStages> logScanStages) {
-                GsonBuilder builder = new GsonBuilder();
-                builder.excludeFieldsWithoutExposeAnnotation();
-                Gson gson = builder.create();
-                scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(logScanStages)),
-                        new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
-                                ScanProductDetailOutUsecase.ErrorValue>() {
-                            @Override
-                            public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
-                                view.hideProgressBar();
-                                localRepository.updateStatusScanStagesByOrder(orderId).subscribe(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
-                                        view.showSuccess(successResponse.getDescription());
-                                        getListScanStages(orderId, departmentId, times);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
-                                view.hideProgressBar();
-                                view.showError(errorResponse.getDescription());
-                            }
-                        });
-            }
-        });
-
-    }
-
-    @Override
     public void deleteScanStages(int stagesId) {
         view.showProgressBar();
         localRepository.deleteScanStages(stagesId).subscribe(new Action1<String>() {
@@ -273,7 +249,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                     view.startMusicSuccess();
                     view.turnOnVibrator();
                 }
-
                 view.hideProgressBar();
 
             }
@@ -314,49 +289,75 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void uploadDataAll(int orderId, int departmentId, int times) {
         view.showProgressBar();
-        localRepository.getListLogScanStagesUpdate().subscribe(new Action1<List<LogScanStages>>() {
+        localRepository.getListLogScanStagesUpdate().subscribe(new Action1<HashMap<List<LogScanStages>, Set<GroupScan>>>() {
             @Override
-            public void call(List<LogScanStages> logScanStages) {
-                if (logScanStages.size() == 0) {
+            public void call(HashMap<List<LogScanStages>, Set<GroupScan>> list) {
+                if (list.size() == 0) {
                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
                 }
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 Gson gson = builder.create();
-                scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(logScanStages)),
-                        new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
-                                ScanProductDetailOutUsecase.ErrorValue>() {
-                            @Override
-                            public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
-                                view.hideProgressBar();
-                                getListProduct(orderId, true);
-                                localRepository.updateStatusScanStages().subscribe(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
-                                        view.showSuccess(successResponse.getDescription());
-                                        getListScanStages(orderId, departmentId, times);
-                                    }
-                                });
-                            }
+                for (Map.Entry<List<LogScanStages>, Set<GroupScan>> map : list.entrySet()) {
+                    List<GroupScan> scanList = new ArrayList<GroupScan>(map.getValue());
+                    checkUpdateForGroupUsecase.executeIO(new CheckUpdateForGroupUsecase.RequestValue(gson.toJson(scanList)),
+                            new BaseUseCase.UseCaseCallback<CheckUpdateForGroupUsecase.ResponseValue,
+                                    CheckUpdateForGroupUsecase.ErrorValue>() {
+                                @Override
+                                public void onSuccess(CheckUpdateForGroupUsecase.ResponseValue successResponse) {
+                                    scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(map.getKey())),
+                                            new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
+                                                    ScanProductDetailOutUsecase.ErrorValue>() {
+                                                @Override
+                                                public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
+                                                    view.hideProgressBar();
+                                                    getListProduct(orderId, true);
+                                                    localRepository.updateStatusScanStages().subscribe(new Action1<String>() {
+                                                        @Override
+                                                        public void call(String s) {
+                                                            view.showSuccess(successResponse.getDescription());
+                                                            getListScanStages(orderId, departmentId, times);
+                                                        }
+                                                    });
+                                                }
 
-                            @Override
-                            public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
-                                view.hideProgressBar();
-                                view.showError(errorResponse.getDescription());
-                            }
-                        });
+                                                @Override
+                                                public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
+                                                    view.hideProgressBar();
+                                                    view.showError(errorResponse.getDescription());
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onError(CheckUpdateForGroupUsecase.ErrorValue errorResponse) {
+                                    view.showError(errorResponse.getDescription());
+                                    view.hideProgressBar();
+                                    if (errorResponse.getEntity() != null) {
+                                        ListGroupManager.getInstance().setListGroup(errorResponse.getEntity());
+                                        localRepository.addGroupScan(errorResponse.getEntity()).subscribe();
+                                    }
+                                }
+                            });
+
+                }
+
+
             }
         });
     }
 
     @Override
     public void saveBarcodeToDataBase(int times, ProductEntity
-            productEntity, int number, int departmentId) {
+            productEntity, int number, int departmentId, GroupEntity groupEntity, boolean typeScan) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
-
+        String groupCode = null;
+        if (groupEntity != null) {
+            groupCode = groupEntity.getGroupCode();
+        }
         LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), departmentId, user.getRole(), productEntity.getProductDetailID(),
-                productEntity.getBarcode(), productEntity.getModule(), number, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
+                groupEntity.getMasterGroupId(), groupCode, productEntity.getBarcode(), productEntity.getModule(), number, typeScan, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
         localRepository.addLogScanStagesAsync(logScanStages, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -378,55 +379,45 @@ public class StagesPresenter implements StagesContract.Presenter {
                     @Override
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
+                        ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
+                        localRepository.addGroupScan(successResponse.getEntity()).subscribe();
                     }
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        ListProductGroupManager.getInstance().setListProduct(new ArrayList<>());
+                        ListGroupManager.getInstance().setListGroup(new ArrayList<>());
                         //  view.showError(errorResponse.getDescription());
                     }
                 });
     }
 
     @Override
-    public void saveListWithGroupCode(int times, List<ProductGroupEntity> list, int departmentId) {
-
-        for (ProductGroupEntity item : list) {
+    public void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId) {
+        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-            saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId);
+            if (productEntity != null){
+                saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false);
+            }
 
         }
     }
 
     @Override
     public void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId) {
-        for (ProductGroupEntity item : list) {
-            final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-            localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
-                @Override
-                public void call(ProductDetail productDetail) {
-                    NumberInputModel numberInput = null;
-                    for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                        NumberInputModel input = productDetail.getListInput().get(i);
-                        if (input.getTimes() == times) {
-                            numberInput = input;
-                            break;
-                        }
-                    }
-                    if (numberInput.getNumberRest() < item.getNumber()) {
-                        saveBarcodeToDataBase(times, productEntity, numberInput.getNumberRest(), departmentId);
-                    } else {
-                        saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId);
-                    }
 
+    }
 
+    @Override
+    public void countListAllData(int orderId) {
+        localRepository.countAllDetailWaitingUpload(orderId).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                if (integer > 0) {
+                    view.showDialogUpload();
                 }
-
-            });
-
-        }
+            }
+        });
     }
 
 

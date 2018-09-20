@@ -2,6 +2,7 @@ package com.demo.architect.data.repository.base.product.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -24,11 +25,13 @@ public interface ProductRepository {
 
     Observable<BaseResponse<String>> groupProductDetail(String key, String json);
 
-    Observable<BaseListResponse<ProductGroupEntity>> getListProductDetailGroup(int orderId);
+    Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(int orderId);
 
-    Observable<BaseResponse> deactiveProductDetailGroup(String key, String groupCode, int userId);
+    Observable<BaseListResponse<GroupEntity>> checkUpdateForGroup(String json);
 
-    Observable<BaseResponse> updateProductDetailGroup(String key, String groupCode,
+    Observable<BaseResponse> deactiveProductDetailGroup(String key, int masterGroupId, int userId);
+
+    Observable<BaseResponse> updateProductDetailGroup(String key,  int masterGroupId,
                                                       String jsonNew,String jsonUpdate,
                                                       String jsonDelete,int userId);
 

@@ -2,6 +2,7 @@ package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupCodeEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
@@ -41,11 +42,13 @@ public interface StagesContract {
                 productEntity, int departmentId);
 
         void showCheckResidualInGroup(int times, List<ProductGroupEntity>
-                productGroupEntityList,int departmentId);
+                productGroupEntityList, int departmentId);
 
         void showListTimes(List<Integer> list);
 
         void clearDataNoProduct(boolean chooseType);
+
+        void showDialogUpload();
 
     }
 
@@ -54,13 +57,11 @@ public interface StagesContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(int orderId,boolean refresh);
+        void getListProduct(int orderId, boolean refresh);
 
-        void checkBarcode(String barcode, int departmentId, int times,boolean groupCode);
+        void checkBarcode(String barcode, int departmentId, int times, boolean groupCode);
 
         int countLogScanStages(int orderId, int departmentId, int times);
-
-        void uploadData(int orderId, int departmentId, int times);
 
         void deleteScanStages(int stagesId);
 
@@ -68,17 +69,19 @@ public interface StagesContract {
 
         void getListScanStages(int orderId, int departmentId, int times);
 
-        void getListTimes(int orderId,int departmentId);
+        void getListTimes(int orderId, int departmentId);
 
         void uploadDataAll(int orderId, int departmentId, int times);
 
         void saveBarcodeToDataBase(int times, ProductEntity
-                productEntity, int number, int departmentId);
+                productEntity, int number, int departmentId, GroupEntity groupEntity, boolean typeScan);
 
         void getListGroupCode(int orderId);
 
-        void saveListWithGroupCode(int times, List<ProductGroupEntity> list, int departmentId);
+        void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId);
 
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId);
+
+        void countListAllData(int orderId);
     }
 }

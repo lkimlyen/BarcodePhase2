@@ -628,11 +628,14 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             cbAll.setChecked(false);
             lvAdapter.enableSelectMode(false);
             countersToSelect.clear();
+            for (RadioButton radioButton : radioButtonList) {
+                if (radioButton.isChecked()) {
+                    radioButton.setChecked(false);
+                }
+            }
         } else {
             showError(getString(R.string.text_not_product_upload));
         }
-
-
     }
 
     @OnClick(R.id.btn_detached_code)
@@ -641,7 +644,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             showError(getString(R.string.text_module_is_empty));
             return;
         }
-
         if (countersToSelect.size() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))

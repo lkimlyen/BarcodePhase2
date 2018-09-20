@@ -447,20 +447,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
                 .setContentText(getString(R.string.text_number_in_group_exceed_number_received_save_enough))
-                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmText(getString(R.string.text_ok))
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.saveListWithGroupCodeEnough(times, list);
 
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
                     }
                 })
                 .show();
@@ -472,8 +464,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             change = true;
             cbConfirmAll.setChecked(checkedAll);
         }
-
-
     }
 
     @OnClick(R.id.ic_refresh)
@@ -530,7 +520,10 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             showError(getString(R.string.text_times_id_null));
             return;
         }
-
+        if (typeScan == 0) {
+            showError(getString(R.string.text_type_scan_null));
+            return;
+        }
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -621,6 +614,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         }
         if (times == 0) {
             showError(getString(R.string.text_times_id_null));
+            return;
+        }
+
+        if (typeScan == 0) {
+            showError(getString(R.string.text_type_scan_null));
             return;
         }
         integrator = new IntentIntegrator(getActivity());

@@ -5,6 +5,9 @@ public class Result {
     private PackageEntity packageEntity;
     private ProductPackagingEntity productPackagingEntity;
 
+    public Result() {
+    }
+
     public Result(ListModuleEntity listModuleEntity, PackageEntity packageEntity, ProductPackagingEntity productPackagingEntity) {
         this.listModuleEntity = listModuleEntity;
         this.packageEntity = packageEntity;

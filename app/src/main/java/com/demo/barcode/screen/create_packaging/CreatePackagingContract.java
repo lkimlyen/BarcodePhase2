@@ -47,7 +47,7 @@ public interface CreatePackagingContract {
 
         void getListScan(int orderId, int apartmentId);
 
-        void deleteLogScan(int id);
+        void deleteLogScan(LogScanPackaging log);
 
         void updateNumberScan(int id, int number);
 

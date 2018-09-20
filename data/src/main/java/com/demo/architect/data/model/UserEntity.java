@@ -16,6 +16,10 @@ public class UserEntity {
     @Expose
     private int role;
 
+    @SerializedName("UserType")
+    @Expose
+    private String userType;
+
     public int getId() {
         return id;
     }
@@ -26,5 +30,9 @@ public class UserEntity {
 
     public int getRole() {
         return role;
+    }
+
+    public String getUserType() {
+        return userType;
     }
 }

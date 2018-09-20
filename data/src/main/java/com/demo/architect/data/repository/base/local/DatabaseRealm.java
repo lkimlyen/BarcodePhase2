@@ -7,6 +7,7 @@ import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
@@ -17,6 +18,7 @@ import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -31,7 +33,9 @@ import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -140,15 +144,21 @@ public class DatabaseRealm {
         return count;
     }
 
+    public int countAllDetailWaitingUpload(int orderId) {
+        Realm realm = getRealmInstance();
+        final int count = LogListScanStages.countAllDetailWaitingUpload(realm, orderId, userId);
+        return count;
+    }
+
     public List<LogScanStages> getListLogScanStagesUpload(int orderId) {
         Realm realm = getRealmInstance();
         final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, userId);
         return list;
     }
 
-    public List<LogScanStages> getListLogScanStagesUpload() {
+    public HashMap<List<LogScanStages>, Set<GroupScan>> getListLogScanStagesUpload() {
         Realm realm = getRealmInstance();
-        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
+        final  HashMap<List<LogScanStages>, Set<GroupScan>> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
         return list;
     }
 
@@ -162,6 +172,16 @@ public class DatabaseRealm {
             }
         });
     }
+    public void addGroupScan(final List<GroupEntity> list) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                GroupScan.create(realm, list);
+            }
+        });
+    }
+
 
     public void updateNumberScanStages(final int stagesId, final int numberInput) {
         Realm realm = getRealmInstance();
@@ -429,6 +449,7 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 LogScanPackaging.updateStatusScanPackaging(realm, orderId, apartmentId, moduleId, serialPack, serverId);
+
             }
         });
 

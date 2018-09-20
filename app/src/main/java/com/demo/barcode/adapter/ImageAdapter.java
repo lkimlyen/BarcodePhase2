@@ -24,10 +24,6 @@ public class ImageAdapter extends RealmRecyclerViewAdapter<ImageModel, ImageAdap
     public ImageAdapter(OrderedRealmCollection<ImageModel> data, OnItemClearListener listener) {
         super(data, true);
         this.listener = listener;
-        // Only set this if the model class has a primary key that is also a integer or long.
-        // In that case, {@code getItemId(int)} must also be overridden to return the key.
-        // See https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html#hasStableIds()
-        // See https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html#getItemId(int)
         setHasStableIds(true);
     }
 

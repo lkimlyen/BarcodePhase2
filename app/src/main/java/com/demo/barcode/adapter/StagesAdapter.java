@@ -1,5 +1,6 @@
 package com.demo.barcode.adapter;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +17,6 @@ import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.util.ConvertUtils;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -26,13 +26,15 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
+    private onOpenDetailListener onOpenDetailListener;
 
     public StagesAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, StagesAdapter.onErrorListener onErrorListener) {
+                         OnEditTextChangeListener onEditTextChangeListener, StagesAdapter.onErrorListener onErrorListener, StagesAdapter.onOpenDetailListener onOpenDetailListener) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
+        this.onOpenDetailListener = onOpenDetailListener;
     }
 
 
@@ -76,7 +78,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
                         holder.edtNumberScan.setText(item.getNumberInput() + "");
-                        onErrorListener.errorListener(item, numberInput,CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
+                        onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
@@ -102,6 +104,20 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         holder.txtQuantityScan.setText(numberInputModel.getNumberSuccess() + "");
         holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
 
+        if (item.getTypeScan()){
+            holder.txtCodeGroup.setVisibility(View.GONE);
+            holder.txtCodeGroup.setOnClickListener(null);
+        }else {
+            holder.txtCodeGroup.setVisibility(View.VISIBLE);
+            holder.txtCodeGroup.setText(item.getGroupCode());
+            holder.txtCodeGroup.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+            holder.txtCodeGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   onOpenDetailListener.onOpenDetail(item.getGroupCode());
+                }
+            });
+        }
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -133,6 +149,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         TextView txtQuantityRest;
         TextView txtQuantityScan;
         EditText edtNumberScan;
+        TextView txtCodeGroup;
 
         private HistoryHolder(View v) {
             super(v);
@@ -144,6 +161,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
+            txtCodeGroup = (TextView) v.findViewById(R.id.txt_group_code);
         }
 
     }
@@ -158,5 +176,8 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
 
     public interface onErrorListener {
         void errorListener(LogScanStages item, int number, String message);
+    }
+    public interface  onOpenDetailListener{
+        void onOpenDetail(String groupCode);
     }
 }

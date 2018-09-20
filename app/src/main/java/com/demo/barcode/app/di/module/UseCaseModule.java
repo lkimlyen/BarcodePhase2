@@ -8,6 +8,7 @@ import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
+import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
 import com.demo.architect.domain.GetApartmentUsecase;
@@ -174,6 +175,11 @@ public class UseCaseModule {
     @Provides
     GetTimesInputAndOutputByDepartmentUsecase provideGetTimesInputAndOutputByDepartmentUsecase(OtherRepository otherRepository) {
         return new GetTimesInputAndOutputByDepartmentUsecase(otherRepository);
+    }
+
+    @Provides
+    CheckUpdateForGroupUsecase provideCheckUpdateForGroupUsecase(ProductRepository productRepository) {
+        return new CheckUpdateForGroupUsecase(productRepository);
     }
 }
 

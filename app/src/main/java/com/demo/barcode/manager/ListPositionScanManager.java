@@ -30,22 +30,36 @@ public class ListPositionScanManager {
     }
 
 
-    public PositionScan getPositionScanByOrderId(int orderId, int departmentId) {
+    public PositionScan getPositionScanByOrderId(int orderId, int apartmentId) {
 
-        if (list == null) {
             list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListPositionScanObject();
-        }
-        PositionScan moduleEntity = null;
+
         if (list != null){
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getOrderId() == orderId) {
-                    moduleEntity = list.get(i);
-                    break;
+                if (list.get(i).getOrderId() == orderId && list.get(i).getApartmentId() == apartmentId) {
+                    return list.get(i);
                 }
             }
         }
 
-        return moduleEntity;
+        return null;
+    }
+
+
+    public int getPositionByOrderId(int orderId, int departmentId) {
+
+
+            list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListPositionScanObject();
+
+        if (list != null){
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getOrderId() == orderId && list.get(i).getApartmentId() == departmentId) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 
 

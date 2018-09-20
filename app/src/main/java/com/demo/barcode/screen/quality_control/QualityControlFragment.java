@@ -87,9 +87,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     @Bind(R.id.lv_code)
     ListView lvCode;
 
-    @Bind(R.id.ss_department)
-    SearchableSpinner ssDepartment;
-
     @Bind(R.id.txt_date_scan)
     TextView txtDateScan;
 
@@ -120,7 +117,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, orderId, departmentId);
+                mPresenter.checkBarcode(barcode, orderId);
 
             }
         }
@@ -168,13 +165,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             }
         });
 
-        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
-
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
                 getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
         adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
@@ -191,7 +181,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
             }
         });
-        mPresenter.getListDepartment();
     }
 
 
@@ -280,31 +269,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             vibrate.vibrate(500);
         }
     }
-
-    @Override
-    public void showListDepartment(List<DepartmentEntity> list) {
-        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssDepartment.setAdapter(adapter);
-        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departmentId = list.get(position).getId();
-                if (orderId > 0) {
-                    mPresenter.getListProduct(orderId, departmentId);
-                    mPresenter.getListQualityControl(orderId, departmentId);
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
     @Override
     public void showListQualityControl(RealmResults<QualityControlModel> results) {
         adapter = new QualityControlAdapter(results, new QualityControlAdapter.OnItemClearListener() {
@@ -351,13 +315,9 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
-                if (departmentId > 0) {
-                    mPresenter.getListProduct(orderId, departmentId);
-                    if (orderId > 0){
-                        mPresenter.getListQualityControl(orderId, departmentId);
-                    }
-                }
 
+                mPresenter.getListProduct(orderId);
+                mPresenter.getListQualityControl(orderId);
 
             }
 
@@ -382,7 +342,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             return;
         }
 
-        if (departmentId == 0){
+        if (departmentId == 0) {
             showError("Bạn chưa chọn bộ phận lỗi");
             return;
         }
@@ -393,7 +353,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, departmentId);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -420,7 +380,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             return;
         }
 
-        if (departmentId == 0){
+        if (departmentId == 0) {
             showError("Bạn chưa chọn bộ phận lỗi");
             return;
         }

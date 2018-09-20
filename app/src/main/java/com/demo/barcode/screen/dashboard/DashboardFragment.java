@@ -131,20 +131,29 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Override
     public void showUser(UserEntity user) {
         txtName.setText(user.getName());
-        if (user.getRole() > 0 && user.getRole() <= 9) {
-            if (user.getRole() == 6){
-                btnGroupCode.setVisibility(View.VISIBLE);
-            }
-            txtPosition.setText("Công đoạn: " +ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
-            btnScanPackaging.setVisibility(View.GONE);
-            btnHistory.setVisibility(View.GONE);
-            if (user.getRole() == 9) {
-                btnScanPackaging.setVisibility(View.GONE);
-            }
+        if (user.getUserType().equals("SP")) {
             btnQC.setVisibility(View.GONE);
+            if (user.getRole() > 0) {
+                if (user.getRole() == 6) {
+                    btnGroupCode.setVisibility(View.VISIBLE);
+                }
+                txtPosition.setText("Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
+                btnScanPackaging.setVisibility(View.GONE);
+                btnHistory.setVisibility(View.GONE);
+                if (user.getRole() == 9) {
+                    btnScanPackaging.setVisibility(View.GONE);
+                }
+            }else {
+                btnScanStages.setVisibility(View.GONE);
+                btnConfirmreceive.setVisibility(View.GONE);
+            }
         } else {
             btnScanStages.setVisibility(View.GONE);
             btnConfirmreceive.setVisibility(View.GONE);
+            btnScanPackaging.setVisibility(View.GONE);
+            btnHistory.setVisibility(View.GONE);
+            btnGroupCode.setVisibility(View.GONE);
+            txtPosition.setText("QC Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
         }
 
     }

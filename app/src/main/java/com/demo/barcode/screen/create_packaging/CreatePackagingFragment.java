@@ -146,11 +146,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null) {
-                    if (adapter.getCount() > 0) {
-                        return true;
-                    }
-                }
                 return false;
             }
         });
@@ -158,12 +153,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null) {
-                    if (adapter.getCount() > 0) {
-                        return true;
-                    }
-                }
-
                 return false;
             }
         });
@@ -172,11 +161,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         ssApartment.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public boolean onClick() {
-                if (adapter != null) {
-                    if (adapter.getCount() > 0) {
-                        return true;
-                    }
-                }
                 return false;
             }
         });
@@ -302,7 +286,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.deleteLogScan(item.getId());
+                                        mPresenter.deleteLogScan(item);
                                     }
                                 })
                                 .setCancelText(getString(R.string.text_no))

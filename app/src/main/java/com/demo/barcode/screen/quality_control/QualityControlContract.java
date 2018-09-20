@@ -26,7 +26,6 @@ public interface QualityControlContract {
         void startMusicSuccess();
 
         void turnOnVibrator();
-        void showListDepartment(List<DepartmentEntity> list);
 
         void showListQualityControl(RealmResults<QualityControlModel> results);
         void showListSO(List<SOEntity> list);
@@ -35,16 +34,11 @@ public interface QualityControlContract {
 
     interface Presenter extends BasePresenter {
 
-        void getListDepartment();
-
         void getListSO(int orderType);
 
-        void getListProduct(int orderId,int departmentId);
-
-
-        void checkBarcode(String barcode, int orderId, int departmentId);
-
-        void getListQualityControl(int orderId, int departmentId);
+        void getListProduct(int orderId);
+        void checkBarcode(String barcode, int orderId);
+        void getListQualityControl(int orderId);
         void removeItemQualityControl(int id);
 
         void uploadData();

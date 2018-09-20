@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.product.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -31,18 +32,22 @@ public interface ProductApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ProductGroupEntity>> getListProductDetailGroup(@Url String url, @Field("pOrderID") int orderId);
+    Call<BaseListResponse<GroupEntity>> getListProductDetailGroup(@Url String url, @Field("pOrderID") int orderId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<GroupEntity>> checkUpdateForGroup(@Url String url, @Field("pJsonListGroup") String json);
 
     @FormUrlEncoded
     @POST
     Call<BaseResponse> deactiveProductDetailGroup(@Url String url, @Field("pKey") String key,
-                                                  @Field("pGroupCode") String groupCode,
+                                                  @Field("pMasterGroupID") int masterGroup,
                                                   @Field("pUserID") int userId);
 
     @FormUrlEncoded
     @POST
     Call<BaseResponse> updateProductDetailGroup(@Url String url, @Field("pKey") String key,
-                                                  @Field("pGroupCode") String groupCode,
+                                                  @Field("pMasterGroupID") int masterGroup,
                                                 @Field("pJsonNew") String jsonNew,
                                                 @Field("pJsonUpdate") String jsonUpdate,
                                                 @Field("pJsonDelete") String jsonDelete,

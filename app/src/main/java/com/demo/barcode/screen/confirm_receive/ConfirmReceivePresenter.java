@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.OrderConfirmEntity;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -19,8 +18,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListOrderConfirmManager;
-import com.demo.barcode.manager.ListProductGroupManager;
-import com.demo.barcode.manager.ListProductManager;
+import com.demo.barcode.manager.ListGroupManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.google.gson.Gson;
@@ -226,36 +224,33 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
                     }
                 } else {
-                    ProductGroupEntity productGroupEntity = ListProductGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
+                    ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
                     if (productGroupEntity == null) {
                         showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
                         return;
                     } else {
                         allowedToSave = true;
-                        List<ProductGroupEntity> productGroupEntityList = ListProductGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
+                        List<ProductGroupEntity> productGroupEntityList = ListGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
                         for (ProductGroupEntity item : productGroupEntityList) {
                             OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
-                            localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
-                                @Override
-                                public void call(LogScanConfirm logScanConfirm) {
-                                    if (logScanConfirm == null) {
-                                        allowedToSave = false;
-                                        showError(CoreApplication.getInstance().getString(R.string.text_barcode_in_group_no_exist));
-                                    } else {
+                            if (orderConfirmEntity != null) {
+                                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                                    @Override
+                                    public void call(LogScanConfirm logScanConfirm) {
                                         if (logScanConfirm.getNumberScanOut() - logScanConfirm.getNumberConfirmed() >= item.getNumber()) {
                                             if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()) {
                                                 allowedToSave = false;
                                                 view.showDialogConfirm(productGroupEntityList, times);
                                             }
                                         } else {
+                                            allowedToSave = false;
                                             view.showDialogConfirm(productGroupEntityList, times);
                                         }
 
-
                                     }
+                                });
+                            }
 
-                                }
-                            });
 
                             if (!allowedToSave) {
                                 return;
@@ -263,12 +258,15 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         }
                         for (ProductGroupEntity item : productGroupEntityList) {
                             OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
-                            localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
-                                @Override
-                                public void call(LogScanConfirm logScanConfirm) {
-                                    saveConfirm(orderId, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber());
-                                }
-                            });
+                            if (orderConfirmEntity != null) {
+                                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                                    @Override
+                                    public void call(LogScanConfirm logScanConfirm) {
+                                        saveConfirm(orderId, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber());
+                                    }
+                                });
+                            }
+
                         }
                     }
                 }
@@ -337,13 +335,13 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     @Override
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        ListProductGroupManager.getInstance().setListProduct(successResponse.getEntity());
+                        ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
                     }
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        ListProductGroupManager.getInstance().setListProduct(new ArrayList<>());
+                        ListGroupManager.getInstance().setListGroup(new ArrayList<>());
                     }
                 });
     }
@@ -383,10 +381,10 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 @Override
                 public void call(LogScanConfirm logScanConfirm) {
                     if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
-                        if (item.getNumber()+ logScanConfirm.getNumberConfirmed() > logScanConfirm.getNumberScanOut()){
+                        if (item.getNumber() + logScanConfirm.getNumberConfirmed() > logScanConfirm.getNumberScanOut()) {
                             saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, logScanConfirm.getNumberScanOut());
-                        }else {
-                            saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber()+ logScanConfirm.getNumberConfirmed());
+                        } else {
+                            saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber() + logScanConfirm.getNumberConfirmed());
                         }
                     }
 

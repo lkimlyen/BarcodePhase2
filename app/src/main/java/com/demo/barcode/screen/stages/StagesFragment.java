@@ -3,7 +3,6 @@ package com.demo.barcode.screen.stages;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,12 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,23 +25,17 @@ import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.UserEntity;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.GroupCodeContentAdapter;
 import com.demo.barcode.adapter.StagesAdapter;
-import com.demo.barcode.adapter.StagesInGroupAdapter;
+import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
-import com.demo.barcode.dialogs.ChooseGroupDialog;
+import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
-import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.capture.ScanActivity;
-import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -59,7 +48,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import io.realm.RealmList;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -125,7 +113,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 178) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("Message");
@@ -162,7 +149,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private void initView() {
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-
         // Vibrate for 500 milliseconds
         ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
             @Override
@@ -409,6 +395,13 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 }
 
             }
+        }, new StagesAdapter.onOpenDetailListener() {
+            @Override
+            public void onOpenDetail(String groupCode) {
+                DetailGroupDialog detailGroupDialog = new DetailGroupDialog();
+                detailGroupDialog.show(getActivity().getFragmentManager(),TAG);
+                detailGroupDialog.setGroupCode(groupCode);
+            }
         });
         rvCode.setAdapter(adapter);
 
@@ -426,7 +419,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
-                    mPresenter.getListProduct(orderId,false);
+                    mPresenter.getListProduct(orderId, false);
                     //mPresenter.getListTimes(orderId);
                     mPresenter.getListGroupCode(orderId);
                     if (departmentId > 0 && times > 0) {
@@ -476,7 +469,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId);
+                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId,null,typeScan == 1);
                         sweetAlertDialog.dismiss();
 
                     }
@@ -497,38 +490,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
                 .setContentText(getString(R.string.text_exceed_the_number_of_requests_in_group))
-                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmText(getString(R.string.text_ok))
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText(getString(R.string.text_title_noti))
-                                .setContentText(getString(R.string.text_get_residual_or_enough))
-                                .setConfirmText(getString(R.string.text_get_residual))
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                                        mPresenter.saveListWithGroupCode(times,productGroupEntityList,departmentId);
-                                        sweetAlertDialog.dismiss();
-
-                                    }
-                                })
-                                .setCancelText(getString(R.string.text_get_enough))
-                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        mPresenter.saveListWithGroupCodeEnough(times,productGroupEntityList,departmentId);
-                                        sweetAlertDialog.dismiss();
-                                    }
-                                })
-                                .show();
-
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
@@ -549,7 +512,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 if (orderId > 0 && departmentId > 0) {
                     mPresenter.getListScanStages(orderId, departmentId, times);
                 }
-
             }
 
             @Override
@@ -576,6 +538,29 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         times = 0;
         rvCode.setAdapter(null);
 
+    }
+
+    @Override
+    public void showDialogUpload() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_data_yesterday_not_upload))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        mPresenter.uploadDataAll(orderId, departmentId, times);
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
     }
 
 
@@ -639,7 +624,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId, departmentId, times);
+                            mPresenter.uploadDataAll(orderId, departmentId, times);
                             sweetAlertDialog.dismiss();
                         }
                     })

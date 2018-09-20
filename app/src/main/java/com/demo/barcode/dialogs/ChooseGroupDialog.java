@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -20,19 +17,14 @@ import android.widget.Toast;
 
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
-import com.demo.architect.data.model.offline.ListGroupCode;
-import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.GroupCodeContentAdapter;
-import com.demo.barcode.manager.ListProductGroupManager;
+import com.demo.barcode.manager.ListGroupManager;
 import com.demo.barcode.manager.ListProductManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import io.realm.RealmList;
 
 public class ChooseGroupDialog extends DialogFragment {
 
@@ -58,7 +50,7 @@ public class ChooseGroupDialog extends DialogFragment {
 
         LinearLayout layoutContent  =  (LinearLayout) dialog.findViewById(R.id.layoutContent);
         for (ProductGroupEntity productGroupEntity : list){
-            List<ProductGroupEntity> result = ListProductGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
+            List<ProductGroupEntity> result = ListGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
             List<ProductEntity> productEntities = new ArrayList<>();
             for (ProductGroupEntity productGroupEntity1 : result){
                 ProductEntity productEntity = ListProductManager.getInstance().getProductById(productGroupEntity1.getProductDetailID());

@@ -11,6 +11,7 @@ import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
@@ -21,6 +22,7 @@ import com.demo.architect.domain.PostCheckBarCodeUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
+import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListModulePackagingManager;
 import com.demo.barcode.manager.ListPositionScanManager;
 import com.demo.barcode.manager.ListSOManager;
@@ -140,13 +142,47 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
 
     @Override
-    public void deleteLogScan(int id) {
-        localRepository.deleteScanPackaging(id).subscribe(new Action1<String>() {
+    public void deleteLogScan(LogScanPackaging log) {
+        if (positionScan != null) {
+            ListModuleEntity listModuleEntity = ListModulePackagingManager.getInstance().getModuleById(log.getModule());
+            if (!positionScan.getModule().equals(listModuleEntity.getModule()) || !positionScan.getSerialPack().equals(log.getSttPack())) {
+                showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
+                return;
+            }
+        }
+        localRepository.deleteScanPackaging(log.getId()).subscribe(new Action1<String>() {
             @Override
-            public void call(String s) {
+            public void call(String total) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
                 view.turnOnVibrator();
                 view.startMusicSuccess();
+                localRepository.getTotalScanBySerialPack(log.getOrderId(), log.getApartmentId(), log.getModule(), log.getSttPack()).subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        List<PositionScan> list = ListPositionScanManager.getInstance().getList();
+                        if (integer == 0) {
+                            if (positionScan != null) {
+                                int position = ListPositionScanManager.getInstance().getPositionByOrderId(log.getOrderId(), log.getApartmentId());
+                                if (position > -1) {
+                                    list.remove(position);
+                                }
+                            }
+                            positionScan = null;
+                        } else {
+                            ListModuleEntity listModuleEntity = ListModulePackagingManager.getInstance().getModuleById(log.getModule());
+                            int position = ListPositionScanManager.getInstance().getPositionByOrderId(log.getOrderId(), log.getApartmentId());
+                            if (positionScan == null) {
+                                positionScan = new PositionScan(log.getOrderId(), log.getApartmentId(), listModuleEntity.getModule(), log.getSttPack(), log.getCodePack());
+                                if (position > -1) {
+                                    list.add(position, positionScan);
+                                } else {
+                                    list.add(positionScan);
+                                }
+                            }
+                        }
+                        ListPositionScanManager.getInstance().setList(list);
+                    }
+                });
             }
         });
     }
@@ -187,26 +223,35 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
         ProductPackagingEntity productPackagingEntity;
         resultFind = null;
 
-        if (resultList.size() == 1 || (positionScan == null) || (!resultList.get(0).getListModuleEntity().getModule()
-                .equals(positionScan.getModule()) && !resultList.get(0).getPackageEntity().getPackCode().equals(positionScan.getCodePack()))) {
+        if (resultList.size() == 1) {
             resultFind = resultList.get(0);
         } else {
             for (Result result : resultList) {
                 localRepository.findProductPackaging(result.getProductPackagingEntity().getId(), result.getPackageEntity().getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
                     @Override
                     public void call(ProductPackagingModel productPackagingModel) {
-                        if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
+                        if ((productPackagingModel == null || productPackagingModel.getNumberRest() > 0)&&result.getPackageEntity().getNumberScan() < result.getListModuleEntity().getNumberRequired()) {
                             resultFind = result;
+                        } else {
+                            if (positionScan != null) {
+                                if (!result.getListModuleEntity().getModule().equals(positionScan.getModule()) || !result.getPackageEntity().getSerialPack().equals(positionScan.getSerialPack())) {
+                                    resultFind =new Result();
+                                    showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
+                                }
+                            }
                         }
                     }
                 });
 
                 if (resultFind != null) {
-
                     break;
                 }
             }
 
+        }
+        if (resultFind == null){
+            showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
+            return;
         }
         packageEntity = resultFind.getPackageEntity();
         listModuleEntity = resultFind.getListModuleEntity();
@@ -303,16 +348,28 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                                 public void call(String s) {
 
                                     List<PositionScan> list = ListPositionScanManager.getInstance().getList();
-                                    int position = list.indexOf(positionScan);
-                                    positionScan = new PositionScan(orderId, apartmentId, listModuleEntity.getModule(), packageEntity.getSerialPack(), packageEntity.getPackCode());
-                                    if (position > -1){
-                                        list.add(position, positionScan);
-                                    }else {
-                                        list.add(positionScan);
-                                    }
 
+                                    localRepository.getTotalScanBySerialPack(orderId, apartmentId, listModuleEntity.getProductId(), packageEntity.getSerialPack()).subscribe(new Action1<Integer>() {
+                                        @Override
+                                        public void call(Integer integer) {
+                                            int position = ListPositionScanManager.getInstance().getPositionByOrderId(orderId, apartmentId);
+                                            if (packageEntity.getTotal() == integer) {
+                                                positionScan = null;
+                                                if (position > -1) {
+                                                    list.remove(position);
+                                                }
+                                            } else {
+                                                positionScan = new PositionScan(orderId, apartmentId, listModuleEntity.getModule(), packageEntity.getSerialPack(), packageEntity.getPackCode());
+                                                if (position > -1) {
+                                                    list.add(position, positionScan);
+                                                } else {
+                                                    list.add(positionScan);
+                                                }
+                                            }
+                                            ListPositionScanManager.getInstance().setList(list);
+                                        }
+                                    });
 
-                                    ListPositionScanManager.getInstance().setList(list);
                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                                     view.startMusicSuccess();
                                     view.turnOnVibrator();

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -130,9 +131,8 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
             }
 
             if (requestCode == REQUEST_CODE_PICK_IMAGE) {
-                Uri uri = data.getData();
-                String pathFile = uri.toString();
-                mPresenter.addImage(id, pathFile);
+                Uri uri  = data.getData();
+                mPresenter.addImage(id, getPathFromURI(uri));
             }
 
         }
@@ -452,7 +452,6 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
@@ -516,5 +515,17 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
             return;
         }
         mPresenter.save(id, Integer.parseInt(edtNumberFailed.getText().toString()), edtDescription.getText().toString(), rsAdapter.getCountersToSelect());
+    }
+
+    public String getPathFromURI(Uri contentUri) {
+        String res = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
     }
 }

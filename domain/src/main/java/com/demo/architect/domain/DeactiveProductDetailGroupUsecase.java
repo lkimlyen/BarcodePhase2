@@ -19,9 +19,9 @@ public class DeactiveProductDetailGroupUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        String groupCode = ((RequestValue) requestValues).groupCode;
+        int masterGroupId = ((RequestValue) requestValues).masterGroupId;
         int userId = ((RequestValue) requestValues).userId;
-        return remoteRepository.deactiveProductDetailGroup(Constants.KEY,groupCode,userId);
+        return remoteRepository.deactiveProductDetailGroup(Constants.KEY,masterGroupId,userId);
     }
 
     @Override
@@ -56,11 +56,11 @@ public class DeactiveProductDetailGroupUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final String groupCode;
+        private final int masterGroupId;
         private final int userId;
 
-        public RequestValue(String groupCode, int userId) {
-            this.groupCode = groupCode;
+        public RequestValue(int groupCode, int userId) {
+            this.masterGroupId = groupCode;
             this.userId = userId;
         }
     }

@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.detail_error;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
 

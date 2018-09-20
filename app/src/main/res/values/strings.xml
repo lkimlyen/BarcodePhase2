@@ -96,7 +96,7 @@
     <string name="text_delete_pack">Bạn có muốn xóa gói này không?</string>
     <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
     <string name="text_exceed_the_number_of_requests">Số lượng bạn nhập vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
-    <string name="text_exceed_the_number_of_requests_in_group">Có số lượng sản phẩm trong group vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
+    <string name="text_exceed_the_number_of_requests_in_group">Có số lượng sản phẩm trong group vượt quá số lượng yêu cầu!</string>
     <string name="text_delete_success">Xóa thành công</string>
     <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
     <string name="text_print_pack">Bạn có muốn in gói này không?</string>
@@ -260,8 +260,9 @@
     <string name="text_get_residual">Lấy dư</string>
     <string name="text_get_enough">Lấy đủ</string>
     <string name="text_number_in_group_exceed_number_received">Số lượng trong nhóm vượt quá số lượng đã nhận!</string>
-    <string name="text_number_in_group_exceed_number_received_save_enough">Số lượng trong nhóm vượt quá số lượng đã nhận!
-    Bạn có muốn lưu số lượng vừa đủ nhận không?</string>
+    <string name="text_number_in_group_exceed_number_received_save_enough">Số lượng trong nhóm vượt quá số lượng đã nhận!</string>
+    <string name="text_data_yesterday_not_upload">Còn dữ liệu chưa tải lên, bạn có muốn tải lên không?</string>
+    <string name="text_code_group">Mã nhóm:</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

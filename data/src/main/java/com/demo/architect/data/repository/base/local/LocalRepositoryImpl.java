@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.ModuleEntity;
@@ -14,6 +15,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
@@ -27,7 +29,9 @@ import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -94,6 +98,23 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<Integer> countAllDetailWaitingUpload(final int orderId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                    int count = databaseRealm.countAllDetailWaitingUpload(orderId);
+
+                    subscriber.onNext(count);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId) {
         return Observable.create(new Observable.OnSubscribe<List<LogScanStages>>() {
             @Override
@@ -110,12 +131,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanStages>> getListLogScanStagesUpdate() {
-        return Observable.create(new Observable.OnSubscribe<List<LogScanStages>>() {
+    public Observable <HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate() {
+        return Observable.create(new Observable.OnSubscribe< HashMap<List<LogScanStages>, Set<GroupScan>>>() {
             @Override
-            public void call(Subscriber<? super List<LogScanStages>> subscriber) {
+            public void call(Subscriber<? super HashMap<List<LogScanStages>, Set<GroupScan>>> subscriber) {
                 try {
-                    List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload();
+                    HashMap<List<LogScanStages>, Set<GroupScan>> list = databaseRealm.getListLogScanStagesUpload();
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -827,6 +848,22 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     databaseRealm.addGroupCode(productEntity);
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addGroupScan(final List<GroupEntity> list) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addGroupScan(list);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

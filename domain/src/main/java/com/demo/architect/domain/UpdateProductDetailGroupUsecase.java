@@ -19,12 +19,12 @@ public class UpdateProductDetailGroupUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        String groupCode = ((RequestValue) requestValues).groupCode;
+         int masterGroupId = ((RequestValue) requestValues).masterGroupId;
         String jsonNew = ((RequestValue) requestValues).jsonNew;
         String jsonUpdate = ((RequestValue) requestValues).jsonUpdate;
         String jsonDelete = ((RequestValue) requestValues).jsonDelete;
         int userId = ((RequestValue) requestValues).userId;
-        return remoteRepository.updateProductDetailGroup(Constants.KEY, groupCode,jsonNew,jsonUpdate,jsonDelete,userId);
+        return remoteRepository.updateProductDetailGroup(Constants.KEY, masterGroupId,jsonNew,jsonUpdate,jsonDelete,userId);
     }
 
     @Override
@@ -59,14 +59,14 @@ public class UpdateProductDetailGroupUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final String groupCode;
+        private final int masterGroupId;
         private final String jsonNew;
         private final String jsonUpdate;
         private final String jsonDelete;
         private final int userId;
 
-        public RequestValue(String groupCode, String jsonNew, String jsonUpdate, String jsonDelete, int userId) {
-            this.groupCode = groupCode;
+        public RequestValue(int masterGroupId, String jsonNew, String jsonUpdate, String jsonDelete, int userId) {
+            this.masterGroupId = masterGroupId;
             this.jsonNew = jsonNew;
             this.jsonUpdate = jsonUpdate;
             this.jsonDelete = jsonDelete;
