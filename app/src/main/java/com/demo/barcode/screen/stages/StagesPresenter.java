@@ -151,7 +151,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                 boolean existDepartment = false;
                 for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
                     ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                    if (productEntity != null){
+                    if (productEntity != null) {
                         if (productEntity.getListDepartmentID().contains(departmentId)) {
                             existDepartment = true;
                             break;
@@ -163,7 +163,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                 if (existDepartment) {
                     for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
                         ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                        if (productEntity != null){
+                        if (productEntity != null) {
                             localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
                                 @Override
                                 public void call(ProductDetail productDetail) {
@@ -353,11 +353,13 @@ public class StagesPresenter implements StagesContract.Presenter {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         String groupCode = null;
+        int groupCodeId = -1;
         if (groupEntity != null) {
             groupCode = groupEntity.getGroupCode();
+            groupCodeId = groupEntity.getMasterGroupId();
         }
         LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), departmentId, user.getRole(), productEntity.getProductDetailID(),
-                groupEntity.getMasterGroupId(), groupCode, productEntity.getBarcode(), productEntity.getModule(), number, typeScan, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
+                groupCodeId , groupCode, productEntity.getBarcode(), productEntity.getModule(), number, typeScan, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
         localRepository.addLogScanStagesAsync(logScanStages, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -396,7 +398,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     public void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId) {
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-            if (productEntity != null){
+            if (productEntity != null) {
                 saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false);
             }
 

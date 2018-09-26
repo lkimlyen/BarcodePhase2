@@ -36,7 +36,7 @@ public class DetailGroupDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         dialog.setContentView(R.layout.dialog_detail_group);
-
+        dialog.setCanceledOnTouchOutside(true);
         LinearLayout layoutContent = (LinearLayout) dialog.findViewById(R.id.layout_content);
         TextView txtGroupCode = (TextView) dialog.findViewById(R.id.txt_group_code);
         txtGroupCode.setText(groupCode);

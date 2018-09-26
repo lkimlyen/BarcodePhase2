@@ -21,10 +21,10 @@ public class TypeSOManager {
     public ArrayList<TypeSO> getListType() {
         listTypeSO = new ArrayList<>();
         listTypeSO.add(new TypeSO("Hàng nội thất", 1));
-        listTypeSO.add(new TypeSO("Hàng Cửa", 4));
+      //  listTypeSO.add(new TypeSO("Hàng Cửa", 4));
         listTypeSO.add(new TypeSO("Hàng Lẻ", 2));
-        listTypeSO.add(new TypeSO("Hàng Phụ Kiện", 3));
-        listTypeSO.add(new TypeSO("Hàng Phụ Kiện Cửa", 5));
+//        listTypeSO.add(new TypeSO("Hàng Phụ Kiện", 3));
+//        listTypeSO.add(new TypeSO("Hàng Phụ Kiện Cửa", 5));
         return listTypeSO;
     }
 
