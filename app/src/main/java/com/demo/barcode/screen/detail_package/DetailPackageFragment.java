@@ -51,8 +51,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     public static final String APARTMENT_ID = "apartment_id";
     public static final String ORDER_TYPE = "order_type";
     public static final String HISTORY = "history";
-    private int orderId;
-    private int apartmentId;
+    private long orderId;
+    private long apartmentId;
     private HistoryEntity historyEntity;
     public MediaPlayer mp1, mp2;
     private Vibrator vibrate;
@@ -81,7 +81,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     @Bind(R.id.txt_floor)
     TextView txtFloor;
 
-    private int packageId;
+    private long packageId;
     private int orderType;
 
     public DetailPackageFragment() {

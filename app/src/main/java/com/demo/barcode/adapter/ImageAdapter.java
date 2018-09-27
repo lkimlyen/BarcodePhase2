@@ -37,7 +37,7 @@ public class ImageAdapter extends RealmRecyclerViewAdapter<ImageModel, ImageAdap
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final ImageModel obj = getItem(position);
         holder.data = obj;
-        final int itemId = obj.getId();
+        final long itemId = obj.getId();
         File f = new File(obj.getPathFile());
         Picasso.with(CoreApplication.getInstance()).load(f).into(holder.image);
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +69,7 @@ public class ImageAdapter extends RealmRecyclerViewAdapter<ImageModel, ImageAdap
     }
 
     public interface OnItemClearListener {
-        void onItemClick(int id);
+        void onItemClick(long id);
     }
 
 }

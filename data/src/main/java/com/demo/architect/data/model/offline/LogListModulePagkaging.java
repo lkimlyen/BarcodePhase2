@@ -6,10 +6,10 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class LogListModulePagkaging extends RealmObject {
-    @PrimaryKey
-    private int id;
+   @PrimaryKey
+    private long id;
     private String module;
-    private int size;
+    private double size;
     @SuppressWarnings("unused")
     private RealmList<LogScanPackaging> logScanPackagingList;
 
@@ -17,17 +17,17 @@ public class LogListModulePagkaging extends RealmObject {
     public LogListModulePagkaging() {
     }
 
-    public LogListModulePagkaging(int id, String module, int size) {
+    public LogListModulePagkaging(long id, String module, double size) {
         this.id = id;
         this.module = module;
         this.size = size;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -39,15 +39,15 @@ public class LogListModulePagkaging extends RealmObject {
         this.module = module;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(LogListModulePagkaging.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
-    public static LogListModulePagkaging create(Realm realm, String module, int productId) {
+    public static LogListModulePagkaging create(Realm realm, String module, long productId) {
         LogListModulePagkaging log = new LogListModulePagkaging(productId, module, 0);
         log = realm.copyToRealm(log);
         return log;
@@ -62,11 +62,11 @@ public class LogListModulePagkaging extends RealmObject {
     }
 
 
-    public int getSize() {
+    public double getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(double size) {
         this.size = size;
     }
 }

@@ -13,7 +13,7 @@ public class ListModuleEntity implements Serializable {
 
     @SerializedName("ProductID")
     @Expose
-    private int productId;
+    private long productId;
 
     @SerializedName("NumberRequired")
     @Expose
@@ -26,7 +26,7 @@ public class ListModuleEntity implements Serializable {
         return module;
     }
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 

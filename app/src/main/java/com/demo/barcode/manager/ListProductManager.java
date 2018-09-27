@@ -25,7 +25,7 @@ public class ListProductManager {
         this.listProduct = listProduct;
     }
 
-    public  ProductEntity getProductById(int productId) {
+    public  ProductEntity getProductById(long productId) {
         for (ProductEntity requestEntity : listProduct) {
             if (requestEntity.getProductDetailID() == productId) {
                 return requestEntity;

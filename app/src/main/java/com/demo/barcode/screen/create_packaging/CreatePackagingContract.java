@@ -43,17 +43,17 @@ public interface CreatePackagingContract {
 
         void getListSO(int orderType);
 
-        void getListApartment(int orderId);
+        void getListApartment(long orderId);
 
-        void getListScan(int orderId, int apartmentId);
+        void getListScan(long orderId, long apartmentId);
 
         void deleteLogScan(LogScanPackaging log);
 
-        void updateNumberScan(int id, int number);
+        void updateNumberScan(long id, int number);
 
-        void checkBarcode(String barcode, int orderId, int apartmentId);
+        void checkBarcode(String barcode, long orderId, long apartmentId);
 
-        void getListProduct(int orderId, int apartmentId);
+        void getListProduct(long orderId, long apartmentId);
 
         boolean countListScanInPack(int sizeList);
 

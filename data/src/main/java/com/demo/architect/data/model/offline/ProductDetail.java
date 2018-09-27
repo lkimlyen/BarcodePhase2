@@ -9,12 +9,12 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class ProductDetail extends RealmObject {
-    @PrimaryKey
-    private int id;
-    private int productId;
+   @PrimaryKey
+    private long id;
+    private long productId;
     private String productName;
     private String productDetailCode;
-    private int userId;
+    private long userId;
     @SuppressWarnings("unused")
     private RealmList<NumberInputModel> listInput;
     private RealmList<Integer> listStages;
@@ -23,7 +23,7 @@ public class ProductDetail extends RealmObject {
     public ProductDetail() {
     }
 
-    public ProductDetail(int id, int productId, String productName, String productDetailCode, int userId) {
+    public ProductDetail(long id, long productId, String productName, String productDetailCode, long userId) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
@@ -43,15 +43,15 @@ public class ProductDetail extends RealmObject {
         return listStages;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(ProductDetail.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 
@@ -63,7 +63,7 @@ public class ProductDetail extends RealmObject {
         this.productDetailCode = productDetailCode;
     }
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 
@@ -71,7 +71,7 @@ public class ProductDetail extends RealmObject {
         return listInput;
     }
 
-    public static ProductDetail create(Realm realm, ProductEntity productEntity, int userId) {
+    public static ProductDetail create(Realm realm, ProductEntity productEntity, long userId) {
         ProductDetail productDetail = new ProductDetail(id(realm) + 1, productEntity.getProductDetailID(),
                 productEntity.getProductDetailName(), productEntity.getProductDetailCode(), userId);
         productDetail = realm.copyToRealm(productDetail);
@@ -87,7 +87,7 @@ public class ProductDetail extends RealmObject {
         return productDetail;
     }
 
-    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity, int userId) {
+    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity, long userId) {
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
                 .equalTo("userId", userId).findFirst();
         if (productDetail == null) {
@@ -106,7 +106,7 @@ public class ProductDetail extends RealmObject {
                     numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
                     numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
                     if (numberInput.getNumberWaitting() != numberInputModel.getNumberRest()) {
-                        int numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
+                        double numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
                         numberInputModel.setNumberScanned(numberScanSuccessOld);
                         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
                     }

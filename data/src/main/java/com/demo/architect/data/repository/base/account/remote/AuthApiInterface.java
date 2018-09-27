@@ -36,7 +36,7 @@ public interface AuthApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse> updateSoft(@Url String url, @Field("pAppCode") String appCode, @Field("pUserID") int userId,
+    Call<BaseListResponse> updateSoft(@Url String url, @Field("pAppCode") String appCode, @Field("pUserID") long userId,
                                       @Field("pVersion") String version, @Field("pNumberRecodeNotUpdate") int numNotUpdate,
                                       @Field("pDateServer") String dateServer,
                                       @Field("pDeviceIme") String imeDevice);

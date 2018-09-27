@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class UserEntity {
     @SerializedName("ID")
     @Expose
-    private int id;
+    private long id;
 
     @SerializedName("Name")
     @Expose
@@ -20,7 +20,7 @@ public class UserEntity {
     @Expose
     private String userType;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

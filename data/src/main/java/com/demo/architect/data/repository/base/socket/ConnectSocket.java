@@ -18,10 +18,10 @@ public class ConnectSocket extends AsyncTask<Void, Void, SocketRespone> {
     String ipAddress;
     int port;
     private Socket mSocket;
-    private int idPack;
+    private long idPack;
     private onPostExecuteResult listener;
 
-    public ConnectSocket(String addr, int port, int idPack, onPostExecuteResult listener) {
+    public ConnectSocket(String addr, int port, long idPack, onPostExecuteResult listener) {
         ipAddress = addr;
         this.port = port;
         this.idPack = idPack;
@@ -76,7 +76,7 @@ public class ConnectSocket extends AsyncTask<Void, Void, SocketRespone> {
     private void sendEvent() {
         try {
             if (mSocket != null) {
-                byte[] tmp = toByteArray(true, 1, idPack);
+                byte[] tmp = toByteArray(true, 1, (int)idPack);
                 mSocket.getOutputStream().write(tmp);
             }
 

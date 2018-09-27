@@ -8,9 +8,9 @@ import com.google.gson.annotations.Expose;
 
 public class UploadEntity {
     @Expose
-    private int ImageID;
+    private long ImageID;
 
-    public int getImageID() {
+    public long getImageID() {
         return ImageID;
     }
 

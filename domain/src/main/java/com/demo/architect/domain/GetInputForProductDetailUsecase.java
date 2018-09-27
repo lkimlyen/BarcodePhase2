@@ -21,7 +21,7 @@ public class GetInputForProductDetailUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int departmentId = ((RequestValue) requestValues).departmentId;
         return remoteRepository.getInputForProductDetail(orderId, departmentId);
     }
@@ -58,10 +58,10 @@ public class GetInputForProductDetailUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
+        private final long orderId;
         private final int departmentId;
 
-        public RequestValue(int orderId, int departmentId) {
+        public RequestValue(long orderId, int departmentId) {
             this.orderId = orderId;
             this.departmentId = departmentId;
         }

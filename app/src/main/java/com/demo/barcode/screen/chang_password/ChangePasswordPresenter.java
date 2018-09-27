@@ -53,7 +53,7 @@ public class ChangePasswordPresenter implements ChangePasswordContract.Presenter
     @Override
     public void changePass(String oldPass, String newPass) {
         view.showProgressBar();
-        int userId = UserManager.getInstance().getUser().getId();
+        long userId = UserManager.getInstance().getUser().getId();
         changePasswordUsecase.executeIO(new ChangePasswordUsecase.RequestValue(userId, oldPass, newPass),
                 new BaseUseCase.UseCaseCallback<ChangePasswordUsecase.ResponseValue,
                         ChangePasswordUsecase.ErrorValue>() {

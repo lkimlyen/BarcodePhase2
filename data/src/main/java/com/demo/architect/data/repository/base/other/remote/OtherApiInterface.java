@@ -50,11 +50,11 @@ public interface OtherApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") int orderId);
+    Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") long orderId);
 
     @FormUrlEncoded
     @POST
-    Call<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(@Url String url, @Field("pOrderID") int orderId
+    Call<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(@Url String url, @Field("pOrderID") long orderId
             , @Field("pDepartmentID") int departmentId);
 
 }

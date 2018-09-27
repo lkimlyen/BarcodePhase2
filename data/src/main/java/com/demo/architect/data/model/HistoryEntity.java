@@ -13,7 +13,7 @@ public class HistoryEntity implements Serializable {
 
     @SerializedName("ProductID")
     @Expose
-    private int productId;
+    private long productId;
 
     @SerializedName("CustomerName")
     @Expose
@@ -31,7 +31,7 @@ public class HistoryEntity implements Serializable {
         return module;
     }
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 

@@ -1,13 +1,13 @@
 package com.demo.architect.data.model;
 
 public class PositionScan {
-    private int orderId;
-    private int apartmentId;
+    private long orderId;
+    private long apartmentId;
     private String module;
     private String serialPack;
     private String codePack;
 
-    public PositionScan(int orderId, int apartmentId, String module, String serialPack, String codePack) {
+    public PositionScan(long orderId, long apartmentId, String module, String serialPack, String codePack) {
         this.orderId = orderId;
         this.apartmentId = apartmentId;
         this.module = module;
@@ -27,11 +27,11 @@ public class PositionScan {
         return codePack;
     }
 
-    public int getApartmentId() {
+    public long getApartmentId() {
         return apartmentId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 }

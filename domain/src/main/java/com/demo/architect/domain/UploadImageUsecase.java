@@ -27,10 +27,10 @@ public class UploadImageUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         File file = ((RequestValue) requestValues).file;
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int departmentId = ((RequestValue) requestValues).departmentId;
         String fileName = ((RequestValue) requestValues).fileName;
-        int userId = ((RequestValue) requestValues).userId;
+        long userId = ((RequestValue) requestValues).userId;
         return otherRepository.uploadImage(file, Constants.KEY, orderId,departmentId,fileName,userId);
     }
 
@@ -54,7 +54,7 @@ public class UploadImageUsecase extends BaseUseCase {
             public void onNext(BaseResponse<UploadEntity> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
-                    int result = data.getData().getImageID();
+                    long result = data.getData().getImageID();
                     if (data.getStatus() == 1) {
                         useCaseCallback.onSuccess(new ResponseValue(result));
                     } else {
@@ -67,12 +67,12 @@ public class UploadImageUsecase extends BaseUseCase {
 
     public static final class RequestValue implements RequestValues {
         private final File file;
-        private final int orderId;
+        private final long orderId;
         private final int departmentId;
         private final String fileName;
-        private final int userId;
+        private final long userId;
 
-        public RequestValue(File file, int orderId, int departmentId, String fileName, int userId) {
+        public RequestValue(File file, long orderId, int departmentId, String fileName, long userId) {
             this.file = file;
             this.orderId = orderId;
             this.departmentId = departmentId;
@@ -82,13 +82,13 @@ public class UploadImageUsecase extends BaseUseCase {
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private final int  imageId;
+        private final long  imageId;
 
-        public ResponseValue(int imageId) {
+        public ResponseValue(long imageId) {
             this.imageId = imageId;
         }
 
-        public int getImageId() {
+        public long getImageId() {
             return imageId;
         }
     }

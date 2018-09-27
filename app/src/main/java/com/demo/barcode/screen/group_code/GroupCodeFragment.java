@@ -69,12 +69,12 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     private Set<String> countersToSelect = new HashSet<String>();
     private List<RadioButton> radioButtonList = new ArrayList<>();
     private HashMap<String, List<ImageButton>> deleteButtonList = new HashMap<>();
-    private HashMap<Integer, ProductGroupEntity> productUpdateList = new HashMap<>();
+    private HashMap<Long, ProductGroupEntity> productUpdateList = new HashMap<>();
     private HashMap<String, List<EditText>> editTextList = new HashMap<>();
     private HashMap<String, List<TextView>> textViewList = new HashMap<>();
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
-    private int orderId = 0;
+    private long orderId = 0;
     private String module;
 
     public MediaPlayer mp1, mp2;

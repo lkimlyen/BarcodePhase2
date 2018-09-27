@@ -46,101 +46,101 @@ public interface LocalRepository {
 
     Observable<List<MessageModel>> findAll();
 
-    Observable<Integer> countLogScanStages(final int orderId, final int departmentId, final int times);
-    Observable<Integer> countAllDetailWaitingUpload(final int orderId);
+    Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times);
+    Observable<Integer> countAllDetailWaitingUpload(final long orderId);
 
-    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId);
+    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId);
 
     Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate();
 
-    Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module);
+    Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module);
 
-    Observable<RealmResults<GroupCode>> getListGroupCodeScan(final int orderId, String module);
+    Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId, String module);
 
 
     Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
 
     Observable<ProductDetail> getProductDetail(ProductEntity productEntity);
 
-    Observable<String> updateNumberScanStages(final int stagesId, final int numberInput);
+    Observable<String> updateNumberScanStages(final long stagesId, final double numberInput);
 
-    Observable<String> deleteScanStages(final int stagesId);
+    Observable<String> deleteScanStages(final long stagesId);
 
-    Observable<LogListScanStages> getListScanStagseByDepartment(final int orderId, int departmentId, int userId, int times);
+    Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, int departmentId, long userId, int times);
 
     Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
 
-    Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut, final int times);
+    Observable<RealmResults<LogScanConfirm>> getListConfirm(final long orderId, final int departmentIdOut, final int times);
 
-    Observable<Integer> countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times);
+    Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times);
 
     Observable<List<LogScanConfirm>> getListLogScanConfirm();
 
-    Observable<LogScanConfirm> findConfirmByBarcode(final int orderId, int departmentIdOut, int times, final String barcode);
+    Observable<LogScanConfirm> findConfirmByBarcode(final long orderId, int departmentIdOut, int times, final String barcode);
 
-    Observable<String> updateNumnberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan);
+    Observable<String> updateNumnberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan);
 
     Observable<String> updateStatusLogConfirm();
 
-    Observable<String> updateStatusScanStagesByOrder(int orderId);
+    Observable<String> updateStatusScanStagesByOrder(long orderId);
 
     Observable<String> updateStatusScanStages();
 
-    Observable<String> updateStatusAndServerIdImage(final int id, final int imageId, int serverId);
+    Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, long serverId);
 
-    Observable<String> addImageModel(final int id, final String pathFile);
+    Observable<String> addImageModel(final long id, final String pathFile);
 
-    Observable<String> deleteImageModel(final int id);
+    Observable<String> deleteImageModel(final long id);
 
     Observable<RealmResults<LogListModulePagkaging>> getListScanPackaging(SOEntity soEntity,ApartmentEntity apartment);
 
-    Observable<List<LogScanPackaging>> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack);
+    Observable<List<LogScanPackaging>> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPack);
 
 
 
-    Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentI);
+    Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentI);
 
-    Observable<String> deleteScanPackaging(int logId);
+    Observable<String> deleteScanPackaging(long logId);
 
-    Observable<String> updateNumberScanPackaging(int logId, int number);
+    Observable<String> updateNumberScanPackaging(long logId, double number);
 
-    Observable<ProductPackagingModel> findProductPackaging(int productId, String serialPack);
+    Observable<ProductPackagingModel> findProductPackaging(long productId, String serialPack);
 
-    Observable<LogListOrderPackaging> findOrderPackaging(int orderId);
+    Observable<LogListOrderPackaging> findOrderPackaging(long orderId);
 
-    Observable<Integer> getTotalScanBySerialPack(final int orderId, final int apartmentId, final int moduleId, final String serialPack);
+    Observable<Integer> getTotalScanBySerialPack(final long orderId, final long apartmentId, final long moduleId, final String serialPack);
 
-    Observable<String> addGroupCode(String groupCode, int orderId,String module, GroupCode[] listSelect);
+    Observable<String> addGroupCode(String groupCode, long orderId,String module, GroupCode[] listSelect);
 
     Observable<String> addGroupCode(String groupCode,  LogScanStages logScanStages,ProductEntity productEntity);
 
-    Observable<Boolean> updateNumberGroup(int groupId, int numberGroup);
+    Observable<Boolean> updateNumberGroup(long groupId, double numberGroup);
 
-    Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, int orderId, final String module,  String groupCode);
+    Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, long orderId, final String module,  String groupCode);
 
-    Observable<String> removeItemInGroup(ProductGroupEntity logScanStages, int orderId, final String module);
+    Observable<String> removeItemInGroup(ProductGroupEntity logScanStages, long orderId, final String module);
 
     Observable<IPAddress> findIPAddress();
 
     Observable<IPAddress> insertOrUpdateIpAddress(final IPAddress model);
 
-    Observable<String> updateStatusScanPackaging(int orderId, int apartmentId, int moduleId,String serialPack,int serverId);
+    Observable<String> updateStatusScanPackaging(long orderId, long apartmentId, long moduleId,String serialPack,long serverId);
 
     Observable<String> deleteAllItemLogScanPackaging();
 
-    Observable<RealmResults<QualityControlModel>> getListQualityControl(int orderId, int departmentId);
+    Observable<RealmResults<QualityControlModel>> getListQualityControl(long orderId, int departmentId);
 
-    Observable<QualityControlModel> getDetailQualityControl(int id);
+    Observable<QualityControlModel> getDetailQualityControl(long id);
 
-    Observable<RealmList<Integer>> getListReasonQualityControl(int id);
+    Observable<RealmList<Integer>> getListReasonQualityControl(long id);
 
-    Observable<String> saveBarcodeQC(int orderId, int departmentId, ProductEntity productEntity);
+    Observable<String> saveBarcodeQC(long orderId, int departmentId, ProductEntity productEntity);
 
-    Observable<String> updateDetailErrorQC(int id, int numberFailed, String description, Collection<Integer> idList);
+    Observable<String> updateDetailErrorQC(long id, double numberFailed, String description, Collection<Integer> idList);
 
     Observable<List<QualityControlModel>> getListQualityControlUpload();
 
-    Observable<String> updateImageIdAndStatus(int qcId, int id, int imageId);
+    Observable<String> updateImageIdAndStatus(long qcId, long id, long imageId);
 
     Observable<String> updateStatusQC();
 
@@ -150,10 +150,10 @@ public interface LocalRepository {
 
     Observable<Boolean>  checkNumberProductInGroupCode(ProductEntity model);
 
-    Observable<String> updateGroupCode(String groupCode, int orderId,  String module, GroupCode[] listSelect);
+    Observable<String> updateGroupCode(String groupCode, long orderId,  String module, GroupCode[] listSelect);
 
-    Observable<String> confirmAllProductReceive(int orderId, int departmentId, int times);
+    Observable<String> confirmAllProductReceive(long orderId, int departmentId, int times);
 
-    Observable<String> cancelConfirmAllProductReceive(int orderId, int departmentId, int times);
-    Observable<Boolean> getCheckedConfirmAll(final int orderId, final int departmentIdOut, final int times);
+    Observable<String> cancelConfirmAllProductReceive(long orderId, int departmentId, int times);
+    Observable<Boolean> getCheckedConfirmAll(final long orderId, final int departmentIdOut, final int times);
 }

@@ -14,7 +14,7 @@ import rx.Observable;
 public interface AuthRepository {
     Observable<BaseResponse<UserEntity>> login(String type, String username, String password);
     Observable<BaseListResponse> changePassword(String userId, String oldPass, String newPass);
-    Observable<BaseListResponse> updateSoft(String appCode, int userId, String version, int numNotUpdate,
+    Observable<BaseListResponse> updateSoft(String appCode, long userId, String version, int numNotUpdate,
                                             String dateServer, String ime);
     Observable<UpdateAppResponse> getUpdateVersionACR();
     Observable<String> getDateServer();

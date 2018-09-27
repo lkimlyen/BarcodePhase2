@@ -23,7 +23,7 @@ public class PostCheckBarCodeUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int productId = ((RequestValue) requestValues).productId;
         int apartmentId = ((RequestValue) requestValues).apartmentId;
         String packCode = ((RequestValue) requestValues).packCode;
@@ -64,7 +64,7 @@ public class PostCheckBarCodeUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
+        private final long orderId;
         private final int productId;
         private final int apartmentId;
         private final String packCode;
@@ -72,7 +72,7 @@ public class PostCheckBarCodeUsecase extends BaseUseCase {
         private final String code;
 
 
-        public RequestValue(int orderId, int productId, int apartmentId, String packCode, String sttPack, String code) {
+        public RequestValue(long orderId, int productId, int apartmentId, String packCode, String sttPack, String code) {
             this.orderId = orderId;
             this.productId = productId;
             this.apartmentId = apartmentId;

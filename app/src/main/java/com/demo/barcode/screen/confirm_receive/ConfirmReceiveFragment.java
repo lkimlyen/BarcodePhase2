@@ -98,7 +98,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     CheckBox cbConfirmAll;
     private int typeScan = 0;
     private Vibrator vibrate;
-    private int orderId = 0;
+    private long orderId = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 

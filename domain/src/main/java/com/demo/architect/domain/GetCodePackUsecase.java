@@ -22,9 +22,9 @@ public class GetCodePackUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int orderType = ((RequestValue) requestValues).orderType;
-        int productId = ((RequestValue) requestValues).productId;
+        long productId = ((RequestValue) requestValues).productId;
         return remoteRepository.getCodePack(orderId, orderType, productId);
     }
 
@@ -60,11 +60,11 @@ public class GetCodePackUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
+        private final long orderId;
         private final int orderType;
-        private final int productId;
+        private final long productId;
 
-        public RequestValue(int orderId, int departmentIdIn, int productId) {
+        public RequestValue(long orderId, int departmentIdIn, long productId) {
             this.orderId = orderId;
             this.orderType = departmentIdIn;
             this.productId = productId;

@@ -132,7 +132,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public Observable<BaseListResponse> updateSoft(final String appCode, final int userId, final String version, final int numNotUpdate, final String dateServer, final String ime) {
+    public Observable<BaseListResponse> updateSoft(final String appCode, final long userId, final String version, final int numNotUpdate, final String dateServer, final String ime) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override

@@ -26,7 +26,7 @@ public class ListGroupManager {
         this.listGroup = listGroup;
     }
 
-    public ProductGroupEntity getProductById(int productId) {
+    public ProductGroupEntity getProductById(long productId) {
         for (GroupEntity requestEntity : listGroup) {
             for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()){
                 if (productGroupEntity.getProductDetailID() == productId) {

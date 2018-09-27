@@ -46,30 +46,30 @@ public interface GroupCodeContract {
     }
 
     interface Presenter extends BasePresenter {
-        void getListModule(int orderId);
+        void getListModule(long orderId);
 
-        void groupCode(int orderId, String module, Collection<GroupCode> list);
+        void groupCode(long orderId, String module, Collection<GroupCode> list);
 
-        void getListGroupCode(int orderId, String module);
+        void getListGroupCode(long orderId, String module);
 
-        void getGroupCodeScanList(int orderId, String module);
+        void getGroupCodeScanList(long orderId, String module);
 
-        void updateGroupCode(String groupCode, int orderId, String module, Collection<GroupCode> list);
+        void updateGroupCode(String groupCode, long orderId, String module, Collection<GroupCode> list);
 
-        void updateNumberInGroup(String group, int orderId, String module,Collection<ProductGroupEntity> listUpdate);
+        void updateNumberInGroup(String group, long orderId, String module,Collection<ProductGroupEntity> listUpdate);
 
-        void updateNumberGroup(int productId, int groupId, int numberGroup);
+        void updateNumberGroup(long productId, long groupId, double numberGroup);
 
-        void detachedCode(int orderId, String module, String groupCode);
+        void detachedCode(long orderId, String module, String groupCode);
 
-        void removeItemInGroup(ProductGroupEntity logScanStages, int orderId, String module);
+        void removeItemInGroup(ProductGroupEntity logScanStages, long orderId, String module);
 
         void getListSO(int orderType);
 
-        void getListProduct(int orderId);
+        void getListProduct(long orderId);
 
         void checkBarcode(String barcode, String module);
 
-        void getListProductDetailInGroupCode(int orderId, String module);
+        void getListProductDetailInGroupCode(long orderId, String module);
     }
 }

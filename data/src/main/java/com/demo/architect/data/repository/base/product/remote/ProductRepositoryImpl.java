@@ -168,7 +168,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
 
     @Override
-    public Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(final int orderId, final int departmentId) {
+    public Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(final long orderId, final int departmentId) {
 
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductEntity>>() {
@@ -193,7 +193,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(final int orderId) {
+    public Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(final long orderId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<GroupEntity>>() {
             @Override
@@ -217,7 +217,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseResponse> deactiveProductDetailGroup(final String key, final int masterGroupId, final int userId) {
+    public Observable<BaseResponse> deactiveProductDetailGroup(final String key, final long masterGroupId, final long userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
@@ -229,9 +229,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseResponse> updateProductDetailGroup(final String key, final int masterGroupId,
+    public Observable<BaseResponse> updateProductDetailGroup(final String key, final long masterGroupId,
                                                              final String jsonNew, final String jsonUpdate,
-                                                             final String jsonDelete, final int userId) {
+                                                             final String jsonDelete, final long userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
@@ -244,7 +244,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Observable<BaseResponse<Integer>> postListCodeProductDetail(final String key, final String json, final int userId, final String note) {
+    public Observable<BaseResponse<Integer>> postListCodeProductDetail(final String key, final String json, final long userId, final String note) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse<Integer>>() {
             @Override
@@ -256,7 +256,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         });
     }
     @Override
-    public Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(final int orderId,final int apartmentId) {
+    public Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(final long orderId,final long apartmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ListModuleEntity>>() {
             @Override

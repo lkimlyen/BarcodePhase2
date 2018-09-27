@@ -46,27 +46,27 @@ public interface ConfirmReceiveContract {
     interface Presenter extends BasePresenter {
         void getListSO(int orderType);
 
-        void getListTimes(int orderId, int departmentId);
+        void getListTimes(long orderId, int departmentId);
 
-        void getListConfirm(int orderId, int departmentIdOut, int times, boolean refresh);
+        void getListConfirm(long orderId, int departmentIdOut, int times, boolean refresh);
 
         void getListDepartment();
 
-        void getListConfirmByTimes(int orderId, int deparmentId, int times);
+        void getListConfirmByTimes(long orderId, int deparmentId, int times);
 
-        int countListConfirmByTimesWaitingUpload(int orderId, int deparmentId, int times);
+        int countListConfirmByTimesWaitingUpload(long orderId, int deparmentId, int times);
 
-        void checkBarcode(int orderId, String barcode, int departmentId, int times, boolean groupCode);
+        void checkBarcode(long orderId, String barcode, int departmentId, int times, boolean groupCode);
 
-        void updateNumberConfirm(int orderId, int masterOutputId, int departmentIdOut, int times, int numberScan);
+        void updateNumberConfirm(long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
 
-        void uploadData(int orderId, int departmentIdOut, int times);
+        void uploadData(long orderId, int departmentIdOut, int times);
 
-        void getListGroupCode(int orderId);
+        void getListGroupCode(long orderId);
 
-        void confirmAll(int orderId, int departmentId, int times);
+        void confirmAll(long orderId, int departmentId, int times);
 
-        void cancelConfirmAll(int orderId, int departmentId, int times);
+        void cancelConfirmAll(long orderId, int departmentId, int times);
 
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list);
 

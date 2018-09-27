@@ -215,7 +215,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     private int count = 0;
 
     @Override
-    public int countLogScanStages(int orderId, int departmentId, int times) {
+    public int countLogScanStages(long orderId, int departmentId, int times) {
         localRepository.countLogScanStages(orderId, departmentId, times).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
@@ -227,7 +227,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void deleteScanStages(int stagesId) {
+    public void deleteScanStages(long stagesId) {
         view.showProgressBar();
         localRepository.deleteScanStages(stagesId).subscribe(new Action1<String>() {
             @Override
@@ -239,7 +239,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void updateNumberScanStages(int stagesId, int numberInput, boolean update) {
+    public void updateNumberScanStages(long stagesId, double numberInput, boolean update) {
         view.showProgressBar();
         localRepository.updateNumberScanStages(stagesId, numberInput).subscribe(new Action1<String>() {
             @Override
@@ -256,7 +256,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void getListScanStages(int orderId, int departmentId, int times) {
+    public void getListScanStages(long orderId, int departmentId, int times) {
         localRepository.getListScanStagseByDepartment(orderId, departmentId, UserManager.getInstance().getUser().getId(), times)
                 .subscribe(new Action1<LogListScanStages>() {
                     @Override
@@ -268,7 +268,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void getListTimes(int orderId, int departmentId) {
+    public void getListTimes(long orderId, int departmentId) {
         view.showProgressBar();
         getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, departmentId),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
@@ -287,7 +287,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void uploadDataAll(int orderId, int departmentId, int times) {
+    public void uploadDataAll(long orderId, int departmentId, int times) {
         view.showProgressBar();
         localRepository.getListLogScanStagesUpdate().subscribe(new Action1<HashMap<List<LogScanStages>, Set<GroupScan>>>() {
             @Override
@@ -349,11 +349,11 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveBarcodeToDataBase(int times, ProductEntity
-            productEntity, int number, int departmentId, GroupEntity groupEntity, boolean typeScan) {
+            productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         String groupCode = null;
-        int groupCodeId = -1;
+        long groupCodeId = -1;
         if (groupEntity != null) {
             groupCode = groupEntity.getGroupCode();
             groupCodeId = groupEntity.getMasterGroupId();
@@ -373,7 +373,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void getListGroupCode(int orderId) {
+    public void getListGroupCode(long orderId) {
         view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,
@@ -411,7 +411,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void countListAllData(int orderId) {
+    public void countListAllData(long orderId) {
         localRepository.countAllDetailWaitingUpload(orderId).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
@@ -457,7 +457,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void getListProduct(int orderId, boolean refresh) {
+    public void getListProduct(long orderId, boolean refresh) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),

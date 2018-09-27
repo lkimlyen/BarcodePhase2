@@ -8,7 +8,7 @@ import java.util.List;
 public class ProductEntity {
     @SerializedName("OrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("DepartmentID")
     @Expose
@@ -16,7 +16,7 @@ public class ProductEntity {
 
     @SerializedName("ProductDetailID")
     @Expose
-    private int productDetailID;
+    private long productDetailID;
 
     @SerializedName("ProductDetailName")
     @Expose
@@ -36,7 +36,7 @@ public class ProductEntity {
 
     @SerializedName("NumberTotalOrder")
     @Expose
-    private int numberTotalOrder;
+    private double numberTotalOrder;
 
     @SerializedName("TimesOutput")
     @Expose
@@ -53,7 +53,7 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
@@ -61,7 +61,7 @@ public class ProductEntity {
         return departmentID;
     }
 
-    public int getProductDetailID() {
+    public long getProductDetailID() {
         return productDetailID;
     }
 
@@ -77,7 +77,7 @@ public class ProductEntity {
         return barcode;
     }
 
-    public int getNumberTotalOrder() {
+    public double getNumberTotalOrder() {
         return numberTotalOrder;
     }
 

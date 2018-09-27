@@ -28,7 +28,7 @@ public class PrintStempActivity extends BaseActivity {
 
     PrintStempFragment fragment;
 
-    public static void start(Activity context, int orderId, int apartmentId, int moduleId, int orderType) {
+    public static void start(Activity context, long orderId, long apartmentId, long moduleId, int orderType) {
         Intent intent = new Intent(context, PrintStempActivity.class);
         intent.putExtra(ORDER_ID, orderId);
         intent.putExtra(APARTMENT_ID, apartmentId);

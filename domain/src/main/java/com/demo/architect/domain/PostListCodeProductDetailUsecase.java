@@ -20,7 +20,7 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         String json = ((RequestValue) requestValues).json;
-        int userId = ((RequestValue) requestValues).userId;
+        long userId = ((RequestValue) requestValues).userId;
         String note = ((RequestValue) requestValues).note;
         return remoteRepository.postListCodeProductDetail(Constants.KEY, json, userId, note);
     }
@@ -58,10 +58,10 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
 
     public static final class RequestValue implements RequestValues {
         private final String json;
-        private final int userId;
+        private final long userId;
         private final String note;
 
-        public RequestValue(String json, int userId, String note) {
+        public RequestValue(String json, long userId, String note) {
             this.json = json;
             this.userId = userId;
             this.note = note;
@@ -69,13 +69,13 @@ public class PostListCodeProductDetailUsecase extends BaseUseCase {
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private int id;
+        private long id;
 
-        public ResponseValue(int id) {
+        public ResponseValue(long id) {
             this.id = id;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
     }

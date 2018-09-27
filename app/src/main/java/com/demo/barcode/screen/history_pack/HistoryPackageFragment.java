@@ -57,8 +57,8 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
     @Bind(R.id.lv_history)
     ExpandableListView lvHistory;
-    private int orderId = 0;
-    private int apartmentId = 0;
+    private long orderId = 0;
+    private long apartmentId = 0;
     private int orderType = 0;
 
     public HistoryPackageFragment() {

@@ -39,20 +39,20 @@ public interface PrintStempContract {
 
     interface Presenter extends BasePresenter {
 
-        void getOrderPackaging(int orderId);
+        void getOrderPackaging(long orderId);
 
-        void getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack);
+        void getTotalScanBySerialPack(long orderId, long apartmentId, long moduleId, String serialPack);
 
-        void getListScanStages(int orderId, int apartmentId, int moduleId, String serialPack);
+        void getListScanStages(long orderId, long apartmentId, long moduleId, String serialPack);
 
-        void printTemp(int orderId, int apartmentId, int moduleId,String serialPack,int serverId);
+        void printTemp(long orderId, long apartmentId, long moduleId,String serialPack,long serverId);
 
-        void getApartment(int apartmentId);
+        void getApartment(long apartmentId);
 
-        void getModule(int moduleId);
+        void getModule(long moduleId);
 
-        void saveIPAddress(String ipAddress, int port,int orderId, int apartmentId, int moduleId,String serialPack, int serverId);
-        void getListCodePack(int orderId, int orderType, int productId);
-        boolean checkNumberProduct(int orderId, int productId, int apartmentId, String sttPack);
+        void saveIPAddress(String ipAddress, int port,long orderId, long apartmentId, long moduleId,String serialPack, long serverId);
+        void getListCodePack(long orderId, int orderType, long productId);
+        boolean checkNumberProduct(long orderId, long productId, long apartmentId, String sttPack);
     }
 }

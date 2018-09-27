@@ -89,7 +89,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.radioGroup)
     RadioGroup radioGroup;
     private Vibrator vibrate;
-    private int orderId = 0;
+    private long orderId = 0;
     private int departmentId = 0;
     private int typeScan = 0;
 

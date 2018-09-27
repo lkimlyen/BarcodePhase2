@@ -12,7 +12,7 @@ public class ProductPackagingEntity  implements Serializable{
 
     @SerializedName("ProductDetailID")
     @Expose
-    private int id;
+    private long id;
 
     @SerializedName("ProductName")
     @Expose
@@ -24,37 +24,37 @@ public class ProductPackagingEntity  implements Serializable{
 
     @SerializedName("ProductLong")
     @Expose
-    private int length;
+    private double length;
 
     @SerializedName("ProductHeight")
     @Expose
-    private int height;
+    private double height;
 
     @SerializedName("ProductDeep")
     @Expose
-    private int width;
+    private double width;
 
     @SerializedName("Quantity")
     @Expose
-    private int number;
+    private double number;
 
     public String getProductName() {
         return productName;
     }
 
-    public int getLength() {
+    public double getLength() {
         return length;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
@@ -66,7 +66,7 @@ public class ProductPackagingEntity  implements Serializable{
         this.barcode = barcode;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -74,7 +74,7 @@ public class ProductPackagingEntity  implements Serializable{
         return productColor;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 }

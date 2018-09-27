@@ -102,7 +102,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListTimes(int orderId, int departmentId) {
+    public void getListTimes(long orderId, int departmentId) {
         view.showProgressBar();
         getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, departmentId),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
@@ -121,7 +121,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListConfirm(int orderId, int departmentIdOut, int times, boolean refresh) {
+    public void getListConfirm(long orderId, int departmentIdOut, int times, boolean refresh) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         getInputUnConfirmedUsecase.executeIO(new GetInputUnConfirmedUsecase.RequestValue(orderId, user.getRole(), departmentIdOut),
@@ -167,7 +167,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListConfirmByTimes(int orderId, int deparmentId, int times) {
+    public void getListConfirmByTimes(long orderId, int deparmentId, int times) {
         localRepository.getListConfirm(orderId, deparmentId, times).subscribe(new Action1<RealmResults<LogScanConfirm>>() {
             @Override
             public void call(RealmResults<LogScanConfirm> logScanConfirms) {
@@ -186,7 +186,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     int count = 0;
 
     @Override
-    public int countListConfirmByTimesWaitingUpload(int orderId, int deparmentId, int times) {
+    public int countListConfirmByTimesWaitingUpload(long orderId, int deparmentId, int times) {
         count = 0;
         localRepository.countListConfirmByTimesWaitingUpload(orderId, deparmentId, times).subscribe(new Action1<Integer>() {
             @Override
@@ -200,7 +200,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     private boolean allowedToSave = false;
 
     @Override
-    public void checkBarcode(int orderId, String barcode, int departmentId, int times, boolean groupCode) {
+    public void checkBarcode(long orderId, String barcode, int departmentId, int times, boolean groupCode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -278,7 +278,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void updateNumberConfirm(int orderId, int masterOutputId, int departmentIdOut, int times, int numberScan) {
+    public void updateNumberConfirm(long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan) {
         localRepository.updateNumnberLogConfirm(orderId, masterOutputId, departmentIdOut, times, numberScan, false).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -291,7 +291,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void uploadData(int orderId, int departmentIdOut, int times) {
+    public void uploadData(long orderId, int departmentIdOut, int times) {
         view.showProgressBar();
         localRepository.getListLogScanConfirm().subscribe(new Action1<List<LogScanConfirm>>() {
             @Override
@@ -327,7 +327,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListGroupCode(int orderId) {
+    public void getListGroupCode(long orderId) {
         view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,
@@ -347,7 +347,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void confirmAll(int orderId, int departmentId, int times) {
+    public void confirmAll(long orderId, int departmentId, int times) {
         localRepository.confirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -360,7 +360,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void cancelConfirmAll(int orderId, int departmentId, int times) {
+    public void cancelConfirmAll(long orderId, int departmentId, int times) {
         localRepository.cancelConfirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -393,7 +393,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         }
     }
 
-    public void saveConfirm(int orderId, int marterOutputId, int departmentIdOut, int times, int number) {
+    public void saveConfirm(long orderId, long marterOutputId, int departmentIdOut, int times, double number) {
         localRepository.updateNumnberLogConfirm(orderId, marterOutputId, departmentIdOut, times, number, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

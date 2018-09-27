@@ -186,7 +186,7 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseResponse<UploadEntity>> uploadImage(final File file, final String key, final int orderId, final int departmentId, final String fileName, final int userId) {
+    public Observable<BaseResponse<UploadEntity>> uploadImage(final File file, final String key, final long orderId, final int departmentId, final String fileName, final long userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse<UploadEntity>>() {
             @Override
@@ -205,7 +205,7 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ApartmentEntity>> getApartment(final int orderId) {
+    public Observable<BaseListResponse<ApartmentEntity>> getApartment(final long orderId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ApartmentEntity>>() {
             @Override
@@ -217,7 +217,7 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(final int orderId, final int departmentId) {
+    public Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(final long orderId, final int departmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse<TimesEntity>>() {
             @Override

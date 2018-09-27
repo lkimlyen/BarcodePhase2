@@ -263,6 +263,7 @@
     <string name="text_number_in_group_exceed_number_received_save_enough">Số lượng trong nhóm vượt quá số lượng đã nhận!</string>
     <string name="text_data_yesterday_not_upload">Còn dữ liệu chưa tải lên, bạn có muốn tải lên không?</string>
     <string name="text_code_group">Mã nhóm:</string>
+    <string name="text_get_data_success">Lấy dữ liệu thành công</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

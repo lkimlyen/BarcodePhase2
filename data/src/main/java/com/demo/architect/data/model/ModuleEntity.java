@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class ModuleEntity {
     @SerializedName("ProductID")
     @Expose
-    private int productId;
+    private long productId;
 
     @SerializedName("ModuleName")
     @Expose
     private String moduleName;
 
-    public int getProductId() {
+    public long getProductId() {
         return productId;
     }
 

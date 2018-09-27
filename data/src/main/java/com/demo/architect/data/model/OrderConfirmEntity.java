@@ -8,11 +8,11 @@ import java.util.List;
 public class OrderConfirmEntity {
     @SerializedName("MasterOutputID")
     @Expose
-    private int masterOutputID;
+    private long masterOutputID;
 
     @SerializedName("OrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("DepartmentIDIn")
     @Expose
@@ -24,7 +24,7 @@ public class OrderConfirmEntity {
 
     @SerializedName("ProductDetailID")
     @Expose
-    private int productDetailID;
+    private long productDetailID;
 
     @SerializedName("ProductDetailName")
     @Expose
@@ -61,11 +61,11 @@ public class OrderConfirmEntity {
     @SerializedName("LastIDOutput")
     @Expose
     private long lastIDOutput;
-    public int getMasterOutputID() {
+    public long getMasterOutputID() {
         return masterOutputID;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
@@ -77,7 +77,7 @@ public class OrderConfirmEntity {
         return departmentIDOut;
     }
 
-    public int getProductDetailID() {
+    public long getProductDetailID() {
         return productDetailID;
     }
 

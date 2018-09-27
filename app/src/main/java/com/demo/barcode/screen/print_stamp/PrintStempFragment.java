@@ -49,9 +49,9 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     private final String TAG = PrintStempFragment.class.getName();
     private PrintStempContract.Presenter mPresenter;
     private PrintStampAdapter adapter;
-    private int orderId;
-    private int apartmentId;
-    private int moduleId;
+    private long orderId;
+    private long apartmentId;
+    private long moduleId;
     private int orderType;
     private String serialPack;
     @Bind(R.id.lv_codes)
@@ -108,9 +108,9 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_print_stemp, container, false);
         ButterKnife.bind(this, view);
-        orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
-        moduleId = getActivity().getIntent().getIntExtra(MODULE_ID, 0);
-        apartmentId = getActivity().getIntent().getIntExtra(APARTMENT_ID, 0);
+        orderId = getActivity().getIntent().getLongExtra(ORDER_ID, 0);
+        moduleId = getActivity().getIntent().getLongExtra(MODULE_ID, 0);
+        apartmentId = getActivity().getIntent().getLongExtra(APARTMENT_ID, 0);
         orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
         initView();
         return view;

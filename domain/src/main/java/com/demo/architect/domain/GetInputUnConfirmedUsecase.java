@@ -21,7 +21,7 @@ public class GetInputUnConfirmedUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int departmentIdIn = ((RequestValue) requestValues).departmentIdIn;
         int departmentIdOut = ((RequestValue) requestValues).departmentIdOut;
         return remoteRepository.getInputUnConfirmed(orderId, departmentIdIn, departmentIdOut);
@@ -59,11 +59,11 @@ public class GetInputUnConfirmedUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
+        private final long orderId;
         private final int departmentIdIn;
         private final int departmentIdOut;
 
-        public RequestValue(int orderId, int departmentIdIn, int departmentIdOut) {
+        public RequestValue(long orderId, int departmentIdIn, int departmentIdOut) {
             this.orderId = orderId;
             this.departmentIdIn = departmentIdIn;
             this.departmentIdOut = departmentIdOut;

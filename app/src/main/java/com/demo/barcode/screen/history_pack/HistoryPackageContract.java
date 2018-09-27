@@ -34,9 +34,9 @@ public interface HistoryPackageContract {
     interface Presenter extends BasePresenter {
         void getListSO(int orderType);
 
-        void getListApartment(int orderId);
+        void getListApartment(long orderId);
 
-        void getListHistory(int orderId,int apartmentId);
+        void getListHistory(long orderId,long apartmentId);
 
 
     }

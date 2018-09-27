@@ -9,8 +9,8 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class LogListSerialPackPagkaging extends RealmObject {
-    @PrimaryKey
-    private int id;
+   @PrimaryKey
+    private long id;
 
     private String serialPack;
     private String codeProduct;
@@ -20,18 +20,18 @@ public class LogListSerialPackPagkaging extends RealmObject {
     public LogListSerialPackPagkaging() {
     }
 
-    public LogListSerialPackPagkaging(int id, String serialPack, String codeProduct) {
+    public LogListSerialPackPagkaging(long id, String serialPack, String codeProduct) {
         this.id = id;
         this.serialPack = serialPack;
         this.codeProduct = codeProduct;
     }
 
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(LogListSerialPackPagkaging.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -42,11 +42,11 @@ public class LogListSerialPackPagkaging extends RealmObject {
     }
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

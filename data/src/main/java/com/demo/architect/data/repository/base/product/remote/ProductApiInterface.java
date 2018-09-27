@@ -23,7 +23,7 @@ import retrofit2.http.Url;
 public interface ProductApiInterface {
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ProductEntity>> getInputForProductDetail(@Url String url, @Field("pOderID") int orderId,
+    Call<BaseListResponse<ProductEntity>> getInputForProductDetail(@Url String url, @Field("pOderID") long orderId,
                                                                    @Field("pDepartmentID") int departmentID);
     @FormUrlEncoded
     @POST
@@ -32,7 +32,7 @@ public interface ProductApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<GroupEntity>> getListProductDetailGroup(@Url String url, @Field("pOrderID") int orderId);
+    Call<BaseListResponse<GroupEntity>> getListProductDetailGroup(@Url String url, @Field("pOrderID") long orderId);
 
     @FormUrlEncoded
     @POST
@@ -41,29 +41,29 @@ public interface ProductApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseResponse> deactiveProductDetailGroup(@Url String url, @Field("pKey") String key,
-                                                  @Field("pMasterGroupID") int masterGroup,
-                                                  @Field("pUserID") int userId);
+                                                  @Field("pMasterGroupID") long masterGroup,
+                                                  @Field("pUserID") long userId);
 
     @FormUrlEncoded
     @POST
     Call<BaseResponse> updateProductDetailGroup(@Url String url, @Field("pKey") String key,
-                                                  @Field("pMasterGroupID") int masterGroup,
+                                                  @Field("pMasterGroupID") long masterGroup,
                                                 @Field("pJsonNew") String jsonNew,
                                                 @Field("pJsonUpdate") String jsonUpdate,
                                                 @Field("pJsonDelete") String jsonDelete,
-                                                @Field("pUserID") int userId);
+                                                @Field("pUserID") long userId);
 
     @FormUrlEncoded
     @POST
     Call<BaseResponse<Integer>> postListCodeProductDetail(@Url String url, @Field("pKey") String key,
                                                 @Field("pJsonListProductDetail") String json,
-                                                @Field("pUserID") int userId,
+                                                @Field("pUserID") long userId,
                                                 @Field("pNote") String note);
 
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ListModuleEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") int orderId,
-                                                                     @Field("pApartmentID") int apartmentId);
+    Call<BaseListResponse<ListModuleEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") long orderId,
+                                                                     @Field("pApartmentID") long apartmentId);
 
 }

@@ -69,7 +69,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
 
     @Override
-    public void getOrderPackaging(int orderId) {
+    public void getOrderPackaging(long orderId) {
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
         view.showOrder(soEntity);
     }
@@ -91,7 +91,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
 
     @Override
-    public void printTemp(int serverId, int packageId) {
+    public void printTemp(long serverId, long packageId) {
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
@@ -128,13 +128,13 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void getApartment(int apartmentId) {
+    public void getApartment(long apartmentId) {
         ApartmentEntity apartment = ListApartmentManager.getInstance().getApartmentById(apartmentId);
         view.showApartmentName(apartment.getApartmentName());
     }
 
     @Override
-    public void getListCodePack(int orderId, int orderType, int productId) {
+    public void getListCodePack(long orderId, int orderType, long productId) {
         view.showProgressBar();
         getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId, orderType, productId),
                 new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
@@ -154,8 +154,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port, int serverId, int packageId) {
-        int userId = UserManager.getInstance().getUser().getId();
+    public void saveIPAddress(String ipAddress, int port, long serverId, long packageId) {
+        long userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override

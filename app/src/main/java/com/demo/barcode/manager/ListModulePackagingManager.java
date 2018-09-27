@@ -67,7 +67,7 @@ public class ListModulePackagingManager {
         }
         return null;
     }
-    public PackageEntity getPackingBySerialPack(int moduleId, String serialPack) {
+    public PackageEntity getPackingBySerialPack(long moduleId, String serialPack) {
         for (ListModuleEntity requestEntity : list) {
 
             if (requestEntity.getProductId() == moduleId) {
@@ -83,7 +83,7 @@ public class ListModulePackagingManager {
 
 
 
-    public ListModuleEntity getModuleById(int moduleId) {
+    public ListModuleEntity getModuleById(long moduleId) {
         for (ListModuleEntity requestEntity : list) {
 
             if (requestEntity.getProductId() == moduleId) {

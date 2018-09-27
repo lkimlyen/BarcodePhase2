@@ -200,7 +200,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(final int orderId, final int departmentIDIn, final int departmentIDOut) {
+    public Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(final long orderId, final int departmentIDIn, final int departmentIDOut) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderConfirmEntity>>() {
             @Override
@@ -237,7 +237,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<CodePackEntity>> getCodePack(final int orderId, final int orderType, final int productId) {
+    public Observable<BaseListResponse<CodePackEntity>> getCodePack(final long orderId, final int orderType, final long productId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<CodePackEntity>>() {
             @Override
@@ -250,7 +250,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ModuleEntity>> getModule(final int orderId, final int orderType, final int departmentId) {
+    public Observable<BaseListResponse<ModuleEntity>> getModule(final long orderId, final int orderType, final int departmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ModuleEntity>>() {
             @Override
@@ -262,7 +262,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(final int orderId, final int productId, final int apartmentId, final String packCode, final String sttPack, final String code) {
+    public Observable<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(final long orderId, final long productId, final long apartmentId, final String packCode, final String sttPack, final String code) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductPackagingEntity>>() {
             @Override
@@ -275,7 +275,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(final int orderId, final int apartmentId) {
+    public Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(final long orderId, final long apartmentId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<HistoryEntity>>() {
             @Override
@@ -287,7 +287,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse<String>> getListModuleByOrder(final int orderId) {
+    public Observable<BaseListResponse<String>> getListModuleByOrder(final long orderId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<String>>() {
             @Override

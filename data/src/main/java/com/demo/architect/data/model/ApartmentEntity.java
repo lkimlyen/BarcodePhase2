@@ -7,13 +7,13 @@ public class ApartmentEntity {
 
     @SerializedName("ApartmentID")
     @Expose
-    private int apartmentID;
+    private long apartmentID;
 
     @SerializedName("ApartmentName")
     @Expose
     private String apartmentName;
 
-    public int getApartmentID() {
+    public long getApartmentID() {
         return apartmentID;
     }
 

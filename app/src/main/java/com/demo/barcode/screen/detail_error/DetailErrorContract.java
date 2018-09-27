@@ -41,15 +41,15 @@ public interface DetailErrorContract {
 
     interface Presenter extends BasePresenter {
 
-        void addImage(int id, String pathFile);
+        void addImage(long id, String pathFile);
 
-        void deleteImage(int id);
+        void deleteImage(long id);
 
-        void getListReason(int id);
+        void getListReason(long id);
 
-        void getDetailQualityControl(int id);
+        void getDetailQualityControl(long id);
 
-        void save(int id, int numberFailed, String description, Collection<Integer> idList);
+        void save(long id, int numberFailed, String description, Collection<Integer> idList);
 
     }
 }

@@ -18,7 +18,7 @@ public class UpdateSoftUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int userId = ((RequestValue) requestValues).userId;
+        long userId = ((RequestValue) requestValues).userId;
         String version = ((RequestValue) requestValues).version;
         int numNotUpdate = ((RequestValue) requestValues).numNotUpdate;
         String dateServer = ((RequestValue) requestValues).dateServer;
@@ -58,14 +58,14 @@ public class UpdateSoftUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        public final int userId;
+        public final long userId;
         public final String version;
         public final int numNotUpdate;
         public final String dateServer;
         public final String ime;
 
 
-        public RequestValue(int userId, String version, int numNotUpdate, String dateServer, String ime) {
+        public RequestValue(long userId, String version, int numNotUpdate, String dateServer, String ime) {
             this.userId = userId;
             this.version = version;
             this.numNotUpdate = numNotUpdate;

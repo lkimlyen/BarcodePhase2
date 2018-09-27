@@ -18,22 +18,22 @@ import rx.Observable;
 public interface OrderRepository {
     Observable<BaseListResponse<SOEntity>> getListSO(int orderType);
 
-    Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(int orderId, int departmentIDIn, int departmentIDOut);
+    Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(long orderId, int departmentIDIn, int departmentIDOut);
 
     Observable<BaseListResponse> scanProductDetailOut(String key, String json);
 
     Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);
 
-    Observable<BaseListResponse<CodePackEntity>> getCodePack(int orderId, int orderType, int productId);
+    Observable<BaseListResponse<CodePackEntity>> getCodePack(long orderId, int orderType, long productId);
 
-    Observable<BaseListResponse<ModuleEntity>> getModule(int orderId, int orderType, int departmentId);
+    Observable<BaseListResponse<ModuleEntity>> getModule(long orderId, int orderType, int departmentId);
 
-    Observable<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(int orderId, int productId,
-                                                                          int apartmentId,String packCode,
+    Observable<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(long orderId, long productId,
+                                                                          long apartmentId,String packCode,
                                                                           String sttPack,String code);
 
-    Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(int orderId,
-                                                                 int apartmentId);
-    Observable<BaseListResponse<String>> getListModuleByOrder(int orderId);
+    Observable<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(long orderId,
+                                                                 long apartmentId);
+    Observable<BaseListResponse<String>> getListModuleByOrder(long orderId);
 
 }

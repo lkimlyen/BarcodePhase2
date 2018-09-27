@@ -42,17 +42,17 @@ public interface DetailPackageContract {
     }
 
     interface Presenter extends BasePresenter {
-        void getOrderPackaging(int orderId);
+        void getOrderPackaging(long orderId);
 
         void getListHistoryBySerialPack(HistoryEntity historyEntity, String serialPack);
 
-        void printTemp(int serverId, int packageId);
+        void printTemp(long serverId, long packageId);
 
-        void getApartment(int apartmentId);
+        void getApartment(long apartmentId);
 
-        void getListCodePack(int orderId, int orderType, int productId);
+        void getListCodePack(long orderId, int orderType, long productId);
 
-        void saveIPAddress(String ipAddress, int port, int serverId, int packageId);
+        void saveIPAddress(String ipAddress, int port, long serverId, long packageId);
 
     }
 }

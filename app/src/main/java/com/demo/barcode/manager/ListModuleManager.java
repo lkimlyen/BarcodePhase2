@@ -23,7 +23,7 @@ public class ListModuleManager {
 
     }
 
-    public ModuleEntity getModuleById(int id) {
+    public ModuleEntity getModuleById(long id) {
 
         ModuleEntity moduleEntity = null;
         for (int i = 0; i < list.size(); i++) {

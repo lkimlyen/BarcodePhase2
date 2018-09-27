@@ -57,31 +57,31 @@ public interface StagesContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(int orderId, boolean refresh);
+        void getListProduct(long orderId, boolean refresh);
 
         void checkBarcode(String barcode, int departmentId, int times, boolean groupCode);
 
-        int countLogScanStages(int orderId, int departmentId, int times);
+        int countLogScanStages(long orderId, int departmentId, int times);
 
-        void deleteScanStages(int stagesId);
+        void deleteScanStages(long stagesId);
 
-        void updateNumberScanStages(int stagesId, int numberInput, boolean update);
+        void updateNumberScanStages(long stagesId,double numberInput, boolean update);
 
-        void getListScanStages(int orderId, int departmentId, int times);
+        void getListScanStages(long orderId, int departmentId, int times);
 
-        void getListTimes(int orderId, int departmentId);
+        void getListTimes(long orderId, int departmentId);
 
-        void uploadDataAll(int orderId, int departmentId, int times);
+        void uploadDataAll(long orderId, int departmentId, int times);
 
         void saveBarcodeToDataBase(int times, ProductEntity
-                productEntity, int number, int departmentId, GroupEntity groupEntity, boolean typeScan);
+                productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan);
 
-        void getListGroupCode(int orderId);
+        void getListGroupCode(long orderId);
 
         void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId);
 
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId);
 
-        void countListAllData(int orderId);
+        void countListAllData(long orderId);
     }
 }

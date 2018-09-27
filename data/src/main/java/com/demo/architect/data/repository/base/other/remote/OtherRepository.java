@@ -26,8 +26,8 @@ public interface OtherRepository {
 
     Observable<BaseResponse> addLogQC(String key, String json);
 
-    Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, int orderId,
-                                                       int departmentId, String fileName, int userId);
-    Observable<BaseListResponse<ApartmentEntity>> getApartment(int orderId);
-    Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(int orderId, int departmentId);
+    Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, long orderId,
+                                                       int departmentId, String fileName, long userId);
+    Observable<BaseListResponse<ApartmentEntity>> getApartment(long orderId);
+    Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(long orderId, int departmentId);
 }

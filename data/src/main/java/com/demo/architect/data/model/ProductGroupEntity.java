@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName;
 public class ProductGroupEntity {
     @SerializedName("OrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("ProductDetailID")
     @Expose
-    private int productDetailID;
+    private long productDetailID;
 
     @SerializedName("ProductDetailName")
     @Expose
@@ -25,19 +25,19 @@ public class ProductGroupEntity {
     private String groupCode;
 
     @SerializedName("NumberTotalDetail")
-    private int numberTotal;
+    private double numberTotal;
 
     @SerializedName("Number")
     @Expose
-    private int number;
+    private double number;
 
 
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public int getProductDetailID() {
+    public long getProductDetailID() {
         return productDetailID;
     }
 
@@ -45,7 +45,7 @@ public class ProductGroupEntity {
         return groupCode;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
@@ -57,7 +57,7 @@ public class ProductGroupEntity {
         return Module;
     }
 
-    public int getNumberTotal() {
+    public double getNumberTotal() {
         return numberTotal;
     }
 

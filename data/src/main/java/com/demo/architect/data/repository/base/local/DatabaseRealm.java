@@ -45,7 +45,7 @@ import io.realm.RealmResults;
 
 public class DatabaseRealm {
     private Context context;
-    private int userId = -1;
+    private long userId = -1;
 
     public DatabaseRealm() {
     }
@@ -116,7 +116,7 @@ public class DatabaseRealm {
         return getRealmInstance().where(clazz).findFirst();
     }
 
-    public <T extends RealmObject> T findFirstById(Class<T> clazz, int id) {
+    public <T extends RealmObject> T findFirstById(Class<T> clazz, long id) {
         return getRealmInstance().where(clazz).equalTo("id", id).findFirst();
     }
 
@@ -137,20 +137,20 @@ public class DatabaseRealm {
         });
     }
 
-    public int countLogScanStagesWatingUpload(int orderId, int departmentId, int times) {
+    public int countLogScanStagesWatingUpload(long orderId, int departmentId, int times) {
 
         Realm realm = getRealmInstance();
         final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId, times);
         return count;
     }
 
-    public int countAllDetailWaitingUpload(int orderId) {
+    public int countAllDetailWaitingUpload(long orderId) {
         Realm realm = getRealmInstance();
         final int count = LogListScanStages.countAllDetailWaitingUpload(realm, orderId, userId);
         return count;
     }
 
-    public List<LogScanStages> getListLogScanStagesUpload(int orderId) {
+    public List<LogScanStages> getListLogScanStagesUpload(long orderId) {
         Realm realm = getRealmInstance();
         final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, userId);
         return list;
@@ -183,7 +183,7 @@ public class DatabaseRealm {
     }
 
 
-    public void updateNumberScanStages(final int stagesId, final int numberInput) {
+    public void updateNumberScanStages(final long stagesId, final double numberInput) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -193,7 +193,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void deleteScanStages(final int stagesId) {
+    public void deleteScanStages(final long stagesId) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -203,19 +203,19 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListScanStages getListScanStages(int orderId, int departmentId, int userId, int times) {
+    public LogListScanStages getListScanStages(long orderId, int departmentId, long userId, int times) {
         Realm realm = getRealmInstance();
         LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId, times);
         return logListScanStages;
     }
 
-    public RealmResults<LogScanStages> getListScanStagesByModule(int orderId, int departmentId, int times, String module) {
+    public RealmResults<LogScanStages> getListScanStagesByModule(long orderId, int departmentId, int times, String module) {
         Realm realm = getRealmInstance();
         RealmResults<LogScanStages> logListScanStages = LogListScanStages.getListScanStagesByModule(realm, orderId, departmentId, userId, times, module);
         return logListScanStages;
     }
 
-    public RealmResults<GroupCode> getListGroupCodeByModule(int orderId, String module) {
+    public RealmResults<GroupCode> getListGroupCodeByModule(long orderId, String module) {
         Realm realm = getRealmInstance();
         RealmResults<GroupCode> results = GroupCode.getListGroupCodeByModule(realm, orderId, userId, module);
         return results;
@@ -240,13 +240,13 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<LogScanConfirm> getListConfirm(int orderId, final int departmentIdOut, int times) {
+    public RealmResults<LogScanConfirm> getListConfirm(long orderId, final int departmentIdOut, int times) {
         Realm realm = getRealmInstance();
         final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm, orderId, departmentIdOut, times, userId);
         return results;
     }
 
-    public int countListConfirmByTimesWaitingUpload(int orderId, final int departmentIdOut, int times) {
+    public int countListConfirmByTimesWaitingUpload(long orderId, final int departmentIdOut, int times) {
         Realm realm = getRealmInstance();
         final int count = LogScanConfirm.countListConfirmByTimesWaitingUpload(realm, orderId, departmentIdOut, times, userId);
         return count;
@@ -259,7 +259,7 @@ public class DatabaseRealm {
     }
 
 
-    public void updateNumberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan) {
+    public void updateNumberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -279,7 +279,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusScanStagesByOrder(final int orderId) {
+    public void updateStatusScanStagesByOrder(final long orderId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -299,14 +299,14 @@ public class DatabaseRealm {
         });
     }
 
-    public LogScanConfirm findConfirmByBarcode(String barcode, int orderId,
+    public LogScanConfirm findConfirmByBarcode(String barcode, long orderId,
                                                int departmentIDOut, int times) {
         Realm realm = getRealmInstance();
         LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, barcode, orderId, departmentIDOut, times, userId);
         return logScanConfirm;
     }
 
-    public void addImageModel(final int id, final String pathFile) {
+    public void addImageModel(final long id, final String pathFile) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -316,7 +316,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void deleteImageModel(final int id) {
+    public void deleteImageModel(final long id) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -326,7 +326,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusAndServerIdImage(final int id, final int imageId, final int serverId) {
+    public void updateStatusAndServerIdImage(final long id, final long imageId, final long serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -344,7 +344,7 @@ public class DatabaseRealm {
     }
 
 
-    public void deleteScanPackaging(final int logId) {
+    public void deleteScanPackaging(final long logId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -355,7 +355,7 @@ public class DatabaseRealm {
 
     }
 
-    public void updateNumberScanPackaging(final int logId, final int number) {
+    public void updateNumberScanPackaging(final long logId, final double number) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -366,25 +366,25 @@ public class DatabaseRealm {
 
     }
 
-    public ProductPackagingModel findProductPackaging(final int productId, final String serialPack) {
+    public ProductPackagingModel findProductPackaging(final long productId, final String serialPack) {
         Realm realm = getRealmInstance();
         ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId, serialPack);
         return productPackagingModel;
     }
 
-    public LogListOrderPackaging findOrderPackaging(final int orderId) {
+    public LogListOrderPackaging findOrderPackaging(final long orderId) {
         Realm realm = getRealmInstance();
         LogListOrderPackaging listOrderPackaging = LogListOrderPackaging.findOrderPackaging(realm, orderId);
         return listOrderPackaging;
     }
 
-    public int getTotalScanBySerialPack(int orderId, int apartmentId, int moduleId, String serialPack) {
+    public int getTotalScanBySerialPack(long orderId, long apartmentId, long moduleId, String serialPack) {
         Realm realm = getRealmInstance();
         int total = LogScanPackaging.getTotalScan(realm, orderId, apartmentId, moduleId, serialPack);
         return total;
     }
 
-    public void addGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
+    public void addGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -394,7 +394,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateNumberGroup(final int groupId, final int numberGroup) {
+    public void updateNumberGroup(final long groupId, final double numberGroup) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -405,7 +405,7 @@ public class DatabaseRealm {
 
     }
 
-    public void detachedCodeStages(final List<ProductGroupEntity> list, final int orderId, final String module, final String groupCode) {
+    public void detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String module, final String groupCode) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -415,7 +415,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void removeItemInGroup(final ProductGroupEntity logScanStages, final int orderId, final String module) {
+    public void removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId, final String module) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -425,7 +425,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
+    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -436,14 +436,14 @@ public class DatabaseRealm {
 
     }
 
-    public List<LogScanPackaging> getListScanPackaging(int orderId, int apartmentId, int moduleId, String serialPack) {
+    public List<LogScanPackaging> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPack) {
         Realm realm = getRealmInstance();
         List<LogScanPackaging> result = LogScanPackaging.getListScanPackaging(realm,
                 orderId, apartmentId, moduleId, serialPack);
         return result;
     }
 
-    public void updateStatusScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack, final int serverId) {
+    public void updateStatusScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack, final long serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -465,25 +465,25 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<QualityControlModel> getListQualityControl(int orderId, int departmentId) {
+    public RealmResults<QualityControlModel> getListQualityControl(long orderId, int departmentId) {
         Realm realm = getRealmInstance();
         RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm, orderId, departmentId, userId);
         return results;
     }
 
-    public QualityControlModel getDetailQualityControl(int id) {
+    public QualityControlModel getDetailQualityControl(long id) {
         Realm realm = getRealmInstance();
         QualityControlModel results = QualityControlModel.getDetailQualityControl(realm, id);
         return results;
     }
 
-    public RealmList<Integer> getListReasonQualityControl(int id) {
+    public RealmList<Integer> getListReasonQualityControl(long id) {
         Realm realm = getRealmInstance();
         RealmList<Integer> results = QualityControlModel.getListReasonQualityControl(realm, id);
         return results;
     }
 
-    public void saveBarcodeQC(final int orderId, final int departmentId, final ProductEntity productEntity) {
+    public void saveBarcodeQC(final long orderId, final int departmentId, final ProductEntity productEntity) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -493,7 +493,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateDetailErrorQC(final int id, final int numberFailed, final String description, final Collection<Integer> idList) {
+    public void updateDetailErrorQC(final long id, final double numberFailed, final String description, final Collection<Integer> idList) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -509,7 +509,7 @@ public class DatabaseRealm {
         return result;
     }
 
-    public void updateImageIdAndStatus(final int qcId, final int id, final int imageId) {
+    public void updateImageIdAndStatus(final long qcId, final long id, final long imageId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -555,7 +555,7 @@ public class DatabaseRealm {
         return number;
     }
 
-    public void updateGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
+    public void updateGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -566,7 +566,7 @@ public class DatabaseRealm {
     }
 
 
-    public void confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+    public void confirmAllProductReceive(final long orderId, final int departmentId, final int times) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -576,7 +576,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void cancelConfirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+    public void cancelConfirmAllProductReceive(final long orderId, final int departmentId, final int times) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -586,7 +586,7 @@ public class DatabaseRealm {
         });
     }
 
-    public boolean getCheckedConfirmAll(final int orderId, final int departmentId, final int times) {
+    public boolean getCheckedConfirmAll(final long orderId, final int departmentId, final int times) {
         Realm realm = getRealmInstance();
         boolean b = TimesConfirm.getCheckedConfirmAll(realm, orderId, departmentId, times, userId);
         return b;

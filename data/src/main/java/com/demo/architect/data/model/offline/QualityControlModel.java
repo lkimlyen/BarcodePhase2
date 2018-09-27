@@ -18,8 +18,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class QualityControlModel extends RealmObject {
 
-    @PrimaryKey
-    private int id;
+   @PrimaryKey
+    private long id;
     @SerializedName("pBarcode")
     @Expose
     private String barcode;
@@ -31,13 +31,13 @@ public class QualityControlModel extends RealmObject {
 
     @SerializedName("pOrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("pProductDetailID")
     @Expose
-    private int productDetailId;
+    private long productDetailId;
     private String productName;
-    private int totalNumber;
+    private double totalNumber;
 
     @SerializedName("pListReason")
     @Expose
@@ -57,11 +57,11 @@ public class QualityControlModel extends RealmObject {
 
     @SerializedName("pNumber")
     @Expose
-    private int number;
+    private double number;
 
     @SerializedName("pUserId")
     @Expose
-    private int userId;
+    private long userId;
 
     private int status;
 
@@ -78,7 +78,7 @@ public class QualityControlModel extends RealmObject {
     public QualityControlModel() {
     }
 
-    public QualityControlModel(int id, String barcode, String module, int departmentId, int orderId, int productDetailId, String productName, int totalNumber, int number, int userId, int status, boolean edit) {
+    public QualityControlModel(long id, String barcode, String module, int departmentId, long orderId, long productDetailId, String productName, double totalNumber, double number, long userId, int status, boolean edit) {
         this.id = id;
         this.barcode = barcode;
         this.module = module;
@@ -97,11 +97,11 @@ public class QualityControlModel extends RealmObject {
         this.status = status;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -129,19 +129,19 @@ public class QualityControlModel extends RealmObject {
         this.departmentId = departmentId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
-    public int getProductDetailId() {
+    public long getProductDetailId() {
         return productDetailId;
     }
 
-    public void setProductDetailId(int productDetailId) {
+    public void setProductDetailId(long productDetailId) {
         this.productDetailId = productDetailId;
     }
 
@@ -153,11 +153,11 @@ public class QualityControlModel extends RealmObject {
         this.productName = productName;
     }
 
-    public int getTotalNumber() {
+    public double getTotalNumber() {
         return totalNumber;
     }
 
-    public void setTotalNumber(int totalNumber) {
+    public void setTotalNumber(double totalNumber) {
         this.totalNumber = totalNumber;
     }
 
@@ -177,7 +177,6 @@ public class QualityControlModel extends RealmObject {
         this.description = description;
     }
 
-
     public RealmList<ImageModel> getImageList() {
         return imageList;
     }
@@ -194,31 +193,31 @@ public class QualityControlModel extends RealmObject {
         this.listImage = listImage;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(double number) {
         this.number = number;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(QualityControlModel.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
-    public static void create(Realm realm, int orderId, int departmentId, ProductEntity product, int userId) {
+    public static void create(Realm realm, long orderId, int departmentId, ProductEntity product, long userId) {
 
         ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId).findFirst();
         ListDepartmentQualityControl listDepartmentQualityControl = listOrderQualityControl.getList().where().equalTo("departmentId", departmentId).findFirst();
@@ -230,7 +229,7 @@ public class QualityControlModel extends RealmObject {
         parentList.add(qualityControlModel);
     }
 
-    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm, int orderId, int departmentId, int userId) {
+    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm, long orderId, int departmentId, long userId) {
 
         ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId).findFirst();
         if (listOrderQualityControl == null) {
@@ -253,7 +252,7 @@ public class QualityControlModel extends RealmObject {
 
     }
 
-    public static void updateDetailErrorQC(Realm realm, int id, int numberFailed, String description, Collection<Integer> idList) {
+    public static void updateDetailErrorQC(Realm realm, long id, double numberFailed, String description, Collection<Integer> idList) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         RealmList<Integer> integers = qualityControlModel.getIdReasonList();
         integers.clear();
@@ -269,7 +268,7 @@ public class QualityControlModel extends RealmObject {
 
     }
 
-    public static void updateListImage(Realm realm, int id, String filePath) {
+    public static void updateListImage(Realm realm, long id, String filePath) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         RealmList<ImageModel> imageModels = qualityControlModel.getImageList();
         ImageModel imageModel = ImageModel.create(realm, filePath);
@@ -277,7 +276,7 @@ public class QualityControlModel extends RealmObject {
         imageModels.add(imageModel);
     }
 
-    public static void updateStatusAndServerId(Realm realm, int id, int imageId, int serverId) {
+    public static void updateStatusAndServerId(Realm realm, long id, long imageId, long serverId) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         ImageModel imageModel = qualityControlModel.getImageList().where().equalTo("id", imageId).findFirst();
         if (imageModel != null) {
@@ -305,24 +304,24 @@ public class QualityControlModel extends RealmObject {
         this.idReasonList = idReasonList;
     }
 
-    public static QualityControlModel getDetailQualityControl(Realm realm, int id) {
+    public static QualityControlModel getDetailQualityControl(Realm realm, long id) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         return qualityControlModel;
     }
 
-    public static RealmList<Integer> getListReasonQualityControl(Realm realm, int id) {
+    public static RealmList<Integer> getListReasonQualityControl(Realm realm, long id) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         RealmList<Integer> results = qualityControlModel.getIdReasonList();
         return results;
     }
 
-    public static List<QualityControlModel> getListQualityControlUpload(Realm realm, int userId) {
+    public static List<QualityControlModel> getListQualityControlUpload(Realm realm, long userId) {
         RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).equalTo("edit", true).findAll();
         return realm.copyFromRealm(results);
     }
 
-    public static void updateImageIdAndStatus(Realm realm, int qcId, int id, int imageId) {
+    public static void updateImageIdAndStatus(Realm realm, long qcId, long id, long imageId) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", qcId).findFirst();
         ImageModel imageModel = qualityControlModel.getImageList().where().equalTo("id", id).findFirst();
         imageModel.setServerId(imageId);
@@ -331,7 +330,7 @@ public class QualityControlModel extends RealmObject {
 
     }
 
-    public static void updateStatusQC(Realm realm, int userId) {
+    public static void updateStatusQC(Realm realm, long userId) {
         RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findAll();
         for (QualityControlModel qualityControlModel : results) {

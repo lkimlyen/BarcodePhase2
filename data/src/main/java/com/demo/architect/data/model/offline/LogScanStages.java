@@ -14,11 +14,11 @@ import io.realm.annotations.PrimaryKey;
 
 public class LogScanStages extends RealmObject {
 
-    @PrimaryKey
-    private int id;
+   @PrimaryKey
+    private long id;
     @Expose
     @SerializedName("pOrderID")
-    private int orderId;
+    private long orderId;
     @Expose
     @SerializedName("pDepartmentIDIn")
     private int departmentIdIn;
@@ -27,11 +27,11 @@ public class LogScanStages extends RealmObject {
     private int departmentIdOut;
     @Expose
     @SerializedName("pProductDetailID")
-    private int productDetailId;
+    private long productDetailId;
 
     private ProductDetail productDetail;
 
-    private int masterGroupId;
+   private long masterGroupId;
     private String groupCode;
     @Expose
     @SerializedName("pBarcode")
@@ -40,7 +40,7 @@ public class LogScanStages extends RealmObject {
     private String module;
     @Expose
     @SerializedName("pNumberScan")
-    private int numberInput;
+    private double numberInput;
 
     @Expose
     @SerializedName("pTypeScan")
@@ -53,15 +53,15 @@ public class LogScanStages extends RealmObject {
     private String dateScan;
     @Expose
     @SerializedName("pUserID")
-    private int userId;
+    private long userId;
 
-    private int numberGroup;
+    private double numberGroup;
 
     public LogScanStages() {
     }
 
 
-    public LogScanStages(int orderId, int departmentIdIn, int departmentIdOut, int productDetailId, int masterGroupId, String groupCode, String barcode, String module, int numberInput, Boolean typeScan, int times, String dateScan, int userId, int numberGroup) {
+    public LogScanStages(long orderId, int departmentIdIn, int departmentIdOut, long productDetailId, long masterGroupId, String groupCode, String barcode, String module, double numberInput, Boolean typeScan, int times, String dateScan, long userId, double numberGroup) {
         this.orderId = orderId;
         this.departmentIdIn = departmentIdIn;
         this.departmentIdOut = departmentIdOut;
@@ -78,60 +78,19 @@ public class LogScanStages extends RealmObject {
         this.numberGroup = numberGroup;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-
-    public int getNumberInput() {
-        return numberInput;
-    }
-
-    public int getTimes() {
-        return times;
-    }
-
-    public String getDateScan() {
-        return dateScan;
-    }
-
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public void setNumberInput(int numberInput) {
-        this.numberInput = numberInput;
-    }
-
-    public void setTimes(int times) {
-        this.times = times;
-    }
-
-    public void setDateScan(String dateScan) {
-        this.dateScan = dateScan;
-    }
-
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -151,11 +110,11 @@ public class LogScanStages extends RealmObject {
         this.departmentIdOut = departmentIdOut;
     }
 
-    public int getProductDetailId() {
+    public long getProductDetailId() {
         return productDetailId;
     }
 
-    public void setProductDetailId(int productDetailId) {
+    public void setProductDetailId(long productDetailId) {
         this.productDetailId = productDetailId;
     }
 
@@ -167,19 +126,67 @@ public class LogScanStages extends RealmObject {
         this.productDetail = productDetail;
     }
 
-    public int getUserId() {
+    public void setMasterGroupId(long masterGroupId) {
+        this.masterGroupId = masterGroupId;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public double getNumberInput() {
+        return numberInput;
+    }
+
+    public void setNumberInput(double numberInput) {
+        this.numberInput = numberInput;
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public void setTimes(int times) {
+        this.times = times;
+    }
+
+    public String getDateScan() {
+        return dateScan;
+    }
+
+    public void setDateScan(String dateScan) {
+        this.dateScan = dateScan;
+    }
+
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public void setNumberGroup(double numberGroup) {
+        this.numberGroup = numberGroup;
+    }
+
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(LogScanStages.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -213,9 +220,9 @@ public class LogScanStages extends RealmObject {
         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
     }
 
-    public static void updateNumberInput(Realm realm, int stagesId, int numberInput) {
+    public static void updateNumberInput(Realm realm, long stagesId, double numberInput) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
-        int number = numberInput - logScanStages.getNumberInput();
+        double number = numberInput - logScanStages.getNumberInput();
         logScanStages.setNumberInput(numberInput);
         logScanStages.setNumberGroup(numberInput);
         ProductDetail productDetail = logScanStages.getProductDetail();
@@ -226,7 +233,7 @@ public class LogScanStages extends RealmObject {
 
     }
 
-    public static void deleteScanStages(Realm realm, int stagesId) {
+    public static void deleteScanStages(Realm realm, long stagesId) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
 
         if (!logScanStages.getTypeScan()) {
@@ -253,14 +260,9 @@ public class LogScanStages extends RealmObject {
     }
 
 
-    public int getNumberGroup() {
-        return numberGroup;
+    public long getMasterGroupId() {
+        return masterGroupId;
     }
-
-    public void setNumberGroup(int numberGroup) {
-        this.numberGroup = numberGroup;
-    }
-
 
     public String getGroupCode() {
         return groupCode;
@@ -278,11 +280,7 @@ public class LogScanStages extends RealmObject {
         this.typeScan = typeScan;
     }
 
-    public int getMasterGroupId() {
-        return masterGroupId;
-    }
-
-    public void setMasterGroupId(int masterGroupId) {
-        this.masterGroupId = masterGroupId;
+    public double getNumberGroup() {
+        return numberGroup;
     }
 }

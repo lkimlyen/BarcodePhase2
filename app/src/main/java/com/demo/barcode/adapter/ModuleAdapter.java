@@ -128,7 +128,7 @@ public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> impl
     }
 
     public interface onPrintListener {
-        void onPrint(int module);
+        void onPrint(long module);
     }
 
 

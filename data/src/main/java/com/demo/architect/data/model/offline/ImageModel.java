@@ -9,8 +9,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class ImageModel extends RealmObject {
     @PrimaryKey
-    private int id;
-    private int serverId;
+    private long id;
+    private long serverId;
     private String nameFile;
     private String pathFile;
     private int status;
@@ -19,18 +19,18 @@ public class ImageModel extends RealmObject {
     public ImageModel() {
     }
 
-    public ImageModel(int id, String pathFile, int status, String dateCreate) {
+    public ImageModel(long id, String pathFile, int status, String dateCreate) {
         this.id = id;
         this.pathFile = pathFile;
         this.status = status;
         this.dateCreate = dateCreate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -66,11 +66,11 @@ public class ImageModel extends RealmObject {
         this.dateCreate = dateCreate;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+        long nextId = 0;
         Number maxValue = realm.where(ImageModel.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+        nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -81,7 +81,7 @@ public class ImageModel extends RealmObject {
         return imageModel;
     }
 
-    public static void delete(Realm realm, int id) {
+    public static void delete(Realm realm, long id) {
 
         ImageModel imageModel = realm.where(ImageModel.class).equalTo("id", id).findFirst();
         if (imageModel != null) {
@@ -91,11 +91,11 @@ public class ImageModel extends RealmObject {
     }
 
 
-    public int getServerId() {
+    public long getServerId() {
         return serverId;
     }
 
-    public void setServerId(int serverId) {
+    public void setServerId(long serverId) {
         this.serverId = serverId;
     }
 

@@ -98,7 +98,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void getListProduct(int orderId) {
+    public void getListProduct(long orderId) {
         view.showProgressBar();
         UserEntity userEntity = UserManager.getInstance().getUser();
         getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, userEntity.getRole()),
@@ -121,7 +121,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void checkBarcode(String barcode, int orderId) {
+    public void checkBarcode(String barcode, long orderId) {
         UserEntity userEntity = UserManager.getInstance().getUser();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
@@ -161,7 +161,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void getListQualityControl(int orderId) {
+    public void getListQualityControl(long orderId) {
         UserEntity userEntity = UserManager.getInstance().getUser();
         localRepository.getListQualityControl(orderId, userEntity.getRole()).subscribe(new Action1<RealmResults<QualityControlModel>>() {
             @Override
@@ -172,7 +172,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void removeItemQualityControl(int id) {
+    public void removeItemQualityControl(long id) {
 
     }
 
@@ -225,7 +225,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
         view.turnOnVibrator();
     }
 
-    public void saveBarcode(int orderId, int departmentId, ProductEntity productEntity) {
+    public void saveBarcode(long orderId, int departmentId, ProductEntity productEntity) {
         localRepository.saveBarcodeQC(orderId, departmentId, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

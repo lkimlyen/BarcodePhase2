@@ -28,13 +28,13 @@ import javax.mail.internet.MimeMultipart;
 
 public class SendMailUtil {
 
-    public static void sendMail(final int userid, final String username, final String phone_user, final String filePath, final String version, final String nameData)
+    public static void sendMail(final long userId, final String username, final String phone_user, final String filePath, final String version, final String nameData)
     {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    send(userid, username, phone_user , filePath, version, nameData);
+                    send(userId, username, phone_user , filePath, version, nameData);
 
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);

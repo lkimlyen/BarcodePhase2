@@ -89,7 +89,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void getListModule(int orderId) {
+    public void getListModule(long orderId) {
         view.showProgressBar();
         getListModuleByOrderUsecase.executeIO(new GetListModuleByOrderUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListModuleByOrderUsecase.ResponseValue, GetListModuleByOrderUsecase.ErrorValue>() {
@@ -110,7 +110,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void getListGroupCode(int orderId, String module) {
+    public void getListGroupCode(long orderId, String module) {
         HashMap<String, List<ProductGroupEntity>> result = new HashMap<>();
         List<String> groupCodeList = ListGroupManager.getInstance().getListGroupCodeByModule(module);
         for (String groupCode : groupCodeList) {
@@ -120,7 +120,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void getGroupCodeScanList(int orderId, String module) {
+    public void getGroupCodeScanList(long orderId, String module) {
         localRepository.getListGroupCodeScan(orderId, module).subscribe(new Action1<RealmResults<GroupCode>>() {
             @Override
             public void call(RealmResults<GroupCode> groupCodes) {
@@ -131,7 +131,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void updateGroupCode(String groupCode, int orderId, String module, Collection<GroupCode> list) {
+    public void updateGroupCode(String groupCode, long orderId, String module, Collection<GroupCode> list) {
         view.showProgressBar();
         final GroupCode[] listSelect = new GroupCode[list.size()];
         list.toArray(listSelect);
@@ -174,9 +174,9 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void updateNumberInGroup(String groupCode, int orderId, String module, Collection<ProductGroupEntity> listUpdate) {
+    public void updateNumberInGroup(String groupCode, long orderId, String module, Collection<ProductGroupEntity> listUpdate) {
         view.showProgressBar();
-        int userId = UserManager.getInstance().getUser().getId();
+        long userId = UserManager.getInstance().getUser().getId();
         final ProductGroupEntity[] listSelect = new ProductGroupEntity[listUpdate.size()];
         listUpdate.toArray(listSelect);
         List<GroupCodeEntity> groupCodeList = new ArrayList<>();
@@ -212,7 +212,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void updateNumberGroup(int productId, int groupId, int numberGroup) {
+    public void updateNumberGroup(long productId, long groupId, double numberGroup) {
         localRepository.updateNumberGroup(groupId, numberGroup).subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
@@ -225,7 +225,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void groupCode(int orderId, String module, Collection<GroupCode> list) {
+    public void groupCode(long orderId, String module, Collection<GroupCode> list) {
         view.showProgressBar();
         final GroupCode[] listSelect = new GroupCode[list.size()];
         list.toArray(listSelect);
@@ -263,7 +263,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void detachedCode(int orderId, String module, String groupCode) {
+    public void detachedCode(long orderId, String module, String groupCode) {
         view.showProgressBar();
         GroupEntity groupEntity =  ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode);
         UserEntity user = UserManager.getInstance().getUser();
@@ -296,11 +296,11 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void removeItemInGroup(ProductGroupEntity groupCode, int orderId, String module) {
+    public void removeItemInGroup(ProductGroupEntity groupCode, long orderId, String module) {
         view.showProgressBar();
         GroupEntity groupEntity =  ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode.getGroupCode());
         List<GroupCodeEntity> groupCodeList = new ArrayList<>();
-        int userId = UserManager.getInstance().getUser().getId();
+        long userId = UserManager.getInstance().getUser().getId();
         GroupCodeEntity groupCodeEntity = new GroupCodeEntity(groupCode.getOrderId(), groupCode.getProductDetailID(),
                 groupCode.getNumber(), userId);
         groupCodeList.add(groupCodeEntity);
@@ -361,7 +361,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void getListProduct(int orderId) {
+    public void getListProduct(long orderId) {
         view.showProgressBar();
         getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
                 new BaseUseCase.UseCaseCallback<GetInputForProductDetailUsecase.ResponseValue,
@@ -440,7 +440,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void getListProductDetailInGroupCode(int orderId, String module) {
+    public void getListProductDetailInGroupCode(long orderId, String module) {
         view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue, GetListProductDetailGroupUsecase.ErrorValue>() {

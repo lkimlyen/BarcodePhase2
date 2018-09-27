@@ -8,7 +8,7 @@ import java.util.List;
 public class SOEntity {
     @SerializedName("OrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("CodeSO")
     @Expose
@@ -33,7 +33,7 @@ public class SOEntity {
     public SOEntity() {
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 

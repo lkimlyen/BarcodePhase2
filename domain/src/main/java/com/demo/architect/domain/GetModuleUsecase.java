@@ -22,7 +22,7 @@ public class GetModuleUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
+        long orderId = ((RequestValue) requestValues).orderId;
         int orderType = ((RequestValue) requestValues).orderType;
         int apartmentId = ((RequestValue) requestValues).apartmentId;
         return remoteRepository.getModule(orderId, orderType, apartmentId);
@@ -60,11 +60,11 @@ public class GetModuleUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
+        private final long orderId;
         private final int orderType;
         private final int apartmentId;
 
-        public RequestValue(int orderId, int departmentIdIn, int apartmentId) {
+        public RequestValue(long orderId, int departmentIdIn, int apartmentId) {
             this.orderId = orderId;
             this.orderType = departmentIdIn;
             this.apartmentId = apartmentId;

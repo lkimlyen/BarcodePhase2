@@ -28,7 +28,7 @@ public class ListApartmentManager {
     }
 
 
-    public ApartmentEntity getApartmentById(int apartmentId) {
+    public ApartmentEntity getApartmentById(long apartmentId) {
         ApartmentEntity apartmentEntity = null;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getApartmentID() == apartmentId) {

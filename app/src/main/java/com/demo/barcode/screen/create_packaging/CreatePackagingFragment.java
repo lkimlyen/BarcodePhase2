@@ -80,8 +80,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     TextView txtDateScan;
 
     private Vibrator vibrate;
-    private int orderId = 0;
-    private int apartmentId = 0;
+    private long orderId = 0;
+    private long apartmentId = 0;
     private int orderType = 0;
 
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
@@ -313,7 +313,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         },
                 new ModuleAdapter.onPrintListener() {
                     @Override
-                    public void onPrint(int module) {
+                    public void onPrint(long module) {
 //                        if (!mPresenter.countListScanInPack(adapter.getCount())) {
 //                            showNotification(getString(R.string.text_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
 //                            return;
@@ -342,10 +342,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListApartment(orderId);
-                if (apartmentId > 0) {
-                    mPresenter.getListScan(orderId, apartmentId);
-                    mPresenter.getListProduct(orderId, apartmentId);
-                }
+//                if (apartmentId > 0) {
+//                    mPresenter.getListScan(orderId, apartmentId);
+//                    mPresenter.getListProduct(orderId, apartmentId);
+//                }
 
 
             }

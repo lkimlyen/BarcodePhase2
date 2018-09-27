@@ -20,25 +20,25 @@ import rx.Observable;
  */
 
 public interface ProductRepository {
-    Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(int orderId,
+    Observable<BaseListResponse<ProductEntity>> getInputForProductDetail(long orderId,
                                                                          int departmentId);
 
     Observable<BaseResponse<String>> groupProductDetail(String key, String json);
 
-    Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(int orderId);
+    Observable<BaseListResponse<GroupEntity>> getListProductDetailGroup(long orderId);
 
     Observable<BaseListResponse<GroupEntity>> checkUpdateForGroup(String json);
 
-    Observable<BaseResponse> deactiveProductDetailGroup(String key, int masterGroupId, int userId);
+    Observable<BaseResponse> deactiveProductDetailGroup(String key, long masterGroupId, long userId);
 
-    Observable<BaseResponse> updateProductDetailGroup(String key,  int masterGroupId,
+    Observable<BaseResponse> updateProductDetailGroup(String key,  long masterGroupId,
                                                       String jsonNew,String jsonUpdate,
-                                                      String jsonDelete,int userId);
+                                                      String jsonDelete,long userId);
 
     Observable<BaseResponse<Integer>> postListCodeProductDetail(String key, String json,
-                                                      int userId,String note);
-    Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(int orderId,
-                                                                           int apartmentId);
+                                                      long userId,String note);
+    Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(long orderId,
+                                                                           long apartmentId);
 
 
 

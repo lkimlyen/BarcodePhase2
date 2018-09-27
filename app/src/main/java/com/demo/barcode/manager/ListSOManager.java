@@ -24,7 +24,7 @@ public class ListSOManager {
         this.listSO = listSO;
     }
 
-    public SOEntity getSOById(int id) {
+    public SOEntity getSOById(long id) {
         for (SOEntity so : listSO) {
             if (so.getOrderId() == id) {
                 return so;

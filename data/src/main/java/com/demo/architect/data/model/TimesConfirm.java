@@ -9,18 +9,18 @@ import io.realm.annotations.PrimaryKey;
 
 public class TimesConfirm extends RealmObject {
     @PrimaryKey
-    private int id;
-    private int orderId;
+    private long id;
+    private long orderId;
     private int departmentIdOut;
     private int times;
     private boolean checkedAll;
-    private int userId;
+    private long userId;
     private int status;
 
     public TimesConfirm() {
     }
 
-    public TimesConfirm(int id, int orderId, int departmentIdOut, int times, boolean checkedAll, int userId, int status) {
+    public TimesConfirm(long id, long orderId, int departmentIdOut, int times, boolean checkedAll, long userId, int status) {
         this.id = id;
         this.orderId = orderId;
         this.departmentIdOut = departmentIdOut;
@@ -30,19 +30,19 @@ public class TimesConfirm extends RealmObject {
         this.status = status;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -70,11 +70,11 @@ public class TimesConfirm extends RealmObject {
         this.checkedAll = checkedAll;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -86,15 +86,15 @@ public class TimesConfirm extends RealmObject {
         this.status = status;
     }
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+        long nextId = 0;
         Number maxValue = realm.where(TimesConfirm.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+        nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
-    public static boolean getCheckedConfirmAll(Realm realm, int orderId, int departmentId, int times, int userId) {
+    public static boolean getCheckedConfirmAll(Realm realm, long orderId, int departmentId, int times, long userId) {
         TimesConfirm timesConfirm = realm.where(TimesConfirm.class).equalTo("orderId", orderId)
                 .equalTo("departmentIdOut", departmentId)
                 .equalTo("times", times)

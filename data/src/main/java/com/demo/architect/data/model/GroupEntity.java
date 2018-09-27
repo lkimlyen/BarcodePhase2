@@ -8,11 +8,11 @@ import java.util.List;
 public class GroupEntity {
     @SerializedName("MasterGroupID")
     @Expose
-    private int masterGroupId;
+    private long masterGroupId;
 
     @SerializedName("OrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     public String getModule() {
         return Module;
@@ -33,11 +33,11 @@ public class GroupEntity {
     @Expose
     private List<ProductGroupEntity> producGroupList;
 
-    public int getMasterGroupId() {
+    public long getMasterGroupId() {
         return masterGroupId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 

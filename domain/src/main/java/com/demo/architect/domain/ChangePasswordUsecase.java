@@ -18,7 +18,7 @@ public class ChangePasswordUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int userId = ((RequestValue) requestValues).userId;
+        long userId = ((RequestValue) requestValues).userId;
         String oldPass = ((RequestValue) requestValues).oldPass;
         String newPass = ((RequestValue) requestValues).newPass;
         return remoteRepository.changePassword(userId+"", oldPass, newPass);
@@ -55,11 +55,11 @@ public class ChangePasswordUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        public final int userId;
+        public final long userId;
         public final String oldPass;
         public final String newPass;
 
-        public RequestValue(int userId, String oldPass, String newPass) {
+        public RequestValue(long userId, String oldPass, String newPass) {
             this.userId = userId;
             this.oldPass = oldPass;
             this.newPass = newPass;

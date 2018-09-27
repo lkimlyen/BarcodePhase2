@@ -30,7 +30,7 @@ public class ListPositionScanManager {
     }
 
 
-    public PositionScan getPositionScanByOrderId(int orderId, int apartmentId) {
+    public PositionScan getPositionScanByOrderId(long orderId, long apartmentId) {
 
             list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListPositionScanObject();
 
@@ -46,7 +46,7 @@ public class ListPositionScanManager {
     }
 
 
-    public int getPositionByOrderId(int orderId, int departmentId) {
+    public int getPositionByOrderId(long orderId, long departmentId) {
 
 
             list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListPositionScanObject();

@@ -6,19 +6,60 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class ListGroupCode extends RealmObject {
-    @PrimaryKey
-    private int id;
+   @PrimaryKey
+    private long id;
     private String groupCode;
     @SuppressWarnings("unused")
     private RealmList<GroupCode> list;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public double getNumber() {
+        return number;
+    }
+
+    public void setNumber(double number) {
+        this.number = number;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     private String module;
-    private int number;
+    private double number;
     private int status;
 
     public ListGroupCode() {
     }
 
-    public ListGroupCode(int id, String groupCode, String module, int number, int status) {
+    public ListGroupCode(long id, String groupCode, String module, double number, int status) {
         this.id = id;
         this.groupCode = groupCode;
         this.module = module;
@@ -35,40 +76,17 @@ public class ListGroupCode extends RealmObject {
     }
 
 
-    public static int id(Realm realm) {
-        int nextId = 0;
+    public static long id(Realm realm) {
+       long nextId = 0;
         Number maxValue = realm.where(ListGroupCode.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-        nextId = (maxValue == null) ? 0 : maxValue.intValue();
+       nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getGroupCode() {
-        return groupCode;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
 
     @Override
     public String toString() {
         return groupCode;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 }

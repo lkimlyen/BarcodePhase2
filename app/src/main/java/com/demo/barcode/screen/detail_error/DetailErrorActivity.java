@@ -24,7 +24,7 @@ public class DetailErrorActivity extends BaseActivity {
 
     DetailErrorFragment fragment;
 
-    public static void start(Activity activity, int id) {
+    public static void start(Activity activity, long id) {
         Intent intent = new Intent(activity, DetailErrorActivity.class);
         intent.putExtra("qc_id", id);
         activity.startActivityForResult(intent, REQUEST_CODE);

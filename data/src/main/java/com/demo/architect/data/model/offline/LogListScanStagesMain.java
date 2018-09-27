@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class LogListScanStagesMain extends RealmObject {
     @PrimaryKey
-    private int orderId;
+    private long orderId;
     @SuppressWarnings("unused")
     private RealmList<LogListScanStages> stagesList;
 
@@ -14,13 +14,11 @@ public class LogListScanStagesMain extends RealmObject {
     public LogListScanStagesMain() {
     }
 
-    public LogListScanStagesMain(int orderId) {
+    public LogListScanStagesMain(long orderId) {
         this.orderId = orderId;
     }
 
-    public int getOrderId() {
-        return orderId;
-    }
+
 
     public RealmList<LogListScanStages> getList() {
         return stagesList;
@@ -33,5 +31,13 @@ public class LogListScanStagesMain extends RealmObject {
 
     public void setListModule(RealmList<ListModule> listModule) {
         this.listModule = listModule;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 }

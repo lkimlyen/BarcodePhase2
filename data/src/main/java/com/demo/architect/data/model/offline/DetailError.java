@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class DetailError extends RealmObject {
     @PrimaryKey
-    private int id;
+    private long id;
 
     @SuppressWarnings("unused")
     private RealmList<ImageModel> list;
@@ -16,11 +16,11 @@ public class DetailError extends RealmObject {
     public DetailError() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

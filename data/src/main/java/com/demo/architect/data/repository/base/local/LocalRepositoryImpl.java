@@ -81,7 +81,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> countLogScanStages(final int orderId, final int departmentId, final int times) {
+    public Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -98,7 +98,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> countAllDetailWaitingUpload(final int orderId) {
+    public Observable<Integer> countAllDetailWaitingUpload(final long orderId) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -115,7 +115,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final int orderId) {
+    public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId) {
         return Observable.create(new Observable.OnSubscribe<List<LogScanStages>>() {
             @Override
             public void call(Subscriber<? super List<LogScanStages>> subscriber) {
@@ -147,7 +147,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogScanStages>> getListScanStages(final int orderId, final int departmentIdOut, final int times, final String module) {
+    public Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module) {
         return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStages>>() {
             @Override
             public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
@@ -164,7 +164,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<GroupCode>> getListGroupCodeScan(final int orderId, final String module) {
+    public Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId, final String module) {
         return Observable.create(new Observable.OnSubscribe<RealmResults<GroupCode>>() {
             @Override
             public void call(Subscriber<? super RealmResults<GroupCode>> subscriber) {
@@ -213,7 +213,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberScanStages(final int stagesId, final int numberInput) {
+    public Observable<String> updateNumberScanStages(final long stagesId, final double numberInput) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -229,7 +229,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteScanStages(final int stagesId) {
+    public Observable<String> deleteScanStages(final long stagesId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -245,8 +245,8 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListScanStages> getListScanStagseByDepartment(final int orderId, final int departmentId,
-                                                                       final int userId, final int times) {
+    public Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, final int departmentId,
+                                                                       final long userId, final int times) {
         return Observable.create(new Observable.OnSubscribe<LogListScanStages>() {
             @Override
             public void call(Subscriber<? super LogListScanStages> subscriber) {
@@ -278,7 +278,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogScanConfirm>> getListConfirm(final int orderId, final int departmentIdOut, final int times) {
+    public Observable<RealmResults<LogScanConfirm>> getListConfirm(final long orderId, final int departmentIdOut, final int times) {
         return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanConfirm>>() {
             @Override
             public void call(Subscriber<? super RealmResults<LogScanConfirm>> subscriber) {
@@ -294,7 +294,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> countListConfirmByTimesWaitingUpload(final int orderId, final int departmentIdOut, final int times) {
+    public Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -326,7 +326,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogScanConfirm> findConfirmByBarcode(final int orderId, final int departmentIdOut, final int times, final String barcode) {
+    public Observable<LogScanConfirm> findConfirmByBarcode(final long orderId, final int departmentIdOut, final int times, final String barcode) {
         return Observable.create(new Observable.OnSubscribe<LogScanConfirm>() {
             @Override
             public void call(Subscriber<? super LogScanConfirm> subscriber) {
@@ -344,7 +344,7 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> updateNumnberLogConfirm(final int orderId, final int orderProductId, final int departmentIdOut, final int times, final int numberScan, final boolean scan) {
+    public Observable<String> updateNumnberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -376,7 +376,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusScanStagesByOrder(final int orderId) {
+    public Observable<String> updateStatusScanStagesByOrder(final long orderId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -408,7 +408,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusAndServerIdImage(final int id, final int imageId, final int serverId) {
+    public Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, final long serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -424,7 +424,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addImageModel(final int id, final String pathFile) {
+    public Observable<String> addImageModel(final long id, final String pathFile) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -440,7 +440,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteImageModel(final int id) {
+    public Observable<String> deleteImageModel(final long id) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -472,7 +472,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanPackaging>> getListScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack) {
+    public Observable<List<LogScanPackaging>> getListScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<List<LogScanPackaging>>() {
             @Override
             public void call(Subscriber<? super List<LogScanPackaging>> subscriber) {
@@ -490,7 +490,7 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final int orderId, final int apartmentId) {
+    public Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -506,7 +506,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteScanPackaging(final int logId) {
+    public Observable<String> deleteScanPackaging(final long logId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -522,7 +522,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberScanPackaging(final int logId, final int number) {
+    public Observable<String> updateNumberScanPackaging(final long logId, final double number) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -538,7 +538,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ProductPackagingModel> findProductPackaging(final int productId, final String serialPack) {
+    public Observable<ProductPackagingModel> findProductPackaging(final long productId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<ProductPackagingModel>() {
             @Override
             public void call(Subscriber<? super ProductPackagingModel> subscriber) {
@@ -554,7 +554,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogListOrderPackaging> findOrderPackaging(final int orderId) {
+    public Observable<LogListOrderPackaging> findOrderPackaging(final long orderId) {
         return Observable.create(new Observable.OnSubscribe<LogListOrderPackaging>() {
             @Override
             public void call(Subscriber<? super LogListOrderPackaging> subscriber) {
@@ -570,7 +570,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> getTotalScanBySerialPack(final int orderId, final int apartmentId, final int moduleId, final String serialPack) {
+    public Observable<Integer> getTotalScanBySerialPack(final long orderId, final long apartmentId, final long moduleId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
@@ -586,7 +586,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
+    public Observable<String> addGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -618,7 +618,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Boolean> updateNumberGroup(final int group, final int numberGroup) {
+    public Observable<Boolean> updateNumberGroup(final long group, final double numberGroup) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
@@ -634,7 +634,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final int orderId, final String module, final String groupCode) {
+    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String module, final String groupCode) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -650,7 +650,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> removeItemInGroup(final ProductGroupEntity logScanStages, final int orderId, final String module) {
+    public Observable<String> removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId, final String module) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -682,7 +682,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusScanPackaging(final int orderId, final int apartmentId, final int moduleId, final String serialPack, final int serverId) {
+    public Observable<String> updateStatusScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack, final long serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -714,7 +714,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<QualityControlModel>> getListQualityControl(final int orderId, final int departmentId) {
+    public Observable<RealmResults<QualityControlModel>> getListQualityControl(final long orderId, final int departmentId) {
         return Observable.create(new Observable.OnSubscribe<RealmResults<QualityControlModel>>() {
             @Override
             public void call(Subscriber<? super RealmResults<QualityControlModel>> subscriber) {
@@ -730,7 +730,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<QualityControlModel> getDetailQualityControl(final int id) {
+    public Observable<QualityControlModel> getDetailQualityControl(final long id) {
         return Observable.create(new Observable.OnSubscribe<QualityControlModel>() {
             @Override
             public void call(Subscriber<? super QualityControlModel> subscriber) {
@@ -746,7 +746,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmList<Integer>> getListReasonQualityControl(final int id) {
+    public Observable<RealmList<Integer>> getListReasonQualityControl(final long id) {
         return Observable.create(new Observable.OnSubscribe<RealmList<Integer>>() {
             @Override
             public void call(Subscriber<? super RealmList<Integer>> subscriber) {
@@ -762,7 +762,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> saveBarcodeQC(final int orderId, final int departmentId, final ProductEntity productEntity) {
+    public Observable<String> saveBarcodeQC(final long orderId, final int departmentId, final ProductEntity productEntity) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -778,7 +778,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateDetailErrorQC(final int id, final int numberFailed, final String description, final Collection<Integer> idList) {
+    public Observable<String> updateDetailErrorQC(final long id, final double numberFailed, final String description, final Collection<Integer> idList) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -810,7 +810,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateImageIdAndStatus(final int qcId, final int id, final int imageId) {
+    public Observable<String> updateImageIdAndStatus(final long qcId, final long id, final long imageId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -891,7 +891,7 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> updateGroupCode(final String groupCode, final int orderId, final String module, final GroupCode[] listSelect) {
+    public Observable<String> updateGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -908,7 +908,7 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> confirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+    public Observable<String> confirmAllProductReceive(final long orderId, final int departmentId, final int times) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -924,7 +924,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> cancelConfirmAllProductReceive(final int orderId, final int departmentId, final int times) {
+    public Observable<String> cancelConfirmAllProductReceive(final long orderId, final int departmentId, final int times) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -957,7 +957,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Boolean> getCheckedConfirmAll(final int orderId, final int departmentIdOut, final int times) {
+    public Observable<Boolean> getCheckedConfirmAll(final long orderId, final int departmentIdOut, final int times) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {

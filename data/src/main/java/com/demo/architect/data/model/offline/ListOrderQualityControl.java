@@ -7,18 +7,18 @@ import io.realm.annotations.PrimaryKey;
 
 public class ListOrderQualityControl extends RealmObject {
     @PrimaryKey
-    private int orderId;
+    private long orderId;
     @SuppressWarnings("unused")
     private RealmList<ListDepartmentQualityControl> list;
 
     public ListOrderQualityControl() {
     }
 
-    public ListOrderQualityControl(int orderId) {
+    public ListOrderQualityControl(long orderId) {
         this.orderId = orderId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
@@ -26,7 +26,7 @@ public class ListOrderQualityControl extends RealmObject {
         return list;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -34,7 +34,7 @@ public class ListOrderQualityControl extends RealmObject {
         this.list = list;
     }
 
-    public static ListOrderQualityControl create(Realm realm, int orderId) {
+    public static ListOrderQualityControl create(Realm realm, long orderId) {
 
         ListOrderQualityControl listOrderQualityControl = new ListOrderQualityControl(orderId);
         listOrderQualityControl = realm.copyToRealm(listOrderQualityControl);

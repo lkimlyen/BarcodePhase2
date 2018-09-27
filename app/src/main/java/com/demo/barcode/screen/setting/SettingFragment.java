@@ -184,7 +184,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     }
 
     @Override
-    public void uploadFile(String path, int userId, String userName) {
+    public void uploadFile(String path, long userId, String userName) {
 
 
         UploadTask uploadTask;

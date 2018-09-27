@@ -26,7 +26,7 @@ public class DetailPackageActivity extends BaseActivity {
 
     DetailPackageFragment fragment;
 
-    public static void start(Activity activity, int orderId, int apartmentId,int orderType, HistoryEntity historyEntity) {
+    public static void start(Activity activity, long orderId, long apartmentId,int orderType, HistoryEntity historyEntity) {
         Intent intent = new Intent(activity, DetailPackageActivity.class);
         intent.putExtra(DetailPackageFragment.ORDER_ID, orderId);
         intent.putExtra(DetailPackageFragment.APARTMENT_ID, apartmentId);

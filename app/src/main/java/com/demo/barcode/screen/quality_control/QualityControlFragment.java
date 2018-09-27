@@ -67,7 +67,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private final String TAG = QualityControlFragment.class.getName();
     private QualityControlContract.Presenter mPresenter;
     private QualityControlAdapter adapter;
-    private int orderId;
+    private long orderId;
     private int departmentId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;

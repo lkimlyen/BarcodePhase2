@@ -24,7 +24,7 @@ public class ListOrderConfirmManager {
         this.listOrder = listOrder;
     }
 
-    public OrderConfirmEntity getDetailByProductDetailId(int productDetailID) {
+    public OrderConfirmEntity getDetailByProductDetailId(long productDetailID) {
         for (OrderConfirmEntity requestEntity : listOrder) {
             if (requestEntity.getProductDetailID() == productDetailID) {
                 return requestEntity;
@@ -33,7 +33,7 @@ public class ListOrderConfirmManager {
         return null;
     }
 
-//    public OrderConfirmEntity getOrderById(int id) {
+//    public OrderConfirmEntity getOrderById(long id) {
 //
 //    }
 

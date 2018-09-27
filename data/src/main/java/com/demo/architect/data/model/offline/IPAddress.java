@@ -6,17 +6,17 @@ import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class IPAddress extends RealmObject {
-    @PrimaryKey
+   @PrimaryKey
     private int id;
     private String ipAddress;
     private int portNumber;
-    private int createBy;
+    private long createBy;
     private String dateCreate;
 
     public IPAddress() {
     }
 
-    public IPAddress(int id, String ipAddress, int portNumber, int createBy, String dateCreate) {
+    public IPAddress(int id, String ipAddress, int portNumber, long createBy, String dateCreate) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.portNumber = portNumber;
@@ -36,7 +36,7 @@ public class IPAddress extends RealmObject {
         return portNumber;
     }
 
-    public int getCreateBy() {
+    public long getCreateBy() {
         return createBy;
     }
 

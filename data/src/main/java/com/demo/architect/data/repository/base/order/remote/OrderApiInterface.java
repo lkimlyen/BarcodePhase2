@@ -29,7 +29,7 @@ public interface OrderApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(@Url String url, @Field("pOrderID") int orderId,
+    Call<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(@Url String url, @Field("pOrderID") long orderId,
                                                                    @Field("pDepartmentIDIn") int departmentIDIn,
                                                                    @Field("pDepartmentIDOut") int departmentIDOut);
     @FormUrlEncoded
@@ -42,31 +42,31 @@ public interface OrderApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<CodePackEntity>> getCodePack(@Url String url, @Field("pOrderID") int orderId,
+    Call<BaseListResponse<CodePackEntity>> getCodePack(@Url String url, @Field("pOrderID") long orderId,
                                                        @Field("pOrderType") int orderType,
-                                                       @Field("pProductID") int productId);
+                                                       @Field("pProductID") long productId);
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ModuleEntity>> getModule(@Url String url, @Field("pOrderID") int orderId,
+    Call<BaseListResponse<ModuleEntity>> getModule(@Url String url, @Field("pOrderID") long orderId,
                                                    @Field("pOrderType") int orderType,
                                                    @Field("pApartmentID") int departmentId);
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(@Url String url, @Field("pOrderID") int orderId,
-                                                                    @Field("pProductID") int productId,
-                                                                    @Field("pApartmentID") int apartmentId,
+    Call<BaseListResponse<ProductPackagingEntity>> postCheckBarCode(@Url String url, @Field("pOrderID") long orderId,
+                                                                    @Field("pProductID") long productId,
+                                                                    @Field("pApartmentID") long apartmentId,
                                                                     @Field("pPackCode") String packCode,
                                                                     @Field("pSTTPack") String sttPack,
                                                                     @Field("pCode") String code);
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(@Url String url, @Field("pOrderID") int orderId,
-                                                           @Field("pApartmentID") int apartmentId);
+    Call<BaseListResponse<HistoryEntity>> getListPrintPackageHistory(@Url String url, @Field("pOrderID") long orderId,
+                                                           @Field("pApartmentID") long apartmentId);
 
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse<String>> getListModuleByOrder(@Url String url, @Field("pOrderID") int orderId);
+    Call<BaseListResponse<String>> getListModuleByOrder(@Url String url, @Field("pOrderID") long orderId);
 
 }

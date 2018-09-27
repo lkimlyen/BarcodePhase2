@@ -15,7 +15,7 @@ public interface SettingContract {
         void showIPAddress(IPAddress model);
         void showSuccess(String message);
         void showError(String message);
-        void uploadFile(String path, int userId, String userName);
+        void uploadFile(String path, long userId, String userName);
     }
 
     interface Presenter extends BasePresenter {

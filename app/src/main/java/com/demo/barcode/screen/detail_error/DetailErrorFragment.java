@@ -79,7 +79,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     private String mCurrentPhotoPath;
     private ReasonAdapter rsAdapter;
     private boolean edit;
-    private int id;
+    private long id;
 
     @Bind(R.id.txt_barcode)
     TextView txtBarcode;
@@ -262,7 +262,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     public void showImageError(RealmList<ImageModel> imageModels) {
         imAdapter = new ImageAdapter(imageModels, new ImageAdapter.OnItemClearListener() {
             @Override
-            public void onItemClick(int id) {
+            public void onItemClick(long id) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_image))

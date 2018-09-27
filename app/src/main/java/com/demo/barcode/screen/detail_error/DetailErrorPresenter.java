@@ -56,7 +56,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
 
 
     @Override
-    public void addImage(int id, String pathFile) {
+    public void addImage(long id, String pathFile) {
         view.showProgressBar();
         localRepository.addImageModel(id, pathFile).subscribe(new Action1<String>() {
             @Override
@@ -68,7 +68,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     }
 
     @Override
-    public void deleteImage(int id) {
+    public void deleteImage(long id) {
         view.showProgressBar();
         localRepository.deleteImageModel(id).subscribe(new Action1<String>() {
             @Override
@@ -80,7 +80,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     }
 
     @Override
-    public void getListReason(int id) {
+    public void getListReason(long id) {
         view.showProgressBar();
         getListReasonUsecase.executeIO(new GetListReasonUsecase.RequestValue(),
                 new BaseUseCase.UseCaseCallback<GetListReasonUsecase.ResponseValue,
@@ -107,7 +107,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     }
 
     @Override
-    public void getDetailQualityControl(int id) {
+    public void getDetailQualityControl(long id) {
         localRepository.getDetailQualityControl(id).subscribe(new Action1<QualityControlModel>() {
             @Override
             public void call(QualityControlModel qualityControlModel) {
@@ -118,7 +118,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     }
 
     @Override
-    public void save(int id, int numberFailed, String description, Collection<Integer> idList) {
+    public void save(long id, int numberFailed, String description, Collection<Integer> idList) {
         localRepository.updateDetailErrorQC(id, numberFailed, description, idList).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

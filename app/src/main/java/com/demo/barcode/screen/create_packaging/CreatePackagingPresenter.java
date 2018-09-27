@@ -103,7 +103,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
     @Override
-    public void getListApartment(int orderId) {
+    public void getListApartment(long orderId) {
         view.showProgressBar();
         getApartmentUsecase.executeIO(new GetApartmentUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetApartmentUsecase.ResponseValue,
@@ -113,6 +113,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                         view.hideProgressBar();
                         ListApartmentManager.getInstance().setListDepartment(successResponse.getEntity());
                         view.showListApartment(successResponse.getEntity());
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_data_success));
                     }
 
                     @Override
@@ -127,7 +128,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
 
     @Override
-    public void getListScan(int orderId, int apartmentId) {
+    public void getListScan(long orderId, long apartmentId) {
         positionScan = ListPositionScanManager.getInstance().getPositionScanByOrderId(orderId, apartmentId);
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
         ApartmentEntity apartmentEntity = ListApartmentManager.getInstance().getApartmentById(apartmentId);
@@ -188,7 +189,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
     @Override
-    public void updateNumberScan(int id, int number) {
+    public void updateNumberScan(long id, int number) {
         localRepository.updateNumberScanPackaging(id, number).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -202,7 +203,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     private Result resultFind;
 
     @Override
-    public void checkBarcode(String barcode, int orderId, int apartmentId) {
+    public void checkBarcode(String barcode, long orderId, long apartmentId) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -295,7 +296,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
 
     @Override
-    public void getListProduct(int orderId, int apartmentId) {
+    public void getListProduct(long orderId, long apartmentId) {
         view.showProgressBar();
         getListProductInPackageUsecase.executeIO(new GetListProductInPackageUsecase.RequestValue(orderId, apartmentId),
                 new BaseUseCase.UseCaseCallback<GetListProductInPackageUsecase.ResponseValue,
@@ -337,7 +338,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
         view.turnOnVibrator();
     }
 
-    public void saveBarcode(ListModuleEntity listModuleEntity, PackageEntity packageEntity, ProductPackagingEntity productPackagingEntity, int orderId, int apartmentId) {
+    public void saveBarcode(ListModuleEntity listModuleEntity, PackageEntity packageEntity, ProductPackagingEntity productPackagingEntity, long orderId, long apartmentId) {
         localRepository.findProductPackaging(productPackagingEntity.getId(), packageEntity.getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
             @Override
             public void call(ProductPackagingModel productPackagingModel) {

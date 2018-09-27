@@ -23,8 +23,8 @@ public class GetListProductInPackageUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int orderId = ((RequestValue) requestValues).orderId;
-        int apartmentId = ((RequestValue) requestValues).apartmentId;
+        long orderId = ((RequestValue) requestValues).orderId;
+        long apartmentId = ((RequestValue) requestValues).apartmentId;
         return remoteRepository.getListProductInPackage(orderId,  apartmentId);
     }
 
@@ -60,11 +60,11 @@ public class GetListProductInPackageUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int orderId;
-        private final int apartmentId;
+        private final long orderId;
+        private final long apartmentId;
 
 
-        public RequestValue(int orderId,int apartmentId) {
+        public RequestValue(long orderId,long apartmentId) {
             this.orderId = orderId;
             this.apartmentId = apartmentId;
         }

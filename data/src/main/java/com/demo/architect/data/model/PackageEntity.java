@@ -10,7 +10,7 @@ public class PackageEntity implements Serializable {
 
     @SerializedName("PackageID")
     @Expose
-    private int packageId;
+    private long packageId;
 
     @SerializedName("PackCode")
     @Expose
@@ -22,17 +22,17 @@ public class PackageEntity implements Serializable {
 
     @SerializedName("Current")
     @Expose
-    private int numberScan;
+    private double numberScan;
 
     @SerializedName("Total")
     @Expose
-    private int total;
+    private double total;
 
     @SerializedName("DetailDataList")
     @Expose
     private List<ProductPackagingEntity> productPackagingEntityList;
 
-    public int getPackageId() {
+    public long getPackageId() {
         return packageId;
     }
 
@@ -44,7 +44,7 @@ public class PackageEntity implements Serializable {
         return serialPack;
     }
 
-    public int getTotal() {
+    public double getTotal() {
         return total;
     }
 
@@ -52,7 +52,7 @@ public class PackageEntity implements Serializable {
         return productPackagingEntityList;
     }
 
-    public int getNumberScan() {
+    public double getNumberScan() {
         return numberScan;
     }
 }

@@ -89,7 +89,7 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
     }
 
     @Override
-    public void getListApartment(int orderId) {
+    public void getListApartment(long orderId) {
         view.showProgressBar();
         getApartmentUsecase.executeIO(new GetApartmentUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetApartmentUsecase.ResponseValue,
@@ -113,7 +113,7 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
 
 
     @Override
-    public void getListHistory(int orderId, int apartmentId) {
+    public void getListHistory(long orderId, long apartmentId) {
         view.showProgressBar();
         getListPrintPackageHistoryUsecase.executeIO(new GetListPrintPackageHistoryUsecase.RequestValue(orderId, apartmentId),
                 new BaseUseCase.UseCaseCallback<GetListPrintPackageHistoryUsecase.ResponseValue,

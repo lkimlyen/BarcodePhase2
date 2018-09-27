@@ -13,21 +13,21 @@ public class GroupCodeEntity {
 
     @SerializedName("pOrderID")
     @Expose
-    private int orderId;
+    private long orderId;
 
     @SerializedName("pProductDetailID")
     @Expose
-    private int productDetailId;
+    private long productDetailId;
 
     @SerializedName("pNumber")
     @Expose
-    private int number;
+    private double number;
 
     @SerializedName("pUserID")
     @Expose
-    private int userId;
+    private long userId;
 
-    public GroupCodeEntity(int orderId, int productDetailId, int number, int userId) {
+    public GroupCodeEntity(long orderId, long productDetailId, double number, long userId) {
         this.orderId = orderId;
         this.productDetailId = productDetailId;
         this.number = number;
