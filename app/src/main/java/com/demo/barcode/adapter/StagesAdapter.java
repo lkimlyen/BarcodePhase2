@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -77,7 +79,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
-                        holder.edtNumberScan.setText(item.getNumberInput() + "");
+                        holder.edtNumberScan.setText((int)item.getNumberInput() + "");
                         onErrorListener.errorListener(item, numberInput, CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
@@ -99,16 +101,16 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         holder.txtBarcode.setText(item.getBarcode());
         holder.txtNameDetail.setText(item.getProductDetail().getProductName());
         holder.txtModule.setText(item.getModule());
-        holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
-        holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(numberInputModel.getNumberSuccess() + "");
-        holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.txtQuantityProduct.setText((int)numberInputModel.getNumberTotal() + "");
+        holder.txtQuantityRest.setText((int)numberInputModel.getNumberRest() + "");
+        holder.txtQuantityScan.setText((int)numberInputModel.getNumberSuccess() + "");
+        holder.edtNumberScan.setText(String.valueOf((int)item.getNumberInput()));
 
         if (item.getTypeScan()){
-            holder.txtCodeGroup.setVisibility(View.GONE);
+            holder.llGroup.setVisibility(View.GONE);
             holder.txtCodeGroup.setOnClickListener(null);
         }else {
-            holder.txtCodeGroup.setVisibility(View.VISIBLE);
+            holder.llGroup.setVisibility(View.VISIBLE);
             holder.txtCodeGroup.setText(item.getGroupCode());
             holder.txtCodeGroup.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
             holder.txtCodeGroup.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +139,12 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
             }
         });
 
+        if (numberInputModel.getNumberRest() > 0){
+            holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
+        } else {
+            holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
+        }
+
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
@@ -150,6 +158,8 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         TextView txtQuantityScan;
         EditText edtNumberScan;
         TextView txtCodeGroup;
+        LinearLayout llGroup;
+        RelativeLayout llMain;
 
         private HistoryHolder(View v) {
             super(v);
@@ -162,6 +172,8 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
             txtCodeGroup = (TextView) v.findViewById(R.id.txt_group_code);
+            llGroup = v.findViewById(R.id.layout_group);
+            llMain = v.findViewById(R.id.layout_main);
         }
 
     }

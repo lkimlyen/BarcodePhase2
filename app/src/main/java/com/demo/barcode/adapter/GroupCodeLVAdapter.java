@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import io.realm.RealmBaseAdapter;
 public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements ListAdapter {
     private boolean inChooseMode = false;
     private Set<GroupCode> countersToSelect = new HashSet<GroupCode>();
+    private OnRemoveListener onRemoveListener;
 
     public void enableSelectMode(boolean enabled) {
         inChooseMode = enabled;
@@ -41,8 +43,9 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
+    public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnRemoveListener onRemoveListener, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
         super(realmResults);
+        this.onRemoveListener = onRemoveListener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
     }
@@ -85,14 +88,14 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
-                        holder.edtNumberGroup.setText(item.getNumber() + "");
+                        holder.edtNumberGroup.setText((int) item.getNumber() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
 
                     if (numberInput > item.getNumberTotal()) {
-                        holder.edtNumberGroup.setText(item.getNumber() + "");
+                        holder.edtNumberGroup.setText((int) item.getNumber() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
                         return;
                     }
@@ -107,8 +110,8 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
             }
         };
         holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.edtNumberGroup.setText(String.valueOf(item.getNumber()));
-        holder.txtNumberTotal.setText(String.valueOf(item.getNumberTotal()));
+        holder.edtNumberGroup.setText(String.valueOf((int) item.getNumber()));
+        holder.txtNumberTotal.setText(String.valueOf((int) item.getNumberTotal()));
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -138,6 +141,13 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
             }
         });
+
+        holder.imgRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRemoveListener.onRemove(item.getId());
+            }
+        });
         // holder.cbSelect.setChecked(countersToSelect.contains(item));
     }
 
@@ -147,6 +157,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         EditText edtNumberGroup;
         TextView txtNumberTotal;
         CheckBox cbSelect;
+        ImageView imgRemove;
 
         private HistoryHolder(View v) {
             super(v);
@@ -154,6 +165,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
             edtNumberGroup = (EditText) v.findViewById(R.id.edt_number);
             txtNumberTotal = (TextView) v.findViewById(R.id.txt_number_total);
             cbSelect = (CheckBox) v.findViewById(R.id.cb_select);
+            imgRemove = (ImageView) v.findViewById(R.id.btn_remove);
         }
 
     }
@@ -165,4 +177,8 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     public interface onErrorListener {
         void errorListener(String message);
     }
+    public interface OnRemoveListener {
+        void onRemove(long id);
+    }
+
 }

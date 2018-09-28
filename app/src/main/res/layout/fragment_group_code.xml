@@ -40,7 +40,7 @@
                 android:gravity="center"
                 android:text="@string/text_edit_group_code"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -103,7 +103,7 @@
                 android:layout_weight="1.5"
                 android:text="@string/text_code_so"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 android:textStyle="bold" />
 
             <com.demo.barcode.widgets.spinner.SearchableSpinner
@@ -130,7 +130,7 @@
                 android:layout_weight="1.5"
                 android:text="@string/text_customer_name"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -138,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5"
-                android:textSize="@dimen/text_16sp" />
+                android:textSize="@dimen/text_14sp" />
         </LinearLayout>
 
 
@@ -156,7 +156,7 @@
                 android:layout_weight="1.5"
                 android:text="@string/text_serial_module"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp"
+                android:textSize="@dimen/text_14sp"
                 android:textStyle="bold" />
 
             <com.demo.barcode.widgets.spinner.SearchableSpinner

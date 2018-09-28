@@ -223,12 +223,29 @@ public class LogScanStages extends RealmObject {
     public static void updateNumberInput(Realm realm, long stagesId, double numberInput) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
         double number = numberInput - logScanStages.getNumberInput();
-        logScanStages.setNumberInput(numberInput);
-        logScanStages.setNumberGroup(numberInput);
-        ProductDetail productDetail = logScanStages.getProductDetail();
-        NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
-        numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + number);
-        numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+        if (!logScanStages.getTypeScan()){
+            RealmResults<LogScanStages> scanStages = realm.where(LogScanStages.class).equalTo("groupCode", logScanStages.getGroupCode())
+                    .equalTo("userId", logScanStages.getUserId())
+                    .findAll();
+            for (LogScanStages item : scanStages) {
+                item.setNumberInput(item.getNumberInput()+number);
+                item.setNumberGroup(item.getNumberInput()+number);
+                ProductDetail productDetail = item.getProductDetail();
+                NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
+                numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + number);
+                numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+            }
+
+        }else {
+            logScanStages.setNumberInput(numberInput);
+            logScanStages.setNumberGroup(numberInput);
+            ProductDetail productDetail = logScanStages.getProductDetail();
+            NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
+            numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + number);
+            numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
+
+        }
+
 
 
     }

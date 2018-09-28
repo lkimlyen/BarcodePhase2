@@ -971,4 +971,20 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+    @Override
+    public Observable<String> deleteScanGroupCode(final long id) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteScanGroupCode(id);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 }

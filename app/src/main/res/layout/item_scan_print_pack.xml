@@ -26,14 +26,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/text_name_detail_print"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
+                    android:textSize="@dimen/text_12sp" />
 
                 <TextView
                     android:id="@+id/txt_name_product"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp"
+                    android:textSize="@dimen/text_14sp"
+                    android:layout_marginLeft="@dimen/distance_5dp"
                     android:textStyle="bold" />
             </TableRow>
 
@@ -48,14 +49,15 @@
                     android:layout_height="wrap_content"
                     android:text="Mã màu: "
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
+                    android:textSize="@dimen/text_12sp" />
 
                 <TextView
                     android:id="@+id/txt_code_color"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/distance_5dp"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
+                    android:textSize="@dimen/text_14sp" />
             </TableRow>
 
             <LinearLayout
@@ -71,11 +73,12 @@
                     android:layout_gravity="center"
                     android:text="Quy cách: "
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
+                    android:textSize="@dimen/text_12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/distance_5dp"
                     android:orientation="vertical">
 
                     <TableLayout
@@ -93,7 +96,7 @@
                                 android:gravity="center"
                                 android:text="Dài(L)"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -101,7 +104,7 @@
                                 android:gravity="center"
                                 android:text="Rộng(W)"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -109,7 +112,7 @@
                                 android:gravity="center"
                                 android:text="Dày(H)"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
                         </TableRow>
 
                         <TableRow
@@ -123,7 +126,7 @@
                                 android:gravity="center"
                                 android:text="..."
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
 
                             <TextView
                                 android:id="@+id/txt_width"
@@ -132,7 +135,7 @@
                                 android:gravity="center"
                                 android:text="..."
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
 
                             <TextView
                                 android:id="@+id/txt_height"
@@ -141,7 +144,7 @@
                                 android:gravity="center"
                                 android:text="..."
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp" />
+                                android:textSize="@dimen/text_14sp" />
                         </TableRow>
                     </TableLayout>
                 </LinearLayout>
@@ -158,14 +161,15 @@
                     android:layout_height="wrap_content"
                     android:text="Số lượng: "
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_16sp" />
+                    android:textSize="@dimen/text_12sp" />
 
                 <TextView
                     android:id="@+id/txt_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/holo_red_light"
-                    android:textSize="@dimen/text_16sp"
+                    android:textSize="@dimen/text_14sp"
+                    android:layout_marginLeft="@dimen/distance_5dp"
                     android:textStyle="bold" />
             </TableRow>
 

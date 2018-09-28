@@ -177,7 +177,6 @@ public class GroupCode extends RealmObject {
     }
 
 
-
     public static RealmResults<GroupCode> getListGroupCodeByModule(Realm realm, long orderId, long userId, String module) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
@@ -267,9 +266,14 @@ public class GroupCode extends RealmObject {
                 .equalTo("userId", userId).findFirst();
         RealmList<GroupCode> outGroupList = listModule.getGroupCodeRealmList();
         GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, module, productGroupEntity.getProductDetailID(),
-                productGroupEntity.getProductDetailName(), productGroupEntity.getNumber(), 0, userId, DateUtils.getDateTimeCurrent());
+                productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), userId, DateUtils.getDateTimeCurrent());
         groupCode = realm.copyToRealm(groupCode);
         outGroupList.add(groupCode);
 
+    }
+
+    public static void deleteScanGroupCode(Realm realm, long id, long userId) {
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", id).equalTo("userId", userId).findFirst();
+        groupCode.deleteFromRealm();
     }
 }

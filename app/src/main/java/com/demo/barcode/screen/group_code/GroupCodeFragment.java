@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -68,7 +69,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     private GroupCodeLVAdapter lvAdapter;
     private Set<String> countersToSelect = new HashSet<String>();
     private List<RadioButton> radioButtonList = new ArrayList<>();
-    private HashMap<String, List<ImageButton>> deleteButtonList = new HashMap<>();
+    private HashMap<String, List<ImageView>> deleteButtonList = new HashMap<>();
     private HashMap<Long, ProductGroupEntity> productUpdateList = new HashMap<>();
     private HashMap<String, List<EditText>> editTextList = new HashMap<>();
     private HashMap<String, List<TextView>> textViewList = new HashMap<>();
@@ -306,7 +307,31 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showGroupCodeScanList(RealmResults<GroupCode> groupCodes) {
-        lvAdapter = new GroupCodeLVAdapter(groupCodes, new GroupCodeLVAdapter.OnEditTextChangeListener() {
+        lvAdapter = new GroupCodeLVAdapter(groupCodes, new GroupCodeLVAdapter.OnRemoveListener() {
+            @Override
+            public void onRemove(long id) {
+                new SweetAlertDialog(getContext(),SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_delete_code))
+                        .setConfirmText(getString(R.string.text_ok))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                mPresenter.deleteScanGroupCode(id);
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_cancel))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .show();
+
+            }
+        }, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(GroupCode item, int number) {
                 mPresenter.updateNumberGroup(item.getProductDetailId(), item.getId(), number);
@@ -345,9 +370,9 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 }
                 v.setVisibility(View.GONE);
 
-                for (Map.Entry<String, List<ImageButton>> map : deleteButtonList.entrySet()) {
+                for (Map.Entry<String, List<ImageView>> map : deleteButtonList.entrySet()) {
                     if (map.getKey().equals(v.getTag())) {
-                        for (ImageButton imageButton : map.getValue()) {
+                        for (ImageView imageButton : map.getValue()) {
                             imageButton.setVisibility(View.VISIBLE);
                         }
                         break;
@@ -382,9 +407,9 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
                 v.setVisibility(View.GONE);
 
-                for (Map.Entry<String, List<ImageButton>> map : deleteButtonList.entrySet()) {
+                for (Map.Entry<String, List<ImageView>> map : deleteButtonList.entrySet()) {
                     if (map.getKey().equals(v.getTag())) {
-                        for (ImageButton imageButton : map.getValue()) {
+                        for (ImageView imageButton : map.getValue()) {
                             imageButton.setVisibility(View.INVISIBLE);
                         }
                         break;
@@ -435,7 +460,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         });
         txtTitle.setText(groupCode);
 
-        List<ImageButton> listDelete = new ArrayList<>();
+        List<ImageView> listDelete = new ArrayList<>();
         List<EditText> listEditText = new ArrayList<>();
         List<TextView> listTextView = new ArrayList<>();
 
@@ -445,13 +470,13 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             TextView txtNumberGroup = (TextView) view.findViewById(R.id.txt_number_group);
             EditText edtNumberGroup = (EditText) view.findViewById(R.id.edt_number_group);
             TextView txtNumberScan = (TextView) view.findViewById(R.id.txt_number_scan);
-            ImageButton imgRemove = (ImageButton) view.findViewById(R.id.btn_remove);
+            ImageView imgRemove = (ImageView) view.findViewById(R.id.btn_remove);
             txtNameDetail.setText(product.getProductDetailName());
-            txtNumberGroup.setText(String.valueOf(product.getNumber()));
-            edtNumberGroup.setText(String.valueOf(product.getNumber()));
+            txtNumberGroup.setText(String.valueOf((int)product.getNumber()));
+            edtNumberGroup.setText(String.valueOf((int)product.getNumber()));
             edtNumberGroup.setTag(product);
             txtNumberScan.setTag(product);
-            txtNumberScan.setText(String.valueOf(product.getNumberTotal()));
+            txtNumberScan.setText(String.valueOf((int)product.getNumberTotal()));
             imgRemove.setTag(product);
             listDelete.add(imgRemove);
             listEditText.add(edtNumberGroup);
@@ -482,7 +507,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                         ProductGroupEntity productGroupEntity = (ProductGroupEntity) edtNumberGroup.getTag();
                         if (numberInput <= 0) {
                             if (edtNumberGroup.getTag().equals(productGroupEntity)) {
-                                edtNumberGroup.setText(productGroupEntity.getNumber() + "");
+                                edtNumberGroup.setText((int)productGroupEntity.getNumber() + "");
                             }
                             showError(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                             return;
@@ -490,7 +515,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
                         if (numberInput > productGroupEntity.getNumberTotal()) {
                             if (edtNumberGroup.getTag().equals(productGroupEntity)) {
-                                edtNumberGroup.setText(productGroupEntity.getNumber() + "");
+                                edtNumberGroup.setText((int)productGroupEntity.getNumber() + "");
                             }
                             showError(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
                             return;

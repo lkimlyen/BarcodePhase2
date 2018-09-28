@@ -35,7 +35,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:layout_height="@dimen/distance_24dp"
                             android:orientation="horizontal">
 
                             <TextView
@@ -43,7 +44,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/text_code_scan"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_14sp" />
+                                android:textSize="@dimen/text_12sp" />
 
                             <TextView
                                 android:id="@+id/txt_barcode"
@@ -57,15 +58,16 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_height="@dimen/distance_24dp"
+                            android:gravity="center_vertical"
+                           android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/text_serial_module_print"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_14sp" />
+                                android:textSize="@dimen/text_12sp" />
 
                             <TextView
                                 android:id="@+id/txt_serial_module"
@@ -73,13 +75,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/distance_5dp"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp"
+                                android:textSize="@dimen/text_14sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/distance_24dp"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
@@ -87,7 +90,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/text_name_detail_print"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_14sp" />
+                                android:textSize="@dimen/text_12sp" />
 
                             <TextView
                                 android:id="@+id/txt_name_detail"
@@ -95,13 +98,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/distance_5dp"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp"
+                                android:textSize="@dimen/text_14sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/distance_24dp"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
@@ -109,7 +113,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/text_number_order"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_14sp" />
+                                android:textSize="@dimen/text_12sp" />
 
                             <TextView
                                 android:id="@+id/txt_number_order"
@@ -117,7 +121,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/distance_5dp"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp"
+                                android:textSize="@dimen/text_14sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </LinearLayout>

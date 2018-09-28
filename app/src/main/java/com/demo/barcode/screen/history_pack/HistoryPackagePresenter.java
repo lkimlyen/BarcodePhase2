@@ -123,9 +123,8 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
                         view.hideProgressBar();
                         if(successResponse.getEntity().size() == 0){
                             view.showError(CoreApplication.getInstance().getString(R.string.text_no_data));
-                        }else {
-                            view.showListHistory(successResponse.getEntity());
                         }
+                            view.showListHistory(successResponse.getEntity());
 
                         ListHistoryManager.getInstance().setListHitory(successResponse.getEntity());
                     }

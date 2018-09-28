@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,10 +35,11 @@ public class DetailGroupDialog extends DialogFragment {
     @Override
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+        Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
         dialog.setContentView(R.layout.dialog_detail_group);
         dialog.setCanceledOnTouchOutside(true);
         LinearLayout layoutContent = (LinearLayout) dialog.findViewById(R.id.layout_content);
+        RelativeLayout layoutMain = (RelativeLayout) dialog.findViewById(R.id.layout_main);
         TextView txtGroupCode = (TextView) dialog.findViewById(R.id.txt_group_code);
         txtGroupCode.setText(groupCode);
         GroupEntity groupEntity = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode);
@@ -49,10 +51,15 @@ public class DetailGroupDialog extends DialogFragment {
             TextView txtNumber = (TextView) v.findViewById(R.id.txt_number);
 
             txtTitle.setText(productGroupEntity.getProductDetailName());
-            txtNumber.setText(String.valueOf(productGroupEntity.getNumber()));
+            txtNumber.setText(String.valueOf((int) productGroupEntity.getNumber()));
             layoutContent.addView(v);
         }
-
+        layoutMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         return dialog;
     }
 

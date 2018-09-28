@@ -113,9 +113,9 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
-        orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
+        orderId = getActivity().getIntent().getLongExtra(ORDER_ID, 0);
         historyEntity = (HistoryEntity) getActivity().getIntent().getSerializableExtra(HISTORY);
-        apartmentId = getActivity().getIntent().getIntExtra(APARTMENT_ID, 0);
+        apartmentId = getActivity().getIntent().getLongExtra(APARTMENT_ID, 0);
         orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
         initView();
         return view;

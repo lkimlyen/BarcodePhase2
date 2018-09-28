@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:padding="@dimen/distance_5dp"
         android:orientation="horizontal">
 
 
@@ -64,7 +65,7 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_save_blue" />
+            android:src="@drawable/ic_save" />
 
     </LinearLayout>
 

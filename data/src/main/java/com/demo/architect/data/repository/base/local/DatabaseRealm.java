@@ -592,4 +592,13 @@ public class DatabaseRealm {
         return b;
     }
 
+    public void deleteScanGroupCode(final long id) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                GroupCode.deleteScanGroupCode(realm, id, userId);
+            }
+        });
+    }
 }

@@ -156,4 +156,6 @@ public interface LocalRepository {
 
     Observable<String> cancelConfirmAllProductReceive(long orderId, int departmentId, int times);
     Observable<Boolean> getCheckedConfirmAll(final long orderId, final int departmentIdOut, final int times);
+
+    Observable<String> deleteScanGroupCode(long id);
 }

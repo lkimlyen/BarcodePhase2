@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -67,14 +68,14 @@ public class GroupCodeContentAdapter extends RealmBaseAdapter<GroupCode> impleme
         TextView txtNameDetail;
         TextView txtNumberGroup;
         TextView txtNumberScan;
-        ImageButton imgRemove;
+        ImageView imgRemove;
 
         private HistoryHolder(View v) {
             super(v);
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
             txtNumberGroup = (TextView) v.findViewById(R.id.txt_number_group);
             txtNumberScan = (TextView) v.findViewById(R.id.txt_number_scan);
-            imgRemove = (ImageButton) v.findViewById(R.id.btn_remove);
+            imgRemove = (ImageView) v.findViewById(R.id.btn_remove);
         }
 
     }

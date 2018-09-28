@@ -353,7 +353,7 @@ public class LogScanConfirm extends RealmObject {
         RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
                 .equalTo("status", Constants.WAITING_UPLOAD)
                 .notEqualTo("statusConfirm", -1)
-                .greaterThan("numberConfirmed",0)
+                .greaterThan("numberConfirmed",(double) 0)
                 .equalTo("userId", userId).findAll();
         return realm.copyFromRealm(results);
 
@@ -460,9 +460,6 @@ public class LogScanConfirm extends RealmObject {
     public static void updateStatusScanConfirm(Realm realm, long userId) {
         RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class)
                 .equalTo("status", Constants.WAITING_UPLOAD)
-                .notEqualTo("statusConfirm", -1)
-                .greaterThan("numberConfirmed",0)
-                .greaterThan("numberScanOut",0)
                 .equalTo("userId", userId).findAll();
         for (LogScanConfirm logScanConfirm : results) {
             logScanConfirm.setStatus(Constants.COMPLETE);
@@ -481,7 +478,7 @@ public class LogScanConfirm extends RealmObject {
                 .equalTo("departmentIDOut", departmentIDOut)
                 .equalTo("userId", userId)
                 .equalTo("status", Constants.WAITING_UPLOAD)
-                .greaterThan("numberScanOut", 0)
+                .greaterThan("numberScanOut", (double) 0)
                 .equalTo("timesInput", times).findAll();
         return list;
     }

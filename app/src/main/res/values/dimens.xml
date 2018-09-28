@@ -33,4 +33,6 @@
     <dimen name="size_70dp">70dp</dimen>
     <dimen name="distance_22dp">22dp</dimen>
     <dimen name="size_24dp">24dp</dimen>
+    <dimen name="distance_32dp">32dp</dimen>
+    <dimen name="distance_40dp">40dp</dimen>
 </resources>

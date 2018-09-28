@@ -69,12 +69,12 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput < 0) {
-                        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
+                        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
                     if (numberInput > item.getNumberScanOut()) {
-                        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
+                        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
                     }
@@ -91,8 +91,8 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.txtNumberDelivery.setText(String.valueOf(item.getNumberScanOut()));
-        holder.edtNumberReceive.setText(String.valueOf(item.getNumberConfirmed()));
+        holder.txtNumberDelivery.setText(String.valueOf((int)item.getNumberScanOut()));
+        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
 
 
         switch (item.getStatusConfirm()) {

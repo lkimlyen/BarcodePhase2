@@ -71,5 +71,7 @@ public interface GroupCodeContract {
         void checkBarcode(String barcode, String module);
 
         void getListProductDetailInGroupCode(long orderId, String module);
+
+        void deleteScanGroupCode(long id);
     }
 }
