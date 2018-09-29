@@ -95,7 +95,6 @@ public class NumberInputConfirmModel extends RealmObject {
                     numberInputConfirm.getNumberConfirmed(),  numberOut, numberOut, numberInputConfirm.getTimesInput());
             numberInputModel = realm.copyToRealm(numberInputModel);
         } else {
-
             numberInputModel = new NumberInputConfirmModel(id(realm) + 1, masterDetailId, 0,
                     numberInputConfirm.getNumberConfirmed(), numberOut, numberRest, numberInputConfirm.getTimesInput());
             numberInputModel = realm.copyToRealm(numberInputModel);

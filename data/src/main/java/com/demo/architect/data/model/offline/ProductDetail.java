@@ -9,7 +9,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class ProductDetail extends RealmObject {
-   @PrimaryKey
+    @PrimaryKey
     private long id;
     private long productId;
     private String productName;
@@ -44,10 +44,10 @@ public class ProductDetail extends RealmObject {
     }
 
     public static long id(Realm realm) {
-       long nextId = 0;
+        long nextId = 0;
         Number maxValue = realm.where(ProductDetail.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-       nextId = (maxValue == null) ? 0 : maxValue.longValue();
+        nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -104,12 +104,13 @@ public class ProductDetail extends RealmObject {
                     list.add(NumberInputModel.create(realm, numberInput));
                 } else {
                     numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
-                    numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
                     if (numberInput.getNumberWaitting() != numberInputModel.getNumberRest()) {
-                        double numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
-                        numberInputModel.setNumberScanned(numberScanSuccessOld);
+                        // double numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
+                        numberInputModel.setNumberScanned((numberInputModel.getNumberScanned() - numberInputModel.getNumberSuccess()) + numberInput.getNumberSuccess());
                         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
                     }
+
+                    numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
                 }
 
             }
