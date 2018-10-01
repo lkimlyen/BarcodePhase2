@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HistoryAdapter extends BaseExpandableListAdapter {
+public class HistoryAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
     private Context context;
     private List<HistoryEntity> listModule;
     private HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> listProduct;
@@ -57,11 +57,6 @@ public class HistoryAdapter extends BaseExpandableListAdapter {
         return this.listModule.size();
     }
 
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return this.listProduct.get(this.listModule.get(groupPosition))
-                .size();
-    }
 
     @Override
     public long getGroupId(int groupPosition) {
@@ -101,7 +96,7 @@ public class HistoryAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final HashMap<ProductPackagingEntity, PackageEntity> childContent = (HashMap<ProductPackagingEntity, PackageEntity>) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
@@ -128,10 +123,16 @@ public class HistoryAdapter extends BaseExpandableListAdapter {
             txtPackCode.setText(map.getValue().getPackCode());
             txtNameProduct.setText(map.getKey().getProductName());
             txtCodeScan.setText(map.getKey().getBarcode());
-            txtNumber.setText(String.valueOf(map.getKey().getNumber()));
+            txtNumber.setText(String.valueOf((int)map.getKey().getNumber()));
         }
 
         return convertView;
+    }
+
+    @Override
+    public int getRealChildrenCount(int groupPosition) {
+        return this.listProduct.get(this.listModule.get(groupPosition))
+                .size();
     }
 
     @Override

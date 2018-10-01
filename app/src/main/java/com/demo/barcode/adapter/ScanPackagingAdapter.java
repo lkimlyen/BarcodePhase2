@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
@@ -34,7 +35,6 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -74,13 +74,13 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
-                        holder.edtNumberScan.setText(item.getNumberInput() + "");
+                        holder.edtNumberScan.setText((int)item.getNumberInput() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_number_bigger_zero));
                         return;
 
                     }
                     if (numberInput - item.getNumberInput() > productPackagingModel.getNumberRest()) {
-                        holder.edtNumberScan.setText(item.getNumberInput() + "");
+                        holder.edtNumberScan.setText((int)item.getNumberInput() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest));
                         return;
                     }
@@ -98,10 +98,10 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         holder.txtPackCode.setText(item.getCodePack());
         holder.txtSerialPack.setText(item.getSttPack());
         holder.txtNameDetail.setText(productPackagingModel.getProductName());
-        holder.txtQuantityProduct.setText(productPackagingModel.getNumberTotal() + "");
-        holder.txtQuantityRest.setText(productPackagingModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(productPackagingModel.getNumberScan() + "");
-        holder.edtNumberScan.setText(String.valueOf(item.getNumberInput()));
+        holder.txtQuantityProduct.setText((int)productPackagingModel.getNumberTotal() + "");
+        holder.txtQuantityRest.setText((int)productPackagingModel.getNumberRest() + "");
+        holder.txtQuantityScan.setText((int)productPackagingModel.getNumberScan() + "");
+        holder.edtNumberScan.setText(String.valueOf((int)item.getNumberInput()));
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -142,7 +142,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         TextView txtQuantityRest;
         TextView txtQuantityScan;
         EditText edtNumberScan;
-        LinearLayout layoutMain;
+        RelativeLayout layoutMain;
 
 
         private HistoryHolder(View v) {
@@ -156,7 +156,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
             txtQuantityRest = (TextView) v.findViewById(R.id.txt_quantity_rest);
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
-            layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
+            layoutMain = (RelativeLayout) v.findViewById(R.id.layout_main);
         }
 
     }

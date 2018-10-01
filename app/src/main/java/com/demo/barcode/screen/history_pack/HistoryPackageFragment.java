@@ -245,8 +245,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     @Override
     public void showListHistory(List<HistoryEntity> list) {
         HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
-
-
         for (HistoryEntity historyEntity : list) {
             List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
             for (PackageEntity packageEntity : historyEntity.getPackageList()) {

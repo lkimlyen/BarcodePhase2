@@ -63,7 +63,7 @@ public class ProductHistoryAdapter extends BaseAdapter {
         holder.txtHeight.setText(item.getHeight() + "");
         holder.txtLength.setText(item.getLength() + "");
         holder.txtWidth.setText(item.getWidth() + "");
-        holder.txtNumber.setText(item.getNumber()+ "");
+        holder.txtNumber.setText((int)item.getNumber()+ "");
         holder.txtNameProduct.setText(item.getProductName());
     }
 

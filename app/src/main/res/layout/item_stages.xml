@@ -43,7 +43,7 @@
                         android:layout_marginStart="@dimen/distance_5dp"
                         android:text="vbvbvb"
                         android:gravity="center_vertical"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="#ffbb52"
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
 

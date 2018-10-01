@@ -362,7 +362,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 if (item.getTypeScan()) {
                     mPresenter.updateNumberScan(item.getId(), number, true);
                 } else {
-                    mPresenter.updateNumberScanInGroup(item, number, true);
+                    mPresenter.updateNumberScanInGroup(item, number);
                 }
 
             }
@@ -398,7 +398,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 })
                                 .show();
                     } else {
-                        mPresenter.updateNumberScanInGroup(item, numberInput, true);
+                        mPresenter.updateNumberScanInGroup(item, numberInput);
                     }
 
                 }

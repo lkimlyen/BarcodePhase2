@@ -65,7 +65,7 @@ public interface StagesContract {
 
         void deleteScanStages(long stagesId);
 
-        void updateNumberScanInGroup(LogScanStages logScanStages, double numberInput, boolean update);
+        void updateNumberScanInGroup(LogScanStages logScanStages, double numberInput);
 
         void getListScanStages(long orderId, int departmentId, int times);
 

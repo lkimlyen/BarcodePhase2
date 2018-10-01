@@ -240,7 +240,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void updateNumberScanInGroup(LogScanStages stages, double number, boolean update) {
+    public void updateNumberScanInGroup(LogScanStages stages, double number) {
         allowedToSave = true;
         double numberOut = number-stages.getNumberInput();
             localRepository.getScanByProductDetailId(stages)
@@ -256,9 +256,9 @@ public class StagesPresenter implements StagesContract.Presenter {
                             }
                             if (!allowedToSave) {
                                 view.showError(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest_in_group));
-                                updateNumberScan(stages.getId(), stages.getNumberInput(), update);
+                                updateNumberScan(stages.getId(), stages.getNumberInput(), false);
                             }else {
-                                updateNumberScan(stages.getId(), number, update);
+                                updateNumberScan(stages.getId(), number, true);
                             }
 
 

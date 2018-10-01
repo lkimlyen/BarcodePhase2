@@ -64,10 +64,10 @@ public class PrintStampAdapter extends BaseAdapter {
 
     private void setDataToViews(HistoryHolder holder, LogScanPackaging item) {
         holder.txtCodeColor.setText(item.getProductPackagingModel().getProductColor());
-        holder.txtHeight.setText(item.getProductPackagingModel().getHeight() + "");
-        holder.txtLength.setText(item.getProductPackagingModel().getLength() + "");
-        holder.txtWidth.setText(item.getProductPackagingModel().getWidth() + "");
-        holder.txtNumber.setText(item.getNumberInput() + "");
+        holder.txtHeight.setText((int)item.getProductPackagingModel().getHeight() + "");
+        holder.txtLength.setText((int)item.getProductPackagingModel().getLength() + "");
+        holder.txtWidth.setText((int)item.getProductPackagingModel().getWidth() + "");
+        holder.txtNumber.setText((int)item.getNumberInput() + "");
         holder.txtNameProduct.setText(item.getProductPackagingModel().getProductName());
     }
 
