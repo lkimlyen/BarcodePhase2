@@ -64,6 +64,7 @@
     <string name="text_sum_detail">Tổng chi tiết:</string>
     <string name="text_number_bigger_zero">Số lượng nhập vào phải lớn hơn 0!</string>
     <string name="text_quantity_input_bigger_quantity_rest">Số lượng nhập vào không được vượt quá số lượng cho phép.</string>
+    <string name="text_quantity_input_bigger_quantity_rest_in_group">Số lượng nhập vào trong group không được vượt quá số lượng cho phép.</string>
     <string name="text_code_scan" >Mã quét:</string>
     <string name="text_date_scan">Ngày quét</string>
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>

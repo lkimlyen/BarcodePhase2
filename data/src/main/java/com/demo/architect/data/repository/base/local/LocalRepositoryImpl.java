@@ -973,6 +973,22 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<RealmResults<LogScanStages>> getScanByProductDetailId(final LogScanStages logScanStages) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStages>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
+                try {
+                    RealmResults<LogScanStages> list = databaseRealm.getScanByProductDetailId(logScanStages);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<String> deleteScanGroupCode(final long id) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override

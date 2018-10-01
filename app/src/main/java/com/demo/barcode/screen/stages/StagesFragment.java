@@ -30,7 +30,6 @@ import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
-import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.DetailGroupDialog;
@@ -360,7 +359,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }, new StagesAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanStages item, int number) {
-                mPresenter.updateNumberScanStages(item.getId(), number, true);
+                if (item.getTypeScan()) {
+                    mPresenter.updateNumberScan(item.getId(), number, true);
+                } else {
+                    mPresenter.updateNumberScanInGroup(item, number, true);
+                }
+
             }
         }, new StagesAdapter.onErrorListener() {
             @Override
@@ -370,28 +374,33 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     turnOnVibrator();
                     startMusicError();
                 } else {
-                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText(getString(R.string.text_title_noti))
-                            .setContentText(getString(R.string.text_exceed_the_number_of_requests))
-                            .setConfirmText(getString(R.string.text_yes))
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    if (item.getTypeScan()) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.text_title_noti))
+                                .setContentText(getString(R.string.text_exceed_the_number_of_requests))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                                    mPresenter.updateNumberScanStages(item.getId(), numberInput, true);
-                                    sweetAlertDialog.dismiss();
+                                        mPresenter.updateNumberScan(item.getId(), numberInput, true);
+                                        sweetAlertDialog.dismiss();
 
-                                }
-                            })
-                            .setCancelText(getString(R.string.text_no))
-                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    mPresenter.updateNumberScanStages(item.getId(), item.getNumberInput(), false);
-                                    sweetAlertDialog.dismiss();
-                                }
-                            })
-                            .show();
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.updateNumberScan(item.getId(), item.getNumberInput(), false);
+                                        sweetAlertDialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    } else {
+                        mPresenter.updateNumberScanInGroup(item, numberInput, true);
+                    }
+
                 }
 
             }
@@ -399,7 +408,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             @Override
             public void onOpenDetail(String groupCode) {
                 DetailGroupDialog detailGroupDialog = new DetailGroupDialog();
-                detailGroupDialog.show(getActivity().getFragmentManager(),TAG);
+                detailGroupDialog.show(getActivity().getFragmentManager(), TAG);
                 detailGroupDialog.setGroupCode(groupCode);
             }
         });
@@ -469,7 +478,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId,null,typeScan == 1);
+                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId, null, typeScan == 1);
                         sweetAlertDialog.dismiss();
 
                     }
@@ -486,14 +495,25 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidualInGroup(int times, List<ProductGroupEntity> productGroupEntityList, int departmentId) {
+    public void showCheckResidualInGroup(long id, double number, double numberInput) {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
                 .setContentText(getString(R.string.text_exceed_the_number_of_requests_in_group))
-                .setConfirmText(getString(R.string.text_ok))
+                .setConfirmText(getString(R.string.text_yes))
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                        mPresenter.updateNumberScan(id, number, true);
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mPresenter.updateNumberScan(id, numberInput, false);
                         sweetAlertDialog.dismiss();
                     }
                 })

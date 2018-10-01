@@ -39,6 +39,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import io.realm.RealmResults;
 import rx.functions.Action1;
 
 /**
@@ -176,7 +177,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                         }
                                     }
                                     if (numberInput != null) {
-                                        if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() == item.getNumber()) {
+                                        if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() >= item.getNumber()) {
                                             allowedToSave = true;
                                         } else {
                                             allowedToSave = false;
@@ -239,20 +240,34 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void updateNumberScanStages(long stagesId, double numberInput, boolean update) {
-        view.showProgressBar();
-        localRepository.updateNumberScanStages(stagesId, numberInput).subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                if (update) {
-                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                    view.startMusicSuccess();
-                    view.turnOnVibrator();
-                }
-                view.hideProgressBar();
+    public void updateNumberScanInGroup(LogScanStages stages, double number, boolean update) {
+        allowedToSave = true;
+        double numberOut = number-stages.getNumberInput();
+            localRepository.getScanByProductDetailId(stages)
+                    .subscribe(new Action1<RealmResults<LogScanStages>>() {
+                        @Override
+                        public void call(RealmResults<LogScanStages> list) {
+                            for (LogScanStages scanStages : list){
+                                final NumberInputModel numberInputModel = scanStages.getProductDetail().getListInput().where().equalTo("times", stages.getTimes()).findFirst();
+                                if (numberOut > numberInputModel.getNumberRest()) {
+                                    allowedToSave = false;
+                                    break;
+                                }
+                            }
+                            if (!allowedToSave) {
+                                view.showError(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest_in_group));
+                                updateNumberScan(stages.getId(), stages.getNumberInput(), update);
+                            }else {
+                                updateNumberScan(stages.getId(), number, update);
+                            }
 
-            }
-        });
+
+                        }
+                    });
+
+
+
+
     }
 
     @Override
@@ -359,7 +374,7 @@ public class StagesPresenter implements StagesContract.Presenter {
             groupCodeId = groupEntity.getMasterGroupId();
         }
         LogScanStages logScanStages = new LogScanStages(productEntity.getOrderId(), departmentId, user.getRole(), productEntity.getProductDetailID(),
-                groupCodeId , groupCode, productEntity.getBarcode(), productEntity.getModule(), number, typeScan, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
+                groupCodeId, groupCode, productEntity.getBarcode(), productEntity.getModule(), number, typeScan, times, ConvertUtils.getDateTimeCurrent(), user.getId(), number);
         localRepository.addLogScanStagesAsync(logScanStages, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -418,6 +433,23 @@ public class StagesPresenter implements StagesContract.Presenter {
                 if (integer > 0) {
                     view.showDialogUpload();
                 }
+            }
+        });
+    }
+
+    @Override
+    public void updateNumberScan(long stagesId, double number, boolean update) {
+        view.showProgressBar();
+        localRepository.updateNumberScanStages(stagesId, number).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                if (update) {
+                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                    view.startMusicSuccess();
+                    view.turnOnVibrator();
+                }
+                view.hideProgressBar();
+
             }
         });
     }

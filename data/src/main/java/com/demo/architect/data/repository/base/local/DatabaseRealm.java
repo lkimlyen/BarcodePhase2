@@ -158,7 +158,7 @@ public class DatabaseRealm {
 
     public HashMap<List<LogScanStages>, Set<GroupScan>> getListLogScanStagesUpload() {
         Realm realm = getRealmInstance();
-        final  HashMap<List<LogScanStages>, Set<GroupScan>> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
+        final HashMap<List<LogScanStages>, Set<GroupScan>> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
         return list;
     }
 
@@ -172,6 +172,7 @@ public class DatabaseRealm {
             }
         });
     }
+
     public void addGroupScan(final List<GroupEntity> list) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -600,5 +601,11 @@ public class DatabaseRealm {
                 GroupCode.deleteScanGroupCode(realm, id, userId);
             }
         });
+    }
+
+    public RealmResults<LogScanStages> getScanByProductDetailId(LogScanStages logScanStages) {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanStages> list = LogScanStages.getScanByProductDetailId(realm, logScanStages);
+        return list;
     }
 }

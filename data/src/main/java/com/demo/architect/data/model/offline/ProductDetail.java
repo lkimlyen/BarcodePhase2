@@ -79,7 +79,6 @@ public class ProductDetail extends RealmObject {
         for (NumberInput numberInput : productEntity.getListInput()) {
             numberInputModels.add(NumberInputModel.create(realm, numberInput));
         }
-
         RealmList<Integer> listStages = productDetail.getListStages();
         for (Integer id : productEntity.getListDepartmentID()) {
             listStages.add(id);
@@ -105,7 +104,6 @@ public class ProductDetail extends RealmObject {
                 } else {
                     numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
                     if (numberInput.getNumberWaitting() != numberInputModel.getNumberRest()) {
-                        // double numberScanSuccessOld = numberInput.getNumberWaitting() - numberInputModel.getNumberRest();
                         numberInputModel.setNumberScanned((numberInputModel.getNumberScanned() - numberInputModel.getNumberSuccess()) + numberInput.getNumberSuccess());
                         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
                     }

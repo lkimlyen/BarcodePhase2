@@ -6,6 +6,8 @@ import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -14,7 +16,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class LogScanStages extends RealmObject {
 
-   @PrimaryKey
+    @PrimaryKey
     private long id;
     @Expose
     @SerializedName("pOrderID")
@@ -31,7 +33,7 @@ public class LogScanStages extends RealmObject {
 
     private ProductDetail productDetail;
 
-   private long masterGroupId;
+    private long masterGroupId;
     private String groupCode;
     @Expose
     @SerializedName("pBarcode")
@@ -183,10 +185,10 @@ public class LogScanStages extends RealmObject {
     }
 
     public static long id(Realm realm) {
-       long nextId = 0;
+        long nextId = 0;
         Number maxValue = realm.where(LogScanStages.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-       nextId = (maxValue == null) ? 0 : maxValue.longValue();
+        nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -220,23 +222,46 @@ public class LogScanStages extends RealmObject {
         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
     }
 
+    public static RealmResults<LogScanStages> getScanByProductDetailId(Realm realm, LogScanStages logScanStages){
+        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
+
+        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
+                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+                .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+
+        RealmList<LogScanStages> parentList = parent.getList();
+        RealmResults<LogScanStages> scanStages = parentList.where().equalTo("groupCode", logScanStages.getGroupCode())
+                .equalTo("userId", logScanStages.getUserId())
+                .findAll();
+        return scanStages;
+    }
+
     public static void updateNumberInput(Realm realm, long stagesId, double numberInput) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
         double number = numberInput - logScanStages.getNumberInput();
-        if (!logScanStages.getTypeScan()){
-            RealmResults<LogScanStages> scanStages = realm.where(LogScanStages.class).equalTo("groupCode", logScanStages.getGroupCode())
+        if (!logScanStages.getTypeScan()) {
+            LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
+
+            LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
+                    .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+                    .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+
+            RealmList<LogScanStages> parentList = parent.getList();
+            RealmResults<LogScanStages> scanStages = parentList.where().equalTo("groupCode", logScanStages.getGroupCode())
                     .equalTo("userId", logScanStages.getUserId())
                     .findAll();
             for (LogScanStages item : scanStages) {
-                item.setNumberInput(item.getNumberInput()+number);
-                item.setNumberGroup(item.getNumberInput()+number);
+                item.setNumberInput(item.getNumberInput() + number);
+                item.setNumberGroup(item.getNumberInput() + number);
                 ProductDetail productDetail = item.getProductDetail();
                 NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", logScanStages.getTimes()).findFirst();
                 numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + number);
                 numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
             }
 
-        }else {
+        } else {
             logScanStages.setNumberInput(numberInput);
             logScanStages.setNumberGroup(numberInput);
             ProductDetail productDetail = logScanStages.getProductDetail();
@@ -247,14 +272,21 @@ public class LogScanStages extends RealmObject {
         }
 
 
-
     }
 
     public static void deleteScanStages(Realm realm, long stagesId) {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
 
         if (!logScanStages.getTypeScan()) {
-            RealmResults<LogScanStages> scanStages = realm.where(LogScanStages.class).equalTo("groupCode", logScanStages.getGroupCode())
+            LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
+
+            LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
+                    .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+                    .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+
+            RealmList<LogScanStages> parentList = parent.getList();
+            RealmResults<LogScanStages> scanStages = parentList.where().equalTo("groupCode", logScanStages.getGroupCode())
                     .equalTo("userId", logScanStages.getUserId())
                     .findAll();
             for (LogScanStages item : scanStages) {

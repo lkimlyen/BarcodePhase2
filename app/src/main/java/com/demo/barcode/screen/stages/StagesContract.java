@@ -8,6 +8,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
@@ -41,8 +42,7 @@ public interface StagesContract {
         void showCheckResidual(int times, ProductEntity
                 productEntity, int departmentId);
 
-        void showCheckResidualInGroup(int times, List<ProductGroupEntity>
-                productGroupEntityList, int departmentId);
+        void showCheckResidualInGroup(long id, double number,double numberInput);
 
         void showListTimes(List<Integer> list);
 
@@ -65,7 +65,7 @@ public interface StagesContract {
 
         void deleteScanStages(long stagesId);
 
-        void updateNumberScanStages(long stagesId,double numberInput, boolean update);
+        void updateNumberScanInGroup(LogScanStages logScanStages, double numberInput, boolean update);
 
         void getListScanStages(long orderId, int departmentId, int times);
 
@@ -83,5 +83,7 @@ public interface StagesContract {
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId);
 
         void countListAllData(long orderId);
+
+        void updateNumberScan(long stagesId, double number, boolean update);
     }
 }
