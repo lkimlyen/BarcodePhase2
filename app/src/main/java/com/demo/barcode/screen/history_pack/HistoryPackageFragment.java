@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.HistoryAdapter;
+import com.demo.barcode.adapter.HistoryAdapter2;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.detail_package.DetailPackageActivity;
@@ -42,7 +45,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class HistoryPackageFragment extends BaseFragment implements HistoryPackageContract.View {
     private final String TAG = HistoryPackageFragment.class.getName();
     private HistoryPackageContract.Presenter mPresenter;
-    private HistoryAdapter adapter;
+    private HistoryAdapter2 adapter;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
 
@@ -56,7 +59,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     TextView txtCustomerName;
 
     @Bind(R.id.lv_history)
-    ExpandableListView lvHistory;
+    ListView lvHistory;
     private long orderId = 0;
     private long apartmentId = 0;
     private int orderType = 0;
@@ -244,29 +247,66 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
     @Override
     public void showListHistory(List<HistoryEntity> list) {
-        HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
-        for (HistoryEntity historyEntity : list) {
-            List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
-            for (PackageEntity packageEntity : historyEntity.getPackageList()) {
-                HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
-                for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
-                    map.put(productPackagingEntity, packageEntity);
-                }
-                listContent.add(map);
-            }
-            hashMap.put(historyEntity, listContent);
-        }
-        adapter = new HistoryAdapter(getContext(), list, hashMap, new HistoryAdapter.OnClickPrintListener() {
+//        HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
+//        for (HistoryEntity historyEntity : list) {
+//            List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
+//            for (PackageEntity packageEntity : historyEntity.getPackageList()) {
+//                HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
+//                for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
+//                    map.put(productPackagingEntity, packageEntity);
+//                }
+//                listContent.add(map);
+//            }
+//            hashMap.put(historyEntity, listContent);
+//        }
+        adapter =  new HistoryAdapter2(getContext(), list, new HistoryAdapter2.OnClickPrintListener() {
             @Override
             public void onClickPrint(HistoryEntity historyEntity) {
                 DetailPackageActivity.start(getActivity(), orderId, apartmentId,orderType, historyEntity);
             }
         });
+
         lvHistory.setAdapter(adapter);
 
-        lvHistory.setGroupIndicator(null);
+//        lvHistory.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                setListViewHeightBasedOnItems(lvHistory);
+//            }
+//        });
+       // lvHistory.setGroupIndicator(null);
     }
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
 
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
