@@ -110,18 +110,14 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void getListGroupCode(long orderId, String module) {
-        HashMap<String, List<ProductGroupEntity>> result = new HashMap<>();
-        List<String> groupCodeList = ListGroupManager.getInstance().getListGroupCodeByModule(module);
-        for (String groupCode : groupCodeList) {
-            result.put(groupCode, ListGroupManager.getInstance().getListProductByGroupCode(groupCode));
-        }
+    public void getListGroupCode(long orderId) {
+        HashMap<String, List<ProductGroupEntity>> result = ListGroupManager.getInstance().getListGroupCode();
         view.showGroupCode(result);
     }
 
     @Override
-    public void getGroupCodeScanList(long orderId, String module) {
-        localRepository.getListGroupCodeScan(orderId, module).subscribe(new Action1<RealmResults<GroupCode>>() {
+    public void getGroupCodeScanList(long orderId) {
+        localRepository.getListGroupCodeScan(orderId).subscribe(new Action1<RealmResults<GroupCode>>() {
             @Override
             public void call(RealmResults<GroupCode> groupCodes) {
                 view.showGroupCodeScanList(groupCodes);
@@ -131,17 +127,24 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
 
     @Override
-    public void updateGroupCode(String groupCode, long orderId, String module, Collection<GroupCode> list) {
+    public void updateGroupCode(String groupCode, long orderId, Collection<GroupCode> list) {
         view.showProgressBar();
         final GroupCode[] listSelect = new GroupCode[list.size()];
         list.toArray(listSelect);
         List<GroupCodeEntity> groupCodeList = new ArrayList<>();
+
+        GroupEntity groupEntity = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode);
         for (GroupCode logScanStages : listSelect) {
+            for (ProductGroupEntity productGroupEntity : groupEntity.getProducGroupList()) {
+               if (productGroupEntity.getProductDetailID() == logScanStages.getProductDetailId()){
+                   showError(CoreApplication.getInstance().getString(R.string.text_has_product_exist_in_group));
+                   return;
+               }
+            }
             GroupCodeEntity groupCodeEntity = new GroupCodeEntity(logScanStages.getOrderId(), logScanStages.getProductDetailId(),
                     logScanStages.getNumber(), logScanStages.getUserId());
             groupCodeList.add(groupCodeEntity);
         }
-        GroupEntity groupEntity = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode);
         Gson gson = new Gson();
         String jsonNew = gson.toJson(groupCodeList);
         UserEntity user = UserManager.getInstance().getUser();
@@ -153,13 +156,13 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     @Override
                     public void onSuccess(UpdateProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.updateGroupCode(groupCode, orderId, module, listSelect)
+                        localRepository.updateGroupCode(groupCode, orderId, listSelect)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_group_code_success));
-                                        getListGroupCode(orderId, module);
-                                        getListProductDetailInGroupCode(orderId, module);
+                                        getListGroupCode(orderId);
+                                        getListProductDetailInGroupCode(orderId);
                                     }
                                 });
                     }
@@ -174,7 +177,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void updateNumberInGroup(String groupCode, long orderId, String module, Collection<ProductGroupEntity> listUpdate) {
+    public void updateNumberInGroup(String groupCode, long orderId, Collection<ProductGroupEntity> listUpdate) {
         view.showProgressBar();
         long userId = UserManager.getInstance().getUser().getId();
         final ProductGroupEntity[] listSelect = new ProductGroupEntity[listUpdate.size()];
@@ -198,7 +201,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     @Override
                     public void onSuccess(UpdateProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        getListProductDetailInGroupCode(orderId, module);
+                        getListProductDetailInGroupCode(orderId);
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_number_group_success));
                     }
 
@@ -243,12 +246,12 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     @Override
                     public void onSuccess(GroupProductDetailUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.addGroupCode(successResponse.getGroupCode(), orderId, module, listSelect)
+                        localRepository.addGroupCode(successResponse.getGroupCode(), orderId, listSelect)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_group_code_success));
-                                        getListProductDetailInGroupCode(orderId, module);
+                                        getListProductDetailInGroupCode(orderId);
                                     }
                                 });
                     }
@@ -263,7 +266,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void detachedCode(long orderId, String module, String groupCode) {
+    public void detachedCode(long orderId, String groupCode) {
         view.showProgressBar();
         GroupEntity groupEntity = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode);
         UserEntity user = UserManager.getInstance().getUser();
@@ -275,12 +278,12 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     @Override
                     public void onSuccess(DeactiveProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.detachedCodeStages(list, orderId, module, groupCode)
+                        localRepository.detachedCodeStages(list, orderId, groupCode)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_detached_code_success));
-                                        getListProductDetailInGroupCode(orderId, module);
+                                        getListProductDetailInGroupCode(orderId);
                                         view.setHeightListView();
                                     }
                                 });
@@ -296,7 +299,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void removeItemInGroup(ProductGroupEntity groupCode, long orderId, String module) {
+    public void removeItemInGroup(ProductGroupEntity groupCode, long orderId) {
         view.showProgressBar();
         GroupEntity groupEntity = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupCode.getGroupCode());
         List<GroupCodeEntity> groupCodeList = new ArrayList<>();
@@ -315,12 +318,12 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     @Override
                     public void onSuccess(UpdateProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.removeItemInGroup(groupCode, orderId, module)
+                        localRepository.removeItemInGroup(groupCode, orderId)
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_remove_item_in_group_code_success));
-                                        getListProductDetailInGroupCode(orderId, module);
+                                        getListProductDetailInGroupCode(orderId);
                                     }
                                 });
                     }
@@ -387,13 +390,9 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void checkBarcode(String barcode, String module) {
+    public void checkBarcode(String barcode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            return;
-        }
-        if (barcode.length() < 10 || barcode.length() > 13) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             return;
         }
 
@@ -401,18 +400,13 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
         if (list.size() == 0) {
             showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-
             return;
         }
 
         ProductEntity model = ListProductManager.getInstance().getProductByBarcode(barcode);
 
         if (model != null) {
-            ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(model.getProductDetailID());
-            if (productGroupEntity != null) {
-                showError(CoreApplication.getInstance().getString(R.string.text_product_is_grouped));
-                return;
-            }
+            // ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(model.getProductDetailID());
             localRepository.checkNumberProductInGroupCode(model).subscribe(new Action1<Boolean>() {
                 @Override
                 public void call(Boolean aBoolean) {
@@ -432,7 +426,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void getListProductDetailInGroupCode(long orderId, String module) {
+    public void getListProductDetailInGroupCode(long orderId) {
         view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue, GetListProductDetailGroupUsecase.ErrorValue>() {
@@ -440,9 +434,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
-                        if (module != null) {
-                            getListGroupCode(orderId, module);
-                        }
+                        getListGroupCode(orderId);
                     }
 
                     @Override

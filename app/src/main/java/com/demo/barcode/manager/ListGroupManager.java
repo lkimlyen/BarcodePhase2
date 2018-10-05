@@ -5,6 +5,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ListGroupManager {
@@ -28,7 +29,7 @@ public class ListGroupManager {
 
     public ProductGroupEntity getProductById(long productId) {
         for (GroupEntity requestEntity : listGroup) {
-            for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()){
+            for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()) {
                 if (productGroupEntity.getProductDetailID() == productId) {
                     return productGroupEntity;
                 }
@@ -59,15 +60,11 @@ public class ListGroupManager {
     }
 
 
-    public List<String> getListGroupCodeByModule(String module) {
-        List<String> list = new ArrayList<>();
+    public HashMap<String,List<ProductGroupEntity>> getListGroupCode() {
+        HashMap<String,List<ProductGroupEntity>> list = new HashMap<>();
         for (GroupEntity requestEntity : listGroup) {
-            if (requestEntity.getModule().equals(module)) {
-                if (!list.equals(requestEntity.getGroupCode())) {
-                    list.add(requestEntity.getGroupCode());
-                }
+            list.put(requestEntity.getGroupCode(),requestEntity.getProducGroupList());
 
-            }
         }
         return list;
     }

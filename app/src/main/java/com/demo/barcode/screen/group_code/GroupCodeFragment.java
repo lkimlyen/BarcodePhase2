@@ -128,7 +128,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, module);
+                mPresenter.checkBarcode(barcode);
             }
         }
     }
@@ -278,8 +278,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 module = list.get(position);
-                mPresenter.getGroupCodeScanList(orderId, module);
-                mPresenter.getListGroupCode(orderId, module);
+                mPresenter.getListGroupCode(orderId);
 
             }
 
@@ -434,7 +433,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 if (productUpdateList.size() == 0) {
                     return;
                 }
-                mPresenter.updateNumberInGroup((String) v.getTag(), orderId, module, productUpdateList.values());
+                mPresenter.updateNumberInGroup((String) v.getTag(), orderId, productUpdateList.values());
 
             }
         });
@@ -455,7 +454,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 }
                 countersToSelect.clear();
                 countersToSelect.add((String) rbSelect.getTag());
-
             }
         });
         txtTitle.setText(groupCode);
@@ -470,12 +468,14 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             TextView txtNumberGroup = (TextView) view.findViewById(R.id.txt_number_group);
             EditText edtNumberGroup = (EditText) view.findViewById(R.id.edt_number_group);
             TextView txtNumberScan = (TextView) view.findViewById(R.id.txt_number_scan);
+            TextView txtModule = (TextView) view.findViewById(R.id.txt_module);
             ImageView imgRemove = (ImageView) view.findViewById(R.id.btn_remove);
             txtNameDetail.setText(product.getProductDetailName());
             txtNumberGroup.setText(String.valueOf((int)product.getNumber()));
             edtNumberGroup.setText(String.valueOf((int)product.getNumber()));
             edtNumberGroup.setTag(product);
             txtNumberScan.setTag(product);
+            txtModule.setText(product.getModule());
             txtNumberScan.setText(String.valueOf((int)product.getNumberTotal()));
             imgRemove.setTag(product);
             listDelete.add(imgRemove);
@@ -484,7 +484,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             imgRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mPresenter.removeItemInGroup((ProductGroupEntity) v.getTag(), orderId, module);
+                    mPresenter.removeItemInGroup((ProductGroupEntity) v.getTag(), orderId);
                 }
             });
 
@@ -585,8 +585,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
+                    mPresenter.getListProductDetailInGroupCode(orderId);
                     mPresenter.getListProduct(orderId);
-                    mPresenter.getListProductDetailInGroupCode(orderId, null);
                 }
             }
 
@@ -648,8 +648,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             lvAdapter.enableSelectMode(false);
             countersToSelect.clear();
         } else if (lvAdapter.getCountersToSelect().size() > 0 && countersToSelect.size() > 0) {
-            mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId,
-                    module, lvAdapter.getCountersToSelect());
+            mPresenter.updateGroupCode(countersToSelect.iterator().next(), orderId, lvAdapter.getCountersToSelect());
             cbAll.setChecked(false);
             lvAdapter.enableSelectMode(false);
             countersToSelect.clear();
@@ -679,7 +678,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
 
                             sweetAlertDialog.dismiss();
-                            mPresenter.detachedCode(orderId, module, countersToSelect.iterator().next());
+                            mPresenter.detachedCode(orderId, countersToSelect.iterator().next());
                             countersToSelect.clear();
                         }
                     })
@@ -709,11 +708,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             return;
         }
 
-        if (TextUtils.isEmpty(module)) {
-            showError(getString(R.string.text_module_is_empty));
-            return;
-        }
-        mPresenter.checkBarcode(edtBarcode.getText().toString(), module);
+        mPresenter.checkBarcode(edtBarcode.getText().toString());
     }
 
     @OnClick(R.id.btn_scan)
@@ -723,10 +718,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             return;
         }
 
-        if (TextUtils.isEmpty(module)) {
-            showError(getString(R.string.text_module_is_empty));
-            return;
-        }
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);

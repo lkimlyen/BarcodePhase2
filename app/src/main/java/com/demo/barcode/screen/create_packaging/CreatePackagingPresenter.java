@@ -208,10 +208,6 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-        if (barcode.length() < 10 || barcode.length() > 13) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
-            return;
-        }
 
 
         List<Result> resultList = ListModulePackagingManager.getInstance().getListProductByBarcode(barcode);

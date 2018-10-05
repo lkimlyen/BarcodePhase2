@@ -28,14 +28,6 @@ public class GroupScan extends RealmObject {
         this.version = version;
     }
 
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
     public long getOrderId() {
         return orderId;
     }
@@ -52,17 +44,14 @@ public class GroupScan extends RealmObject {
     @SerializedName("pVersion")
     @Expose
     private int version;
-
-    private String module;
     private long orderId;
 
     public GroupScan() {
     }
 
-    public GroupScan(long masterGroupId, int version, String module, long orderId) {
+    public GroupScan(long masterGroupId, int version, long orderId) {
         this.masterGroupId = masterGroupId;
         this.version = version;
-        this.module = module;
         this.orderId = orderId;
     }
 
@@ -76,7 +65,7 @@ public class GroupScan extends RealmObject {
 
     public static void create(Realm realm, List<GroupEntity> list) {
         for (GroupEntity groupEntity : list){
-            GroupScan groupScan = new GroupScan( groupEntity.getMasterGroupId(), groupEntity.getRowVersion(), groupEntity.getModule(), groupEntity.getOrderId());
+            GroupScan groupScan = new GroupScan( groupEntity.getMasterGroupId(), groupEntity.getRowVersion(), groupEntity.getOrderId());
             realm.insertOrUpdate(groupScan);
         }
 

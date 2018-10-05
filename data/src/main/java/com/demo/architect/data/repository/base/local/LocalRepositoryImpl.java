@@ -3,11 +3,9 @@ package com.demo.architect.data.repository.base.local;
 import android.content.Context;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
@@ -17,7 +15,6 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
@@ -164,12 +161,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId, final String module) {
+    public Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId) {
         return Observable.create(new Observable.OnSubscribe<RealmResults<GroupCode>>() {
             @Override
             public void call(Subscriber<? super RealmResults<GroupCode>> subscriber) {
                 try {
-                    RealmResults<GroupCode> list = databaseRealm.getListGroupCodeByModule(orderId, module);
+                    RealmResults<GroupCode> list = databaseRealm.getListGroupCode(orderId);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -586,12 +583,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
+    public Observable<String> addGroupCode(final String groupCode, final long orderId, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addGroupCode(groupCode, orderId, module, listSelect);
+                    databaseRealm.addGroupCode(groupCode, orderId, listSelect);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -634,12 +631,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String module, final String groupCode) {
+    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final long orderId,final String groupCode) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.detachedCodeStages(list, orderId, module, groupCode);
+                    databaseRealm.detachedCodeStages(list, orderId,  groupCode);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -650,12 +647,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId, final String module) {
+    public Observable<String> removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.removeItemInGroup(logScanStages, orderId, module);
+                    databaseRealm.removeItemInGroup(logScanStages, orderId);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -891,12 +888,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> updateGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
+    public Observable<String> updateGroupCode(final String groupCode, final long orderId, final GroupCode[] listSelect) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateGroupCode(groupCode, orderId, module, listSelect);
+                    databaseRealm.updateGroupCode(groupCode, orderId, listSelect);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

@@ -55,7 +55,7 @@ public interface LocalRepository {
 
     Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module);
 
-    Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId, String module);
+    Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId);
 
 
     Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
@@ -110,15 +110,15 @@ public interface LocalRepository {
 
     Observable<Integer> getTotalScanBySerialPack(final long orderId, final long apartmentId, final long moduleId, final String serialPack);
 
-    Observable<String> addGroupCode(String groupCode, long orderId,String module, GroupCode[] listSelect);
+    Observable<String> addGroupCode(String groupCode, long orderId, GroupCode[] listSelect);
 
     Observable<String> addGroupCode(String groupCode,  LogScanStages logScanStages,ProductEntity productEntity);
 
     Observable<Boolean> updateNumberGroup(long groupId, double numberGroup);
 
-    Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, long orderId, final String module,  String groupCode);
+    Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, long orderId,String groupCode);
 
-    Observable<String> removeItemInGroup(ProductGroupEntity logScanStages, long orderId, final String module);
+    Observable<String> removeItemInGroup(ProductGroupEntity logScanStages, long orderId);
 
     Observable<IPAddress> findIPAddress();
 
@@ -150,7 +150,7 @@ public interface LocalRepository {
 
     Observable<Boolean>  checkNumberProductInGroupCode(ProductEntity model);
 
-    Observable<String> updateGroupCode(String groupCode, long orderId,  String module, GroupCode[] listSelect);
+    Observable<String> updateGroupCode(String groupCode, long orderId, GroupCode[] listSelect);
 
     Observable<String> confirmAllProductReceive(long orderId, int departmentId, int times);
 

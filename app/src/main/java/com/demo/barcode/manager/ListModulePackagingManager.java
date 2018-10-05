@@ -5,7 +5,6 @@ import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.Result;
-import com.demo.architect.data.model.offline.ListModule;
 
 import java.util.ArrayList;
 import java.util.List;

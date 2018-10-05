@@ -216,9 +216,9 @@ public class DatabaseRealm {
         return logListScanStages;
     }
 
-    public RealmResults<GroupCode> getListGroupCodeByModule(long orderId, String module) {
+    public RealmResults<GroupCode> getListGroupCode(long orderId) {
         Realm realm = getRealmInstance();
-        RealmResults<GroupCode> results = GroupCode.getListGroupCodeByModule(realm, orderId, userId, module);
+        RealmResults<GroupCode> results = GroupCode.getListGroupCodeByModule(realm, orderId, userId);
         return results;
     }
 
@@ -385,12 +385,12 @@ public class DatabaseRealm {
         return total;
     }
 
-    public void addGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
+    public void addGroupCode(final String groupCode, final long orderId, final GroupCode[] listSelect) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.addGroupCode(realm, groupCode, orderId, module, listSelect, userId);
+                GroupCode.addGroupCode(realm, groupCode, orderId, listSelect, userId);
             }
         });
     }
@@ -406,22 +406,22 @@ public class DatabaseRealm {
 
     }
 
-    public void detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String module, final String groupCode) {
+    public void detachedCodeStages(final List<ProductGroupEntity> list, final long orderId,  final String groupCode) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.detachedCode(realm, list, orderId, module, userId);
+                GroupCode.detachedCode(realm, list, orderId, userId);
             }
         });
     }
 
-    public void removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId, final String module) {
+    public void removeItemInGroup(final ProductGroupEntity logScanStages, final long orderId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.removeItemInGroup(realm, logScanStages, orderId, module, userId);
+                GroupCode.removeItemInGroup(realm, logScanStages, orderId, userId);
             }
         });
     }
@@ -556,12 +556,12 @@ public class DatabaseRealm {
         return number;
     }
 
-    public void updateGroupCode(final String groupCode, final long orderId, final String module, final GroupCode[] listSelect) {
+    public void updateGroupCode(final String groupCode, final long orderId, final GroupCode[] listSelect) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GroupCode.updateGroupCode(realm, groupCode, orderId, module, listSelect, userId);
+                GroupCode.updateGroupCode(realm, groupCode, orderId, listSelect, userId);
             }
         });
     }

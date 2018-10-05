@@ -14,13 +14,6 @@ public class GroupEntity {
     @Expose
     private long orderId;
 
-    public String getModule() {
-        return Module;
-    }
-
-    @SerializedName("Module")
-    @Expose
-    private String Module;
     @SerializedName("GroupCode")
     @Expose
     private String groupCode;

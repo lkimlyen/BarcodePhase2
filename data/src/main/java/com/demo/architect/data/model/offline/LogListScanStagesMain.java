@@ -10,7 +10,16 @@ public class LogListScanStagesMain extends RealmObject {
     @SuppressWarnings("unused")
     private RealmList<LogListScanStages> stagesList;
 
-    private RealmList<ListModule> listModule;
+    public RealmList<GroupCode> getGroupCodeRealmList() {
+        return groupCodeRealmList;
+    }
+
+    public void setGroupCodeRealmList(RealmList<GroupCode> groupCodeRealmList) {
+        this.groupCodeRealmList = groupCodeRealmList;
+    }
+
+    @SuppressWarnings("unused")
+    private RealmList<GroupCode> groupCodeRealmList;
     public LogListScanStagesMain() {
     }
 
@@ -22,15 +31,6 @@ public class LogListScanStagesMain extends RealmObject {
 
     public RealmList<LogListScanStages> getList() {
         return stagesList;
-    }
-
-
-    public RealmList<ListModule> getListModule() {
-        return listModule;
-    }
-
-    public void setListModule(RealmList<ListModule> listModule) {
-        this.listModule = listModule;
     }
 
     public long getOrderId() {

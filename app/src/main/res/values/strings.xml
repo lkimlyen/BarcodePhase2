@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Barcode</string>
+    <string name="app_name">Barcode GĐ2</string>
     <string name="text_login">Đăng nhập</string>
     <string name="text_title_noti">Thông báo</string>
     <string name="text_ok">OK</string>
@@ -265,6 +265,7 @@
     <string name="text_data_yesterday_not_upload">Còn dữ liệu chưa tải lên, bạn có muốn tải lên không?</string>
     <string name="text_code_group">Mã nhóm:</string>
     <string name="text_get_data_success">Lấy dữ liệu thành công</string>
+    <string name="text_has_product_exist_in_group">Danh sách sản phẩm bạn chọn có sản phẩm đã tồn tại trong group!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

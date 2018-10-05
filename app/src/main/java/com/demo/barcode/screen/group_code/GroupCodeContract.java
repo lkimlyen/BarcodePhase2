@@ -50,27 +50,27 @@ public interface GroupCodeContract {
 
         void groupCode(long orderId, String module, Collection<GroupCode> list);
 
-        void getListGroupCode(long orderId, String module);
+        void getListGroupCode(long orderId);
 
-        void getGroupCodeScanList(long orderId, String module);
+        void getGroupCodeScanList(long orderId);
 
-        void updateGroupCode(String groupCode, long orderId, String module, Collection<GroupCode> list);
+        void updateGroupCode(String groupCode, long orderId, Collection<GroupCode> list);
 
-        void updateNumberInGroup(String group, long orderId, String module,Collection<ProductGroupEntity> listUpdate);
+        void updateNumberInGroup(String group, long orderId,Collection<ProductGroupEntity> listUpdate);
 
         void updateNumberGroup(long productId, long groupId, double numberGroup);
 
-        void detachedCode(long orderId, String module, String groupCode);
+        void detachedCode(long orderId, String groupCode);
 
-        void removeItemInGroup(ProductGroupEntity logScanStages, long orderId, String module);
+        void removeItemInGroup(ProductGroupEntity logScanStages, long orderId);
 
         void getListSO(int orderType);
 
         void getListProduct(long orderId);
 
-        void checkBarcode(String barcode, String module);
+        void checkBarcode(String barcode);
 
-        void getListProductDetailInGroupCode(long orderId, String module);
+        void getListProductDetailInGroupCode(long orderId);
 
         void deleteScanGroupCode(long id);
     }

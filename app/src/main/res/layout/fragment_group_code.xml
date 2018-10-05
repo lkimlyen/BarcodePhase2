@@ -147,6 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
+            android:visibility="gone"
             android:orientation="horizontal"
             android:weightSum="5">
 
@@ -287,7 +288,17 @@
                 android:textColor="#000"
                 android:textSize="@dimen/text_12sp"
                 android:textStyle="bold" />
-
+            <TextView
+                android:id="@+id/txt_module"
+                android:layout_width="@dimen/size_55dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_serial_module_break"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/age"
                 android:layout_width="match_parent"
@@ -301,7 +312,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_width="@dimen/size_100dp"
+                android:layout_width="@dimen/size_55dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="serif"

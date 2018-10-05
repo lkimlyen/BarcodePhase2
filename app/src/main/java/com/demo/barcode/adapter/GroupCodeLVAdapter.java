@@ -112,6 +112,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.edtNumberGroup.setText(String.valueOf((int) item.getNumber()));
         holder.txtNumberTotal.setText(String.valueOf((int) item.getNumberTotal()));
+        holder.txtModule.setText(item.getModule());
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -155,6 +156,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
         TextView txtNameDetail;
         EditText edtNumberGroup;
+        TextView txtModule;
         TextView txtNumberTotal;
         CheckBox cbSelect;
         ImageView imgRemove;
@@ -166,6 +168,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
             txtNumberTotal = (TextView) v.findViewById(R.id.txt_number_total);
             cbSelect = (CheckBox) v.findViewById(R.id.cb_select);
             imgRemove = (ImageView) v.findViewById(R.id.btn_remove);
+            txtModule = (TextView) v.findViewById(R.id.txt_module);
         }
 
     }

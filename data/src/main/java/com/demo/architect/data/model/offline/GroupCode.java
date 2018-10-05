@@ -1,14 +1,11 @@
 package com.demo.architect.data.model.offline;
 
-import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.GroupCodeEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.utils.view.DateUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -44,14 +41,6 @@ public class GroupCode extends RealmObject {
 
     public void setOrderId(long orderId) {
         this.orderId = orderId;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
     }
 
     public long getProductDetailId() {
@@ -95,8 +84,6 @@ public class GroupCode extends RealmObject {
     @SerializedName("pOrderID")
     @Expose
     private long orderId;
-
-    private String module;
     @SerializedName("pProductDetailID")
     @Expose
     private long productDetailId;
@@ -118,6 +105,8 @@ public class GroupCode extends RealmObject {
     @Expose
     private double number;
 
+    private String module;
+
     @SerializedName("pUserID")
     @Expose
     private long userId;
@@ -127,15 +116,15 @@ public class GroupCode extends RealmObject {
     public GroupCode() {
     }
 
-    public GroupCode(long id, String groupCode, long orderId, String module, long productDetailId, String productDetailName, double numberTotal, double number, long userId, String dateGroup) {
+    public GroupCode(long id, String groupCode, long orderId, long productDetailId, String productDetailName, double numberTotal, double number, String module, long userId, String dateGroup) {
         this.id = id;
         this.groupCode = groupCode;
         this.orderId = orderId;
-        this.module = module;
         this.productDetailId = productDetailId;
         this.productDetailName = productDetailName;
         this.numberTotal = numberTotal;
         this.number = number;
+        this.module = module;
         this.userId = userId;
         this.dateGroup = dateGroup;
     }
@@ -153,13 +142,12 @@ public class GroupCode extends RealmObject {
 
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", productEntity.getOrderId()).findFirst();
 
-        ListModule module = mainParent.getListModule().where().equalTo("module", productEntity.getModule())
-                .equalTo("userId", userId).findFirst();
-        RealmList<GroupCode> parentList = module.getGroupCodeRealmList();
+
+        RealmList<GroupCode> parentList = mainParent.getGroupCodeRealmList();
         GroupCode groupCode = parentList.where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
         if (groupCode == null) {
-            groupCode = new GroupCode(id(realm) + 1, null, productEntity.getOrderId(), productEntity.getModule(),
-                    productEntity.getProductDetailID(), productEntity.getProductDetailName(), productEntity.getNumberTotalOrder(), 1, userId,
+            groupCode = new GroupCode(id(realm) + 1, null, productEntity.getOrderId(),
+                    productEntity.getProductDetailID(), productEntity.getProductDetailName(), productEntity.getNumberTotalOrder(), 1, productEntity.getModule(), userId,
                     DateUtils.getDateTimeCurrent());
             groupCode = realm.copyToRealm(groupCode);
             parentList.add(groupCode);
@@ -177,7 +165,7 @@ public class GroupCode extends RealmObject {
     }
 
 
-    public static RealmResults<GroupCode> getListGroupCodeByModule(Realm realm, long orderId, long userId, String module) {
+    public static RealmResults<GroupCode> getListGroupCodeByModule(Realm realm, long orderId, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
         if (mainParent == null) {
@@ -187,17 +175,7 @@ public class GroupCode extends RealmObject {
             realm.commitTransaction();
 
         }
-        RealmList<ListModule> listModules = mainParent.getListModule();
-        ListModule listModule = listModules.where().equalTo("module", module)
-                .equalTo("userId", userId).findFirst();
-        if (listModule == null) {
-            realm.beginTransaction();
-            listModule = ListModule.create(realm, module, userId);
-            listModules.add(listModule);
-            realm.commitTransaction();
-
-        }
-        RealmResults<GroupCode> parentList = listModule.getGroupCodeRealmList().where().equalTo("userId", userId)
+        RealmResults<GroupCode> parentList = mainParent.getGroupCodeRealmList().where().equalTo("userId", userId)
                 .isNull("groupCode").findAll();
         return parentList;
     }
@@ -220,12 +198,11 @@ public class GroupCode extends RealmObject {
         groupCode.setNumber(numberGroup);
     }
 
-    public static void addGroupCode(Realm realm, String groupCode, long orderId, String module, GroupCode[] listSelect, long userId) {
+    public static void addGroupCode(Realm realm, String groupCode, long orderId, GroupCode[] listSelect, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
-        ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
-                .equalTo("userId", userId).findFirst();
-        RealmList<GroupCode> groupCodeRealmList = listModule.getGroupCodeRealmList();
+
+        RealmList<GroupCode> groupCodeRealmList = mainParent.getGroupCodeRealmList();
         for (GroupCode item : listSelect) {
             GroupCode gv = realm.where(GroupCode.class).equalTo("id", item.getId()).findFirst();
             gv.setGroupCode(groupCode);
@@ -233,11 +210,10 @@ public class GroupCode extends RealmObject {
         }
     }
 
-    public static void updateGroupCode(Realm realm, String groupCode, long orderId, String module, GroupCode[] listSelect, long userId) {
+    public static void updateGroupCode(Realm realm, String groupCode, long orderId, GroupCode[] listSelect, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-        ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
-                .equalTo("userId", userId).findFirst();
-        RealmList<GroupCode> groupCodeRealmList = listModule.getGroupCodeRealmList();
+
+        RealmList<GroupCode> groupCodeRealmList = mainParent.getGroupCodeRealmList();
         for (GroupCode item : listSelect) {
             GroupCode outGroup = groupCodeRealmList.where().equalTo("productDetailId", item.getProductDetailId()).findFirst();
             outGroup.setGroupCode(groupCode);
@@ -245,28 +221,23 @@ public class GroupCode extends RealmObject {
         }
     }
 
-    public static void detachedCode(Realm realm, List<ProductGroupEntity> list, long orderId, String module, long userId) {
+    public static void detachedCode(Realm realm, List<ProductGroupEntity> list, long orderId, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-
-        ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
-                .equalTo("userId", userId).findFirst();
-        RealmList<GroupCode> listGroupCodes = listModule.getGroupCodeRealmList();
+        RealmList<GroupCode> listGroupCodes = mainParent.getGroupCodeRealmList();
         for (ProductGroupEntity groupEntity : list) {
-            GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, module, groupEntity.getProductDetailID(),
-                    groupEntity.getProductDetailName(), groupEntity.getNumberTotal(), groupEntity.getNumber(), userId, DateUtils.getDateTimeCurrent());
+            GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, groupEntity.getProductDetailID(),
+                    groupEntity.getProductDetailName(), groupEntity.getNumberTotal(), groupEntity.getNumber(), groupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
             groupCode = realm.copyToRealm(groupCode);
             listGroupCodes.add(groupCode);
         }
     }
 
-    public static void removeItemInGroup(Realm realm, ProductGroupEntity productGroupEntity, long orderId, String module, long userId) {
+    public static void removeItemInGroup(Realm realm, ProductGroupEntity productGroupEntity, long orderId, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
-        ListModule listModule = mainParent.getListModule().where().equalTo("module", module)
-                .equalTo("userId", userId).findFirst();
-        RealmList<GroupCode> outGroupList = listModule.getGroupCodeRealmList();
-        GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, module, productGroupEntity.getProductDetailID(),
-                productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), userId, DateUtils.getDateTimeCurrent());
+        RealmList<GroupCode> outGroupList = mainParent.getGroupCodeRealmList();
+        GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
+                productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
         groupCode = realm.copyToRealm(groupCode);
         outGroupList.add(groupCode);
 
@@ -275,5 +246,13 @@ public class GroupCode extends RealmObject {
     public static void deleteScanGroupCode(Realm realm, long id, long userId) {
         GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", id).equalTo("userId", userId).findFirst();
         groupCode.deleteFromRealm();
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
     }
 }
