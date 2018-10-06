@@ -19,6 +19,25 @@ public class GroupCode extends RealmObject {
     @PrimaryKey
     private long id;
 
+    @SerializedName("pOrderID")
+    @Expose
+    private long orderId;
+    @SerializedName("pProductDetailID")
+    @Expose
+    private long productDetailId;
+
+    private String productDetailName;
+    @SerializedName("pNumber")
+    @Expose
+    private double number;
+
+    private String module;
+
+    @SerializedName("pUserID")
+    @Expose
+    private long userId;
+
+    private String dateGroup;
     public long getId() {
         return id;
     }
@@ -81,15 +100,6 @@ public class GroupCode extends RealmObject {
 
     private String groupCode;
 
-    @SerializedName("pOrderID")
-    @Expose
-    private long orderId;
-    @SerializedName("pProductDetailID")
-    @Expose
-    private long productDetailId;
-
-    private String productDetailName;
-
 
     public double getNumberTotal() {
         return numberTotal;
@@ -101,17 +111,7 @@ public class GroupCode extends RealmObject {
 
     private double numberTotal;
 
-    @SerializedName("pNumber")
-    @Expose
-    private double number;
 
-    private String module;
-
-    @SerializedName("pUserID")
-    @Expose
-    private long userId;
-
-    private String dateGroup;
 
     public GroupCode() {
     }
@@ -139,9 +139,7 @@ public class GroupCode extends RealmObject {
 
     public static void create(Realm realm, ProductEntity productEntity, long userId) {
 
-
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", productEntity.getOrderId()).findFirst();
-
 
         RealmList<GroupCode> parentList = mainParent.getGroupCodeRealmList();
         GroupCode groupCode = parentList.where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();

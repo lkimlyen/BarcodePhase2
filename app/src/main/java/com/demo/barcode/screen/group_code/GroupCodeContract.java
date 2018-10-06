@@ -1,13 +1,8 @@
 package com.demo.barcode.screen.group_code;
 
-import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
-import com.demo.architect.data.model.offline.ListGroupCode;
-import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 

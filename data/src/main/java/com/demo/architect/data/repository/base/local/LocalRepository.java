@@ -1,13 +1,9 @@
 package com.demo.architect.data.repository.base.local;
 
-import android.util.Log;
-
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
@@ -17,11 +13,9 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -29,7 +23,6 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
-import java.security.acl.Group;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +30,6 @@ import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
-import rx.Completable;
 import rx.Observable;
 
 public interface LocalRepository {

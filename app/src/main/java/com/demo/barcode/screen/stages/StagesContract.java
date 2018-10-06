@@ -1,21 +1,16 @@
 package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.GroupCodeEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.ListGroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
-
-import io.realm.RealmList;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -49,6 +44,8 @@ public interface StagesContract {
         void clearDataNoProduct(boolean chooseType);
 
         void showDialogUpload();
+
+        void showDialogChooseGroup(List<GroupEntity> list);
 
     }
 

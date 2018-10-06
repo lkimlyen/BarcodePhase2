@@ -141,69 +141,79 @@ public class StagesPresenter implements StagesContract.Presenter {
                     showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
                 }
             } else {
-                ProductGroupEntity groupEntity = ListGroupManager.getInstance().getProductById(model.getProductDetailID());
-                if (groupEntity == null) {
-                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
-                    return;
-                }
-
-                GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupEntity.getGroupCode());
-
-                boolean existDepartment = false;
-                for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
-                    ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                    if (productEntity != null) {
-                        if (productEntity.getListDepartmentID().contains(departmentId)) {
-                            existDepartment = true;
-                            break;
-                        }
-                    }
+                int count  = ListGroupManager.getInstance().countProductById(model.getProductDetailID());
+                if (count > 1){
+                    view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(model.getProductDetailID()));
+                }else if (count == 1){
+                    ProductGroupEntity groupEntity = ListGroupManager.getInstance().getProductById(model.getProductDetailID());
+                    GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(groupEntity.getGroupCode());
+                    saveBarcodeWithGroup(groupEntityList,times,departmentId);
+                }else {
+                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
+                        return;
 
                 }
-                allowedToSave = true;
-                if (existDepartment) {
-                    for (ProductGroupEntity item : groupEntityList.getProducGroupList()) {
-                        ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                        if (productEntity != null) {
-                            localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
-                                @Override
-                                public void call(ProductDetail productDetail) {
-                                    NumberInputModel numberInput = null;
-                                    for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                                        NumberInputModel input = productDetail.getListInput().get(i);
-                                        if (input.getTimes() == times) {
-                                            numberInput = input;
-                                            break;
-                                        }
-                                    }
-                                    if (numberInput != null) {
-                                        if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() >= item.getNumber()) {
-                                            allowedToSave = true;
-                                        } else {
-                                            allowedToSave = false;
-                                            view.showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
-                                        }
-                                    } else {
-                                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
-                                    }
-                                }
 
-                            });
-                        }
-
-
-                        if (!allowedToSave) {
-                            return;
-                        }
-                    }
-
-                    saveListWithGroupCode(times, groupEntityList, departmentId);
-                } else {
-                    showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
-                }
             }
         } else {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+        }
+    }
+
+    private void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId){
+
+
+        boolean existDepartment = false;
+        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+            if (productEntity != null) {
+                if (productEntity.getListDepartmentID().contains(departmentId)) {
+                    existDepartment = true;
+                    break;
+                }
+            }
+
+        }
+        allowedToSave = true;
+        if (existDepartment) {
+            for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+                ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+                if (productEntity != null) {
+                    localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
+                        @Override
+                        public void call(ProductDetail productDetail) {
+                            NumberInputModel numberInput = null;
+                            for (int i = 0; i < productDetail.getListInput().size(); i++) {
+                                NumberInputModel input = productDetail.getListInput().get(i);
+                                if (input.getTimes() == times) {
+                                    numberInput = input;
+                                    break;
+                                }
+                            }
+                            if (numberInput != null) {
+                                if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() >= item.getNumber()) {
+                                    allowedToSave = true;
+                                } else {
+                                    allowedToSave = false;
+                                    view.showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
+                                }
+                            } else {
+                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                            }
+                        }
+
+                    });
+                }
+
+
+                if (!allowedToSave) {
+                    return;
+                }
+            }
+
+            saveListWithGroupCode(times, groupEntity, departmentId);
+        } else {
+            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
         }
     }
 

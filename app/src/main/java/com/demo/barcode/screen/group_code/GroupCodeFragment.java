@@ -587,6 +587,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 if (orderId > 0) {
                     mPresenter.getListProductDetailInGroupCode(orderId);
                     mPresenter.getListProduct(orderId);
+                    mPresenter.getGroupCodeScanList(orderId);
                 }
             }
 

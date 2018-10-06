@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
@@ -32,6 +33,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
@@ -581,6 +583,13 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public void showDialogChooseGroup(List<GroupEntity> list) {
+        ChooseGroupDialog dialog = new ChooseGroupDialog();
+        dialog.show(getActivity().getFragmentManager(),TAG);
+
     }
 
 

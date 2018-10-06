@@ -38,6 +38,18 @@ public class ListGroupManager {
         return null;
     }
 
+    public int countProductById(long productId) {
+        int count = 0;
+        for (GroupEntity requestEntity : listGroup) {
+            for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()) {
+                if (productGroupEntity.getProductDetailID() == productId) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public List<ProductGroupEntity> getListProductByGroupCode(String groupCode) {
         List<ProductGroupEntity> list = new ArrayList<>();
         for (GroupEntity requestEntity : listGroup) {
@@ -59,11 +71,24 @@ public class ListGroupManager {
         return null;
     }
 
-
-    public HashMap<String,List<ProductGroupEntity>> getListGroupCode() {
-        HashMap<String,List<ProductGroupEntity>> list = new HashMap<>();
+    public List<GroupEntity> getListGroupEntityByProductId(long productDetailId) {
+        List<GroupEntity> list = new ArrayList<>();
         for (GroupEntity requestEntity : listGroup) {
-            list.put(requestEntity.getGroupCode(),requestEntity.getProducGroupList());
+            for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()) {
+                if (productGroupEntity.getProductDetailID() == productDetailId) {
+                    list.add(requestEntity);
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+
+    public HashMap<String, List<ProductGroupEntity>> getListGroupCode() {
+        HashMap<String, List<ProductGroupEntity>> list = new HashMap<>();
+        for (GroupEntity requestEntity : listGroup) {
+            list.put(requestEntity.getGroupCode(), requestEntity.getProducGroupList());
 
         }
         return list;
