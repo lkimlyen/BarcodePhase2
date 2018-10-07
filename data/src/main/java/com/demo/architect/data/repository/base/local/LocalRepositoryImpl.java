@@ -1000,4 +1000,20 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+    @Override
+    public Observable<Double> totalNumberScanGroup(final long productDetailId) {
+        return Observable.create(new Observable.OnSubscribe<Double>() {
+            @Override
+            public void call(Subscriber<? super Double> subscriber) {
+                try {
+                 Double aDouble =    databaseRealm.totalNumberScanGroup(productDetailId);
+                    subscriber.onNext(aDouble);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 }

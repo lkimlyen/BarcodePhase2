@@ -152,4 +152,6 @@ public interface LocalRepository {
 
     Observable<RealmResults<LogScanStages>> getScanByProductDetailId(LogScanStages logScanStages);
     Observable<String> deleteScanGroupCode(long id);
+
+    Observable<Double> totalNumberScanGroup(long productDetailId);
 }

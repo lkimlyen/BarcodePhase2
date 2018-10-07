@@ -604,4 +604,10 @@ public class DatabaseRealm {
         RealmResults<LogScanStages> list = LogScanStages.getScanByProductDetailId(realm, logScanStages);
         return list;
     }
+
+    public Double totalNumberScanGroup(long productDetailId) {
+        Realm realm = getRealmInstance();
+        Double aDouble = GroupCode.totalNumberScanGroup(realm,productDetailId);
+        return aDouble;
+    }
 }

@@ -85,6 +85,19 @@ public class ListGroupManager {
     }
 
 
+    public double totalNumberProductGroup(long productDetailId) {
+        double total = 0;
+        for (GroupEntity requestEntity : listGroup) {
+            for (ProductGroupEntity productGroupEntity : requestEntity.getProducGroupList()) {
+                if (productGroupEntity.getProductDetailID() == productDetailId) {
+                    total += productGroupEntity.getNumber();
+                }
+            }
+        }
+        return total;
+    }
+
+
     public HashMap<String, List<ProductGroupEntity>> getListGroupCode() {
         HashMap<String, List<ProductGroupEntity>> list = new HashMap<>();
         for (GroupEntity requestEntity : listGroup) {

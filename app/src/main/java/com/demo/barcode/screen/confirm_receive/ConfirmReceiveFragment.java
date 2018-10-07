@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -35,6 +36,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
@@ -464,6 +466,19 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             change = true;
             cbConfirmAll.setChecked(checkedAll);
         }
+    }
+
+    @Override
+    public void showDialogChooseGroup(List<GroupEntity> list) {
+        ChooseGroupDialog dialog = new ChooseGroupDialog();
+        dialog.show(getActivity().getFragmentManager(),TAG);
+        dialog.setList(list);
+        dialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
+            @Override
+            public void onSave(GroupEntity groupEntity) {
+                mPresenter.saveNumberConfirmGroup(groupEntity,orderId,times ,departmentId );
+            }
+        });
     }
 
     @OnClick(R.id.ic_refresh)

@@ -234,15 +234,21 @@ public class GroupCode extends RealmObject {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
         RealmList<GroupCode> outGroupList = mainParent.getGroupCodeRealmList();
-        GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
-                productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
-        groupCode = realm.copyToRealm(groupCode);
-        outGroupList.add(groupCode);
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productGroupEntity.getProductDetailID()).findFirst();
+        if (groupCode != null){
+           groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
+        }else {
+             groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
+                    productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
+            groupCode = realm.copyToRealm(groupCode);
+            outGroupList.add(groupCode);
+        }
+
 
     }
 
     public static void deleteScanGroupCode(Realm realm, long id, long userId) {
-        GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", id).equalTo("userId", userId).findFirst();
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", id).findFirst();
         groupCode.deleteFromRealm();
     }
 
@@ -252,5 +258,11 @@ public class GroupCode extends RealmObject {
 
     public void setModule(String module) {
         this.module = module;
+    }
+
+    public static Double totalNumberScanGroup(Realm realm, long productDetailId) {
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productDetailId).findFirst();
+
+        return groupCode != null ? groupCode.getNumber() : 0;
     }
 }

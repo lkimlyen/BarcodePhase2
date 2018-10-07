@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListGroupManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -94,7 +95,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
                     }
 
-                    if (numberInput > item.getNumberTotal()) {
+                    if (numberInput+ ListGroupManager.getInstance().totalNumberProductGroup(item.getProductDetailId()) > item.getNumberTotal()) {
                         holder.edtNumberGroup.setText((int) item.getNumber() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
                         return;

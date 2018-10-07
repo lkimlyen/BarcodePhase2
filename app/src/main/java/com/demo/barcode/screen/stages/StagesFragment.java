@@ -589,6 +589,13 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     public void showDialogChooseGroup(List<GroupEntity> list) {
         ChooseGroupDialog dialog = new ChooseGroupDialog();
         dialog.show(getActivity().getFragmentManager(),TAG);
+        dialog.setList(list);
+        dialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
+            @Override
+            public void onSave(GroupEntity groupEntity) {
+                mPresenter.saveBarcodeWithGroup(groupEntity,times ,departmentId );
+            }
+        });
 
     }
 
@@ -617,6 +624,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
         if (times == 0) {
             showError(getString(R.string.text_times_id_null));
+            return;
+        }
+        if (typeScan == 0) {
+            showError(getString(R.string.text_type_scan_null));
             return;
         }
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)

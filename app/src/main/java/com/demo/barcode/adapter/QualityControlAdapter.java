@@ -55,7 +55,7 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
         holder.txtBarcode.setText(item.getBarcode());
         holder.txtNameDetail.setText(item.getProductName());
         holder.txtModule.setText(item.getModule());
-        holder.txtTotal.setText(item.getTotalNumber() + "");
+        holder.txtTotal.setText((int)item.getTotalNumber() + "");
 
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,9 +1,11 @@
 package com.demo.barcode.screen.quality_control;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ImageModel;
@@ -16,14 +18,17 @@ import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.UploadImageUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +36,8 @@ import javax.inject.Inject;
 
 import io.realm.RealmResults;
 import rx.functions.Action1;
+
+import static com.thefinestartist.utils.content.ContextUtil.openFileOutput;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -240,7 +247,10 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
         QualityControlModel qualityControlModel = qualityControlModels.get(positionList);
         ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
-        File file = new File(imageModel.getPathFile());
+        //    File file = new File(imageModel.getPathFile());
+        Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
+      bitmap =  getResizedBitmap(bitmap, 1280);
+        File file = bitmapToFile(bitmap, imageModel.getPathFile());
         UserEntity userEntity = UserManager.getInstance().getUser();
         uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),
                         qualityControlModel.getDepartmentId(), file.getName(), userEntity.getId()),
@@ -273,5 +283,44 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
                         view.hideProgressBar();
                     }
                 });
+    }
+
+    public File bitmapToFile(Bitmap bmp, String filePath) {
+        //create a file to write bitmap data
+        File f = new File(filePath);
+        try {
+            f.createNewFile();
+            //Convert bitmap to byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, /*ignored for PNG*/100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return f;
+
+    }
+
+    private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

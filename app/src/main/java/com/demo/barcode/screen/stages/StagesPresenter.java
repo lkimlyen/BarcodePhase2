@@ -160,7 +160,8 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
     }
 
-    private void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId){
+    @Override
+    public void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId){
 
 
         boolean existDepartment = false;
@@ -195,7 +196,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     allowedToSave = true;
                                 } else {
                                     allowedToSave = false;
-                                    view.showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
+                                    showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
                                 }
                             } else {
                                 showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
@@ -430,10 +431,6 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
     }
 
-    @Override
-    public void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId) {
-
-    }
 
     @Override
     public void countListAllData(long orderId) {

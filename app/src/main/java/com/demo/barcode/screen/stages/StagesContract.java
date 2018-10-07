@@ -5,6 +5,7 @@ import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.barcode.app.base.BasePresenter;
@@ -77,7 +78,7 @@ public interface StagesContract {
 
         void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId);
 
-        void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list, int departmentId);
+        void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId);
 
         void countListAllData(long orderId);
 

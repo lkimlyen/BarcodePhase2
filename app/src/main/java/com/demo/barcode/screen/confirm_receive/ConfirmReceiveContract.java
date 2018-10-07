@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.confirm_receive;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
@@ -41,6 +42,7 @@ public interface ConfirmReceiveContract {
 
         void setCheckedAll(boolean checkedAll);
 
+        void showDialogChooseGroup(List<GroupEntity> listGroupEntityByProductId);
     }
 
     interface Presenter extends BasePresenter {
@@ -69,6 +71,7 @@ public interface ConfirmReceiveContract {
         void cancelConfirmAll(long orderId, int departmentId, int times);
 
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list);
+        void saveNumberConfirmGroup(GroupEntity groupEntity,long orderId, int times, int deparmentId);
 
     }
 }

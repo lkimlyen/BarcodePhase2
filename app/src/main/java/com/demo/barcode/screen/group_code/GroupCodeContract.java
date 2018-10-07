@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.group_code;
 
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
@@ -43,7 +44,7 @@ public interface GroupCodeContract {
     interface Presenter extends BasePresenter {
         void getListModule(long orderId);
 
-        void groupCode(long orderId, String module, Collection<GroupCode> list);
+        void groupCode(long orderId,  Collection<GroupCode> list);
 
         void getListGroupCode(long orderId);
 
@@ -68,5 +69,9 @@ public interface GroupCodeContract {
         void getListProductDetailInGroupCode(long orderId);
 
         void deleteScanGroupCode(long id);
+
+        double totalNumberScanGroup(long productDetailId);
+
+
     }
 }

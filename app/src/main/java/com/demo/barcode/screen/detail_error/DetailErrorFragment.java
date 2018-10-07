@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -19,10 +21,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -34,12 +34,10 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.ReasonsEntity;
-import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.R;
@@ -47,7 +45,7 @@ import com.demo.barcode.adapter.ImageAdapter;
 import com.demo.barcode.adapter.ReasonAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ViewImageDialog;
 import com.demo.barcode.util.Precondition;
 
 import java.io.File;
@@ -127,6 +125,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
             if (requestCode == REQUEST_CODE_TAKE_IMAGE) {
                 if (mCurrentPhotoPath != null) {
                     mPresenter.addImage(id, mCurrentPhotoPath);
+
                 }
             }
 
@@ -147,7 +146,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
 
-        id = getActivity().getIntent().getIntExtra("qc_id", 0);
+        id = getActivity().getIntent().getLongExtra("qc_id", 0);
         initView();
         return view;
     }
@@ -283,6 +282,13 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                         })
                         .show();
             }
+        }, new ImageAdapter.OnViewImageListener() {
+            @Override
+            public void OnViewImageClick(String filePath) {
+                ViewImageDialog dialog = new ViewImageDialog();
+                dialog.show(getActivity().getFragmentManager(), TAG);
+                dialog.setFilePath(filePath);
+            }
         });
         rvImage.setAdapter(imAdapter);
 
@@ -333,8 +339,8 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         txtBarcode.setText(qualityControlModel.getBarcode());
         txtModule.setText(qualityControlModel.getModule());
         txtNameDetail.setText(qualityControlModel.getProductName());
-        txtNumberOrder.setText(String.valueOf(qualityControlModel.getTotalNumber()));
-        edtNumberFailed.setText(String.valueOf(qualityControlModel.getNumber()));
+        txtNumberOrder.setText(String.valueOf((int)qualityControlModel.getTotalNumber()));
+        edtNumberFailed.setText(String.valueOf((int)qualityControlModel.getNumber()));
         edtDescription.setText(qualityControlModel.getDescription());
         edit = qualityControlModel.isEdit();
     }
@@ -452,6 +458,9 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+
+
+
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;

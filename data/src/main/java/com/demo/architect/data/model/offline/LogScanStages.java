@@ -205,9 +205,14 @@ public class LogScanStages extends RealmObject {
                 .equalTo("userId", scanStages.getUserId()).findFirst();
         if (productDetail == null) {
             productDetail = ProductDetail.create(realm, productEntity, scanStages.userId);
-        }
-        LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
-                .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
+        }LogScanStages
+
+
+            logScanStages   = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
+                    .equalTo("groupCode",scanStages.groupCode )
+                    .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
+
+
         if (logScanStages == null) {
             scanStages.setProductDetail(productDetail);
             scanStages.setId(id(realm) + 1);

@@ -228,7 +228,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void groupCode(long orderId, String module, Collection<GroupCode> list) {
+    public void groupCode(long orderId,Collection<GroupCode> list) {
         view.showProgressBar();
         final GroupCode[] listSelect = new GroupCode[list.size()];
         list.toArray(listSelect);
@@ -410,7 +410,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
             localRepository.checkNumberProductInGroupCode(model).subscribe(new Action1<Boolean>() {
                 @Override
                 public void call(Boolean aBoolean) {
-                    if (aBoolean) {
+                    if (aBoolean && ListGroupManager.getInstance().totalNumberProductGroup(model.getProductDetailID()) < model.getNumberTotalOrder()) {
                         saveProductInGroupCode(model);
 
                     } else {
@@ -454,6 +454,18 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
             }
         });
+    }
+    private  double totalNumberScanGroup;
+
+    @Override
+    public double totalNumberScanGroup(long productDetailId) {
+        localRepository.totalNumberScanGroup(productDetailId).subscribe(new Action1<Double>() {
+            @Override
+            public void call(Double aDouble) {
+                totalNumberScanGroup = aDouble;
+            }
+        });
+        return totalNumberScanGroup;
     }
 
     public void showError(String error) {

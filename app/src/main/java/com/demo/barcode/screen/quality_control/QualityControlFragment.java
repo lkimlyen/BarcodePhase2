@@ -68,7 +68,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private QualityControlContract.Presenter mPresenter;
     private QualityControlAdapter adapter;
     private long orderId;
-    private int departmentId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -341,11 +340,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             showError(getString(R.string.text_order_id_null));
             return;
         }
-
-        if (departmentId == 0) {
-            showError("Bạn chưa chọn bộ phận lỗi");
-            return;
-        }
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -379,12 +373,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             showError(getString(R.string.text_order_id_null));
             return;
         }
-
-        if (departmentId == 0) {
-            showError("Bạn chưa chọn bộ phận lỗi");
-            return;
-        }
-
 
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);

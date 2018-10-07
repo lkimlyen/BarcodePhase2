@@ -3,6 +3,7 @@ package com.demo.barcode.screen.confirm_receive;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.UserEntity;
@@ -224,51 +225,20 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
                     }
                 } else {
-                    ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
-                    if (productGroupEntity == null) {
-                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
-                        return;
-                    } else {
-                        allowedToSave = true;
-                        List<ProductGroupEntity> productGroupEntityList = ListGroupManager.getInstance().getListProductByGroupCode(productGroupEntity.getGroupCode());
-                        for (ProductGroupEntity item : productGroupEntityList) {
-                            OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
-                            if (orderConfirmEntity != null) {
-                                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
-                                    @Override
-                                    public void call(LogScanConfirm logScanConfirm) {
-                                        if (logScanConfirm.getNumberScanOut() - logScanConfirm.getNumberConfirmed() >= item.getNumber()) {
-                                            if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()) {
-                                                allowedToSave = false;
-                                                view.showDialogConfirm(productGroupEntityList, times);
-                                            }
-                                        } else {
-                                            allowedToSave = false;
-                                            view.showDialogConfirm(productGroupEntityList, times);
-                                        }
-
-                                    }
-                                });
-                            }
-
-
-                            if (!allowedToSave) {
-                                return;
-                            }
+                    int count  = ListGroupManager.getInstance().countProductById(logScanConfirm.getProductDetailId());
+                    if (count > 1){
+                        view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(logScanConfirm.getProductDetailId()));
+                    }else if (count == 1){
+                        ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
+                        GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(productGroupEntity.getGroupCode());
+                        if (productGroupEntity == null) {
+                            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
+                            return;
                         }
-                        for (ProductGroupEntity item : productGroupEntityList) {
-                            OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
-                            if (orderConfirmEntity != null) {
-                                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
-                                    @Override
-                                    public void call(LogScanConfirm logScanConfirm) {
-                                        saveConfirm(orderId, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber());
-                                    }
-                                });
-                            }
-
-                        }
+                        saveNumberConfirmGroup(groupEntityList,orderId,times,departmentId);
                     }
+
+
                 }
 
             }
@@ -392,6 +362,52 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             });
         }
     }
+
+    @Override
+    public void saveNumberConfirmGroup(GroupEntity groupEntity,long orderId, int times, int departmentId) {
+        allowedToSave = true;
+        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+            OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
+            if (orderConfirmEntity != null) {
+                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                    @Override
+                    public void call(LogScanConfirm logScanConfirm) {
+                        if (logScanConfirm.getNumberScanOut() - logScanConfirm.getNumberConfirmed() >= item.getNumber()) {
+                            if (logScanConfirm.getNumberConfirmed() == logScanConfirm.getNumberScanOut()) {
+                                allowedToSave = false;
+                                // view.showDialogConfirm(productGroupEntityList, times);
+                                showError(CoreApplication.getInstance().getString(R.string.text_number_in_group_exceed_number_received_save_enough));
+                            }
+                        } else {
+                            allowedToSave = false;
+                            showError(CoreApplication.getInstance().getString(R.string.text_number_in_group_exceed_number_received_save_enough));
+                            // view.showDialogConfirm(productGroupEntityList, times);
+                        }
+
+                    }
+                });
+            }
+
+
+            if (!allowedToSave) {
+                return;
+            }
+        }
+        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+            OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
+            if (orderConfirmEntity != null) {
+                localRepository.findConfirmByBarcode(orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                    @Override
+                    public void call(LogScanConfirm logScanConfirm) {
+                        saveConfirm(orderId, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber());
+                    }
+                });
+            }
+
+        }
+    }
+
+
 
     public void saveConfirm(long orderId, long marterOutputId, int departmentIdOut, int times, double number) {
         localRepository.updateNumnberLogConfirm(orderId, marterOutputId, departmentIdOut, times, number, true).subscribe(new Action1<String>() {
