@@ -180,7 +180,7 @@ public class LogScanPackaging extends RealmObject {
         }
 
 
-        return logListFloorPagkaging.getList().where().greaterThan("size", (double) 0).findAll();
+        return logListFloorPagkaging.getList().where().greaterThan("size", (double) 0).sort("module").findAll();
 
     }
 

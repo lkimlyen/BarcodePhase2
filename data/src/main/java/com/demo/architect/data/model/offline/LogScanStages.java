@@ -197,7 +197,7 @@ public class LogScanStages extends RealmObject {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
 
         LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
-                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                .equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
         RealmList<LogScanStages> parentList = parent.getList();
@@ -231,7 +231,7 @@ public class LogScanStages extends RealmObject {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
         LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+               .equalTo("times", logScanStages.getTimes())
                 .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
@@ -249,7 +249,7 @@ public class LogScanStages extends RealmObject {
             LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
             LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                    .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+                  .equalTo("times", logScanStages.getTimes())
                     .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
@@ -286,7 +286,7 @@ public class LogScanStages extends RealmObject {
             LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
             LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                    .equalTo("date", DateUtils.getShortDateCurrent()).equalTo("times", logScanStages.getTimes())
+                   .equalTo("times", logScanStages.getTimes())
                     .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 

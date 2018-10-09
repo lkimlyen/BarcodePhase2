@@ -123,11 +123,11 @@
                    android:layout_height="@dimen/distance_35dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="1.5"
                         android:orientation="horizontal">
 
                         <TextView
@@ -142,14 +142,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/distance_5dp"
-                            android:text="1"
+                            android:text="100"
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/text_14sp" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="1.5"
                         android:orientation="horizontal">
 
                         <TextView
@@ -163,16 +163,15 @@
                             android:id="@+id/txt_quantity_rest"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1"
+                            android:text="100"
                             android:layout_marginStart="@dimen/distance_5dp"
                             android:textColor="@android:color/holo_red_dark"
                             android:textSize="@dimen/text_14sp" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:visibility="gone"
                         android:orientation="horizontal">
 
@@ -190,35 +189,38 @@
                             android:textSize="@dimen/text_14sp"
                             android:layout_height="wrap_content" />
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/black"
+                            android:gravity="top"
+                            android:textSize="@dimen/text_12sp"
+                            android:text="SL quét HT: " />
+
+                        <EditText
+                            android:id="@+id/edt_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="SL mã vừa mới quét..."
+                            android:inputType="number"
+                            android:lines="1"
+                            android:text="1"
+                            android:paddingLeft="10dp"
+                            android:gravity="center"
+                            android:paddingRight="10dp"
+                            android:textColor="@android:color/holo_red_light"
+                            android:textSize="14sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/distance_35dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/black"
-                        android:gravity="top"
-                        android:textSize="@dimen/text_12sp"
-                        android:text="SL quét hiện tại : " />
-
-                    <EditText
-                        android:id="@+id/edt_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="SL mã vừa mới quét..."
-                        android:inputType="number"
-                        android:lines="1"
-                        android:text="1"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:textColor="@android:color/holo_red_light"
-                        android:textSize="14sp" />
-                </LinearLayout>
             </LinearLayout>
 
         </RelativeLayout>

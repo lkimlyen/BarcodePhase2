@@ -141,8 +141,19 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
 
         if (numberInputModel.getNumberRest() > 0){
             holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
-        } else {
+            holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+
+            holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+        } else if (numberInputModel.getNumberRest() ==0){
             holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
+            holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+            holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+
+        }else {
+            holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorYellow));
+            holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
+            holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
+
         }
 
     }

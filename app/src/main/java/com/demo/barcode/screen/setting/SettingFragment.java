@@ -8,13 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
+import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.chang_password.ChangePasswordActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
@@ -49,6 +52,9 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @Bind(R.id.txt_version)
     TextView txtVersion;
 
+    @Bind(R.id.btn_change_ip_address)
+    Button btnChangeIp;
+
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -75,7 +81,12 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
-
+        UserEntity user = UserManager.getInstance().getUser();
+        if (user.getRole() == 0){
+            btnChangeIp.setVisibility(View.VISIBLE);
+        }else {
+            btnChangeIp.setVisibility(View.GONE);
+        }
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
         if (auth.getCurrentUser() == null) {
@@ -96,7 +107,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
                         }
                     });
 
-        }else {
+        } else {
             storageRef = storage.getReference();
         }
         return view;
@@ -190,8 +201,8 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         UploadTask uploadTask;
         Uri file = Uri.fromFile(new File(path));
         String dateCurrent = DateUtils.getShortDateCurrent();
-        if (storageRef != null){
-            StorageReference riversRef = storageRef.child(userId + "_" + userName+"_" + dateCurrent + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
+        if (storageRef != null) {
+            StorageReference riversRef = storageRef.child(userId + "_" + userName + "_" + dateCurrent + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
             uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails
@@ -217,7 +228,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
                 }
             });
-        }else {
+        } else {
             showError(getString(R.string.text_backup_fail));
             hideProgressBar();
         }

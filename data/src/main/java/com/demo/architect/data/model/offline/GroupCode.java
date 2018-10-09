@@ -222,11 +222,16 @@ public class GroupCode extends RealmObject {
     public static void detachedCode(Realm realm, List<ProductGroupEntity> list, long orderId, long userId) {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         RealmList<GroupCode> listGroupCodes = mainParent.getGroupCodeRealmList();
-        for (ProductGroupEntity groupEntity : list) {
-            GroupCode groupCode = new GroupCode(id(realm) + 1, null, orderId, groupEntity.getProductDetailID(),
-                    groupEntity.getProductDetailName(), groupEntity.getNumberTotal(), groupEntity.getNumber(), groupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
-            groupCode = realm.copyToRealm(groupCode);
-            listGroupCodes.add(groupCode);
+        for (ProductGroupEntity productGroupEntity : list) {
+            GroupCode groupCode = listGroupCodes.where().equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
+            if (groupCode != null){
+                groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
+            }else {
+                groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
+                        productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
+                groupCode = realm.copyToRealm(groupCode);
+                listGroupCodes.add(groupCode);
+            }
         }
     }
 
@@ -234,7 +239,7 @@ public class GroupCode extends RealmObject {
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 
         RealmList<GroupCode> outGroupList = mainParent.getGroupCodeRealmList();
-        GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productGroupEntity.getProductDetailID()).findFirst();
+        GroupCode groupCode = outGroupList.where().equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
         if (groupCode != null){
            groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
         }else {
@@ -261,8 +266,7 @@ public class GroupCode extends RealmObject {
     }
 
     public static Double totalNumberScanGroup(Realm realm, long productDetailId) {
-        GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productDetailId).findFirst();
-
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productDetailId).isNull("groupCode").findFirst();
         return groupCode != null ? groupCode.getNumber() : 0;
     }
 }

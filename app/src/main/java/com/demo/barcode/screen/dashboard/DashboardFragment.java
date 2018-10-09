@@ -146,6 +146,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
             }else {
                 btnScanStages.setVisibility(View.GONE);
                 btnConfirmreceive.setVisibility(View.GONE);
+                txtPosition.setText("Bộ  phận: In tem bao bì");
             }
         } else {
             btnScanStages.setVisibility(View.GONE);

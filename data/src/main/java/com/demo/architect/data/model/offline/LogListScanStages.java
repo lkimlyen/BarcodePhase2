@@ -23,6 +23,26 @@ public class LogListScanStages extends RealmObject {
     private int status;
     private int times;
 
+
+    private long userId;
+
+    public RealmList<LogScanStages> getList() {
+        return list;
+    }
+
+    @SuppressWarnings("unused")
+    private RealmList<LogScanStages> list;
+
+    public LogListScanStages() {
+    }
+
+    public LogListScanStages(long id, int departmentId, int status, long userId, int times) {
+        this.id = id;
+        this.departmentId = departmentId;
+        this.status = status;
+        this.userId = userId;
+        this.times = times;
+    }
     public long getId() {
         return id;
     }
@@ -63,38 +83,8 @@ public class LogListScanStages extends RealmObject {
         this.userId = userId;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public void setList(RealmList<LogScanStages> list) {
         this.list = list;
-    }
-
-    private long userId;
-    private String date;
-
-    public RealmList<LogScanStages> getList() {
-        return list;
-    }
-
-    @SuppressWarnings("unused")
-    private RealmList<LogScanStages> list;
-
-    public LogListScanStages() {
-    }
-
-    public LogListScanStages(long id, int departmentId, int status, long userId, int times, String date) {
-        this.id = id;
-        this.departmentId = departmentId;
-        this.status = status;
-        this.userId = userId;
-        this.times = times;
-        this.date = date;
     }
 
     public static long id(Realm realm) {
@@ -110,8 +100,7 @@ public class LogListScanStages extends RealmObject {
         LogListScanStagesMain logListScanStagesMain = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
         if (logListScanStagesMain != null) {
             LogListScanStages logListScanStages = logListScanStagesMain.getList().where().equalTo("departmentId", departmentId)
-                    .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).equalTo("times", times)
-                    .equalTo("date", DateUtils.getShortDateCurrent()).findFirst();
+                    .equalTo("status", Constants.WAITING_UPLOAD).equalTo("userId", userId).equalTo("times", times).findFirst();
             if (logListScanStages != null) {
                 count = logListScanStages.getList().size();
             }
@@ -181,13 +170,12 @@ public class LogListScanStages extends RealmObject {
                         .equalTo("status", Constants.WAITING_UPLOAD)
                         .equalTo("departmentId", departmentId)
                         .equalTo("times", times)
-                        .equalTo("date", DateUtils.getShortDateCurrent())
                         .equalTo("userId", userId).findFirst();
                 if (logListScanStages == null) {
                     realm.beginTransaction();
                     RealmList<LogListScanStages> parentList = logListScanStagesMain.getList();
                     logListScanStages = new LogListScanStages(LogListScanStages.id(realm) + 1, departmentId,
-                            Constants.WAITING_UPLOAD, userId, times, DateUtils.getShortDateCurrent());
+                            Constants.WAITING_UPLOAD, userId, times);
                     logListScanStages = realm.copyToRealm(logListScanStages);
                     parentList.add(logListScanStages);
                     realm.commitTransaction();
@@ -199,7 +187,7 @@ public class LogListScanStages extends RealmObject {
             logListScanStagesMain = realm.copyToRealm(logListScanStagesMain);
             RealmList<LogListScanStages> parentList = logListScanStagesMain.getList();
             logListScanStages = new LogListScanStages(LogListScanStages.id(realm) + 1, departmentId,
-                    Constants.WAITING_UPLOAD, userId, times, DateUtils.getShortDateCurrent());
+                    Constants.WAITING_UPLOAD, userId, times);
             logListScanStages = realm.copyToRealm(logListScanStages);
             parentList.add(logListScanStages);
             realm.commitTransaction();

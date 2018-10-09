@@ -134,7 +134,6 @@ public class DatabaseRealm {
     }
 
     public int countLogScanStagesWatingUpload(long orderId, int departmentId, int times) {
-
         Realm realm = getRealmInstance();
         final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId, times);
         return count;

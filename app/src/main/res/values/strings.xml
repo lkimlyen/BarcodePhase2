@@ -97,7 +97,7 @@
     <string name="text_delete_pack">Bạn có muốn xóa gói này không?</string>
     <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
     <string name="text_exceed_the_number_of_requests">Số lượng bạn nhập vượt quá số lượng yêu cầu, bạn có muốn thêm vào không?</string>
-    <string name="text_exceed_the_number_of_requests_in_group">Có số lượng sản phẩm trong group vượt quá số lượng yêu cầu!</string>
+    <string name="text_exceed_the_number_of_requests_in_group">Có số lượng chi tiết trong group vượt quá số lượng yêu cầu!</string>
     <string name="text_delete_success">Xóa thành công</string>
     <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
     <string name="text_print_pack">Bạn có muốn in gói này không?</string>
@@ -159,7 +159,7 @@
     <string name="text_name_detail">Tên chi tiết</string>
     <string name="text_name_detail_print">Tên chi tiết:</string>
     <string name="text_name_detail_break">Tên \n chi tiết</string>
-    <string name="text_product_not_in_stages">Sản phẩm không đi qua công đoạn này!</string>
+    <string name="text_product_not_in_stages">Chi tiết không đi qua công đoạn này!</string>
     <string name="text_choose_times">Chọn số lần quét hiện tại của chi tiết</string>
     <string name="text_not_choose_times">Vui lòng chọn số lần quét để tiếp tục.</string>
     <string name="text_confirm_receive">Xác nhận nhận hàng</string>
@@ -177,7 +177,7 @@
     <string name="text_department_id_null">Bạn chưa chọn bộ phận giao</string>
     <string name="text_times_id_null">Bạn chưa chọn lần quét</string>
     <string name="text_get_so_success">Lấy danh sách SO thành công</string>
-    <string name="text_product_not_in_times">Sản phẩm không có trong lần quét này</string>
+    <string name="text_product_not_in_times">Chi tiết không có trong lần quét này</string>
     <string name="text_get_list_detail_success">Lấy danh sách chi tiết thành công</string>
     <string name="text_no_data_upload">Không có dữ liệu để tải lên</string>
     <string name="text_quality_control">QC hàng lỗi</string>
@@ -202,15 +202,15 @@
     <string name="text_update_number_group_success">Cập nhật số lượng gộp thành công</string>
     <string name="text_detached_code">Tách mã</string>
     <string name="text_detached_code_success">Tách mã thành công</string>
-    <string name="text_remove_item_in_group_code_success">Xoá sản phẩm trong nhóm thành công</string>
+    <string name="text_remove_item_in_group_code_success">Xoá Chi tiết trong nhóm thành công</string>
     <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng đã quét</string>
 
     <string name="text_number_bigger_number_request">Số lượng nhập vào lớn hơn số lượng yêu cầu</string>
     <string name="text_reason_error">Nguyên nhân lỗi</string>
     <string name="text_description_reason_error">Mô tả lỗi:</string>
     <string name="text_choose_code_pack">Chọn mã gói</string>
-    <string name="text_product_not_enough_in_package">Sản phẩm quét không đủ để in. Vui lòng kiểm tra lại</string>
-    <string name="text_quality_product_not_enough_in_package">Số lượng sản phẩm chưa đủ để in. Vui lòng kiểm tra lại</string>
+    <string name="text_product_not_enough_in_package">Chi tiết trong gói quét không đủ để in. Vui lòng kiểm tra lại</string>
+    <string name="text_quality_product_not_enough_in_package">Số lượng Chi tiết chưa đủ để in. Vui lòng kiểm tra lại</string>
     <string name="text_note_print">Nhập ghi chú</string>
     <string name="text_print_stamp">In tem</string>
     <string name="text_total_number">Tổng số lượng:</string>
@@ -221,9 +221,9 @@
     <string name="text_number_bigger_number_order">Số lượng lỗi không được lớn hơn số lượng đơn hàng</string>
     <string name="text_update_success">Cập nhật thành công</string>
     <string name="text_detached_code_scan">Bạn có muốn tách mã không?</string>
-    <string name="text_not_product_upload">Bạn chưa chọn sản phẩm để gộp</string>
-    <string name="text_not_product_detached">Bạn chưa chọn sản phẩm để tách!</string>
-    <string name="text_product_in_group">Sản phẩm này có gộp mã không?</string>
+    <string name="text_not_product_upload">Bạn chưa chọn Chi tiết để gộp</string>
+    <string name="text_not_product_detached">Bạn chưa chọn Chi tiết để tách!</string>
+    <string name="text_product_in_group">Chi tiết này có gộp mã không?</string>
     <string name="text_edit_group_code">Chỉnh sửa gộp mã</string>
     <string name="text_module_is_empty">Bạn chưa chọn module</string>
     <string name="text_list_group_code">Danh sách mã đã gộp</string>
@@ -231,8 +231,8 @@
     <string name="text_serial_pack_null">Bạn chưa chọn mã gói</string>
     <string name="text_apartment_null">Bạn chưa chọn căn!</string>
     <string name="text_number_total">SL tổng</string>
-    <string name="text_product_scanned">Sản phẩm đã được quét!</string>
-    <string name="text_product_not_in_module">Sản phẩm không có trong module!</string>
+    <string name="text_product_scanned">Chi tiết đã được quét!</string>
+    <string name="text_product_not_in_module">Chi tiết không có trong module!</string>
     <string name="text_number_scan_enough">Số lượng quét đã đủ!</string>
     <string name="text_no_image_in_detail">Bạn chưa chụp hình ảnh lỗi!</string>
     <string name="text_no_reason_selected">Bạn chưa chọn nguyên nhân lỗi!</string>
@@ -246,9 +246,9 @@
     <string name="text_default">Không gộp mã</string>
     <string name="text_type_scan_null">Bạn chưa chọn loại quét</string>
     <string name="text_number_group_bigger_number_total">Số lượng gộp không được vượt quá số lượng tổng</string>
-    <string name="text_product_is_grouped">Sản phẩm đã có trong danh sách gộp</string>
+    <string name="text_product_is_grouped">Chi tiết đã có trong danh sách gộp</string>
     <string name="text_want_detached_code_scan">Bạn có muốn tách mã này không</string>
-    <string name="text_product_not_in_group">Sản phẩm này không nằm trong danh sách gộp mã!</string>
+    <string name="text_product_not_in_group">Chi tiết này không nằm trong danh sách gộp mã!</string>
     <string name="text_cancle_confirm_all_success">Hủy xác nhận tất cả thành công</string>
     <string name="text_module" formatted="true">Module: %s</string>
     <string name="text_number_scanned">Số lượng:</string>
@@ -256,7 +256,7 @@
     <string name="text_incomplete_pack">Bạn chưa quét xong gói hiện tại!</string>
     <string name="text_pack_scan_enough">Gói này đã được quét đủ</string>
     <string name="text_data_scan_not_print">Còn dữ liệu chưa in, bạn có muốn thoát không?</string>
-    <string name="no_product_in_group_to_department">Không có sản phẩm nào trong nhóm đi qua công đoạn này</string>
+    <string name="no_product_in_group_to_department">Không có Chi tiết nào trong nhóm đi qua công đoạn này</string>
     <string name="text_get_residual_or_enough">Bạn muốn lấy dư hay chỉ lấy đủ số lượng đã nhận?</string>
     <string name="text_get_residual">Lấy dư</string>
     <string name="text_get_enough">Lấy đủ</string>
@@ -265,7 +265,7 @@
     <string name="text_data_yesterday_not_upload">Còn dữ liệu chưa tải lên, bạn có muốn tải lên không?</string>
     <string name="text_code_group">Mã nhóm:</string>
     <string name="text_get_data_success">Lấy dữ liệu thành công</string>
-    <string name="text_has_product_exist_in_group">Danh sách sản phẩm bạn chọn có sản phẩm đã tồn tại trong group!</string>
+    <string name="text_has_product_exist_in_group">Danh sách Chi tiết bạn chọn có Chi tiết đã tồn tại trong group!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

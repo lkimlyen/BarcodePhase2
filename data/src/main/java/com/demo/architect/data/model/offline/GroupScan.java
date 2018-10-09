@@ -12,34 +12,12 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class GroupScan extends RealmObject {
-    public long getMasterGroupId() {
-        return masterGroupId;
-    }
 
-    public void setMasterGroupId(long masterGroupId) {
-        this.masterGroupId = masterGroupId;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
 
     @PrimaryKey
     @SerializedName("pMasterGroupID")
     @Expose
-   private long masterGroupId;
+    private long masterGroupId;
 
     @SerializedName("pVersion")
     @Expose
@@ -69,6 +47,30 @@ public class GroupScan extends RealmObject {
             realm.insertOrUpdate(groupScan);
         }
 
+    }
+
+    public long getMasterGroupId() {
+        return masterGroupId;
+    }
+
+    public void setMasterGroupId(long masterGroupId) {
+        this.masterGroupId = masterGroupId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
 

@@ -332,6 +332,7 @@ public class QualityControlModel extends RealmObject {
 
     public static void updateStatusQC(Realm realm, long userId) {
         RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("edit",true)
                 .equalTo("userId", userId).findAll();
         for (QualityControlModel qualityControlModel : results) {
             qualityControlModel.setStatus(Constants.COMPLETE);
