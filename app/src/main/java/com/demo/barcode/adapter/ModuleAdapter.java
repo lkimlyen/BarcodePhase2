@@ -23,16 +23,17 @@ public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> impl
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
     private onPrintListener onPrintListener;
-
+private onClickEditTextListener onClickEditTextListener;
     private boolean refresh;
 
     public ModuleAdapter(OrderedRealmCollection<LogListModulePagkaging> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener, ModuleAdapter.onPrintListener onPrintListener) {
+                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener, ModuleAdapter.onPrintListener onPrintListener, ModuleAdapter.onClickEditTextListener onClickEditTextListener) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
         this.onPrintListener = onPrintListener;
+        this.onClickEditTextListener = onClickEditTextListener;
     }
 
     @Override
@@ -72,6 +73,11 @@ public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> impl
             @Override
             public void errorListener(String message) {
                 onErrorListener.errorListener(message);
+            }
+        }, new ScanPackagingAdapter.onClickEditTextListener() {
+            @Override
+            public void onClick() {
+                onClickEditTextListener.onClick();
             }
         });
 
@@ -162,5 +168,8 @@ public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> impl
             return false;
         }
 
+    }
+    public interface onClickEditTextListener {
+        void onClick();
     }
 }

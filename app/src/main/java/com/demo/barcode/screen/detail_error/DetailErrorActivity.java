@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.WindowManager;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -42,6 +43,7 @@ public class DetailErrorActivity extends BaseActivity {
                 .plus(new DetailErrorModule(fragment))
                 .inject(this);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 //        Window w = getWindow(); // in Activity's onCreate() for instance
 //        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

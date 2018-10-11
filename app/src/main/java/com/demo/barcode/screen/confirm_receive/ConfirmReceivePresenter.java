@@ -206,10 +206,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-        if (barcode.length() < 10 || barcode.length() > 13) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
-            return;
-        }
         localRepository.findConfirmByBarcode(orderId, departmentId, times, barcode).subscribe(new Action1<LogScanConfirm>() {
             @Override
             public void call(LogScanConfirm logScanConfirm) {
@@ -225,17 +221,21 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
                     }
                 } else {
-                    int count  = ListGroupManager.getInstance().countProductById(logScanConfirm.getProductDetailId());
-                    if (count > 1){
-                        view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(logScanConfirm.getProductDetailId()));
-                    }else if (count == 1){
-                        ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
-                        GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(productGroupEntity.getGroupCode());
-                        if (productGroupEntity == null) {
-                            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
-                            return;
+                    if (logScanConfirm == null) {
+                        showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+                    } else {
+                        int count = ListGroupManager.getInstance().countProductById(logScanConfirm.getProductDetailId());
+                        if (count > 1) {
+                            view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(logScanConfirm.getProductDetailId()));
+                        } else if (count == 1) {
+                            ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
+                            GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(productGroupEntity.getGroupCode());
+                            if (productGroupEntity == null) {
+                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
+                                return;
+                            }
+                            saveNumberConfirmGroup(groupEntityList, orderId, times, departmentId);
                         }
-                        saveNumberConfirmGroup(groupEntityList,orderId,times,departmentId);
                     }
 
 
@@ -364,7 +364,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void saveNumberConfirmGroup(GroupEntity groupEntity,long orderId, int times, int departmentId) {
+    public void saveNumberConfirmGroup(GroupEntity groupEntity, long orderId, int times, int departmentId) {
         allowedToSave = true;
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
@@ -406,7 +406,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
         }
     }
-
 
 
     public void saveConfirm(long orderId, long marterOutputId, int departmentIdOut, int times, double number) {

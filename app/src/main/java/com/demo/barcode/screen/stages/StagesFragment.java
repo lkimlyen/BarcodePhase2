@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -24,7 +26,6 @@ import android.widget.Toast;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -89,6 +90,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Bind(R.id.radioGroup)
     RadioGroup radioGroup;
+
+    @Bind(R.id.ll_root)
+    LinearLayout llRoot;
+
+    @Bind(R.id.btn_scan)
+    Button btnScan;
     private Vibrator vibrate;
     private long orderId = 0;
     private int departmentId = 0;
@@ -413,6 +420,14 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 detailGroupDialog.show(getActivity().getFragmentManager(), TAG);
                 detailGroupDialog.setGroupCode(groupCode);
             }
+        }, new StagesAdapter.onClickEditTextListener() {
+            @Override
+            public void onClick() {
+                if (llRoot.getVisibility() == View.VISIBLE){
+                    btnScan.setVisibility(View.GONE);
+                    llRoot.setVisibility(View.GONE);
+                }
+            }
         });
         rvCode.setAdapter(adapter);
 
@@ -588,12 +603,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void showDialogChooseGroup(List<GroupEntity> list) {
         ChooseGroupDialog dialog = new ChooseGroupDialog();
-        dialog.show(getActivity().getFragmentManager(),TAG);
+        dialog.show(getActivity().getFragmentManager(), TAG);
         dialog.setList(list);
         dialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
             @Override
             public void onSave(GroupEntity groupEntity) {
-                mPresenter.saveBarcodeWithGroup(groupEntity,times ,departmentId );
+                mPresenter.saveBarcodeWithGroup(groupEntity, times, departmentId);
             }
         });
 

@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -79,6 +81,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @Bind(R.id.txt_date_scan)
     TextView txtDateScan;
 
+    @Bind(R.id.ll_root)
+    LinearLayout llRoot;
+    @Bind(R.id.btn_scan)
+    Button btnScan;
     private Vibrator vibrate;
     private long orderId = 0;
     private long apartmentId = 0;
@@ -324,9 +330,17 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 //            return;
 //        }
 
-                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module,orderType);
+                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module, orderType);
                     }
-                });
+                }, new ModuleAdapter.onClickEditTextListener() {
+            @Override
+            public void onClick() {
+                if (llRoot.getVisibility() == View.VISIBLE) {
+                    btnScan.setVisibility(View.GONE);
+                    llRoot.setVisibility(View.GONE);
+                }
+            }
+        });
         lvCode.setAdapter(adapter);
     }
 
@@ -342,12 +356,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 mPresenter.getListApartment(orderId);
-//                if (apartmentId > 0) {
-//                    mPresenter.getListScan(orderId, apartmentId);
-//                    mPresenter.getListProduct(orderId, apartmentId);
-//                }
-
-
             }
 
             @Override

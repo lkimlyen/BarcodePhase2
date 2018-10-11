@@ -1,27 +1,23 @@
 package com.demo.barcode.screen.confirm_receive;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -41,10 +37,6 @@ import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -98,6 +90,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Bind(R.id.cb_all)
     CheckBox cbConfirmAll;
+
+    @Bind(R.id.ll_root)
+    LinearLayout lLRoot;
+    @Bind(R.id.btn_scan)
+    Button btnScan;
     private int typeScan = 0;
     private Vibrator vibrate;
     private long orderId = 0;
@@ -424,6 +421,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 turnOnVibrator();
                 startMusicError();
             }
+        }, new ConfirmInputAdapter.onClickEditTextListener() {
+            @Override
+            public void onClick() {
+                if (lLRoot.getVisibility() == View.VISIBLE){
+                    btnScan.setVisibility(View.GONE);
+                    lLRoot.setVisibility(View.GONE);
+                }
+            }
         });
         lvConfirm.setAdapter(adapter);
     }
@@ -471,12 +476,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Override
     public void showDialogChooseGroup(List<GroupEntity> list) {
         ChooseGroupDialog dialog = new ChooseGroupDialog();
-        dialog.show(getActivity().getFragmentManager(),TAG);
+        dialog.show(getActivity().getFragmentManager(), TAG);
         dialog.setList(list);
         dialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
             @Override
             public void onSave(GroupEntity groupEntity) {
-                mPresenter.saveNumberConfirmGroup(groupEntity,orderId,times ,departmentId );
+                mPresenter.saveNumberConfirmGroup(groupEntity, orderId, times, departmentId);
             }
         });
     }

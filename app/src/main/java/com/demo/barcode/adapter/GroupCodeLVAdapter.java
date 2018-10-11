@@ -28,6 +28,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     private boolean inChooseMode = false;
     private Set<GroupCode> countersToSelect = new HashSet<GroupCode>();
     private OnRemoveListener onRemoveListener;
+    private onClickEditTextListener onClickEditTextListener;
 
     public void enableSelectMode(boolean enabled) {
         inChooseMode = enabled;
@@ -44,9 +45,10 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
 
-    public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnRemoveListener onRemoveListener, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
+    public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnRemoveListener onRemoveListener, GroupCodeLVAdapter.onClickEditTextListener onClickEditTextListener, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
         super(realmResults);
         this.onRemoveListener = onRemoveListener;
+        this.onClickEditTextListener = onClickEditTextListener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
     }
@@ -71,6 +73,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         }
         return convertView;
     }
+    boolean edit = false;
 
     private void setDataToViews(HistoryHolder holder, GroupCode item) {
         TextWatcher textWatcher = new TextWatcher() {
@@ -103,7 +106,21 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
                     if (numberInput == item.getNumber()) {
                         return;
                     }
-                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+                    edit = false;
+//                    final Timer timer = new Timer();
+//                    if (!edit) {
+//                        edit = true;
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                edit = false;
+//                                timer.cancel();
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        timer.cancel();
+                        onEditTextChangeListener.onEditTextChange(item, numberInput);
+//                    }
 
                 } catch (Exception e) {
 
@@ -112,12 +129,14 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         };
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.edtNumberGroup.setText(String.valueOf((int) item.getNumber()));
+        holder.edtNumberGroup.setSelection( holder.edtNumberGroup.getText().length());
         holder.txtNumberTotal.setText(String.valueOf((int) item.getNumberTotal()));
         holder.txtModule.setText(item.getModule());
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    onClickEditTextListener.onClick();
                     holder.edtNumberGroup.addTextChangedListener(textWatcher);
                 } else {
                     holder.edtNumberGroup.removeTextChangedListener(textWatcher);
@@ -183,6 +202,9 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     }
     public interface OnRemoveListener {
         void onRemove(long id);
+    }
+    public interface onClickEditTextListener {
+        void onClick();
     }
 
 }

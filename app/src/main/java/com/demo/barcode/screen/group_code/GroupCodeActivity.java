@@ -5,11 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseActivity;
 import com.demo.barcode.app.di.Precondition;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
 
 import javax.inject.Inject;
 
@@ -23,6 +28,7 @@ public class GroupCodeActivity extends BaseActivity {
     GroupCodePresenter GroupCodePresenter;
 
     GroupCodeFragment fragment;
+    private Unregistrar mUnregistrar;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, GroupCodeActivity.class);
@@ -46,6 +52,17 @@ public class GroupCodeActivity extends BaseActivity {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
 //        }
+        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
+            @Override
+            public void onVisibilityChanged(boolean isOpen) {
+
+                if (!isOpen) {
+                    fragment.btnScan.setVisibility(View.VISIBLE);
+                    fragment.llRoot.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
     }
 
     private void initFragment() {
@@ -74,7 +91,11 @@ public class GroupCodeActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fragment.onActivityResult(requestCode, resultCode, data);
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnregistrar.unregister();
+    }
 }

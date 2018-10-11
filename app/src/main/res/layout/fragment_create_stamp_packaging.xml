@@ -75,6 +75,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="vertical"
+        android:id="@+id/ll_root"
         android:padding="@dimen/distance_8dp">
         <LinearLayout
             android:layout_width="match_parent"

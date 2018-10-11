@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -24,13 +23,15 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
     private OnEditTextChangeListener onEditTextChangeListener;
     private int times;
     private onErrorListener onErrorListener;
+    private onClickEditTextListener onClickEditTextListener;
 
     public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
-                               OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener) {
+                               OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener, ConfirmInputAdapter.onClickEditTextListener onClickEditTextListener) {
         super(realmResults);
         this.times = times;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
+        this.onClickEditTextListener = onClickEditTextListener;
     }
 
     @Override
@@ -53,6 +54,8 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         return convertView;
     }
 
+    boolean edit = false;
+
     private void setDataToViews(HistoryHolder holder, LogScanConfirm item) {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -69,19 +72,34 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput < 0) {
-                        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
+                        holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
                     if (numberInput > item.getNumberScanOut()) {
-                        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
+                        holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
                     }
                     if (numberInput == item.getNumberConfirmed()) {
                         return;
                     }
+//                    edit = false;
+//                    final Timer timer = new Timer();
+//                    if (!edit) {
+//                        edit = true;
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                edit = false;
+//                                timer.cancel();
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        timer.cancel();
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
+                    //}
+
 
                 } catch (Exception e) {
 
@@ -91,9 +109,10 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.txtNumberDelivery.setText(String.valueOf((int)item.getNumberScanOut()));
-        holder.edtNumberReceive.setText(String.valueOf((int)item.getNumberConfirmed()));
+        holder.txtNumberDelivery.setText(String.valueOf((int) item.getNumberScanOut()));
+        holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
 
+        holder.edtNumberReceive.setSelection(holder.edtNumberReceive.getText().length());
 
         switch (item.getStatusConfirm()) {
             case Constants.FULL:
@@ -114,7 +133,9 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         holder.edtNumberReceive.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
                 if (hasFocus) {
+                    onClickEditTextListener.onClick();
                     holder.edtNumberReceive.addTextChangedListener(textWatcher);
                 } else {
 
@@ -160,5 +181,9 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
     public interface onErrorListener {
         void errorListener(String message);
+    }
+
+    public interface onClickEditTextListener {
+        void onClick();
     }
 }

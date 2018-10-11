@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -100,6 +101,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Bind(R.id.layoutContent)
     LinearLayout layoutContent;
+
+    @Bind(R.id.ll_root)
+    LinearLayout llRoot;
+    @Bind(R.id.btn_scan)
+    Button btnScan;
     private Vibrator vibrate;
 
 
@@ -329,6 +335,14 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                         .show();
 
             }
+        }, new GroupCodeLVAdapter.onClickEditTextListener() {
+            @Override
+            public void onClick() {
+                if (llRoot.getVisibility() == View.VISIBLE) {
+                    btnScan.setVisibility(View.GONE);
+                    llRoot.setVisibility(View.GONE);
+                }
+            }
         }, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(GroupCode item, int number) {
@@ -512,7 +526,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                             return;
                         }
 
-                        if (numberInput+mPresenter.totalNumberScanGroup(productGroupEntity.getProductDetailID()) > productGroupEntity.getNumberTotal() ) {
+                        if (numberInput + mPresenter.totalNumberScanGroup(productGroupEntity.getProductDetailID()) > productGroupEntity.getNumberTotal()) {
                             if (edtNumberGroup.getTag().equals(productGroupEntity)) {
                                 edtNumberGroup.setText((int) productGroupEntity.getNumber() + "");
                             }
