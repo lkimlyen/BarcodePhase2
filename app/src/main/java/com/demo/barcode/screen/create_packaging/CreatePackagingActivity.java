@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -28,7 +29,7 @@ public class CreatePackagingActivity extends BaseActivity {
 
     CreatePackagingFragment fragment;
 
-    private Unregistrar mUnregistrar;
+  //  private Unregistrar mUnregistrar;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, CreatePackagingActivity.class);
@@ -47,16 +48,18 @@ public class CreatePackagingActivity extends BaseActivity {
                 .plus(new CreatePackagingModule(fragment))
                 .inject(this);
 
-        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
-            @Override
-            public void onVisibilityChanged(boolean isOpen) {
-                if (!isOpen) {
-                    fragment.btnScan.setVisibility(View.VISIBLE);
-                    fragment.llRoot.setVisibility(View.VISIBLE);
-                }
 
-            }
-        });
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+//        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
+//            @Override
+//            public void onVisibilityChanged(boolean isOpen) {
+//                if (!isOpen) {
+//                    fragment.btnScan.setVisibility(View.VISIBLE);
+//                    fragment.llRoot.setVisibility(View.VISIBLE);
+//                }
+//
+//            }
+//        });
     }
 
     private void initFragment() {
@@ -97,6 +100,6 @@ public class CreatePackagingActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mUnregistrar.unregister();
+      //  mUnregistrar.unregister();
     }
 }
