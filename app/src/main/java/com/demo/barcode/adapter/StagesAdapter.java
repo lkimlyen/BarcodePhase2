@@ -108,7 +108,8 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
 //                        }, 1000);
 //                    } else {
 //                        timer.cancel();
-                        onEditTextChangeListener.onEditTextChange(item, numberInput);
+                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+
 //                    }
 
 
@@ -124,7 +125,7 @@ public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements Li
         holder.txtQuantityRest.setText((int) numberInputModel.getNumberRest() + "");
         holder.txtQuantityScan.setText((int) numberInputModel.getNumberSuccess() + "");
         holder.edtNumberScan.setText(String.valueOf((int) item.getNumberInput()));
-        holder.edtNumberScan.setSelection( holder.edtNumberScan.getText().length());
+        holder.edtNumberScan.setSelection(holder.edtNumberScan.getText().length());
 
         if (item.getTypeScan()) {
             holder.llGroup.setVisibility(View.GONE);

@@ -249,6 +249,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @Override
     public void showError(String message) {
+        if (llRoot.getVisibility() == View.GONE){
+            btnScan.setVisibility(View.VISIBLE);
+            llRoot.setVisibility(View.VISIBLE);
+        }
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
@@ -284,6 +288,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 new ModuleAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
+                        if (llRoot.getVisibility() == View.GONE){
+                            btnScan.setVisibility(View.VISIBLE);
+                            llRoot.setVisibility(View.VISIBLE);
+                        }
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText(getString(R.string.text_title_noti))
                                 .setContentText(getString(R.string.text_delete_code))
@@ -331,6 +339,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 //        }
 
                         PrintStempActivity.start(getActivity(), orderId, apartmentId, module, orderType);
+                        if (llRoot.getVisibility() == View.GONE){
+                            btnScan.setVisibility(View.VISIBLE);
+                            llRoot.setVisibility(View.VISIBLE);
+                        }
                     }
                 }, new ModuleAdapter.onClickEditTextListener() {
             @Override

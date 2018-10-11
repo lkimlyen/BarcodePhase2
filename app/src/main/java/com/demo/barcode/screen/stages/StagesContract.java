@@ -38,7 +38,7 @@ public interface StagesContract {
         void showCheckResidual(int times, ProductEntity
                 productEntity, int departmentId);
 
-        void showCheckResidualInGroup(long id, double number,double numberInput);
+        void showCheckResidualInGroup(long id, double number, double numberInput);
 
         void showListTimes(List<Integer> list);
 
@@ -55,7 +55,7 @@ public interface StagesContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(long orderId, boolean refresh);
+        void getListProduct(long orderId, int times, int department, boolean refresh);
 
         void checkBarcode(String barcode, int departmentId, int times, boolean groupCode);
 

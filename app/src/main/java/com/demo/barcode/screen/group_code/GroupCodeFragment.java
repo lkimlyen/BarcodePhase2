@@ -267,6 +267,10 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showError(String message) {
+        if (llRoot.getVisibility() == View.GONE){
+            btnScan.setVisibility(View.VISIBLE);
+            llRoot.setVisibility(View.VISIBLE);
+        }
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
@@ -314,6 +318,10 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         lvAdapter = new GroupCodeLVAdapter(groupCodes, new GroupCodeLVAdapter.OnRemoveListener() {
             @Override
             public void onRemove(long id) {
+                if (llRoot.getVisibility() == View.GONE){
+                    btnScan.setVisibility(View.VISIBLE);
+                    llRoot.setVisibility(View.VISIBLE);
+                }
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_code))

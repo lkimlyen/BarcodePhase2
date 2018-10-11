@@ -311,6 +311,10 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showError(String message) {
+        if (lLRoot.getVisibility() == View.GONE){
+            btnScan.setVisibility(View.VISIBLE);
+            lLRoot.setVisibility(View.VISIBLE);
+        }
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
