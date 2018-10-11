@@ -267,10 +267,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showError(String message) {
-        if (llRoot.getVisibility() == View.GONE){
-            btnScan.setVisibility(View.VISIBLE);
-            llRoot.setVisibility(View.VISIBLE);
-        }
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
@@ -318,10 +314,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         lvAdapter = new GroupCodeLVAdapter(groupCodes, new GroupCodeLVAdapter.OnRemoveListener() {
             @Override
             public void onRemove(long id) {
-                if (llRoot.getVisibility() == View.GONE){
-                    btnScan.setVisibility(View.VISIBLE);
-                    llRoot.setVisibility(View.VISIBLE);
-                }
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_code))
@@ -554,6 +546,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                     }
                 }
             });
+
             layoutMain.addView(view);
         }
         deleteButtonList.put(groupCode, listDelete);
@@ -655,6 +648,11 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
+        if(llRoot.getVisibility() == View.GONE){
+            llRoot.setVisibility(View.VISIBLE);
+            btnScan.setVisibility(View.VISIBLE);
+            return;
+        }
         getActivity().finish();
     }
 

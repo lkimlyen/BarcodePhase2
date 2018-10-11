@@ -83,6 +83,7 @@ public class StagesActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         fragment.back();
+
         // super.onBackPressed();
     }
 

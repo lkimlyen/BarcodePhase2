@@ -311,10 +311,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showError(String message) {
-        if (lLRoot.getVisibility() == View.GONE){
-            btnScan.setVisibility(View.VISIBLE);
-            lLRoot.setVisibility(View.VISIBLE);
-        }
+
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
@@ -572,6 +569,10 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_back)
     public void back() {
+        if (lLRoot.getVisibility() == View.GONE){
+            btnScan.setVisibility(View.VISIBLE);
+            lLRoot.setVisibility(View.VISIBLE);
+        }
         if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))

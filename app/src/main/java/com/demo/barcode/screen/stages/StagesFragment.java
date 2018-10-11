@@ -307,10 +307,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showError(String message) {
-        if (llRoot.getVisibility() == View.GONE){
-            btnScan.setVisibility(View.VISIBLE);
-            llRoot.setVisibility(View.VISIBLE);
-        }
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
     }
 
@@ -347,10 +343,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         adapter = new StagesAdapter(parent.getList(), new StagesAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanStages item) {
-                if (llRoot.getVisibility() == View.GONE){
-                    btnScan.setVisibility(View.VISIBLE);
-                    llRoot.setVisibility(View.VISIBLE);
-                }
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_code))
@@ -393,10 +385,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     turnOnVibrator();
                     startMusicError();
                 } else {
-                    if (llRoot.getVisibility() == View.VISIBLE){
-                        btnScan.setVisibility(View.GONE);
-                        llRoot.setVisibility(View.GONE);
-                    }
                     if (item.getTypeScan()) {
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText(getString(R.string.text_title_noti))
@@ -408,10 +396,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
                                         mPresenter.updateNumberScan(item.getId(), numberInput, true);
                                         sweetAlertDialog.dismiss();
-                                        if (llRoot.getVisibility() == View.GONE){
-                                            btnScan.setVisibility(View.VISIBLE);
-                                            llRoot.setVisibility(View.VISIBLE);
-                                        }
+
                                     }
                                 })
                                 .setCancelText(getString(R.string.text_no))
@@ -420,10 +405,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         mPresenter.updateNumberScan(item.getId(), item.getNumberInput(), false);
                                         sweetAlertDialog.dismiss();
-                                        if (llRoot.getVisibility() == View.GONE){
-                                            btnScan.setVisibility(View.VISIBLE);
-                                            llRoot.setVisibility(View.VISIBLE);
-                                        }
+
                                     }
                                 })
                                 .show();
@@ -689,6 +671,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
+        if(llRoot.getVisibility() == View.GONE){
+            llRoot.setVisibility(View.VISIBLE);
+            btnScan.setVisibility(View.VISIBLE);
+            return;
+        }
         if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
