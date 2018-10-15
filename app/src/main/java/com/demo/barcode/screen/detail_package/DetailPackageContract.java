@@ -28,8 +28,6 @@ public interface DetailPackageContract {
 
         void turnOnVibrator();
 
-        void showListProductHistory(PackageEntity packageEntity);
-
         void startActivityHistory();
 
         void showApartmentName(String apartmentName);
@@ -37,20 +35,14 @@ public interface DetailPackageContract {
         void showOrder(SOEntity soEntity);
 
         void showDialogCreateIPAddress();
-
-        void showListCodePack(List<CodePackEntity> list);
     }
 
     interface Presenter extends BasePresenter {
         void getOrderPackaging(long orderId);
 
-        void getListHistoryBySerialPack(HistoryEntity historyEntity, String serialPack);
-
         void printTemp(long serverId, long packageId);
 
         void getApartment(long apartmentId);
-
-        void getListCodePack(long orderId, int orderType, long productId);
 
         void saveIPAddress(String ipAddress, int port, long serverId, long packageId);
 

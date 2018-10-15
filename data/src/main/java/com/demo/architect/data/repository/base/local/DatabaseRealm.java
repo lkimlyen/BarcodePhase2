@@ -21,6 +21,7 @@ import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -332,9 +333,9 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<LogListModulePagkaging> getListScanPackaging(SOEntity soEntity, ApartmentEntity apartment) {
+    public RealmResults<LogListSerialPackPagkaging> getListScanPackaging(SOEntity soEntity, ApartmentEntity apartment) {
         Realm realm = getRealmInstance();
-        RealmResults<LogListModulePagkaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
+        RealmResults<LogListSerialPackPagkaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
                 soEntity, apartment);
         return listScanPackaging;
     }
@@ -432,10 +433,10 @@ public class DatabaseRealm {
 
     }
 
-    public List<LogScanPackaging> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPack) {
+    public List<LogScanPackaging> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPackId) {
         Realm realm = getRealmInstance();
         List<LogScanPackaging> result = LogScanPackaging.getListScanPackaging(realm,
-                orderId, apartmentId, moduleId, serialPack);
+                orderId, apartmentId, moduleId, serialPackId);
         return result;
     }
 

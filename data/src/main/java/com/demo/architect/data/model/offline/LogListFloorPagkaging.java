@@ -12,7 +12,7 @@ public class LogListFloorPagkaging extends RealmObject {
     private long id;
     private String floor;
     @SuppressWarnings("unused")
-    private RealmList<LogListModulePagkaging> list;
+    private RealmList<LogListSerialPackPagkaging> list;
 
     public LogListFloorPagkaging() {
     }
@@ -39,11 +39,11 @@ public class LogListFloorPagkaging extends RealmObject {
         this.floor = floor;
     }
 
-    public RealmList<LogListModulePagkaging> getList() {
+    public RealmList<LogListSerialPackPagkaging> getList() {
         return list;
     }
 
-    public void setList(RealmList<LogListModulePagkaging> list) {
+    public void setList(RealmList<LogListSerialPackPagkaging> list) {
         this.list = list;
     }
 

@@ -74,20 +74,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         view.showOrder(soEntity);
     }
 
-    @Override
-    public void getListHistoryBySerialPack(HistoryEntity historyEntity, String serialPack) {
-        int countExist = 0;
-        for (PackageEntity packageEntity : historyEntity.getPackageList()) {
-            if (packageEntity.getSerialPack().equals(serialPack)) {
-                countExist++;
-                view.showListProductHistory(packageEntity);
-                return;
-            }
-        }
-        if (countExist == 0) {
-            view.showListProductHistory(null);
-        }
-    }
 
 
     @Override
@@ -133,25 +119,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         view.showApartmentName(apartment.getApartmentName());
     }
 
-    @Override
-    public void getListCodePack(long orderId, int orderType, long productId) {
-        view.showProgressBar();
-        getCodePackUsecase.executeIO(new GetCodePackUsecase.RequestValue(orderId, orderType, productId),
-                new BaseUseCase.UseCaseCallback<GetCodePackUsecase.ResponseValue,
-                        GetCodePackUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetCodePackUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        view.showListCodePack(successResponse.getEntity());
-                    }
-
-                    @Override
-                    public void onError(GetCodePackUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
-                    }
-                });
-    }
 
     @Override
     public void saveIPAddress(String ipAddress, int port, long serverId, long packageId) {

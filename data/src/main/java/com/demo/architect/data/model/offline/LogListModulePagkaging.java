@@ -10,8 +10,9 @@ public class LogListModulePagkaging extends RealmObject {
     private long id;
     private String module;
     private double size;
+
     @SuppressWarnings("unused")
-    private RealmList<LogScanPackaging> logScanPackagingList;
+    private RealmList<LogListSerialPackPagkaging> logScanPackagingList;
 
 
     public LogListModulePagkaging() {
@@ -53,14 +54,13 @@ public class LogListModulePagkaging extends RealmObject {
         return log;
     }
 
-    public RealmList<LogScanPackaging> getLogScanPackagingList() {
+    public RealmList<LogListSerialPackPagkaging> getLogScanPackagingList() {
         return logScanPackagingList;
     }
 
-    public void setLogScanPackagingList(RealmList<LogScanPackaging> logScanPackagingList) {
+    public void setLogScanPackagingList(RealmList<LogListSerialPackPagkaging> logScanPackagingList) {
         this.logScanPackagingList = logScanPackagingList;
     }
-
 
     public double getSize() {
         return size;

@@ -25,9 +25,11 @@ import android.widget.Toast;
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ModuleAdapter;
+import com.demo.barcode.adapter.SerialPackAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
@@ -57,7 +59,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     private static final int MY_LOCATION_REQUEST_CODE = 1234;
     private final String TAG = CreatePackagingFragment.class.getName();
     private CreatePackagingContract.Presenter mPresenter;
-    private ModuleAdapter adapter;
+    private SerialPackAdapter adapter;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.ss_code_so)
@@ -279,9 +281,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     @Override
-    public void showListScan(RealmResults<LogListModulePagkaging> log) {
-        adapter = new ModuleAdapter(log,
-                new ModuleAdapter.OnItemClearListener() {
+    public void showListScan(RealmResults<LogListSerialPackPagkaging> log) {
+        adapter = new SerialPackAdapter(log,
+                new SerialPackAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -304,12 +306,12 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                                 })
                                 .show();
                     }
-                }, new ModuleAdapter.OnEditTextChangeListener() {
+                }, new SerialPackAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
                 mPresenter.updateNumberScan(item.getId(), number);
             }
-        }, new ModuleAdapter.onErrorListener() {
+        }, new SerialPackAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
@@ -317,9 +319,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 turnOnVibrator();
             }
         },
-                new ModuleAdapter.onPrintListener() {
+                new SerialPackAdapter.onPrintListener() {
                     @Override
-                    public void onPrint(long module) {
+                    public void onPrint(long moduleId, String serialPack) {
 //                        if (!mPresenter.countListScanInPack(adapter.getCount())) {
 //                            showNotification(getString(R.string.text_product_not_enough_in_package), SweetAlertDialog.ERROR_TYPE);
 //                            return;
@@ -333,10 +335,10 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 //                            btnScan.setVisibility(View.GONE);
 //                            llRoot.setVisibility(View.GONE);
 //                        }
-                        PrintStempActivity.start(getActivity(), orderId, apartmentId, module, orderType);
+                        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId,serialPack, orderType);
 
                     }
-                }, new ModuleAdapter.onClickEditTextListener() {
+                }, new SerialPackAdapter.onClickEditTextListener() {
             @Override
             public void onClick() {
 //                if (llRoot.getVisibility() == View.VISIBLE) {

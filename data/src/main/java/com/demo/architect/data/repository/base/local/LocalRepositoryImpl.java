@@ -18,6 +18,7 @@ import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -453,12 +454,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogListModulePagkaging>> getListScanPackaging(final SOEntity soEntity, final ApartmentEntity apartment) {
-        return Observable.create(new Observable.OnSubscribe<RealmResults<LogListModulePagkaging>>() {
+    public Observable<RealmResults<LogListSerialPackPagkaging>> getListScanPackaging(final SOEntity soEntity, final ApartmentEntity apartment) {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogListSerialPackPagkaging>>() {
             @Override
-            public void call(Subscriber<? super RealmResults<LogListModulePagkaging>> subscriber) {
+            public void call(Subscriber<? super RealmResults<LogListSerialPackPagkaging>> subscriber) {
                 try {
-                    RealmResults<LogListModulePagkaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity, apartment);
+                    RealmResults<LogListSerialPackPagkaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity, apartment);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -469,13 +470,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanPackaging>> getListScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack) {
+    public Observable<List<LogScanPackaging>> getListScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPackId) {
         return Observable.create(new Observable.OnSubscribe<List<LogScanPackaging>>() {
             @Override
             public void call(Subscriber<? super List<LogScanPackaging>> subscriber) {
                 try {
                     List<LogScanPackaging> listScanPackaging = databaseRealm.getListScanPackaging(orderId,
-                            apartmentId, moduleId, serialPack);
+                            apartmentId, moduleId, serialPackId);
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {

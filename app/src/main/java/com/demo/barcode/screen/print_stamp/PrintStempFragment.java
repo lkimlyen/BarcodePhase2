@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
@@ -72,8 +73,8 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Bind(R.id.txt_date_create)
     TextView txtDate;
 
-    @Bind(R.id.ss_code_pack)
-    SearchableSpinner ssCodePack;
+    @Bind(R.id.txt_serial_pack)
+    TextView txtSerialPack;
 
     @Bind(R.id.txt_serial_module)
     TextView txtSerialModule;
@@ -111,6 +112,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         orderId = getActivity().getIntent().getLongExtra(ORDER_ID, 0);
         moduleId = getActivity().getIntent().getLongExtra(MODULE_ID, 0);
         apartmentId = getActivity().getIntent().getLongExtra(APARTMENT_ID, 0);
+        serialPack = getActivity().getIntent().getStringExtra(PrintStempActivity.SERIAL_PACK_ID);
         orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
         initView();
         return view;
@@ -119,17 +121,12 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         mPresenter.getOrderPackaging(orderId);
-
         mPresenter.getApartment(apartmentId);
-        mPresenter.getModule(moduleId);
+        mPresenter.getModule(moduleId,serialPack);
+        mPresenter.getListScanStages(orderId,apartmentId,moduleId,serialPack);
         mPresenter.getListCodePack(orderId, orderType, moduleId);
-        ssCodePack.setPrintStamp(true);
-        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
+        mPresenter.getTotalScanBySerialPack(orderId,apartmentId,moduleId,serialPack);
+
     }
 
 
@@ -224,24 +221,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @Override
     public void showListCodePack(List<CodePackEntity> list) {
-        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssCodePack.setAdapter(adapter);
-        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                serialPack = list.get(position).getSttPack();
-                txtCodePack.setText(list.get(position).getPackCode());
-                mPresenter.getListScanStages(orderId, apartmentId, moduleId, serialPack);
-                mPresenter.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -261,6 +241,12 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         txtSerialModule.setText(module);
     }
 
+    @Override
+    public void showSerialPack(PackageEntity packageEntity) {
+        txtSerialPack.setText(packageEntity.getSerialPack());
+        txtCodePack.setText(packageEntity.getPackCode());
+    }
+
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -275,11 +261,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (TextUtils.isEmpty(serialPack)) {
-            showError(CoreApplication.getInstance().getString(R.string.text_serial_pack_null));
-            return;
-        }
-
         if (!mPresenter.checkNumberProduct(orderId, moduleId, apartmentId, serialPack)) {
             showError(getString(R.string.text_quality_product_not_enough_in_package));
             return;

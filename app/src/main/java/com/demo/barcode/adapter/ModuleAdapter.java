@@ -1,21 +1,26 @@
 package com.demo.barcode.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
+import io.realm.RealmResults;
 
 public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> implements ListAdapter {
 
@@ -23,7 +28,7 @@ public class ModuleAdapter extends RealmBaseAdapter<LogListModulePagkaging> impl
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
     private onPrintListener onPrintListener;
-private onClickEditTextListener onClickEditTextListener;
+    private onClickEditTextListener onClickEditTextListener;
     private boolean refresh;
 
     public ModuleAdapter(OrderedRealmCollection<LogListModulePagkaging> realmResults, OnItemClearListener listener,
@@ -41,7 +46,7 @@ private onClickEditTextListener onClickEditTextListener;
         HistoryHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_header_scan, parent, false);
+                    .inflate(R.layout.item_module, parent, false);
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -58,47 +63,93 @@ private onClickEditTextListener onClickEditTextListener;
 
     private void setDataToViews(HistoryHolder holder, LogListModulePagkaging item) {
         holder.txtModule.setText(String.format(CoreApplication.getInstance().getString(R.string.text_module), item.getModule()));
-        ScanPackagingAdapter adapter = new ScanPackagingAdapter(item.getLogScanPackagingList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll(),
-                new ScanPackagingAdapter.OnItemClearListener() {
+        RealmResults<LogListSerialPackPagkaging> list = item.getLogScanPackagingList().where().greaterThan("size", 0).findAll();
+       holder.llContent.removeAllViews();
+        for (LogListSerialPackPagkaging logListSerialPackPagkaging : list) {
+            LayoutInflater inf = (LayoutInflater) CoreApplication.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inf.inflate(R.layout.item_header_scan, null);
+            TextView txtSerialPack = v.findViewById(R.id.txt_serial_pack);
+            TextView txtCodePack = v.findViewById(R.id.txt_code_pack);
+            ListView lvCode = v.findViewById(R.id.lv_code);
+            ImageButton btnPrint = v.findViewById(R.id.btn_print);
+            txtSerialPack.setText(String.format(CoreApplication.getInstance().getString(R.string.text_serial), logListSerialPackPagkaging.getSerialPack()));
+            txtCodePack.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_package), logListSerialPackPagkaging.getCodeProduct()));
+            ScanPackagingAdapter adapter = new ScanPackagingAdapter(logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll(),
+                    new ScanPackagingAdapter.OnItemClearListener() {
+                        @Override
+                        public void onItemClick(LogScanPackaging item) {
+                            listener.onItemClick(item);
+                        }
+                    }, new ScanPackagingAdapter.OnEditTextChangeListener() {
+                @Override
+                public void onEditTextChange(LogScanPackaging item, int number) {
+                    onEditTextChangeListener.onEditTextChange(item, number);
+                }
+            }, new ScanPackagingAdapter.onErrorListener() {
+                @Override
+                public void errorListener(String message) {
+                    onErrorListener.errorListener(message);
+                }
+            }, new ScanPackagingAdapter.onClickEditTextListener() {
+                @Override
+                public void onClick() {
+                    onClickEditTextListener.onClick();
+                }
+            });
+
+            lvCode.setAdapter(adapter);
+
+            lvCode.post(new Runnable() {
+                @Override
+                public void run() {
+                    setListViewHeightBasedOnItems(lvCode);
+                }
+            });
+
+            double sum = logListSerialPackPagkaging.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll().sum("numberInput").doubleValue();
+            if (logListSerialPackPagkaging.getNumberTotal() == sum) {
+                btnPrint.setVisibility(View.VISIBLE);
+            } else {
+                btnPrint.setVisibility(View.GONE);
+            }
+            btnPrint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onPrintListener.onPrint(item.getId(), logListSerialPackPagkaging.getSerialPack());
+                }
+            });
+            holder.llContent.addView(v);
+        }
+
+
+        SerialPackAdapter adapter = new SerialPackAdapter(item.getLogScanPackagingList().where().greaterThan("size", 0).findAll(),
+                new SerialPackAdapter.OnItemClearListener() {
                     @Override
                     public void onItemClick(LogScanPackaging item) {
                         listener.onItemClick(item);
                     }
-                }, new ScanPackagingAdapter.OnEditTextChangeListener() {
+                }, new SerialPackAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
                 onEditTextChangeListener.onEditTextChange(item, number);
             }
-        }, new ScanPackagingAdapter.onErrorListener() {
+        }, new SerialPackAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 onErrorListener.errorListener(message);
             }
-        }, new ScanPackagingAdapter.onClickEditTextListener() {
+        }, new SerialPackAdapter.onPrintListener() {
+            @Override
+            public void onPrint(long moduleId,String serialPack) {
+                onPrintListener.onPrint(item.getId(), serialPack);
+            }
+        }, new SerialPackAdapter.onClickEditTextListener() {
             @Override
             public void onClick() {
                 onClickEditTextListener.onClick();
             }
         });
 
-        holder.lvCode.setAdapter(adapter);
-
-        holder.lvCode.post(new Runnable() {
-            @Override
-            public void run() {
-                setListViewHeightBasedOnItems(holder.lvCode);
-            }
-        });
-        if (refresh) {
-            setListViewHeightBasedOnItems(holder.lvCode);
-        }
-
-        holder.btnPrint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPrintListener.onPrint(item.getId());
-            }
-        });
 
     }
 
@@ -110,13 +161,11 @@ private onClickEditTextListener onClickEditTextListener;
     public class HistoryHolder {
 
         TextView txtModule;
-        ListView lvCode;
-        ImageButton btnPrint;
+        LinearLayout llContent;
 
         private HistoryHolder(View v) {
-            lvCode = (ListView) v.findViewById(R.id.lv_code);
+            llContent = v.findViewById(R.id.ll_content);
             txtModule = (TextView) v.findViewById(R.id.txt_module);
-            btnPrint = (ImageButton) v.findViewById(R.id.btn_print);
         }
 
     }
@@ -134,9 +183,13 @@ private onClickEditTextListener onClickEditTextListener;
     }
 
     public interface onPrintListener {
-        void onPrint(long module);
+        void onPrint(long moduleId, String serialPack);
     }
 
+
+    public interface onClickEditTextListener {
+        void onClick();
+    }
 
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
@@ -168,8 +221,5 @@ private onClickEditTextListener onClickEditTextListener;
             return false;
         }
 
-    }
-    public interface onClickEditTextListener {
-        void onClick();
     }
 }

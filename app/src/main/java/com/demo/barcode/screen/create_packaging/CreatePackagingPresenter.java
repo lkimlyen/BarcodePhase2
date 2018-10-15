@@ -11,6 +11,7 @@ import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
@@ -22,7 +23,6 @@ import com.demo.architect.domain.PostCheckBarCodeUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
-import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListModulePackagingManager;
 import com.demo.barcode.manager.ListPositionScanManager;
 import com.demo.barcode.manager.ListSOManager;
@@ -133,9 +133,9 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
         SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
         ApartmentEntity apartmentEntity = ListApartmentManager.getInstance().getApartmentById(apartmentId);
         localRepository.getListScanPackaging(soEntity, apartmentEntity)
-                .subscribe(new Action1<RealmResults<LogListModulePagkaging>>() {
+                .subscribe(new Action1<RealmResults<LogListSerialPackPagkaging>>() {
                     @Override
-                    public void call(RealmResults<LogListModulePagkaging> logListModulePagkagings) {
+                    public void call(RealmResults<LogListSerialPackPagkaging> logListModulePagkagings) {
                         view.showListScan(logListModulePagkagings);
                     }
                 });
@@ -173,7 +173,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                             ListModuleEntity listModuleEntity = ListModulePackagingManager.getInstance().getModuleById(log.getModule());
                             int position = ListPositionScanManager.getInstance().getPositionByOrderId(log.getOrderId(), log.getApartmentId());
                             if (positionScan == null) {
-                                positionScan = new PositionScan(log.getOrderId(), log.getApartmentId(), listModuleEntity.getModule(), log.getSttPack(), log.getCodePack());
+                                positionScan = new PositionScan( log.getOrderId(), log.getApartmentId(), listModuleEntity.getModule(), log.getSttPack(), log.getCodePack());
                                 if (position > -1) {
                                     list.add(position, positionScan);
                                 } else {

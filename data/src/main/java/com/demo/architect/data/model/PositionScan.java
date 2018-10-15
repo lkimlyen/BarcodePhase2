@@ -7,7 +7,8 @@ public class PositionScan {
     private String serialPack;
     private String codePack;
 
-    public PositionScan(long orderId, long apartmentId, String module, String serialPack, String codePack) {
+    public PositionScan( long orderId, long apartmentId, String module, String serialPack, String codePack) {
+
         this.orderId = orderId;
         this.apartmentId = apartmentId;
         this.module = module;

@@ -30,7 +30,7 @@ public interface CreatePackagingContract {
 
         void turnOnVibrator();
 
-        void showListScan(RealmResults<LogListModulePagkaging> log);
+        void showListScan(RealmResults<LogListSerialPackPagkaging> log);
 
         void showListSO(List<SOEntity> list);
 

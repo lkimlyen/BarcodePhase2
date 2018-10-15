@@ -16,6 +16,7 @@ import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -84,7 +85,7 @@ public interface LocalRepository {
 
     Observable<String> deleteImageModel(final long id);
 
-    Observable<RealmResults<LogListModulePagkaging>> getListScanPackaging(SOEntity soEntity,ApartmentEntity apartment);
+    Observable<RealmResults<LogListSerialPackPagkaging>> getListScanPackaging(SOEntity soEntity, ApartmentEntity apartment);
 
     Observable<List<LogScanPackaging>> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPack);
 

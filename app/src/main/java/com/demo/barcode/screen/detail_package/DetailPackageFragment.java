@@ -67,8 +67,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
-    @Bind(R.id.ss_code_pack)
-    SearchableSpinner ssCodePack;
+
     @Bind(R.id.txt_total)
     TextView txtTotal;
 
@@ -80,6 +79,9 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @Bind(R.id.txt_floor)
     TextView txtFloor;
+
+    @Bind(R.id.txt_serial_pack)
+    TextView txtSerialPack;
 
     private long packageId;
     private int orderType;
@@ -124,16 +126,14 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     private void initView() {
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         txtSerialModule.setText(historyEntity.getModule());
+        txtSerialPack.setText(historyEntity.getPackageList().get(0).getSerialPack());
+        txtCodePack.setText(historyEntity.getPackageList().get(0).getPackCode());
         mPresenter.getOrderPackaging(orderId);
         mPresenter.getApartment(apartmentId);
-        mPresenter.getListCodePack(orderId, orderType, historyEntity.getProductId());
-        ssCodePack.setPrintStamp(true);
-        ssCodePack.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
+        adapter = new ProductHistoryAdapter(historyEntity.getPackageList().get(0).getProductPackagingEntityList());
+        lvCode.setAdapter(adapter);
+        txtTotal.setText(String.valueOf((int)historyEntity.getPackageList().get(0).getTotal()));
+        packageId = historyEntity.getPackageList().get(0).getPackageId();
     }
 
 
@@ -202,22 +202,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
-    public void showListProductHistory(PackageEntity packageEntity) {
-        if (packageEntity == null){
-            packageId = 0;
-            showError(getString(R.string.text_no_data));
-            adapter = new ProductHistoryAdapter(new ArrayList<>());
-            lvCode.setAdapter(adapter);
-            return;
-        }
-        adapter = new ProductHistoryAdapter(packageEntity.getProductPackagingEntityList());
-        lvCode.setAdapter(adapter);
-        txtTotal.setText(String.valueOf(packageEntity.getTotal()));
-        txtCodePack.setText(packageEntity.getPackCode());
-        packageId = packageEntity.getPackageId();
-    }
-
-    @Override
     public void startActivityHistory() {
         Intent returnIntent = new Intent();
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
@@ -234,24 +218,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     public void showOrder(SOEntity so) {
         txtCustomerName.setText(so.getCustomerName());
         txtCodeSO.setText(so.getCodeSO());
-    }
-
-    @Override
-    public void showListCodePack(List<CodePackEntity> list) {
-        ArrayAdapter<CodePackEntity> adapter = new ArrayAdapter<CodePackEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssCodePack.setAdapter(adapter);
-        ssCodePack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListHistoryBySerialPack(historyEntity, list.get(position).getSttPack());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -283,10 +249,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @OnClick(R.id.btn_print)
     public void print() {
-        if (packageId == 0){
-            showError(getString(R.string.text_no_data_print));
-            return;
-        }
         mPresenter.printTemp(0, packageId);
     }
 

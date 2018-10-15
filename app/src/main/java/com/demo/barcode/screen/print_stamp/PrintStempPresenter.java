@@ -6,6 +6,7 @@ import android.util.Log;
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ModuleEntity;
+import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
@@ -25,6 +26,7 @@ import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.thefinestartist.utils.log.L;
 
 import java.util.List;
 
@@ -92,8 +94,8 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void getListScanStages(long orderId, long apartmentId, long moduleId, String serialPack) {
-        localRepository.getListScanPackaging(orderId, apartmentId, moduleId, serialPack)
+    public void getListScanStages(long orderId, long apartmentId, long moduleId, String serialPackId) {
+        localRepository.getListScanPackaging(orderId, apartmentId, moduleId, serialPackId)
                 .subscribe(new Action1<List<LogScanPackaging>>() {
                     @Override
                     public void call(List<LogScanPackaging> logScanPackagings) {
@@ -107,7 +109,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void printTemp(long orderId, long apartmentId, long moduleId,String serialPack,long serverId) {
+    public void printTemp(long orderId, long apartmentId, long moduleId, String serialPack, long serverId) {
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
@@ -130,7 +132,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                                     @Override
                                     public void onSuccess(PostListCodeProductDetailUsecase.ResponseValue successResponse) {
 
-                                        printTemp(orderId,apartmentId,moduleId,serialPack,successResponse.getId());
+                                        printTemp(orderId, apartmentId, moduleId, serialPack, successResponse.getId());
                                     }
 
                                     @Override
@@ -141,7 +143,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                                 });
 
                             } else {
-                                localRepository.updateStatusScanPackaging(orderId,apartmentId,moduleId,serialPack,serverId).subscribe(new Action1<String>() {
+                                localRepository.updateStatusScanPackaging(orderId, apartmentId, moduleId, serialPack, serverId).subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.hideProgressBar();
@@ -169,20 +171,27 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void getModule(long moduleId) {
+    public void getModule(long moduleId, String serialPack) {
         ListModuleEntity module = ListModulePackagingManager.getInstance().getModuleById(moduleId);
         view.showModuleName(module.getModule());
+        List<PackageEntity> list = module.getPackageList();
+        for (PackageEntity packageEntity : list) {
+            if (packageEntity.getSerialPack().equals(serialPack)) {
+                view.showSerialPack(packageEntity);
+                break;
+            }
+        }
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port,long orderId, long apartmentId, long moduleId,String serialPack, long serverId) {
+    public void saveIPAddress(String ipAddress, int port, long orderId, long apartmentId, long moduleId, String serialPack, long serverId) {
         long userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                printTemp(orderId,apartmentId,moduleId,serialPack,serverId);
+                printTemp(orderId, apartmentId, moduleId, serialPack, serverId);
             }
         });
     }

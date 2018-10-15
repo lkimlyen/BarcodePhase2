@@ -90,21 +90,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                     if (numberInput == item.getNumberInput()) {
                         return;
                     }
-//                    edit = false;
-//                    final Timer timer = new Timer();
-//                    if (!edit) {
-//                        edit = true;
-//                        timer.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                edit = false;
-//                                timer.cancel();
-//                            }
-//                        }, 1000);
-//                    } else {
-//                        timer.cancel();
-                        onEditTextChangeListener.onEditTextChange(item, numberInput);
-//                    }
+                    onEditTextChangeListener.onEditTextChange(item, Integer.parseInt(holder.edtNumberScan.getText().toString()));
 
                 } catch (Exception e) {
 

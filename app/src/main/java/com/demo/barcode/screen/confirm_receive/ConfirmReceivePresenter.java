@@ -81,7 +81,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     @Override
     public void getListSO(int orderType) {
         view.showProgressBar();
-        getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(1),
+        getListSOUsecase.executeIO(new GetListSOUsecase.RequestValue(orderType),
                 new BaseUseCase.UseCaseCallback<GetListSOUsecase.ResponseValue,
                         GetListSOUsecase.ErrorValue>() {
                     @Override

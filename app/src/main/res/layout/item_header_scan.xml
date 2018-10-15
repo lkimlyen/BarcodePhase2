@@ -6,26 +6,61 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:padding="@dimen/distance_5dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/distance_5dp">
 
-        <TextView
-            android:id="@+id/txt_module"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/distance_5dp"
-            android:layout_centerVertical="true"
-            android:textStyle="bold"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="@dimen/text_14sp" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/btn_print"
-            android:background="@android:color/transparent"
-            android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_print_blue" />
+            <TextView
+                android:id="@+id/txt_module"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                android:padding="@dimen/distance_5dp"
+                android:text="123"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_serial_pack"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                android:padding="@dimen/distance_5dp"
+                android:text="123"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_code_pack"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/txt_module"
+                android:layout_weight="1"
+                android:padding="@dimen/distance_5dp"
+                android:text="abc"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+            <ImageButton
+                android:id="@+id/btn_print"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_print_blue" />
+        </LinearLayout>
+
+
     </RelativeLayout>
 
     <View

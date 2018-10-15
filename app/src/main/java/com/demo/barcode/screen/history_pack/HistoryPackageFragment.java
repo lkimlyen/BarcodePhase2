@@ -247,18 +247,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
     @Override
     public void showListHistory(List<HistoryEntity> list) {
-//        HashMap<HistoryEntity, List<HashMap<ProductPackagingEntity, PackageEntity>>> hashMap = new HashMap<>();
-//        for (HistoryEntity historyEntity : list) {
-//            List<HashMap<ProductPackagingEntity, PackageEntity>> listContent = new ArrayList<>();
-//            for (PackageEntity packageEntity : historyEntity.getPackageList()) {
-//                HashMap<ProductPackagingEntity, PackageEntity> map = new HashMap<>();
-//                for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
-//                    map.put(productPackagingEntity, packageEntity);
-//                }
-//                listContent.add(map);
-//            }
-//            hashMap.put(historyEntity, listContent);
-//        }
         adapter =  new HistoryAdapter2(getContext(), list, new HistoryAdapter2.OnClickPrintListener() {
             @Override
             public void onClickPrint(HistoryEntity historyEntity) {
@@ -267,14 +255,6 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         });
 
         lvHistory.setAdapter(adapter);
-
-//        lvHistory.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                setListViewHeightBasedOnItems(lvHistory);
-//            }
-//        });
-       // lvHistory.setGroupIndicator(null);
     }
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

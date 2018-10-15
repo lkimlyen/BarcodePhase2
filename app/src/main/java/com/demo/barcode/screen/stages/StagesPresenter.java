@@ -108,7 +108,7 @@ public class StagesPresenter implements StagesContract.Presenter {
         ProductEntity model = ListProductManager.getInstance().getProductByBarcode(barcode);
         if (model != null) {
             if (!groupCode) {
-                if (model.getListDepartmentID().contains(departmentId)) {
+               // if (model.getListDepartmentID().contains(departmentId)) {
                     localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
                         @Override
                         public void call(ProductDetail productDetail) {
@@ -137,9 +137,9 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                     });
 
-                } else {
-                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
-                }
+//                } else {
+//                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
+//                }
             } else {
                 int count = ListGroupManager.getInstance().countProductById(model.getProductDetailID());
                 if (count > 1) {
@@ -165,18 +165,18 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
         boolean existDepartment = false;
-        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
-            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-            if (productEntity != null) {
-                if (productEntity.getListDepartmentID().contains(departmentId)) {
-                    existDepartment = true;
-                    break;
-                }
-            }
-
-        }
+//        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+//            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+//            if (productEntity != null) {
+//                if (productEntity.getListDepartmentID().contains(departmentId)) {
+//                    existDepartment = true;
+//                    break;
+//                }
+//            }
+//
+//        }
         allowedToSave = true;
-        if (existDepartment) {
+       // if (existDepartment) {
             for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
                 ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
                 if (productEntity != null) {
@@ -213,9 +213,9 @@ public class StagesPresenter implements StagesContract.Presenter {
             }
 
             saveListWithGroupCode(times, groupEntity, departmentId);
-        } else {
-            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
-        }
+//        } else {
+//            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
+//        }
     }
 
     public void showError(String error) {

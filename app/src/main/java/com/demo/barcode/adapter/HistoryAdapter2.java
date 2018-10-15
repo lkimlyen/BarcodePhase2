@@ -82,11 +82,14 @@ public class HistoryAdapter2 extends BaseAdapter {
 
     private void setDataToViews(HistoryHolder holder, HistoryEntity item) {
         holder.txtModule.setText(String.format(CoreApplication.getInstance().getString(R.string.text_module), item.getModule()));
+        holder.txtSerialPack.setText(String.format(CoreApplication.getInstance().getString(R.string.text_serial), item.getPackageList().get(0).getSerialPack()));
+        holder.txtPackCode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_package), item.getPackageList().get(0).getPackCode()));
+
         holder.txtDate.setText(item.getDateTime());
         holder.llContent.removeAllViews();
         for (PackageEntity packageEntity : item.getPackageList()) {
             for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()){
-                setLayoutGroup(packageEntity,productPackagingEntity, holder);
+                setLayoutGroup(productPackagingEntity, holder);
             }
 
         }
@@ -99,16 +102,9 @@ public class HistoryAdapter2 extends BaseAdapter {
 
     }
 
-    private void setLayoutGroup(PackageEntity packageEntity,ProductPackagingEntity productPackagingEntity, HistoryHolder holder) {
+    private void setLayoutGroup(ProductPackagingEntity productPackagingEntity, HistoryHolder holder) {
         LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View convertView = inf.inflate(R.layout.item_content_history, null);
-
-        TextView txtSerialPack = (TextView) convertView
-                .findViewById(R.id.txt_serial_pack);
-
-        TextView txtPackCode = (TextView) convertView
-                .findViewById(R.id.txt_pack_code);
-
         TextView txtNameProduct = (TextView) convertView
                 .findViewById(R.id.txt_name_product);
 
@@ -118,8 +114,7 @@ public class HistoryAdapter2 extends BaseAdapter {
         TextView txtNumber = (TextView) convertView
                 .findViewById(R.id.txt_number);
 
-        txtSerialPack.setText(packageEntity.getSerialPack());
-        txtPackCode.setText(packageEntity.getPackCode());
+
         txtNameProduct.setText(productPackagingEntity.getProductName());
         txtCodeScan.setText(productPackagingEntity.getBarcode());
         txtNumber.setText(String.valueOf((int) productPackagingEntity.getNumber()));
@@ -167,9 +162,16 @@ public class HistoryAdapter2 extends BaseAdapter {
         LinearLayout llContent;
         ImageButton btnPrint;
         TextView txtDate;
+        TextView txtSerialPack;
+        TextView txtPackCode;
+
 
 
         private HistoryHolder(View v) {
+            txtSerialPack = (TextView) v
+                    .findViewById(R.id.txt_serial_pack);
+            txtPackCode = (TextView) v
+                    .findViewById(R.id.txt_code_pack);
             llContent = (LinearLayout) v.findViewById(R.id.ll_content);
             txtModule = (TextView) v.findViewById(R.id.txt_module);
             btnPrint = (ImageButton) v.findViewById(R.id.btn_print);

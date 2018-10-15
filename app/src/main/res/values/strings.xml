@@ -251,6 +251,8 @@
     <string name="text_product_not_in_group">Chi tiết này không nằm trong danh sách gộp mã!</string>
     <string name="text_cancle_confirm_all_success">Hủy xác nhận tất cả thành công</string>
     <string name="text_module" formatted="true">Module: %s</string>
+    <string name="text_serial" formatted="true">STT Kiện: %s</string>
+    <string name="text_code_package" formatted="true">Mã gói: %s</string>
     <string name="text_number_scanned">Số lượng:</string>
     <string name="text_no_data_print">Không có dữ liệu để in</string>
     <string name="text_incomplete_pack">Bạn chưa quét xong gói hiện tại!</string>
