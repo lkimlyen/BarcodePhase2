@@ -49,10 +49,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/distance_5dp"
-                android:visibility="gone"
                 android:layout_toStartOf="@+id/img_upload"
                 android:padding="@dimen/distance_10dp"
-                android:src="@drawable/ic_refresh" />
+                android:src="@drawable/ic_refresh"
+                android:visibility="gone" />
 
 
             <ImageView
@@ -70,12 +70,13 @@
 
 
     <LinearLayout
+        android:id="@+id/ll_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:padding="@dimen/distance_5dp"
-        android:id="@+id/ll_root"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/distance_5dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,11 +97,12 @@
             <com.demo.barcode.widgets.spinner.SearchableSpinner
                 android:id="@+id/ss_type_product"
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_type_product"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_type_product" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -221,35 +223,52 @@
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold" />
+
             <RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5"
-                android:orientation="horizontal"
-                android:id="@+id/radioGroup">
+                android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/rb_default"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_default"
-                    android:textSize="@dimen/text_14sp"
-                    android:id="@+id/rb_default" />
+                    android:textSize="@dimen/text_14sp" />
 
                 <RadioButton
+                    android:id="@+id/rb_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_group_code"
-                    android:textSize="@dimen/text_14sp"
                     android:layout_marginLeft="@dimen/distance_8dp"
-                    android:id="@+id/rb_group" />
+                    android:text="@string/text_group_code"
+                    android:textSize="@dimen/text_14sp" />
             </RadioGroup>
         </LinearLayout>
-        <CheckBox
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_confirm_all"
-            android:id="@+id/cb_all"
-            />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <CheckBox
+                android:id="@+id/cb_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_confirm_all" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bt_print"
+                android:text="In phiếu" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -287,15 +306,15 @@
             android:id="@+id/btn_confirm_all"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
-            android:visibility="gone"
+            android:layout_marginTop="@dimen/distance_5dp"
             android:layout_weight="0"
             android:background="@drawable/bg_button_blue_small"
             android:gravity="center"
-            android:layout_marginTop="@dimen/distance_5dp"
             android:text="@string/text_confirm_all"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -322,13 +341,13 @@
                 android:id="@+id/name"
                 android:layout_width="@dimen/size_60dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:fontFamily="serif"
                 android:gravity="center"
-                android:layout_weight="0"
-                android:textStyle="bold"
                 android:text="@string/text_serial_module_break"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/age"
@@ -338,10 +357,10 @@
                 android:fontFamily="serif"
                 android:gravity="center"
 
-                android:textStyle="bold"
                 android:text="@string/text_name_detail_break"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/position"
@@ -350,11 +369,11 @@
                 android:layout_weight="0"
                 android:fontFamily="serif"
 
-                android:textStyle="bold"
                 android:gravity="center"
                 android:text="@string/text_number_delivery"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/address"
@@ -365,15 +384,15 @@
                 android:gravity="center"
                 android:text="@string/text_number_receive"
 
-                android:textStyle="bold"
                 android:textColor="#000"
-                android:textSize="@dimen/text_12sp" />
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="@dimen/size_80dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_weight="0"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
@@ -382,18 +401,18 @@
                     android:fontFamily="serif"
                     android:gravity="center"
                     android:text="@string/text_confirm"
-                    android:textStyle="bold"
+                    android:textColor="#000"
                     android:textSize="@dimen/text_12sp"
-                    android:textColor="#000" />
+                    android:textStyle="bold" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleX="0.7"
                     android:scaleY="0.7"
-                    android:visibility="gone"
                     android:text="@string/text_choose_all"
-                    android:textSize="@dimen/text_12sp" />
+                    android:textSize="@dimen/text_12sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </TableRow>

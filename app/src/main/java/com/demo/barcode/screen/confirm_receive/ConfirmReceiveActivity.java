@@ -28,7 +28,6 @@ public class ConfirmReceiveActivity extends BaseActivity {
     ConfirmReceivePresenter ConfirmReceivePresenter;
 
     ConfirmReceiveFragment fragment;
-    private Unregistrar mUnregistrar;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, ConfirmReceiveActivity.class);
@@ -47,17 +46,7 @@ public class ConfirmReceiveActivity extends BaseActivity {
                 .plus(new ConfirmReceiveModule(fragment))
                 .inject(this);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
-            @Override
-            public void onVisibilityChanged(boolean isOpen) {
-                if (!isOpen) {
-                    fragment.btnScan.setVisibility(View.VISIBLE);
-                    fragment.lLRoot.setVisibility(View.VISIBLE);
-                }
-
-            }
-        });
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     private void initFragment() {
@@ -98,6 +87,5 @@ public class ConfirmReceiveActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mUnregistrar.unregister();
     }
 }

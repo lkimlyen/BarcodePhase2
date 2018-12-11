@@ -180,7 +180,12 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
     @Override
     public void removeItemQualityControl(long id) {
-
+        localRepository.deleteQC(id).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+            }
+        });
     }
 
     private int positionList = 0;

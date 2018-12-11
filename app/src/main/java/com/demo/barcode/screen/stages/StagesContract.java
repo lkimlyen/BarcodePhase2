@@ -47,7 +47,6 @@ public interface StagesContract {
         void showDialogUpload();
 
         void showDialogChooseGroup(List<GroupEntity> list);
-
     }
 
     interface Presenter extends BasePresenter {
@@ -72,7 +71,7 @@ public interface StagesContract {
         void uploadDataAll(long orderId, int departmentId, int times);
 
         void saveBarcodeToDataBase(int times, ProductEntity
-                productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan);
+                productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
 
         void getListGroupCode(long orderId);
 

@@ -7,6 +7,7 @@ import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
+import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
@@ -180,6 +181,11 @@ public class UseCaseModule {
     @Provides
     CheckUpdateForGroupUsecase provideCheckUpdateForGroupUsecase(ProductRepository productRepository) {
         return new CheckUpdateForGroupUsecase(productRepository);
+    }
+
+    @Provides
+    AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase(ProductRepository productRepository){
+        return new AddPhieuGiaoNhanUsecase(productRepository);
     }
 }
 

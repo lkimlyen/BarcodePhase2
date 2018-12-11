@@ -150,7 +150,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         return Observable.create(new Observable.OnSubscribe<UpdateAppResponse>() {
             @Override
             public void call(Subscriber<? super UpdateAppResponse> subscriber) {
-                handleUpdateResponse(mRemoteApiInterface.getUpdateVersionACR(server + "/WS/api/GetUpdateVersionACR?pAppCode=ids"), subscriber);
+                handleUpdateResponse(mRemoteApiInterface.getUpdateVersionACR(server + "/WS/api/GD2GetUpdateVersion?pAppCode=ids"), subscriber);
             }
         });
     }

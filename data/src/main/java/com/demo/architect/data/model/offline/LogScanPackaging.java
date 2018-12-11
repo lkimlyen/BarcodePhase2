@@ -186,12 +186,13 @@ public class LogScanPackaging extends RealmObject {
         LogScanPackaging logScanPackaging = realm.where(LogScanPackaging.class).equalTo("id", logId).findFirst();
         logScanPackaging.setStatus(Constants.CANCEL);
         logScanPackaging.getProductPackagingModel().setStatus(Constants.CANCEL);
-        LogListModulePagkaging logListModulePagkaging = realm.where(LogListModulePagkaging.class).equalTo("id", logScanPackaging.getModule()).findFirst();
-        RealmList<LogListSerialPackPagkaging> realmList = logListModulePagkaging.getLogScanPackagingList();
+        LogListOrderPackaging logListOrderPackaging = realm.where(LogListOrderPackaging.class)
+                .equalTo("orderId", logScanPackaging.getOrderId()).findFirst();
+        LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("id", logScanPackaging.getApartmentId())
+                .findFirst();
+        RealmList<LogListSerialPackPagkaging> realmList = logListFloorPagkaging.getList();
         LogListSerialPackPagkaging logListSerialPackPagkaging = realmList.where().equalTo("serialPack", logScanPackaging.getSttPack()).findFirst();
         logListSerialPackPagkaging.setSize(logListSerialPackPagkaging.getSize() - 1);
-
-        logListModulePagkaging.setSize(logListModulePagkaging.getSize() - 1);
     }
 
     public static void updateNumberScanPackaging(Realm realm, long logId, double number) {

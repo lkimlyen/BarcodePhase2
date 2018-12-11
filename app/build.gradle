@@ -105,6 +105,7 @@ configurations {
 dependencies {
     def appDependencies = rootProject.ext.appDependencies
 
+    compile 'com.amitshekhar.android:android-networking:1.0.1'
     compile 'com.google.android.gms:play-services-maps:11.6.0'
     compile 'com.android.support:appcompat-v7:25.+'
     compile 'de.hdodenhof:circleimageview:2.2.0'

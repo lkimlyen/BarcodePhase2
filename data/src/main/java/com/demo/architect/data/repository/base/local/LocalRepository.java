@@ -67,7 +67,7 @@ public interface LocalRepository {
 
     Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times);
 
-    Observable<List<LogScanConfirm>> getListLogScanConfirm();
+    Observable<List<LogScanConfirm>> getListLogScanConfirm(long orderId, int departmentIdOut, int times);
 
     Observable<LogScanConfirm> findConfirmByBarcode(final long orderId, int departmentIdOut, int times, final String barcode);
 
@@ -121,6 +121,8 @@ public interface LocalRepository {
 
     Observable<String> deleteAllItemLogScanPackaging();
 
+    Observable<String> deleteQC(long id);
+
     Observable<RealmResults<QualityControlModel>> getListQualityControl(long orderId, int departmentId);
 
     Observable<QualityControlModel> getDetailQualityControl(long id);
@@ -155,4 +157,6 @@ public interface LocalRepository {
     Observable<String> deleteScanGroupCode(long id);
 
     Observable<Double> totalNumberScanGroup(long productDetailId);
+
+    Observable<String> updateStatusPrint(long orderId, int departmentIdOut, int times);
 }

@@ -18,7 +18,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class QualityControlModel extends RealmObject {
 
-   @PrimaryKey
+    @PrimaryKey
     private long id;
     @SerializedName("pBarcode")
     @Expose
@@ -210,10 +210,10 @@ public class QualityControlModel extends RealmObject {
     }
 
     public static long id(Realm realm) {
-       long nextId = 0;
+        long nextId = 0;
         Number maxValue = realm.where(QualityControlModel.class).max("id");
         // If id is null, set it to 1, else set increment it by 1
-       nextId = (maxValue == null) ? 0 : maxValue.longValue();
+        nextId = (maxValue == null) ? 0 : maxValue.longValue();
         return nextId;
     }
 
@@ -229,9 +229,10 @@ public class QualityControlModel extends RealmObject {
         parentList.add(qualityControlModel);
     }
 
-    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm, long orderId, int departmentId, long userId) {
+    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm, long orderId, int departmentId) {
 
-        ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId).findFirst();
+        ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId)
+              .findFirst();
         if (listOrderQualityControl == null) {
             realm.beginTransaction();
             listOrderQualityControl = ListOrderQualityControl.create(realm, orderId);
@@ -332,10 +333,15 @@ public class QualityControlModel extends RealmObject {
 
     public static void updateStatusQC(Realm realm, long userId) {
         RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class).equalTo("status", Constants.WAITING_UPLOAD)
-                .equalTo("edit",true)
+                .equalTo("edit", true)
                 .equalTo("userId", userId).findAll();
         for (QualityControlModel qualityControlModel : results) {
             qualityControlModel.setStatus(Constants.COMPLETE);
         }
+    }
+
+    public static void deleteQC(Realm realm, long id) {
+        QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
+        qualityControlModel.deleteFromRealm();
     }
 }

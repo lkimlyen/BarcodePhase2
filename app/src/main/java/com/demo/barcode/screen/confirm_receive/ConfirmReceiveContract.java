@@ -38,9 +38,11 @@ public interface ConfirmReceiveContract {
 
         void clearDataNoProduct(boolean chooseType);
 
-        void showDialogConfirm(List<ProductGroupEntity> list,int times);
+        void showDialogConfirm(List<ProductGroupEntity> list, int times);
 
         void setCheckedAll(boolean checkedAll);
+
+        void showDialogCreateIPAddress();
 
         void showDialogChooseGroup(List<GroupEntity> listGroupEntityByProductId);
     }
@@ -66,12 +68,16 @@ public interface ConfirmReceiveContract {
 
         void getListGroupCode(long orderId);
 
+        void saveIPAddress(String ipAddress, int port,  long orderId, int departmentIdOut, int times, long serverId);
+
         void confirmAll(long orderId, int departmentId, int times);
 
         void cancelConfirmAll(long orderId, int departmentId, int times);
 
         void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list);
-        void saveNumberConfirmGroup(GroupEntity groupEntity,long orderId, int times, int deparmentId);
 
+        void saveNumberConfirmGroup(GroupEntity groupEntity, long orderId, int times, int deparmentId);
+
+        void print(long orderId, int departmentIdOut, int times, long serverId);
     }
 }

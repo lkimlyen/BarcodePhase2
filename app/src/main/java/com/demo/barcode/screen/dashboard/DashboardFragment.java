@@ -134,14 +134,15 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         if (user.getUserType().equals("SP")) {
             btnQC.setVisibility(View.GONE);
             if (user.getRole() > 0) {
-                if (user.getRole() == 6) {
+                if (user.getRole() == 6 || user.getRole() == 8) {
                     btnGroupCode.setVisibility(View.VISIBLE);
                 }
                 txtPosition.setText("Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
                 btnScanPackaging.setVisibility(View.GONE);
                 btnHistory.setVisibility(View.GONE);
                 if (user.getRole() == 9) {
-                    btnScanPackaging.setVisibility(View.GONE);
+                    btnScanPackaging.setVisibility(View.VISIBLE);
+                    btnHistory.setVisibility(View.VISIBLE);
                 }
             }else {
                 btnScanStages.setVisibility(View.GONE);

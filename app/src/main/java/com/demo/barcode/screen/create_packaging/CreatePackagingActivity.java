@@ -29,7 +29,6 @@ public class CreatePackagingActivity extends BaseActivity {
 
     CreatePackagingFragment fragment;
 
-  //  private Unregistrar mUnregistrar;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, CreatePackagingActivity.class);
@@ -50,16 +49,7 @@ public class CreatePackagingActivity extends BaseActivity {
 
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-//        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
-//            @Override
-//            public void onVisibilityChanged(boolean isOpen) {
-//                if (!isOpen) {
-//                    fragment.btnScan.setVisibility(View.VISIBLE);
-//                    fragment.llRoot.setVisibility(View.VISIBLE);
-//                }
-//
-//            }
-//        });
+
     }
 
     private void initFragment() {

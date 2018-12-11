@@ -34,11 +34,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
+import io.realm.RealmMigration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.RealmSchema;
 
 public class DatabaseRealm {
     private Context context;
@@ -56,7 +59,8 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(1)
+                        .schemaVersion(2)
+                        .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
                 RealmHelper.getInstance().initRealm(true);
@@ -64,7 +68,8 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(1)
+                        .schemaVersion(2)
+                        .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
                 RealmHelper.getInstance().initRealm(true);
@@ -249,9 +254,9 @@ public class DatabaseRealm {
         return count;
     }
 
-    public List<LogScanConfirm> getListLogScanConfirm() {
+    public List<LogScanConfirm> getListLogScanConfirm(final long orderId, final int departmentIdOut, final int times) {
         Realm realm = getRealmInstance();
-        List<LogScanConfirm> results = LogScanConfirm.getListLogScanConfirm(realm, userId);
+        List<LogScanConfirm> results = LogScanConfirm.getListLogScanConfirm(realm, userId, orderId, departmentIdOut, times);
         return results;
     }
 
@@ -402,7 +407,7 @@ public class DatabaseRealm {
 
     }
 
-    public void detachedCodeStages(final List<ProductGroupEntity> list, final long orderId,  final String groupCode) {
+    public void detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String groupCode) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -464,7 +469,7 @@ public class DatabaseRealm {
 
     public RealmResults<QualityControlModel> getListQualityControl(long orderId, int departmentId) {
         Realm realm = getRealmInstance();
-        RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm, orderId, departmentId, userId);
+        RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm, orderId, departmentId);
         return results;
     }
 
@@ -607,7 +612,65 @@ public class DatabaseRealm {
 
     public Double totalNumberScanGroup(long productDetailId) {
         Realm realm = getRealmInstance();
-        Double aDouble = GroupCode.totalNumberScanGroup(realm,productDetailId);
+        Double aDouble = GroupCode.totalNumberScanGroup(realm, productDetailId);
         return aDouble;
+    }
+
+    public void deleteQC(final long id) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.deleteQC(realm, id);
+            }
+        });
+    }
+
+    public void updateStatusPrint(final long orderId, final int departmentIdOut, final int times) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirm.updateStatusPrint(realm,userId, orderId,departmentIdOut,times);
+            }
+        });
+    }
+
+    public class MyMigration implements RealmMigration {
+        @Override
+        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+            // DynamicRealm exposes an editable schema
+            RealmSchema schema = realm.getSchema();
+
+
+            // Migrate to version 2: Add a primary key + object references
+            // Example:
+            // public Person extends RealmObject {
+            //     private String name;
+            //     @PrimaryKey
+            //     private int age;
+            //     private Dog favoriteDog;
+            //     private RealmList<Dog> dogs;
+            //     // getters and setters left out for brevity
+            // }
+            if (oldVersion == 1) {
+                schema.get("LogScanConfirm")
+                        .addField("productId", long.class)
+                        .addField("isPrint", boolean.class);
+                oldVersion++;
+            }
+
+
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj != null && obj instanceof MyMigration; // obj instance of your Migration class name, here My class is Migration.
+        }
+
+        @Override
+        public int hashCode() {
+            return MyMigration.class.hashCode();
+        }
     }
 }

@@ -31,15 +31,20 @@ public interface ProductRepository {
 
     Observable<BaseResponse> deactiveProductDetailGroup(String key, long masterGroupId, long userId);
 
-    Observable<BaseResponse> updateProductDetailGroup(String key,  long masterGroupId,
-                                                      String jsonNew,String jsonUpdate,
-                                                      String jsonDelete,long userId);
+    Observable<BaseResponse> updateProductDetailGroup(String key, long masterGroupId,
+                                                      String jsonNew, String jsonUpdate,
+                                                      String jsonDelete, long userId);
 
     Observable<BaseResponse<Integer>> postListCodeProductDetail(String key, String json,
-                                                      long userId,String note);
+                                                                long userId, String note);
+
     Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(long orderId,
                                                                            long apartmentId);
 
+    Observable<BaseResponse<Integer>> addPhieuGiaoNhan(String key,
+                                                       long orderId, int departmentInID,
+                                                       int departmentOutID, int number, String data,
+                                                       long userId);
 
 
 }

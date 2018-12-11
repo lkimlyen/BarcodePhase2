@@ -66,4 +66,14 @@ public interface ProductApiInterface {
     Call<BaseListResponse<ListModuleEntity>> getListProductInPackage(@Url String url, @Field("pOrderID") long orderId,
                                                                      @Field("pApartmentID") long apartmentId);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse<Integer>> addPhieuGiaoNhan(@Url String url, @Field("pKey") String key,
+                                                @Field("pOrderID") long orderId,
+                                                @Field("pDepartmentInID") int departmentInID,
+                                                @Field("pDepartmentOutID") int departmentOutID,
+                                                @Field("pNumber") int number,
+                                                 @Field("pData") String data,
+                                                @Field("pUserID") long userId);
+
 }

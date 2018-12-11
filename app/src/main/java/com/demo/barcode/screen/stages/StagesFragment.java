@@ -62,7 +62,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private final String TAG = StagesFragment.class.getName();
     private StagesContract.Presenter mPresenter;
     private StagesAdapter adapter;
-    public MediaPlayer mp1, mp2;
+    public MediaPlayer mp1, mp2, mp3;
     private int times = 0;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
@@ -149,6 +149,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
+        mp3 = MediaPlayer.create(getActivity(), R.raw.beepdup);
         initView();
         return view;
     }
@@ -426,10 +427,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }, new StagesAdapter.onClickEditTextListener() {
             @Override
             public void onClick() {
-                if (llRoot.getVisibility() == View.VISIBLE){
-                    btnScan.setVisibility(View.GONE);
-                    llRoot.setVisibility(View.GONE);
-                }
+
             }
         });
         rvCode.setAdapter(adapter);
@@ -448,7 +446,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
-                    mPresenter.getListProduct(orderId,times,departmentId, false);
+                    mPresenter.getListProduct(orderId, times, departmentId, false);
                     //mPresenter.getListTimes(orderId);
                     mPresenter.getListGroupCode(orderId);
 
@@ -488,27 +486,12 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Override
     public void showCheckResidual(int times, ProductEntity
             productEntity, int departmentId) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_exceed_the_number_of_requests))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId, null, typeScan == 1);
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .show();
+        mp3.start();
+        turnOnVibrator();
+        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId, null, typeScan == 1, true);
+        Toast toast = Toast.makeText(getActivity(), "Mã quét vượt số lượng yêu cầu!", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
 
     }
 
@@ -569,7 +552,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             orderId = 0;
 
         }
-
 
         ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
         ssTimes.setAdapter(adapterTimes);
@@ -671,7 +653,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if(llRoot.getVisibility() == View.GONE){
+        if (llRoot.getVisibility() == View.GONE) {
             llRoot.setVisibility(View.VISIBLE);
             btnScan.setVisibility(View.VISIBLE);
             return;

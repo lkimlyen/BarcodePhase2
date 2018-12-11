@@ -3,7 +3,9 @@ package com.demo.barcode.screen.setting;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,11 +84,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
         UserEntity user = UserManager.getInstance().getUser();
-        if (user.getRole() == 0){
-            btnChangeIp.setVisibility(View.VISIBLE);
-        }else {
-            btnChangeIp.setVisibility(View.GONE);
-        }
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
         if (auth.getCurrentUser() == null) {
@@ -164,9 +162,28 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
     @Override
     public void installApp(String path) {
-        Intent install = new Intent(Intent.ACTION_VIEW);
-        install.setDataAndType(Uri.fromFile(new File(path)), "application/vnd.android.package-archive");
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+//        Uri uriApk = FileProvider.getUriForFile(getContext(),
+//                "com.demo.barcode.fileprovider",
+//                new File(path));
+
+        Intent install = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (!getContext().getPackageManager().canRequestPackageInstalls()) {
+                startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:com.demo.barcode")));
+            }
+            install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+        } else {
+            install = new Intent(Intent.ACTION_VIEW);
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            install.setDataAndType(Uri.fromFile(new File(path)), "application/vnd.android.package-archive");
+        } else {
+            install.setDataAndType(Uri.fromFile(new File(path)), "application/vnd.android.package-archive");
+        }
         install.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+        install.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getActivity().startActivityForResult(install, 333);
 

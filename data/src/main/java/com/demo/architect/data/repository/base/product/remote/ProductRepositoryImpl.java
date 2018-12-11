@@ -266,4 +266,18 @@ public class ProductRepositoryImpl implements ProductRepository {
             }
         });
     }
+
+    @Override
+    public Observable<BaseResponse<Integer>> addPhieuGiaoNhan(final String key, final long orderId, final int departmentInID,
+                                                              final int departmentOutID, final int number, final String data, final long userId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<Integer>>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse<Integer>> subscriber) {
+                handleIntegerResponse(mRemoteApiInterface.addPhieuGiaoNhan(
+                        server + "/WS/api/GD2AddPhieuGiaoNhan", key, orderId,departmentInID, departmentOutID, number,data,
+                        userId), subscriber);
+            }
+        });
+    }
 }

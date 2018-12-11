@@ -66,7 +66,7 @@ public class BaseActivity extends AppCompatActivity
             window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         if (!ConvertUtils.checkConnection(this)) {
             WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);

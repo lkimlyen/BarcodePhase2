@@ -129,8 +129,8 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable <HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate() {
-        return Observable.create(new Observable.OnSubscribe< HashMap<List<LogScanStages>, Set<GroupScan>>>() {
+    public Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate() {
+        return Observable.create(new Observable.OnSubscribe<HashMap<List<LogScanStages>, Set<GroupScan>>>() {
             @Override
             public void call(Subscriber<? super HashMap<List<LogScanStages>, Set<GroupScan>>> subscriber) {
                 try {
@@ -308,12 +308,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanConfirm>> getListLogScanConfirm() {
+    public Observable<List<LogScanConfirm>> getListLogScanConfirm(final long orderId, final int departmentIdOut, final int times) {
         return Observable.create(new Observable.OnSubscribe<List<LogScanConfirm>>() {
             @Override
             public void call(Subscriber<? super List<LogScanConfirm>> subscriber) {
                 try {
-                    List<LogScanConfirm> realmList = databaseRealm.getListLogScanConfirm();
+                    List<LogScanConfirm> realmList = databaseRealm.getListLogScanConfirm(orderId, departmentIdOut, times);
                     subscriber.onNext(realmList);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -632,12 +632,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final long orderId,final String groupCode) {
+    public Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, final long orderId, final String groupCode) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.detachedCodeStages(list, orderId,  groupCode);
+                    databaseRealm.detachedCodeStages(list, orderId, groupCode);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -702,6 +702,22 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     databaseRealm.deleteAllItemLogScanPackaging();
+                    subscriber.onNext("Success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteQC(final long id) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteQC(id);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1008,8 +1024,24 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super Double> subscriber) {
                 try {
-                 Double aDouble =    databaseRealm.totalNumberScanGroup(productDetailId);
+                    Double aDouble = databaseRealm.totalNumberScanGroup(productDetailId);
                     subscriber.onNext(aDouble);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusPrint(final long orderId, final int departmentIdOut, final int times) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusPrint(orderId,departmentIdOut,times);
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

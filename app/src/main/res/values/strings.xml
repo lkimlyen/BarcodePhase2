@@ -268,6 +268,9 @@
     <string name="text_code_group">Mã nhóm:</string>
     <string name="text_get_data_success">Lấy dữ liệu thành công</string>
     <string name="text_has_product_exist_in_group">Danh sách Chi tiết bạn chọn có Chi tiết đã tồn tại trong group!</string>
+    <string name="text_not_data_print">Không có dữ liệu để in!</string>
+    <string name="text_not_print_before_upload">Bạn phải in phiếu xác nhận trước khi tải dữ liệu lên server!</string>
+    <string name="text_do_you_want_print">Bạn có muốn in không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

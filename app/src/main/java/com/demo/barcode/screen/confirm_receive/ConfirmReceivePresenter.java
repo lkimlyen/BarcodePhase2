@@ -1,14 +1,21 @@
 package com.demo.barcode.screen.confirm_receive;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.PrintConfirmEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
+import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
+import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.repository.base.local.LocalRepository;
+import com.demo.architect.data.repository.base.socket.ConnectSocket;
+import com.demo.architect.data.repository.base.socket.ConnectSocketConfirm;
+import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
@@ -22,6 +29,7 @@ import com.demo.barcode.manager.ListOrderConfirmManager;
 import com.demo.barcode.manager.ListGroupManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
+import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,18 +54,20 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     private final ConfirmInputUsecase confirmInputUsecase;
     private final GetListProductDetailGroupUsecase getListProductDetailGroupUsecase;
     private final GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase;
+    private final AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     ConfirmReceivePresenter(@NonNull ConfirmReceiveContract.View view, GetListSOUsecase getListSOUsecase,
-                            GetInputUnConfirmedUsecase getInputUnConfirmedUsecase, ConfirmInputUsecase confirmInputUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase, GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase) {
+                            GetInputUnConfirmedUsecase getInputUnConfirmedUsecase, ConfirmInputUsecase confirmInputUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase, GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase, AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase) {
         this.view = view;
         this.getListSOUsecase = getListSOUsecase;
         this.getInputUnConfirmedUsecase = getInputUnConfirmedUsecase;
         this.confirmInputUsecase = confirmInputUsecase;
         this.getListProductDetailGroupUsecase = getListProductDetailGroupUsecase;
         this.getTimesInputAndOutputByDepartmentUsecase = getTimesInputAndOutputByDepartmentUsecase;
+        this.addPhieuGiaoNhanUsecase = addPhieuGiaoNhanUsecase;
     }
 
     @Inject
@@ -262,8 +272,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
     @Override
     public void uploadData(long orderId, int departmentIdOut, int times) {
+
+        //    view.showError(CoreApplication.getInstance().getString(R.string.text_not_print_before_upload));
+
         view.showProgressBar();
-        localRepository.getListLogScanConfirm().subscribe(new Action1<List<LogScanConfirm>>() {
+        localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
             @Override
             public void call(List<LogScanConfirm> logScanConfirms) {
                 GsonBuilder builder = new GsonBuilder();
@@ -279,8 +292,35 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         localRepository.updateStatusLogConfirm().subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                view.showSuccess(successResponse.getDescription());
-                                getListConfirm(orderId, departmentIdOut, times, true);
+                                List<PrintConfirmEntity> list = new ArrayList<>();
+                                for (LogScanConfirm logScanConfirm : logScanConfirms) {
+                                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
+                                            logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
+                                            (int) logScanConfirm.getNumberConfirmed());
+
+                                    list.add(detailItem);
+                                }
+
+                                Gson gson = new Gson();
+                                String jsonWithData = gson.toJson(list);
+                                addPhieuGiaoNhanUsecase.executeIO(new AddPhieuGiaoNhanUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole(),
+                                        departmentIdOut, times, jsonWithData, UserManager.getInstance().getUser().getId()
+                                ), new BaseUseCase.UseCaseCallback<AddPhieuGiaoNhanUsecase.ResponseValue,
+                                        AddPhieuGiaoNhanUsecase.ErrorValue>() {
+                                    @Override
+                                    public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
+                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
+                                        getListConfirm(orderId, departmentIdOut, times, true);
+                                    }
+
+                                    @Override
+                                    public void onError(AddPhieuGiaoNhanUsecase.ErrorValue errorResponse) {
+                                        view.showError(errorResponse.getDescription());
+                                        view.hideProgressBar();
+                                    }
+                                });
+                                Log.d(TAG, "Print: " + jsonWithData);
+
                             }
                         });
 
@@ -295,6 +335,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             }
         });
     }
+
 
     @Override
     public void getListGroupCode(long orderId) {
@@ -314,6 +355,19 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         ListGroupManager.getInstance().setListGroup(new ArrayList<>());
                     }
                 });
+    }
+
+    @Override
+    public void saveIPAddress(String ipAddress, int port, long orderId, int departmentIdOut, int times, long serverId) {
+        long userId = UserManager.getInstance().getUser().getId();
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                //  view.showIPAddress(address);
+                print(orderId, departmentIdOut, times, serverId);
+            }
+        });
     }
 
     @Override
@@ -407,8 +461,88 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         }
     }
 
+    @Override
+    public void print(long orderId, int departmentIdOut, int times, long serverId) {
+        view.showProgressBar();
+        UserEntity user = UserManager.getInstance().getUser();
+        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+                if (address == null) {
+                    //view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
+                    view.showDialogCreateIPAddress();
+                    view.hideProgressBar();
+                    return;
+                }
+                ConnectSocketConfirm connectSocket = new ConnectSocketConfirm(address.getIpAddress(), address.getPortNumber(),
+                        serverId, new ConnectSocketConfirm.onPostExecuteResult() {
+                    @Override
+                    public void onPostExecute(SocketRespone respone) {
+                        if (respone.getConnect() == 1 && respone.getResult() == 1) {
 
-    public void saveConfirm(long orderId, long marterOutputId, int departmentIdOut, int times, double number) {
+                            if (serverId == -1) {
+                                localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
+                                    @Override
+                                    public void call(List<LogScanConfirm> logScanConfirms) {
+
+                                        if (logScanConfirms.size() == 0) {
+                                            view.hideProgressBar();
+                                            view.showError(CoreApplication.getInstance().getString(R.string.text_not_data_print));
+                                        } else {
+                                            List<PrintConfirmEntity> list = new ArrayList<>();
+                                            for (LogScanConfirm logScanConfirm : logScanConfirms) {
+                                                PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
+                                                        logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
+                                                        (int) logScanConfirm.getNumberConfirmed());
+
+                                                list.add(detailItem);
+                                            }
+
+
+                                            Gson gson = new Gson();
+                                            String jsonWithData = gson.toJson(list);
+                                            addPhieuGiaoNhanUsecase.executeIO(new AddPhieuGiaoNhanUsecase.RequestValue(orderId, user.getRole(),
+                                                    departmentIdOut, times, jsonWithData, user.getId()
+                                            ), new BaseUseCase.UseCaseCallback<AddPhieuGiaoNhanUsecase.ResponseValue,
+                                                    AddPhieuGiaoNhanUsecase.ErrorValue>() {
+                                                @Override
+                                                public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
+                                                    print(orderId, departmentIdOut, times, successResponse.getId());
+                                                }
+
+                                                @Override
+                                                public void onError(AddPhieuGiaoNhanUsecase.ErrorValue errorResponse) {
+                                                    view.showError(errorResponse.getDescription());
+                                                    view.hideProgressBar();
+                                                }
+                                            });
+                                            Log.d(TAG, "Print: " + jsonWithData);
+
+                                        }
+                                    }
+                                });
+
+                            } else {
+                                view.hideProgressBar();
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
+
+                            }
+                        } else {
+                            view.hideProgressBar();
+                            view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
+
+                        }
+                    }
+                });
+
+                connectSocket.execute();
+            }
+        });
+    }
+
+
+    public void saveConfirm(long orderId, long marterOutputId, int departmentIdOut, int times,
+                            double number) {
         localRepository.updateNumnberLogConfirm(orderId, marterOutputId, departmentIdOut, times, number, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

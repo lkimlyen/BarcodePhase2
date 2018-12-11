@@ -28,7 +28,6 @@ public class GroupCodeActivity extends BaseActivity {
     GroupCodePresenter GroupCodePresenter;
 
     GroupCodeFragment fragment;
-    private Unregistrar mUnregistrar;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, GroupCodeActivity.class);
@@ -47,22 +46,6 @@ public class GroupCodeActivity extends BaseActivity {
                 .plus(new GroupCodeModule(fragment))
                 .inject(this);
 
-//        Window w = getWindow(); // in Activity's onCreate() for instance
-//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-//        }
-        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(this, new KeyboardVisibilityEventListener() {
-            @Override
-            public void onVisibilityChanged(boolean isOpen) {
-
-                if (!isOpen) {
-                    fragment.btnScan.setVisibility(View.VISIBLE);
-                    fragment.llRoot.setVisibility(View.VISIBLE);
-                }
-
-            }
-        });
     }
 
     private void initFragment() {
@@ -96,6 +79,5 @@ public class GroupCodeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mUnregistrar.unregister();
     }
 }

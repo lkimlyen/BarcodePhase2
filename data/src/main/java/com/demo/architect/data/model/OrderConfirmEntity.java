@@ -38,6 +38,10 @@ public class OrderConfirmEntity {
     @Expose
     private String module;
 
+    @SerializedName("ProductID")
+    @Expose
+    private long productId;
+
     @SerializedName("Barcode")
     @Expose
     private String barcode;
@@ -61,6 +65,7 @@ public class OrderConfirmEntity {
     @SerializedName("LastIDOutput")
     @Expose
     private long lastIDOutput;
+
     public long getMasterOutputID() {
         return masterOutputID;
     }
@@ -115,5 +120,9 @@ public class OrderConfirmEntity {
 
     public long getLastIDOutput() {
         return lastIDOutput;
+    }
+
+    public long getProductId() {
+        return productId;
     }
 }

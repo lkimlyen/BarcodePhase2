@@ -32,6 +32,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
+import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
@@ -425,10 +426,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         }, new ConfirmInputAdapter.onClickEditTextListener() {
             @Override
             public void onClick() {
-                if (lLRoot.getVisibility() == View.VISIBLE){
-                    btnScan.setVisibility(View.GONE);
-                    lLRoot.setVisibility(View.GONE);
-                }
+
             }
         });
         lvConfirm.setAdapter(adapter);
@@ -569,7 +567,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (lLRoot.getVisibility() == View.GONE){
+        if (lLRoot.getVisibility() == View.GONE) {
             btnScan.setVisibility(View.VISIBLE);
             lLRoot.setVisibility(View.VISIBLE);
         }
@@ -680,4 +678,42 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 })
                 .show();
     }
+
+    @OnClick(R.id.bt_print)
+    public void print() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_do_you_want_print))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        mPresenter.print(
+                                orderId, departmentId, times, -1);
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                }).show();
+    }
+
+    @Override
+    public void showDialogCreateIPAddress() {
+        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
+        dialog.show(getActivity().getFragmentManager(), TAG);
+        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
+            @Override
+            public void onSave(String ipAddress, int port) {
+                mPresenter.saveIPAddress(ipAddress, port,
+                        orderId, departmentId, times, -1);
+                dialog.dismiss();
+            }
+        });
+    }
+
 }

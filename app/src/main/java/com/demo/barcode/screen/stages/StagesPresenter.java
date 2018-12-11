@@ -123,12 +123,10 @@ public class StagesPresenter implements StagesContract.Presenter {
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
 
-                                    saveBarcodeToDataBase(times, model, 1, departmentId, null, true);
+                                    saveBarcodeToDataBase(times, model, 1, departmentId, null, true,false);
 
                                 } else {
                                     view.showCheckResidual(times, model, departmentId);
-                                    view.startMusicError();
-                                    view.turnOnVibrator();
                                 }
                             } else {
                                 showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
@@ -137,9 +135,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                     });
 
-//                } else {
-//                    showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
-//                }
             } else {
                 int count = ListGroupManager.getInstance().countProductById(model.getProductDetailID());
                 if (count > 1) {
@@ -373,7 +368,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveBarcodeToDataBase(int times, ProductEntity
-            productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan) {
+            productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan,boolean residual) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         String groupCode = null;
@@ -387,8 +382,10 @@ public class StagesPresenter implements StagesContract.Presenter {
         localRepository.addLogScanStagesAsync(logScanStages, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                view.startMusicSuccess();
+                if (!residual){
+                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                    view.startMusicSuccess();
+                }
                 view.turnOnVibrator();
                 view.hideProgressBar();
             }
@@ -423,7 +420,7 @@ public class StagesPresenter implements StagesContract.Presenter {
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
             if (productEntity != null) {
-                saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false);
+                saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false,false);
             }
 
         }
