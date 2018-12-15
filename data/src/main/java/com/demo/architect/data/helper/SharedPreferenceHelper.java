@@ -10,7 +10,7 @@ import com.demo.architect.data.model.UserEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ public class SharedPreferenceHelper {
     private static final String MY_PREFERENCE = "com.demo.uyminhduc.MAIN.MY_PREFERENCE";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String USER = "USER";
-    private static final String POSITION_SCAN = "POSITION_SCAN";
+    private static final String POSITION_SCAN_UPDATE = "POSITION_SCAN_UPDATE";
     private static final String DEPARTMENT = "DEPARTMENT";
     private static final String WAS_STARTED = "WAS_STARTED";
     private SharedPreferences sharedPreferences;
@@ -112,24 +112,24 @@ public class SharedPreferenceHelper {
         return obj;
     }
 
-    public void pushListPositionScanObject(List<PositionScan> object) {
+    public void pushListPositionScanObject(LinkedHashMap<Long, LinkedHashMap<Long, PositionScan>> object) {
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
         String json = "";
         if (object != null) {
             Gson gson = new Gson();
             json = gson.toJson(object);
         }
-        prefsEditor.putString(POSITION_SCAN, json);
+        prefsEditor.putString(POSITION_SCAN_UPDATE, json);
         prefsEditor.commit();
     }
 
 
-    public List<PositionScan> getListPositionScanObject() {
+    public LinkedHashMap<Long, LinkedHashMap<Long, PositionScan>> getListPositionScanObject() {
         Gson gson = new Gson();
-        String json = sharedPreferences.getString(POSITION_SCAN, "");
-        List<PositionScan> obj = new ArrayList<>();
+        String json = sharedPreferences.getString(POSITION_SCAN_UPDATE, "");
+        LinkedHashMap<Long, LinkedHashMap<Long, PositionScan>> obj = new LinkedHashMap<>();
         if (!TextUtils.isEmpty(json)) {
-            obj = gson.fromJson(json, new TypeToken<List<PositionScan>>(){}.getType());
+            obj = gson.fromJson(json, new TypeToken<LinkedHashMap<Long, LinkedHashMap<Long, PositionScan>>>(){}.getType());
         }
         return obj;
     }

@@ -313,6 +313,7 @@ public class StagesPresenter implements StagesContract.Presenter {
             public void call(HashMap<List<LogScanStages>, Set<GroupScan>> list) {
                 if (list.size() == 0) {
                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
+                    return;
                 }
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
@@ -499,16 +500,24 @@ public class StagesPresenter implements StagesContract.Presenter {
                         GetInputForProductDetailUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetInputForProductDetailUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        ListProductManager.getInstance().setListProduct(successResponse.getEntity());
-                        if (!refresh) {
-                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
-                            if(times > 0 && department > 0){
-                                getListScanStages(orderId,department,times);
-                            }
-                        }
 
-                        getListTimes(orderId, user.getRole());
+                        ListProductManager.getInstance().setListProduct(successResponse.getEntity());
+
+                        localRepository.updateNumberTotalProduct(successResponse.getEntity()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String s) {
+                                if (!refresh) {
+                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
+                                    if(times > 0 && department > 0){
+                                        getListScanStages(orderId,department,times);
+                                    }
+                                }
+                                view.hideProgressBar();
+                                getListTimes(orderId, user.getRole());
+                            }
+                        });
+
+
                     }
 
                     @Override

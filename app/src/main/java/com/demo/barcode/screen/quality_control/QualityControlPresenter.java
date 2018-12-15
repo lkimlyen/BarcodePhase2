@@ -254,7 +254,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
         ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
         //    File file = new File(imageModel.getPathFile());
         Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
-        bitmap = getResizedBitmap(bitmap, 1280);
+        bitmap = getResizedBitmap(bitmap, 800);
         File file = bitmapToFile(bitmap, imageModel.getPathFile());
         UserEntity userEntity = UserManager.getInstance().getUser();
         uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),

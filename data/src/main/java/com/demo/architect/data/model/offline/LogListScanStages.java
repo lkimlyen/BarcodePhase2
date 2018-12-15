@@ -192,7 +192,6 @@ public class LogListScanStages extends RealmObject {
             parentList.add(logListScanStages);
             realm.commitTransaction();
         }
-
         return logListScanStages;
     }
 

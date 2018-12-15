@@ -261,6 +261,8 @@ public class LogScanPackaging extends RealmObject {
         if (logListSerialPackPagkaging == null) {
             logListSerialPackPagkaging = LogListSerialPackPagkaging.create(realm, packageEntity.getSerialPack(), packageEntity.getPackCode(), moduleEntity.getProductId(), packageEntity.getTotal(), moduleEntity.getModule());
             logListFloorPagkaging.getList().add(logListSerialPackPagkaging);
+        }else{
+            logListSerialPackPagkaging.setNumberTotal(packageEntity.getTotal());
         }
         RealmList<LogScanPackaging> parentList = logListSerialPackPagkaging.getList();
         LogScanPackaging logScanPackaging = parentList.where().equalTo("sttPack", packageEntity.getSerialPack()).equalTo("barcode", productPackagingEntity.getBarcode()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();

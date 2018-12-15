@@ -2,6 +2,7 @@ package com.demo.architect.data.repository.base.local;
 
 import android.content.Context;
 
+import com.demo.architect.data.R;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
@@ -15,20 +16,32 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
+import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
+import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ImageModel;
+import com.demo.architect.data.model.offline.ListDepartmentQualityControl;
+import com.demo.architect.data.model.offline.ListOrderQualityControl;
+import com.demo.architect.data.model.offline.LogListFloorPagkaging;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.LogListScanStagesMain;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.NumberInputConfirmModel;
+import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -631,7 +644,79 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.updateStatusPrint(realm,userId, orderId,departmentIdOut,times);
+                LogScanConfirm.updateStatusPrint(realm, userId, orderId, departmentIdOut, times);
+            }
+        });
+    }
+
+    public void updateNumberTotalProduct(final List<ProductEntity> entity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ProductDetail.updateProductDetail(realm, entity, userId);
+            }
+        });
+    }
+
+    public void deleteDataLocal() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<DetailError> detailErrors = realm.where(DetailError.class).findAll();
+
+                detailErrors.deleteAllFromRealm();
+                RealmResults<GroupCode> groupCodes = realm.where(GroupCode.class).findAll();
+                groupCodes.deleteAllFromRealm();
+
+                RealmResults<GroupScan> groupScans = realm.where(GroupScan.class).findAll();
+                groupScans.deleteAllFromRealm();
+                RealmResults<ImageModel> imageModels = realm.where(ImageModel.class).findAll();
+
+                for (ImageModel imageModel : imageModels) {
+                    File file = new File(imageModel.getPathFile());
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+
+                imageModels.deleteAllFromRealm();
+                RealmResults<ListDepartmentQualityControl> listDepartmentQualityControls = realm.where(ListDepartmentQualityControl.class).findAll();
+                listDepartmentQualityControls.deleteAllFromRealm();
+                RealmResults<ListOrderQualityControl> listOrderQualityControls = realm.where(ListOrderQualityControl.class).findAll();
+                listOrderQualityControls.deleteAllFromRealm();
+
+                RealmResults<LogListModulePagkaging> logListModulePagkagings = realm.where(LogListModulePagkaging.class).findAll();
+                logListModulePagkagings.deleteAllFromRealm();
+                RealmResults<LogListFloorPagkaging> logListFloorPagkagings = realm.where(LogListFloorPagkaging.class).findAll();
+                logListFloorPagkagings.deleteAllFromRealm();
+                RealmResults<LogListOrderPackaging> logListOrderPackagings = realm.where(LogListOrderPackaging.class).findAll();
+                logListOrderPackagings.deleteAllFromRealm();
+                RealmResults<LogListScanStages> logListScanStages = realm.where(LogListScanStages.class).findAll();
+                logListScanStages.deleteAllFromRealm();
+                RealmResults<LogListScanStagesMain> logListScanStagesMains = realm.where(LogListScanStagesMain.class).findAll();
+                logListScanStagesMains.deleteAllFromRealm();
+                RealmResults<LogListSerialPackPagkaging> logListSerialPackPagkagings = realm.where(LogListSerialPackPagkaging.class).findAll();
+                logListSerialPackPagkagings.deleteAllFromRealm();
+
+                RealmResults<LogScanConfirm> logScanConfirms = realm.where(LogScanConfirm.class).findAll();
+                logScanConfirms.deleteAllFromRealm();
+                RealmResults<LogScanPackaging> logScanPackagings = realm.where(LogScanPackaging.class).findAll();
+                logScanPackagings.deleteAllFromRealm();
+                RealmResults<LogScanStages> logScanStages = realm.where(LogScanStages.class).findAll();
+                logScanStages.deleteAllFromRealm();
+                RealmResults<NumberInputConfirmModel> numberInputConfirmModels = realm.where(NumberInputConfirmModel.class).findAll();
+                numberInputConfirmModels.deleteAllFromRealm();
+                RealmResults<NumberInputModel> numberInputModels = realm.where(NumberInputModel.class).findAll();
+                numberInputModels.deleteAllFromRealm();
+                RealmResults<ProductDetail> productDetails = realm.where(ProductDetail.class).findAll();
+                productDetails.deleteAllFromRealm();
+                RealmResults<ProductPackagingModel> productPackagingModels = realm.where(ProductPackagingModel.class).findAll();
+                productPackagingModels.deleteAllFromRealm();
+                RealmResults<QualityControlModel> qualityControlModels = realm.where(QualityControlModel.class).findAll();
+                qualityControlModels.deleteAllFromRealm();
+
             }
         });
     }
@@ -673,4 +758,5 @@ public class DatabaseRealm {
             return MyMigration.class.hashCode();
         }
     }
+
 }

@@ -42,9 +42,11 @@ public interface ConfirmReceiveContract {
 
         void setCheckedAll(boolean checkedAll);
 
-        void showDialogCreateIPAddress();
+        void showDialogCreateIPAddress(boolean refresh);
 
         void showDialogChooseGroup(List<GroupEntity> listGroupEntityByProductId);
+
+        void showWarningPrint();
     }
 
     interface Presenter extends BasePresenter {
@@ -64,11 +66,11 @@ public interface ConfirmReceiveContract {
 
         void updateNumberConfirm(long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
 
-        void uploadData(long orderId, int departmentIdOut, int times);
+        void uploadData(long orderId, int departmentIdOut, int times, boolean checkPrint);
 
         void getListGroupCode(long orderId);
 
-        void saveIPAddress(String ipAddress, int port,  long orderId, int departmentIdOut, int times, long serverId);
+        void saveIPAddress(String ipAddress, int port,  long orderId, int departmentIdOut, int times, long serverId, boolean upload);
 
         void confirmAll(long orderId, int departmentId, int times);
 
@@ -78,6 +80,6 @@ public interface ConfirmReceiveContract {
 
         void saveNumberConfirmGroup(GroupEntity groupEntity, long orderId, int times, int deparmentId);
 
-        void print(long orderId, int departmentIdOut, int times, long serverId);
+        void print(long orderId, int departmentIdOut, int times, long serverId, boolean upload);
     }
 }

@@ -3,6 +3,8 @@ package com.demo.architect.data.model.offline;
 import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -102,13 +104,11 @@ public class ProductDetail extends RealmObject {
                 if (numberInputModel == null) {
                     list.add(NumberInputModel.create(realm, numberInput));
                 } else {
+                    double numberTotal = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
+                    numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotal);
                     numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
-                    if (numberInput.getNumberWaitting() != numberInputModel.getNumberRest()) {
-                        numberInputModel.setNumberScanned((numberInputModel.getNumberScanned() - numberInputModel.getNumberSuccess()) + numberInput.getNumberSuccess());
-                        numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
-                    }
-
                     numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
+                    numberInputModel.setNumberScanned(numberInputModel.getNumberTotal() - numberInputModel.getNumberRest());
                 }
 
             }
@@ -116,5 +116,31 @@ public class ProductDetail extends RealmObject {
 
         }
         return productDetail;
+    }
+
+    public static void updateProductDetail(Realm realm, List<ProductEntity> list, long userId) {
+        for (ProductEntity productEntity : list){
+            ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
+                    .equalTo("userId", userId).findFirst();
+            if (productDetail != null){
+                RealmList<NumberInputModel> listNumberInput = productDetail.getListInput();
+                for (NumberInput numberInput : productEntity.getListInput()) {
+                    NumberInputModel numberInputModel = listNumberInput.where().equalTo("times", numberInput.getTimesInput()).findFirst();
+                    if (numberInputModel == null) {
+                        listNumberInput.add(NumberInputModel.create(realm, numberInput));
+                    } else {
+                        double numberTotal = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
+                        numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotal);
+                        numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
+                        numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
+                        numberInputModel.setNumberScanned(numberInputModel.getNumberTotal() - numberInputModel.getNumberRest());
+                    }
+
+                }
+            }
+
+        }
+
+
     }
 }

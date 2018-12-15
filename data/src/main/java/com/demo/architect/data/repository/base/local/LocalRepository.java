@@ -159,4 +159,8 @@ public interface LocalRepository {
     Observable<Double> totalNumberScanGroup(long productDetailId);
 
     Observable<String> updateStatusPrint(long orderId, int departmentIdOut, int times);
+
+    Observable<String> updateNumberTotalProduct(List<ProductEntity> entity);
+
+    Observable<String> deleteDataLocal();
 }

@@ -271,44 +271,54 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void uploadData(long orderId, int departmentIdOut, int times) {
-
+    public void uploadData(long orderId, int departmentIdOut, int times, boolean checkPrint) {
         //    view.showError(CoreApplication.getInstance().getString(R.string.text_not_print_before_upload));
-
         view.showProgressBar();
         localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
             @Override
             public void call(List<LogScanConfirm> logScanConfirms) {
+                if (logScanConfirms.size() == 0) {
+                    view.hideProgressBar();
+                    view.showError(CoreApplication.getInstance().getString(R.string.text_no_data_upload_in_times_scan));
+                    return;
+                }
+                if (!checkPrint) {
+                    for (LogScanConfirm logScanConfirm : logScanConfirms) {
+                        if (!logScanConfirm.isPrint()) {
+                            view.showProgressBar();
+                            view.showWarningPrint();
+                            return;
+                        }
+                    }
+                }
+
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 Gson gson = builder.create();
                 String json = gson.toJson(logScanConfirms);
+                List<PrintConfirmEntity> list = new ArrayList<>();
+                for (LogScanConfirm logScanConfirm : logScanConfirms) {
+                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
+                            logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
+                            (int) logScanConfirm.getNumberConfirmed());
+                    list.add(detailItem);
+                }
+                String jsonWithData = new Gson().toJson(list);
                 confirmInputUsecase.executeIO(new ConfirmInputUsecase.RequestValue(UserManager.getInstance().getUser().getRole(),
                         json), new BaseUseCase.UseCaseCallback<ConfirmInputUsecase.ResponseValue,
                         ConfirmInputUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(ConfirmInputUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
                         localRepository.updateStatusLogConfirm().subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                List<PrintConfirmEntity> list = new ArrayList<>();
-                                for (LogScanConfirm logScanConfirm : logScanConfirms) {
-                                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
-                                            logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
-                                            (int) logScanConfirm.getNumberConfirmed());
-
-                                    list.add(detailItem);
-                                }
-
-                                Gson gson = new Gson();
-                                String jsonWithData = gson.toJson(list);
                                 addPhieuGiaoNhanUsecase.executeIO(new AddPhieuGiaoNhanUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole(),
                                         departmentIdOut, times, jsonWithData, UserManager.getInstance().getUser().getId()
                                 ), new BaseUseCase.UseCaseCallback<AddPhieuGiaoNhanUsecase.ResponseValue,
                                         AddPhieuGiaoNhanUsecase.ErrorValue>() {
                                     @Override
                                     public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
+                                        view.hideProgressBar();
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                         getListConfirm(orderId, departmentIdOut, times, true);
                                     }
@@ -358,14 +368,14 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port, long orderId, int departmentIdOut, int times, long serverId) {
+    public void saveIPAddress(String ipAddress, int port, long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
         long userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                print(orderId, departmentIdOut, times, serverId);
+                print(orderId, departmentIdOut, times, serverId,upload );
             }
         });
     }
@@ -462,7 +472,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void print(long orderId, int departmentIdOut, int times, long serverId) {
+    public void print(long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
@@ -470,7 +480,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             public void call(IPAddress address) {
                 if (address == null) {
                     //view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
-                    view.showDialogCreateIPAddress();
+                    view.showDialogCreateIPAddress(upload);
                     view.hideProgressBar();
                     return;
                 }
@@ -507,7 +517,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                                     AddPhieuGiaoNhanUsecase.ErrorValue>() {
                                                 @Override
                                                 public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
-                                                    print(orderId, departmentIdOut, times, successResponse.getId());
+                                                    print(orderId, departmentIdOut, times, successResponse.getId(), upload);
                                                 }
 
                                                 @Override
@@ -523,9 +533,19 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                 });
 
                             } else {
-                                view.hideProgressBar();
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
+                                localRepository.updateStatusPrint(orderId, departmentIdOut, times).subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
 
+                                        view.hideProgressBar();
+                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
+
+                                        if (upload) {
+                                            uploadData(orderId, departmentIdOut, times, true);
+                                        }
+
+                                    }
+                                });
                             }
                         } else {
                             view.hideProgressBar();

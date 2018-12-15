@@ -125,6 +125,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 showSuccess(getString(R.string.text_print_success));
+                mPresenter.getListScan(orderId, apartmentId);
+                mPresenter.getListProduct(orderId, apartmentId);
             } else {
                 isClick = false;
             }
@@ -332,6 +334,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 //            return;
 //        }
 //                        if (llRoot.getVisibility() == View.VISIBLE) {
+//                            btnScan.setVisibility(View.GONE);
 //                            btnScan.setVisibility(View.GONE);
 //                            llRoot.setVisibility(View.GONE);
 //                        }

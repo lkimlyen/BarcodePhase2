@@ -150,4 +150,14 @@ public class SettingPresenter implements SettingContract.Presenter {
             view.hideProgressBar();
         }
     }
+
+    @Override
+    public void deleteDataLocal() {
+        localRepository.deleteDataLocal().subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_all_data_offline_success));
+            }
+        });
+    }
 }

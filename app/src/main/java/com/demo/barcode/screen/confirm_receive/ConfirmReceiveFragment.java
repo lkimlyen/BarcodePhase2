@@ -159,7 +159,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId, departmentId, times);
+                mPresenter.uploadData(orderId, departmentId, times, false);
             }
         });
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
@@ -174,7 +174,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId, departmentId, times);
+                mPresenter.uploadData(orderId, departmentId, times, false);
             }
         });
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
@@ -189,7 +189,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId, departmentId, times);
+                mPresenter.uploadData(orderId, departmentId, times, false);
             }
         });
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
@@ -204,7 +204,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(orderId, departmentId, times);
+                mPresenter.uploadData(orderId, departmentId, times, false);
             }
         });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
@@ -485,6 +485,33 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         });
     }
 
+    @Override
+    public void showWarningPrint() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(getString(R.string.text_do_you_want_print))
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        // mPresenter.deleteAllItemLog();
+                        sweetAlertDialog.dismiss();
+                        mPresenter.print(
+                                orderId, departmentId, times, -1, true);
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                       mPresenter.uploadData(orderId,departmentId,times,true);
+
+                    }
+                })
+                .show();
+    }
+
     @OnClick(R.id.ic_refresh)
     public void refresh() {
 //        if (mPresenter.countListScan(orderId) > 0) {
@@ -580,7 +607,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId, departmentId, times);
+                            mPresenter.uploadData(orderId, departmentId, times, false);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -609,7 +636,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(orderId, departmentId, times);
+                        mPresenter.uploadData(orderId, departmentId, times, false);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -690,7 +717,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                orderId, departmentId, times, -1);
+                                orderId, departmentId, times, -1, false);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -703,14 +730,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     }
 
     @Override
-    public void showDialogCreateIPAddress() {
+    public void showDialogCreateIPAddress(boolean upload ) {
         ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
         dialog.show(getActivity().getFragmentManager(), TAG);
         dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
             @Override
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
-                        orderId, departmentId, times, -1);
+                        orderId, departmentId, times, -1,upload);
                 dialog.dismiss();
             }
         });

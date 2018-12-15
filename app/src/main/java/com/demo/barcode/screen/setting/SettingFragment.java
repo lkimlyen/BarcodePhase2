@@ -51,6 +51,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     private IPAddress mModel;
     private StorageReference storageRef;
     private FirebaseAuth auth;
+
     @Bind(R.id.txt_version)
     TextView txtVersion;
 
@@ -286,5 +287,29 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @OnClick(R.id.btn_clone)
     public void cloneData() {
         mPresenter.cloneDataAndSendMail();
+    }
+
+    @OnClick(R.id.btn_clear)
+    public void deleteAllDataLocal() {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText("Bạn có muốn xóa toàn bộ offline không?")
+                .setConfirmText(getString(R.string.text_yes))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                        mPresenter.deleteDataLocal();
+                    }
+                })
+                .setCancelText(getString(R.string.text_no))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
     }
 }
