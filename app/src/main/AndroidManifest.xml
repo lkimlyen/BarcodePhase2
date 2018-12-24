@@ -71,7 +71,8 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".screen.history_pack.HistoryPackageActivity"/>
         <activity android:name=".screen.detail_package.DetailPackageActivity"/>
-        <activity android:name=".screen.confirm_receive.ConfirmReceiveActivity"/>
+        <activity android:name=".screen.confirm_receive.ConfirmReceiveActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".screen.detail_error.DetailErrorActivity"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".screen.quality_control.QualityControlActivity"/>

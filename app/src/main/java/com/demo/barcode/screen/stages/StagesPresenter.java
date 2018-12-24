@@ -122,9 +122,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                             }
                             if (numberInput != null) {
                                 if (numberInput.getNumberRest() > 0) {
-
                                     saveBarcodeToDataBase(times, model, 1, departmentId, null, true,false);
-
                                 } else {
                                     view.showCheckResidual(times, model, departmentId);
                                 }

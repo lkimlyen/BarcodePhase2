@@ -28,7 +28,6 @@ public class ConfirmReceiveActivity extends BaseActivity {
     ConfirmReceivePresenter ConfirmReceivePresenter;
 
     ConfirmReceiveFragment fragment;
-
     public static void start(Context context) {
         Intent intent = new Intent(context, ConfirmReceiveActivity.class);
         context.startActivity(intent);
@@ -46,7 +45,8 @@ public class ConfirmReceiveActivity extends BaseActivity {
                 .plus(new ConfirmReceiveModule(fragment))
                 .inject(this);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
     }
 
     private void initFragment() {

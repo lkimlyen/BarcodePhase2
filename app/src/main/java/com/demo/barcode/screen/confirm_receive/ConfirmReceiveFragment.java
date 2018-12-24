@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
+import com.demo.barcode.adapter.ConfirmInputAdapter2;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
@@ -61,7 +64,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
     private int departmentId = 0;
-    private ConfirmInputAdapter adapter;
+    private ConfirmInputAdapter2 adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
     private boolean change;
@@ -81,7 +84,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     EditText edtBarcode;
 
     @Bind(R.id.lv_confirm)
-    ListView lvConfirm;
+    RecyclerView lvConfirm;
 
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
@@ -411,24 +414,21 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListConfirm(RealmResults<LogScanConfirm> list) {
-        adapter = new ConfirmInputAdapter(list, times, new ConfirmInputAdapter.OnEditTextChangeListener() {
+        adapter = new ConfirmInputAdapter2(list, new ConfirmInputAdapter2.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
                 mPresenter.updateNumberConfirm(item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
             }
-        }, new ConfirmInputAdapter.onErrorListener() {
+        }, new ConfirmInputAdapter2.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
                 turnOnVibrator();
                 startMusicError();
             }
-        }, new ConfirmInputAdapter.onClickEditTextListener() {
-            @Override
-            public void onClick() {
-
-            }
         });
+        lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+
         lvConfirm.setAdapter(adapter);
     }
 

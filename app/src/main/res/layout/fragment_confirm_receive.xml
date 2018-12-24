@@ -80,7 +80,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -106,7 +105,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -133,7 +131,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -158,7 +155,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -184,7 +180,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -210,7 +205,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -285,7 +279,6 @@
                 android:background="@drawable/bg_edittext_stroke_white"
                 android:hint="Nhập mã barcode"
                 android:inputType="textMultiLine"
-                android:padding="@dimen/distance_5dp"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp" />
 
@@ -328,8 +321,7 @@
     <TableLayout
         android:id="@+id/table_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_height="wrap_content">
 
         <TableRow
             android:id="@+id/table_row1"
@@ -423,19 +415,20 @@
             android:background="#ff0000" />
     </TableLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_confirm"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:padding="5dp">
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
 
         <Button
             android:id="@+id/btn_scan"
@@ -444,6 +437,8 @@
             android:layout_gravity="bottom"
             android:background="@drawable/bg_button_blue"
             android:text="Quét QR CODE"
+            android:layout_marginLeft="@dimen/distance_8dp"
+            android:layout_marginRight="@dimen/distance_8dp"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
