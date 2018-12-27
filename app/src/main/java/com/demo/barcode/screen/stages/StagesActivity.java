@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -44,6 +45,7 @@ public class StagesActivity extends BaseActivity {
                 .plus(new StagesModule(fragment))
                 .inject(this);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
     }
 

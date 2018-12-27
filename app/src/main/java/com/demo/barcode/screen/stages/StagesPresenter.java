@@ -108,30 +108,30 @@ public class StagesPresenter implements StagesContract.Presenter {
         ProductEntity model = ListProductManager.getInstance().getProductByBarcode(barcode);
         if (model != null) {
             if (!groupCode) {
-               // if (model.getListDepartmentID().contains(departmentId)) {
-                    localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
-                        @Override
-                        public void call(ProductDetail productDetail) {
-                            NumberInputModel numberInput = null;
-                            for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                                NumberInputModel input = productDetail.getListInput().get(i);
-                                if (input.getTimes() == times) {
-                                    numberInput = input;
-                                    break;
-                                }
-                            }
-                            if (numberInput != null) {
-                                if (numberInput.getNumberRest() > 0) {
-                                    saveBarcodeToDataBase(times, model, 1, departmentId, null, true,false);
-                                } else {
-                                    view.showCheckResidual(times, model, departmentId);
-                                }
-                            } else {
-                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                // if (model.getListDepartmentID().contains(departmentId)) {
+                localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
+                    @Override
+                    public void call(ProductDetail productDetail) {
+                        NumberInputModel numberInput = null;
+                        for (int i = 0; i < productDetail.getListInput().size(); i++) {
+                            NumberInputModel input = productDetail.getListInput().get(i);
+                            if (input.getTimes() == times) {
+                                numberInput = input;
+                                break;
                             }
                         }
+                        if (numberInput != null) {
+                            if (numberInput.getNumberRest() > 0) {
+                                saveBarcodeToDataBase(times, model, 1, departmentId, null, true, false);
+                            } else {
+                                view.showCheckResidual(times, model, departmentId);
+                            }
+                        } else {
+                            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                        }
+                    }
 
-                    });
+                });
 
             } else {
                 int count = ListGroupManager.getInstance().countProductById(model.getProductDetailID());
@@ -169,43 +169,43 @@ public class StagesPresenter implements StagesContract.Presenter {
 //
 //        }
         allowedToSave = true;
-       // if (existDepartment) {
-            for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
-                ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-                if (productEntity != null) {
-                    localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
-                        @Override
-                        public void call(ProductDetail productDetail) {
-                            NumberInputModel numberInput = null;
-                            for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                                NumberInputModel input = productDetail.getListInput().get(i);
-                                if (input.getTimes() == times) {
-                                    numberInput = input;
-                                    break;
-                                }
-                            }
-                            if (numberInput != null) {
-                                if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() >= item.getNumber()) {
-                                    allowedToSave = true;
-                                } else {
-                                    allowedToSave = false;
-                                    showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
-                                }
-                            } else {
-                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+        // if (existDepartment) {
+        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+            if (productEntity != null) {
+                localRepository.getProductDetail(productEntity).subscribe(new Action1<ProductDetail>() {
+                    @Override
+                    public void call(ProductDetail productDetail) {
+                        NumberInputModel numberInput = null;
+                        for (int i = 0; i < productDetail.getListInput().size(); i++) {
+                            NumberInputModel input = productDetail.getListInput().get(i);
+                            if (input.getTimes() == times) {
+                                numberInput = input;
+                                break;
                             }
                         }
+                        if (numberInput != null) {
+                            if (numberInput.getNumberRest() > 0 && numberInput.getNumberRest() >= item.getNumber()) {
+                                allowedToSave = true;
+                            } else {
+                                allowedToSave = false;
+                                showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
+                            }
+                        } else {
+                            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                        }
+                    }
 
-                    });
-                }
-
-
-                if (!allowedToSave) {
-                    return;
-                }
+                });
             }
 
-            saveListWithGroupCode(times, groupEntity, departmentId);
+
+            if (!allowedToSave) {
+                return;
+            }
+        }
+
+        saveListWithGroupCode(times, groupEntity, departmentId);
 //        } else {
 //            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
 //        }
@@ -329,7 +329,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                                 @Override
                                                 public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                                     view.hideProgressBar();
-                                                    getListProduct(orderId, times,departmentId,true);
+                                                    getListProduct(orderId, times, departmentId, true);
                                                     localRepository.updateStatusScanStages().subscribe(new Action1<String>() {
                                                         @Override
                                                         public void call(String s) {
@@ -367,7 +367,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveBarcodeToDataBase(int times, ProductEntity
-            productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan,boolean residual) {
+            productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         String groupCode = null;
@@ -381,12 +381,13 @@ public class StagesPresenter implements StagesContract.Presenter {
         localRepository.addLogScanStagesAsync(logScanStages, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                if (!residual){
+                if (!residual) {
                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                     view.startMusicSuccess();
                 }
                 view.turnOnVibrator();
                 view.hideProgressBar();
+
             }
         });
 
@@ -419,7 +420,7 @@ public class StagesPresenter implements StagesContract.Presenter {
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
             if (productEntity != null) {
-                saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false,false);
+                saveBarcodeToDataBase(times, productEntity, item.getNumber(), departmentId, groupEntity, false, false);
             }
 
         }
@@ -506,8 +507,8 @@ public class StagesPresenter implements StagesContract.Presenter {
                             public void call(String s) {
                                 if (!refresh) {
                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
-                                    if(times > 0 && department > 0){
-                                        getListScanStages(orderId,department,times);
+                                    if (times > 0 && department > 0) {
+                                        getListScanStages(orderId, department, times);
                                     }
                                 }
                                 view.hideProgressBar();

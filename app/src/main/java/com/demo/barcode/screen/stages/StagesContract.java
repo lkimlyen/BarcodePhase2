@@ -47,6 +47,7 @@ public interface StagesContract {
         void showDialogUpload();
 
         void showDialogChooseGroup(List<GroupEntity> list);
+
     }
 
     interface Presenter extends BasePresenter {
