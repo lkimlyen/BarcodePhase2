@@ -753,7 +753,8 @@ public class DatabaseRealm {
             if (oldVersion == 2) {
                 schema.get("LogScanConfirm")
                         .removeField("lastIDOutput")
-                        .addField("deliveryNoteId", long.class);
+                        .addField("deliveryNoteId", long.class)
+                .addField("numberUsed",double.class);
                 oldVersion++;
             }
 
