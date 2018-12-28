@@ -119,6 +119,10 @@ public class OrderConfirmEntity {
         return state;
     }
 
+    public int getNumberConfirmed() {
+        return numberConfirmed;
+    }
+
     public long getProductId() {
         return productId;
     }

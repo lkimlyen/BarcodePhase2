@@ -87,6 +87,7 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.txtNumberDelivery.setText(String.valueOf((int) item.getNumberScanOut()));
+        holder.txtNumberConfirmed.setText(String.valueOf((int) item.getNumberConfirmed()));
         holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
 
         switch (item.getStatusConfirm()) {
@@ -141,6 +142,7 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
         TextView txtNumberDelivery;
         EditText edtNumberReceive;
         TextView txtStatus;
+        TextView txtNumberConfirmed;
 
         private HistoryHolder(View v) {
             super(v);
@@ -148,6 +150,8 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
             layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
             txtNumberDelivery = (TextView) v.findViewById(R.id.txt_number_delivery);
+
+            txtNumberConfirmed = (TextView) v.findViewById(R.id.txt_number_confirmed);
             edtNumberReceive = (EditText) v.findViewById(R.id.txt_number_receive);
             txtStatus = (TextView) v.findViewById(R.id.txt_status);
         }
