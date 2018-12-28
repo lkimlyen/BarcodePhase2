@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class OrderConfirmEntity {
-    @SerializedName("MasterOutputID")
+    @SerializedName("OutputID")
     @Expose
     private long masterOutputID;
 
@@ -58,13 +58,14 @@ public class OrderConfirmEntity {
     @Expose
     private int numberOut;
 
+    @SerializedName("NumberConfirmed")
+    @Expose
+    private int numberConfirmed;
+
     @SerializedName("State")
     @Expose
     private boolean state;
 
-    @SerializedName("LastIDOutput")
-    @Expose
-    private long lastIDOutput;
 
     public long getMasterOutputID() {
         return masterOutputID;
@@ -116,10 +117,6 @@ public class OrderConfirmEntity {
 
     public boolean isState() {
         return state;
-    }
-
-    public long getLastIDOutput() {
-        return lastIDOutput;
     }
 
     public long getProductId() {

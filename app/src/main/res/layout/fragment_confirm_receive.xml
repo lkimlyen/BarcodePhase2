@@ -192,6 +192,33 @@
 
                 </LinearLayout>
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_delivery_code"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <com.demo.barcode.widgets.spinner.SearchableSpinner
+                        android:id="@+id/ss_delivery_code"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        app:hintText="@string/text_choose_delivery_code" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

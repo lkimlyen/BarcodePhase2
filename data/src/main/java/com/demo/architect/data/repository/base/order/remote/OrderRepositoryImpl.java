@@ -7,6 +7,7 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
@@ -110,6 +111,26 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
+    private void handleIntegerResponse(Call<BaseResponse<Integer>> call, Subscriber subscriber) {
+        try {
+            BaseResponse<Integer> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
     private void handleCodePackResponse(Call<BaseListResponse<CodePackEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<CodePackEntity> response = call.execute().body();
@@ -147,6 +168,25 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         }
     }
+    private void handleDeliveryNoteResponse(Call<BaseListResponse<DeliveryNoteEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<DeliveryNoteEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
     private void handleProductPackagingResponse(Call<BaseListResponse<ProductPackagingEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<ProductPackagingEntity> response = call.execute().body();
@@ -212,12 +252,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseListResponse> scanProductDetailOut(final String key, final String json) {
+    public Observable<BaseResponse<Integer>> scanProductDetailOut(final String key, final String json) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
-        return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<Integer>>() {
             @Override
-            public void call(Subscriber<? super BaseListResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.scanProductDetailOut(
+            public void call(Subscriber<? super BaseResponse<Integer>> subscriber) {
+                handleIntegerResponse(mRemoteApiInterface.scanProductDetailOut(
                         server + "/WS/api/GD2ScanProductDetailOut", key, json), subscriber);
             }
         });
@@ -294,6 +334,30 @@ public class OrderRepositoryImpl implements OrderRepository {
             public void call(Subscriber<? super BaseListResponse<String>> subscriber) {
                 handleListStringResponse(mRemoteApiInterface.getListModuleByOrder(
                         server + "/WS/api/GD2GetListModuleByOrder", orderId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<DeliveryNoteEntity>> getListMaPhieuGiao(final String key, final long orderId, final int  departmentIdIn, final int departmentIdOut) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<DeliveryNoteEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<DeliveryNoteEntity>> subscriber) {
+                handleDeliveryNoteResponse(mRemoteApiInterface.getListMaPhieuGiao(
+                        server + "/WS/api/GD2GetListMaPhieuGiao", key,orderId, departmentIdIn,departmentIdOut), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<OrderConfirmEntity>> getListInputUnConfirmByMaPhieu(final long maPhieu) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderConfirmEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<OrderConfirmEntity>> subscriber) {
+                handleOrderConfirmResponse(mRemoteApiInterface.getListInputUnConfirmByMaPhieu(
+                        server + "/WS/api/GetListInputUnConfirmByMaPhieu", maPhieu), subscriber);
             }
         });
     }

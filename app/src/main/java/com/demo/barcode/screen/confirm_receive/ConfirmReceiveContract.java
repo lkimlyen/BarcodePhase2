@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.confirm_receive;
 
+import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -47,6 +48,8 @@ public interface ConfirmReceiveContract {
         void showDialogChooseGroup(List<GroupEntity> listGroupEntityByProductId);
 
         void showWarningPrint();
+
+        void showListDeliveryCode(List<DeliveryNoteEntity> list);
     }
 
     interface Presenter extends BasePresenter {
@@ -54,11 +57,13 @@ public interface ConfirmReceiveContract {
 
         void getListTimes(long orderId, int departmentId);
 
-        void getListConfirm(long orderId, int departmentIdOut, int times, boolean refresh);
+        void getListConfirm(long maPhieuId, long orderId, int departmentIdOut, int times, boolean refresh);
+
+        void getListDeliveryCode(long orderId, int departmentIdOut);
 
         void getListDepartment();
 
-        void getListConfirmByTimes(long orderId, int deparmentId, int times);
+        void getListConfirmByTimes(long  deliveryNoteId,long orderId, int deparmentId, int times);
 
         int countListConfirmByTimesWaitingUpload(long orderId, int deparmentId, int times);
 
@@ -66,11 +71,11 @@ public interface ConfirmReceiveContract {
 
         void updateNumberConfirm(long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
 
-        void uploadData(long orderId, int departmentIdOut, int times, boolean checkPrint);
+        void uploadData(long maPhieuId,long orderId, int departmentIdOut, int times, boolean checkPrint);
 
         void getListGroupCode(long orderId);
 
-        void saveIPAddress(String ipAddress, int port,  long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+        void saveIPAddress(String ipAddress, int port,  long maPhieuId, long orderId, int departmentIdOut, int times, long serverId, boolean upload);
 
         void confirmAll(long orderId, int departmentId, int times);
 
@@ -80,6 +85,7 @@ public interface ConfirmReceiveContract {
 
         void saveNumberConfirmGroup(GroupEntity groupEntity, long orderId, int times, int deparmentId);
 
-        void print(long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+        void print(long maPhieuId,long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+
     }
 }

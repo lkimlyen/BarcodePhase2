@@ -60,10 +60,7 @@ public class LogScanConfirm extends RealmObject {
     private double numberScanOut;
     private String dateConfirm;
 
-    @SerializedName("pLastIDOutput")
-    @Expose
-    private long lastIDOutput;
-
+    private long deliveryNoteId;
 
     public boolean isState() {
         return state;
@@ -83,7 +80,7 @@ public class LogScanConfirm extends RealmObject {
     public LogScanConfirm(long id, long masterOutputID, long orderId, int departmentIDIn, int departmentIDOut,
                           long productDetailId, String productDetailName, String module, String barcode,
                           double numberTotalOrder, double numberConfirmed,
-                          double numberConfirmedAll, boolean all, long userId, int timesInput, long productId, double numberOut, int status, long lastIDOutput, boolean state) {
+                          double numberConfirmedAll, boolean all, long userId, int timesInput, long productId, double numberOut, int status, long deliveryNoteId, boolean state) {
         this.id = id;
         this.masterOutputID = masterOutputID;
         this.orderId = orderId;
@@ -102,7 +99,7 @@ public class LogScanConfirm extends RealmObject {
         this.status = status;
         this.numberOut = numberOut;
         this.all = all;
-        this.lastIDOutput = lastIDOutput;
+        this.deliveryNoteId = deliveryNoteId;
         this.state = state;
     }
 
@@ -115,7 +112,7 @@ public class LogScanConfirm extends RealmObject {
         return nextId;
     }
 
-    public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, long userId) {
+    public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, long userId, long deliveryNoteId) {
         List<NumberInputConfirm> confirmList = orderConfirmEntity.getListInputConfirmed();
         RealmList<NumberInputConfirmModel> list = new RealmList<>();
         RealmList<LogScanConfirm> logScanConfirms = new RealmList<>();
@@ -124,6 +121,7 @@ public class LogScanConfirm extends RealmObject {
                 LogScanConfirm logScanConfirm = realm.where(LogScanConfirm.class)
                         .equalTo("masterOutputID", orderConfirmEntity.getMasterOutputID())
                         .equalTo("orderId", orderConfirmEntity.getOrderId())
+                        .equalTo("deliveryNoteId",deliveryNoteId)
                         .equalTo("departmentIDOut", orderConfirmEntity.getDepartmentIDOut())
                         .equalTo("timesInput", input.getTimesInput()).equalTo("status", Constants.WAITING_UPLOAD)
                         .equalTo("userId", userId).findFirst();
@@ -133,14 +131,13 @@ public class LogScanConfirm extends RealmObject {
                             orderConfirmEntity.getProductDetailID(), orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
                             orderConfirmEntity.getNumberTotalOrder(),
                             0, 0, false, userId, input.getTimesInput(), orderConfirmEntity.getProductId(), orderConfirmEntity.getNumberOut(),
-                            Constants.WAITING_UPLOAD, orderConfirmEntity.getLastIDOutput(), orderConfirmEntity.isState());
+                            Constants.WAITING_UPLOAD, deliveryNoteId, orderConfirmEntity.isState());
                     logScanConfirm.setPrint(false);
                     logScanConfirm = realm.copyToRealm(logScanConfirm);
 
                 } else {
                     logScanConfirm.setProductId(orderConfirmEntity.getProductId());
                     logScanConfirm.setNumberOut(orderConfirmEntity.getNumberOut());
-                    logScanConfirm.setLastIDOutput(orderConfirmEntity.getLastIDOutput());
                     logScanConfirm.setState(orderConfirmEntity.isState());
                 }
                 RealmList<NumberInputConfirmModel> parentList = logScanConfirm.getList();
@@ -335,10 +332,11 @@ public class LogScanConfirm extends RealmObject {
         }
     }
 
-    public static RealmResults<LogScanConfirm> getListScanConfirm(Realm realm, long orderId, int departmentIDOut, int times, long userId) {
+    public static RealmResults<LogScanConfirm> getListScanConfirm(Realm realm,long  deliveryNoteId, long orderId, int departmentIDOut, int times, long userId) {
         final RealmResults<LogScanConfirm> list = realm.where(LogScanConfirm.class).equalTo("orderId", orderId)
                 .equalTo("departmentIDOut", departmentIDOut)
                 .equalTo("userId", userId)
+                .equalTo("deliveryNoteId",deliveryNoteId)
                 .equalTo("status", Constants.WAITING_UPLOAD)
                 .greaterThan("numberScanOut", (double) 0)
                 .equalTo("timesInput", times).findAll();
@@ -530,13 +528,6 @@ public class LogScanConfirm extends RealmObject {
         this.all = all;
     }
 
-    public long getLastIDOutput() {
-        return lastIDOutput;
-    }
-
-    public void setLastIDOutput(long lastIDOutput) {
-        this.lastIDOutput = lastIDOutput;
-    }
 
     public long getId() {
         return id;
