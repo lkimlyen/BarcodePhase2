@@ -754,7 +754,9 @@ public class DatabaseRealm {
                 schema.get("LogScanConfirm")
                         .removeField("lastIDOutput")
                         .addField("deliveryNoteId", long.class)
-                .addField("numberUsed",double.class);
+                        .addField("numberRest", double.class)
+                        .removeField("numberScanOut")
+                        .removeField("state").addField("numberUsed",double.class);
                 oldVersion++;
             }
 

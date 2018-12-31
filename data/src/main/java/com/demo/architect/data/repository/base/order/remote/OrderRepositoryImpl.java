@@ -270,7 +270,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             @Override
             public void call(Subscriber<? super BaseListResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.confirmInput(
-                        server + "/WS/api/GD2ComfirmInput", key, departmentId, json), subscriber);
+                        server + "/WS/api/GD2ComfirmInputByMaPhieu", key, departmentId, json), subscriber);
             }
         });
 

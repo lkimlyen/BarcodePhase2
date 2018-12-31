@@ -57,14 +57,13 @@
 
         <EditText
             android:id="@+id/txt_number_receive"
-            android:layout_width="@dimen/size_50dp"
+            android:layout_width="@dimen/size_80dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:inputType="number"
             android:fontFamily="serif"
             android:gravity="center"
             android:text="@string/text_number_receive"
-            android:selectAllOnFocus="true"
             android:textColor="#000"
             android:textSize="@dimen/text_12sp" />
 

@@ -179,7 +179,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 new BaseUseCase.UseCaseCallback<GetListMaPhieuGiaoUsecase.ResponseValue, GetListMaPhieuGiaoUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetListMaPhieuGiaoUsecase.ResponseValue successResponse) {
-//                        view.hideProgressBar();
                         view.showListDeliveryCode(successResponse.getEntity());
                         getListTimes(orderId, departmentIdOut);
                     }
