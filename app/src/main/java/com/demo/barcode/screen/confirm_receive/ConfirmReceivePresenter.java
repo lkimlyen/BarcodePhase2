@@ -321,7 +321,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                 for (LogScanConfirm logScanConfirm : logScanConfirms) {
                     PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
                             logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
-                            (int) logScanConfirm.getNumberConfirmed());
+                            (int)logScanConfirm.getNumberUsed(), (int) logScanConfirm.getNumberConfirmed());
                     list.add(detailItem);
                 }
                 String jsonWithData = new Gson().toJson(list);
@@ -524,7 +524,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                             for (LogScanConfirm logScanConfirm : logScanConfirms) {
                                                 PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
                                                         logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberScanOut(),
-                                                        (int) logScanConfirm.getNumberConfirmed());
+                                                        (int)logScanConfirm.getNumberUsed(), (int) logScanConfirm.getNumberConfirmed());
 
                                                 list.add(detailItem);
                                             }
