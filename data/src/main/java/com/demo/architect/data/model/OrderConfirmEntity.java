@@ -118,7 +118,6 @@ public class OrderConfirmEntity {
         return state;
     }
 
-
     public long getLastIDOutput() {
         return lastIDOutput;
     }
