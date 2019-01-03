@@ -751,7 +751,6 @@ public class DatabaseRealm {
                         .addField("deliveryNoteId", long.class)
                         .addField("numberRest", double.class)
                         .removeField("numberScanOut")
-                        .removeField("list")
                         .removeField("state").addField("numberUsed",double.class);
                 oldVersion++;
             }
