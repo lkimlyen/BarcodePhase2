@@ -519,11 +519,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
 <<<<<<< HEAD
-<<<<<<< HEAD
                         mPresenter.uploadData(maPhieuId,orderId, departmentId, times, true);
-=======
-                       mPresenter.uploadData(orderId,departmentId,times,true);
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
                        mPresenter.uploadData(orderId,departmentId,times,true);
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
@@ -636,7 +632,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             btnScan.setVisibility(View.VISIBLE);
             lLRoot.setVisibility(View.VISIBLE);
 <<<<<<< HEAD
-<<<<<<< HEAD
         } else {
             if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -665,8 +660,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             } else {
                 getActivity().finish();
             }
-=======
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
         }
@@ -810,11 +803,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
 <<<<<<< HEAD
-<<<<<<< HEAD
                         maPhieuId, orderId, departmentId, times, -1, upload);
-=======
-                        orderId, departmentId, times, -1,upload);
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
                         orderId, departmentId, times, -1,upload);
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
