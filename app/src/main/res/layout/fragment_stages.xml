@@ -69,256 +69,267 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        android:id="@+id/ll_root"
-        android:padding="@dimen/distance_8dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_type_product"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_type_product"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:spinnerMode="dialog"
-                app:hintText="@string/text_choose_type_product" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_code_so"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_code_so"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                app:hintText="@string/text_choose_code_so" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_customer_name"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_customer_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:textSize="@dimen/text_14sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_receiving_department"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_receiving_department"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                app:hintText="@string/text_choose_receiving_department" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_times"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_times"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                app:hintText="@string/text_choose_times_scan" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_delivery_date"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_delivery_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:textSize="@dimen/text_16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="5">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="@string/text_type_scan"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
-            <RadioGroup
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.5"
-                android:orientation="horizontal"
-                android:id="@+id/radioGroup">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_default"
-                    android:textSize="@dimen/text_14sp"
-                    android:id="@+id/rb_default" />
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_group_code"
-                    android:textSize="@dimen/text_14sp"
-                    android:layout_marginLeft="@dimen/distance_5dp"
-                    android:id="@+id/rb_group" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <EditText
-                android:id="@+id/edt_barcode"
+            <LinearLayout
+                android:id="@+id/ll_root"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_marginEnd="@dimen/distance_5dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_edittext_stroke_white"
-                android:hint="Nhập mã barcode"
-                android:inputType="textMultiLine"
-                android:padding="@dimen/distance_5dp"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_16sp" />
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/distance_8dp">
 
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/size_40dp"
-                android:layout_weight="0"
-                android:background="@drawable/bg_button_blue_small"
-                android:gravity="center"
-                android:text="@string/text_add"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_type_product"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <com.demo.barcode.widgets.spinner.SearchableSpinner
+                        android:id="@+id/ss_type_product"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:spinnerMode="dialog"
+                        app:hintText="@string/text_choose_type_product" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_code_so"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <com.demo.barcode.widgets.spinner.SearchableSpinner
+                        android:id="@+id/ss_code_so"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        app:hintText="@string/text_choose_code_so" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_customer_name"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_customer_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textSize="@dimen/text_14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_receiving_department"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <com.demo.barcode.widgets.spinner.SearchableSpinner
+                        android:id="@+id/ss_receiving_department"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        app:hintText="@string/text_choose_receiving_department" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_times"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <com.demo.barcode.widgets.spinner.SearchableSpinner
+                        android:id="@+id/ss_times"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        app:hintText="@string/text_choose_times_scan" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_delivery_date"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_delivery_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textSize="@dimen/text_16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_type_scan"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_default"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/text_default"
+                            android:textSize="@dimen/text_14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/distance_5dp"
+                            android:text="@string/text_group_code"
+                            android:textSize="@dimen/text_14sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <EditText
+                        android:id="@+id/edt_barcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_marginEnd="@dimen/distance_5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_edittext_stroke_white"
+                        android:hint="Nhập mã barcode"
+                        android:inputType="textMultiLine"
+                        android:padding="@dimen/distance_5dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_16sp" />
+
+                    <Button
+                        android:id="@+id/btn_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/bg_button_blue_small"
+                        android:gravity="center"
+                        android:text="@string/text_add"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/lv_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="always"
+                android:background="#E6E6FA" />
+
         </LinearLayout>
-
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/lv_code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:transcriptMode="alwaysScroll"
-        android:layout_weight="1"
-        android:background="#E6E6FA" />
-
+    </android.support.v4.widget.NestedScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -338,5 +349,4 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
 </LinearLayout>

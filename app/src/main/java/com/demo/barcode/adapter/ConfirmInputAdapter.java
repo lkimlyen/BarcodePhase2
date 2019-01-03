@@ -1,16 +1,13 @@
 package com.demo.barcode.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
@@ -18,51 +15,32 @@ import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
-import java.util.LinkedHashMap;
-
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmBaseAdapter;
+import io.realm.RealmRecyclerViewAdapter;
 
-public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implements ListAdapter {
+public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm, ConfirmInputAdapter.HistoryHolder> {
     private OnEditTextChangeListener onEditTextChangeListener;
-    private int times;
     private onErrorListener onErrorListener;
 
-<<<<<<< HEAD
     public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
         super(data, true);
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
         setHasStableIds(true);
-=======
-    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
-                               OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener, ConfirmInputAdapter.onClickEditTextListener onClickEditTextListener) {
-        super(realmResults);
-        this.times = times;
-        this.onEditTextChangeListener = onEditTextChangeListener;
-        this.onErrorListener = onErrorListener;
-        this.onClickEditTextListener = onClickEditTextListener;
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
+    }
+
+
+    @Override
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_confirm_order, parent, false);
+        return new HistoryHolder(itemView);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_confirm_order, parent, false);
-            viewHolder = new HistoryHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
-        }
+    public void onBindViewHolder(HistoryHolder holder, int position) {
+        final LogScanConfirm obj = getItem(position);
+        setDataToViews(holder, obj);
 
-        if (adapterData != null) {
-            final LogScanConfirm item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
-
-        }
-        return convertView;
     }
 
     private void setDataToViews(HistoryHolder holder, LogScanConfirm item) {
@@ -143,8 +121,13 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
     }
 
-    public class HistoryHolder extends RecyclerView.ViewHolder {
+    @Override
+    public long getItemId(int index) {
+        //noinspection ConstantConditions
+        return getItem(index).getId();
+    }
 
+    class HistoryHolder extends RecyclerView.ViewHolder {
         TextView txtSerialModule;
         TextView txtNameDetail;
         //ImageView btnDelete;
@@ -165,7 +148,6 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
             edtNumberReceive = (EditText) v.findViewById(R.id.txt_number_receive);
             txtStatus = (TextView) v.findViewById(R.id.txt_status);
         }
-
     }
 
     public interface OnEditTextChangeListener {

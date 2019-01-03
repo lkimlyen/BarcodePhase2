@@ -20,7 +20,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
-import com.demo.barcode.adapter.ConfirmInputAdapter2;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
@@ -65,7 +63,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
     private int departmentId = 0;
-    private ConfirmInputAdapter2 adapter;
+    private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
     private boolean change;
@@ -428,12 +426,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListConfirm(RealmResults<LogScanConfirm> list) {
-        adapter = new ConfirmInputAdapter2(list, new ConfirmInputAdapter2.OnEditTextChangeListener() {
+        adapter = new ConfirmInputAdapter(list, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
                 mPresenter.updateNumberConfirm(item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
             }
-        }, new ConfirmInputAdapter2.onErrorListener() {
+        }, new ConfirmInputAdapter.onErrorListener() {
             @Override
             public void errorListener(String message) {
                 showToast(message);
@@ -441,8 +439,9 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 startMusicError();
             }
         });
-        lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        lvConfirm.setHasFixedSize(true);
         lvConfirm.setAdapter(adapter);
     }
 
@@ -518,11 +517,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-<<<<<<< HEAD
                         mPresenter.uploadData(maPhieuId,orderId, departmentId, times, true);
-=======
-                       mPresenter.uploadData(orderId,departmentId,times,true);
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
 
                     }
                 })
@@ -629,9 +624,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @OnClick(R.id.img_back)
     public void back() {
         if (lLRoot.getVisibility() == View.GONE) {
-            btnScan.setVisibility(View.VISIBLE);
             lLRoot.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
         } else {
             if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -660,36 +653,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             } else {
                 getActivity().finish();
             }
-=======
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
         }
-        if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_have_detail_waiting))
-                    .setConfirmText(getString(R.string.text_yes))
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId, departmentId, times, false);
-                            sweetAlertDialog.dismiss();
-                        }
-                    })
-                    .setCancelText(getString(R.string.text_no))
-                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                            getActivity().finish();
 
-                        }
-                    })
-                    .show();
-
-        } else {
-            getActivity().finish();
-        }
     }
 
     @OnClick(R.id.img_upload)
@@ -795,18 +760,14 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     }
 
     @Override
-    public void showDialogCreateIPAddress(boolean upload ) {
+    public void showDialogCreateIPAddress(boolean upload) {
         ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
         dialog.show(getActivity().getFragmentManager(), TAG);
         dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
             @Override
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
-<<<<<<< HEAD
                         maPhieuId, orderId, departmentId, times, -1, upload);
-=======
-                        orderId, departmentId, times, -1,upload);
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
                 dialog.dismiss();
             }
         });
