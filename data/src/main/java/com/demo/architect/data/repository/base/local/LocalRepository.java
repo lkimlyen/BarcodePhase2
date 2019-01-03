@@ -69,9 +69,9 @@ public interface LocalRepository {
 
     Observable<List<LogScanConfirm>> getListLogScanConfirm(long orderId, int departmentIdOut, int times);
 
-    Observable<LogScanConfirm> findConfirmByBarcode(final long orderId, int departmentIdOut, int times, final String barcode);
+    Observable<LogScanConfirm> findConfirmByBarcode(long maPhieuId,final long orderId, int departmentIdOut, int times, final String barcode);
 
-    Observable<String> updateNumnberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan);
+    Observable<String> updateNumnberLogConfirm(long maPhieuId,final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan);
 
     Observable<String> updateStatusLogConfirm();
 

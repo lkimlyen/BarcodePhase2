@@ -16,6 +16,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
+import com.demo.architect.data.model.offline.DeliveryNoteModel;
 import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.realm.DynamicRealm;
+import io.realm.FieldAttribute;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
@@ -248,16 +250,22 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                RealmResults<DeliveryNoteModel> deliveryNoteModels = realm.where(DeliveryNoteModel.class).findAll();
+                RealmResults<TimesConfirm> realmResults = realm.where(TimesConfirm.class).findAll();
+                realmResults.deleteAllFromRealm();
+                deliveryNoteModels.deleteAllFromRealm();
+                RealmResults<LogScanConfirm> results = realm.where(LogScanConfirm.class).findAll();
+                results.deleteAllFromRealm();
                 for (OrderConfirmEntity orderConfirmEntity : list) {
-                    LogScanConfirm.createOrUpdate(realm, orderConfirmEntity, userId,deliveryNoteId);
+                    LogScanConfirm.createOrUpdate(realm, orderConfirmEntity, userId, deliveryNoteId);
                 }
             }
         });
     }
 
-    public RealmResults<LogScanConfirm> getListConfirm(long  deliveryNoteId,long orderId, final int departmentIdOut, int times) {
+    public RealmResults<LogScanConfirm> getListConfirm(long deliveryNoteId, long orderId, final int departmentIdOut, int times) {
         Realm realm = getRealmInstance();
-        final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm,deliveryNoteId, orderId, departmentIdOut, times, userId);
+        final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm, deliveryNoteId, orderId, departmentIdOut, times, userId);
         return results;
     }
 
@@ -274,12 +282,12 @@ public class DatabaseRealm {
     }
 
 
-    public void updateNumberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
+    public void updateNumberLogConfirm(final long maPhieuId, final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.updateNumberScan(realm, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
+                LogScanConfirm.updateNumberScan(realm,maPhieuId, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
             }
         });
     }
@@ -314,10 +322,10 @@ public class DatabaseRealm {
         });
     }
 
-    public LogScanConfirm findConfirmByBarcode(String barcode, long orderId,
+    public LogScanConfirm findConfirmByBarcode(long maPhieuId,String barcode, long orderId,
                                                int departmentIDOut, int times) {
         Realm realm = getRealmInstance();
-        LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, barcode, orderId, departmentIDOut, times, userId);
+        LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, maPhieuId,barcode, orderId, departmentIDOut, times, userId);
         return logScanConfirm;
     }
 
@@ -751,17 +759,27 @@ public class DatabaseRealm {
                 oldVersion++;
             }
             if (oldVersion == 2) {
+                schema.create("DeliveryNoteModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("deliveryNoteId", long.class)
+                        .addField("orderId", long.class)
+                        .addField("outputId", long.class)
+                        .addField("productDetailId", long.class)
+                        .addField("numberOut", double.class)
+                        .addField("numberRest", double.class)
+                        .addField("numberUsed", double.class)
+                        .addField("numberConfirm", double.class);
                 schema.get("LogScanConfirm")
                         .removeField("lastIDOutput")
                         .addField("deliveryNoteId", long.class)
-                        .addField("numberRest", double.class)
                         .removeField("numberScanOut")
-                        .removeField("list")
-                        .removeField("state").addField("numberUsed",double.class);
+                        .addField("numberRestInTimes", double.class)
+                        .removeField("list").addField("numberUsedInTimes", double.class)
+                .addRealmObjectField("deliveryNoteModel",schema.get("DeliveryNoteModel"));
+
+
                 oldVersion++;
             }
-
-
 
 
         }

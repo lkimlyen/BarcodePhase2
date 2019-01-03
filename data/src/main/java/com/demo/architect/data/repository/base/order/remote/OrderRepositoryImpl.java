@@ -357,7 +357,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             @Override
             public void call(Subscriber<? super BaseListResponse<OrderConfirmEntity>> subscriber) {
                 handleOrderConfirmResponse(mRemoteApiInterface.getListInputUnConfirmByMaPhieu(
-                        server + "/WS/api/GetListInputUnConfirmByMaPhieu", maPhieu), subscriber);
+                        server + "/WS/api/GD2GetListInputUnConfirmByMaPhieu", maPhieu), subscriber);
             }
         });
     }

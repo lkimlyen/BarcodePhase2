@@ -500,6 +500,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                     view.hideProgressBar();
                     return;
                 }
+                view.showProgressBar();
                 ConnectSocketDelivery connectSocket = new ConnectSocketDelivery(address.getIpAddress(), address.getPortNumber(),
                         id, new ConnectSocketDelivery.onPostExecuteResult() {
                     @Override
@@ -511,7 +512,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
                             } else {
-
                                 view.hideProgressBar();
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
 

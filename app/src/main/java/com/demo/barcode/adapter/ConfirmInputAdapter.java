@@ -63,7 +63,7 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
-                    if (numberInput > item.getNumberRest()) {
+                    if (numberInput - item.getNumberConfirmed() > item.getNumberRestInTimes()) {
                         holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
@@ -81,8 +81,10 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.txtNumberDelivery.setText(String.valueOf((int) item.getNumberOut()));
-        holder.txtNumberConfirmed.setText(String.valueOf((int) item.getNumberUsed()));
+        holder.txtNumberConfirmed.setText(String.valueOf((int) item.getDeliveryNoteModel().getNumberUsed()));
         holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
+
+        holder.edtNumberReceive.setSelection(holder.edtNumberReceive.getText().length());
 
         switch (item.getStatusConfirm()) {
             case Constants.FULL:

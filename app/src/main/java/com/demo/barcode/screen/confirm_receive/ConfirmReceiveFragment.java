@@ -68,6 +68,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private int times = 0;
     private boolean change;
     private long maPhieuId = 0;
+    private String maPhieu;
     @Bind(R.id.ss_code_so)
     SearchableSpinner ssCodeSO;
 
@@ -132,7 +133,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(orderId, barcode, departmentId, times, typeScan == 2);
+                mPresenter.checkBarcode(maPhieuId, orderId, barcode, departmentId, times, typeScan == 2);
 
             }
         }
@@ -165,7 +166,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
             }
         });
         ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
@@ -190,7 +191,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
             }
         });
         ssTimes.setListener(new SearchableSpinner.OnClickListener() {
@@ -205,7 +206,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
             }
         });
         ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
@@ -220,7 +221,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
             @Override
             public void uploadData() {
-                mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
             }
         });
         ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
@@ -371,7 +372,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 mPresenter.getListGroupCode(orderId);
 
                 if (departmentId > 0) {
-                    mPresenter.getListConfirm(maPhieuId,orderId, departmentId, times, false);
+                    mPresenter.getListConfirm(maPhieuId, orderId, departmentId, times, false);
                 }
             }
 
@@ -391,7 +392,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 times = list.get(position);
                 if (orderId > 0 && departmentId > 0) {
-                    mPresenter.getListConfirmByTimes(maPhieuId,orderId, departmentId, times);
+                    mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
                 }
             }
 
@@ -412,9 +413,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentId = list.get(position).getId();
                 mPresenter.getListDeliveryCode(orderId, departmentId);
-//                if (orderId > 0 && times > 0) {
-//                    mPresenter.getListConfirmByTimes(orderId, departmentId, times);
-//                }
+
             }
 
             @Override
@@ -429,7 +428,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         adapter = new ConfirmInputAdapter(list, new ConfirmInputAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanConfirm item, int number) {
-                mPresenter.updateNumberConfirm(item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
+                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
             }
         }, new ConfirmInputAdapter.onErrorListener() {
             @Override
@@ -447,17 +446,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void clearDataNoProduct(boolean chooseType) {
-        if (chooseType) {
-            txtCustomerName.setText("");
-            ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
-            ssCodeSO.setAdapter(adapter);
-            orderId = 0;
-
-        }
-        ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
-        ssTimes.setAdapter(adapterTimes);
-        times = 0;
         lvConfirm.setAdapter(null);
+        ArrayAdapter<DeliveryNoteEntity> adapter = new ArrayAdapter<DeliveryNoteEntity>(getContext(), android.R.layout.simple_spinner_item);
+        ssDeliveryCode.setAdapter(adapter);
+        ArrayAdapter<Integer> adapter1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item);
+        ssTimes.setAdapter(adapter);
     }
 
     @Override
@@ -492,7 +485,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         dialog.setListener(new ChooseGroupDialog.OnItemSaveListener() {
             @Override
             public void onSave(GroupEntity groupEntity) {
-                mPresenter.saveNumberConfirmGroup(groupEntity, orderId, times, departmentId);
+                mPresenter.saveNumberConfirmGroup(groupEntity, maPhieuId, orderId, times, departmentId);
             }
         });
     }
@@ -509,7 +502,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         // mPresenter.deleteAllItemLog();
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId,orderId, departmentId, times, -1, true);
+                                maPhieuId,maPhieu, orderId, departmentId, times, -1, true);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -517,7 +510,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(maPhieuId,orderId, departmentId, times, true);
+                        mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, true);
 
                     }
                 })
@@ -532,8 +525,10 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 maPhieuId = list.get(position).getId();
+                maPhieu = list.get(position).getNoteCode();
                 mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -606,7 +601,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(orderId, edtBarcode.getText().toString(), departmentId, times, typeScan == 2);
+                        mPresenter.checkBarcode(maPhieuId, orderId, edtBarcode.getText().toString(), departmentId, times, typeScan == 2);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -635,7 +630,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 // mPresenter.deleteAllItemLog();
-                                mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
                                 sweetAlertDialog.dismiss();
                             }
                         })
@@ -666,7 +661,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                        mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -747,7 +742,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId, orderId, departmentId, times, -1, false);
+                                maPhieuId,maPhieu, orderId, departmentId, times, -1, false);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -767,7 +762,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
-                        maPhieuId, orderId, departmentId, times, -1, upload);
+                        maPhieuId,maPhieu, orderId, departmentId, times, -1, upload);
                 dialog.dismiss();
             }
         });

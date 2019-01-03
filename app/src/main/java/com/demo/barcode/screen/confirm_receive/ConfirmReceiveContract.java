@@ -67,25 +67,25 @@ public interface ConfirmReceiveContract {
 
         int countListConfirmByTimesWaitingUpload(long orderId, int deparmentId, int times);
 
-        void checkBarcode(long orderId, String barcode, int departmentId, int times, boolean groupCode);
+        void checkBarcode(long maPhieuId,long orderId, String barcode, int departmentId, int times, boolean groupCode);
 
-        void updateNumberConfirm(long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
+        void updateNumberConfirm(long maPhieuId,long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
 
-        void uploadData(long maPhieuId,long orderId, int departmentIdOut, int times, boolean checkPrint);
+        void uploadData(long maPhieuId,String maPhieu,long orderId, int departmentIdOut, int times, boolean checkPrint);
 
         void getListGroupCode(long orderId);
 
-        void saveIPAddress(String ipAddress, int port,  long maPhieuId, long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+        void saveIPAddress(String ipAddress, int port,  long maPhieuId,String maPhieu, long orderId, int departmentIdOut, int times, long serverId, boolean upload);
 
         void confirmAll(long orderId, int departmentId, int times);
 
         void cancelConfirmAll(long orderId, int departmentId, int times);
 
-        void saveListWithGroupCodeEnough(int times, List<ProductGroupEntity> list);
+        void saveListWithGroupCodeEnough(long maPhieuId,int times, List<ProductGroupEntity> list);
 
-        void saveNumberConfirmGroup(GroupEntity groupEntity, long orderId, int times, int deparmentId);
+        void saveNumberConfirmGroup(GroupEntity groupEntity,long maPhieuId, long orderId, int times, int deparmentId);
 
-        void print(long maPhieuId,long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+        void print(long maPhieuId,String maPhieu,long orderId, int departmentIdOut, int times, long serverId, boolean upload);
 
     }
 }

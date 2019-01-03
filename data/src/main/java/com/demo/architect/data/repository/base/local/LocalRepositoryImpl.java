@@ -324,12 +324,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<LogScanConfirm> findConfirmByBarcode(final long orderId, final int departmentIdOut, final int times, final String barcode) {
+    public Observable<LogScanConfirm> findConfirmByBarcode(final long maPhieuId, final long orderId, final int departmentIdOut, final int times, final String barcode) {
         return Observable.create(new Observable.OnSubscribe<LogScanConfirm>() {
             @Override
             public void call(Subscriber<? super LogScanConfirm> subscriber) {
                 try {
-                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(barcode, orderId, departmentIdOut,
+                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(maPhieuId,barcode, orderId, departmentIdOut,
                             times);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
@@ -342,12 +342,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> updateNumnberLogConfirm(final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
+    public Observable<String> updateNumnberLogConfirm(final long maPhieuId, final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateNumberLogConfirm(orderId, orderProductId, departmentIdOut, times, numberScan, scan);
+                    databaseRealm.updateNumberLogConfirm(maPhieuId,orderId, orderProductId, departmentIdOut, times, numberScan, scan);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
