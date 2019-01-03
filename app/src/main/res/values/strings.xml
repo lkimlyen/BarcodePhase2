@@ -167,7 +167,7 @@
     <string name="text_choose_times_scan">Chọn lần quét</string>
     <string name="text_delivery_department">Bộ phận giao</string>
     <string name="text_choose_delivery_department">Chọn bộ phận giao</string>
-    <string name="text_number_receive">SL \n nhận</string>
+    <string name="text_number_receive">SL đã\n xác nhận</string>
     <string name="text_number_delivery">SL \n giao</string>
     <string name="text_number_order">SL đơn hàng:</string>
     <string name="text_choose_all">Chọn tất cả</string>
@@ -273,6 +273,9 @@
     <string name="text_do_you_want_print">Bạn có muốn in không?</string>
     <string name="text_no_data_upload_in_times_scan">Không có dữ liệu xác nhận để tải lên</string>
     <string name="text_delete_all_data_offline_success">Xóa toàn bộ dữ liệu offline thành công!</string>
+    <string name="text_do_you_want_print_delivery_note">Bạn có muốn in phiếu giao nhận!</string>
+    <string name="text_delivery_code">Mã phiếu giao:</string>
+    <string name="text_choose_delivery_code">Chọn mã phiếu giao</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

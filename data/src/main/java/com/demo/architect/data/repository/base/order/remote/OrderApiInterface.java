@@ -4,6 +4,7 @@ package com.demo.architect.data.repository.base.order.remote;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.CodePackEntity;
+import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
@@ -34,7 +35,7 @@ public interface OrderApiInterface {
                                                                    @Field("pDepartmentIDOut") int departmentIDOut);
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
+    Call<BaseResponse<Integer>> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
 
     @FormUrlEncoded
     @POST
@@ -68,5 +69,15 @@ public interface OrderApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseListResponse<String>> getListModuleByOrder(@Url String url, @Field("pOrderID") long orderId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<DeliveryNoteEntity>> getListMaPhieuGiao(@Url String url,@Field("pKey") String key, @Field("pOrderID") long orderId,
+                                                                  @Field("pDepartmentIDIn") int departmentIdIn,
+                                                         @Field("pDepartmentIDOut") int departmentIdOut);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<OrderConfirmEntity>> getListInputUnConfirmByMaPhieu(@Url String url, @Field("pMaPhieuID") long maPhieuId);
 
 }
