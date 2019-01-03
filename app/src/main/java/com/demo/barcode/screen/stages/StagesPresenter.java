@@ -4,22 +4,15 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.GroupEntity;
-import com.demo.architect.data.model.PrintConfirmEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
-import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.GroupScan;
-import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.repository.base.local.LocalRepository;
-import com.demo.architect.data.repository.base.socket.ConnectSocketConfirm;
-import com.demo.architect.data.repository.base.socket.ConnectSocketDelivery;
-import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
@@ -163,7 +156,20 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId) {
 
+
+        boolean existDepartment = false;
+//        for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+//            ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+//            if (productEntity != null) {
+//                if (productEntity.getListDepartmentID().contains(departmentId)) {
+//                    existDepartment = true;
+//                    break;
+//                }
+//            }
+//
+//        }
         allowedToSave = true;
+        // if (existDepartment) {
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
             if (productEntity != null) {
@@ -200,6 +206,9 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
 
         saveListWithGroupCode(times, groupEntity, departmentId);
+//        } else {
+//            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
+//        }
     }
 
     public void showError(String error) {
@@ -230,7 +239,6 @@ public class StagesPresenter implements StagesContract.Presenter {
             public void call(String s) {
                 view.hideProgressBar();
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
-                view.refreshLayout();
             }
         });
     }
@@ -278,6 +286,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getListTimes(long orderId, int departmentId) {
+        view.showProgressBar();
         getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, departmentId),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
                     @Override
@@ -295,53 +304,47 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void uploadData(long orderId, int departmentId, int times) {
+    public void uploadDataAll(long orderId, int departmentId, int times) {
         view.showProgressBar();
-        GsonBuilder builder = new GsonBuilder();
-        builder.excludeFieldsWithoutExposeAnnotation();
-        Gson gson = builder.create();
-        localRepository.getListGroupScanVersion(orderId, departmentId, times).subscribe(new Action1<List<GroupScan>>() {
+        localRepository.getListLogScanStagesUpdate().subscribe(new Action1<HashMap<List<LogScanStages>, Set<GroupScan>>>() {
             @Override
-            public void call(List<GroupScan> groupScans) {
-                if (groupScans.size() > 0) {
-                    checkUpdateForGroupUsecase.executeIO(new CheckUpdateForGroupUsecase.RequestValue(gson.toJson(groupScans)),
+            public void call(HashMap<List<LogScanStages>, Set<GroupScan>> list) {
+                if (list.size() == 0) {
+                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
+                    return;
+                }
+                GsonBuilder builder = new GsonBuilder();
+                builder.excludeFieldsWithoutExposeAnnotation();
+                Gson gson = builder.create();
+                for (Map.Entry<List<LogScanStages>, Set<GroupScan>> map : list.entrySet()) {
+                    List<GroupScan> scanList = new ArrayList<GroupScan>(map.getValue());
+                    checkUpdateForGroupUsecase.executeIO(new CheckUpdateForGroupUsecase.RequestValue(gson.toJson(scanList)),
                             new BaseUseCase.UseCaseCallback<CheckUpdateForGroupUsecase.ResponseValue,
                                     CheckUpdateForGroupUsecase.ErrorValue>() {
                                 @Override
                                 public void onSuccess(CheckUpdateForGroupUsecase.ResponseValue successResponse) {
-                                    localRepository.getListLogScanStagesUpdate(orderId, departmentId, times).subscribe(new Action1<List<LogScanStages>>() {
-                                        @Override
-                                        public void call(List<LogScanStages> list) {
-                                            if (list.size() == 0) {
-                                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
-                                                return;
-                                            }
-                                            scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(list)),
-                                                    new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
-                                                            ScanProductDetailOutUsecase.ErrorValue>() {
+                                    scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(map.getKey())),
+                                            new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
+                                                    ScanProductDetailOutUsecase.ErrorValue>() {
+                                                @Override
+                                                public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
+                                                    view.hideProgressBar();
+                                                    getListProduct(orderId, times, departmentId, true);
+                                                    localRepository.updateStatusScanStages().subscribe(new Action1<String>() {
                                                         @Override
-                                                        public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
-                                                            view.hideProgressBar();
-                                                            getListProduct(orderId, times, departmentId, true);
-                                                            localRepository.updateStatusScanStages(orderId, times, departmentId).subscribe(new Action1<String>() {
-                                                                @Override
-                                                                public void call(String s) {
-                                                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
-                                                                    getListScanStages(orderId, departmentId, times);
-                                                                    view.showPrintDeliveryNote(successResponse.getId());
-                                                                }
-                                                            });
-                                                        }
-
-                                                        @Override
-                                                        public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
-                                                            view.hideProgressBar();
-                                                            view.showError(errorResponse.getDescription());
+                                                        public void call(String s) {
+                                                            view.showSuccess(successResponse.getDescription());
+                                                            getListScanStages(orderId, departmentId, times);
                                                         }
                                                     });
-                                        }
-                                    });
+                                                }
 
+                                                @Override
+                                                public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
+                                                    view.hideProgressBar();
+                                                    view.showError(errorResponse.getDescription());
+                                                }
+                                            });
                                 }
 
                                 @Override
@@ -354,42 +357,10 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     }
                                 }
                             });
-                } else {
-                    localRepository.getListLogScanStagesUpdate(orderId, departmentId, times).subscribe(new Action1<List<LogScanStages>>() {
-                        @Override
-                        public void call(List<LogScanStages> list) {
-                            if (list.size() == 0) {
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
-                                return;
-                            }
-                            scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(list)),
-                                    new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
-                                            ScanProductDetailOutUsecase.ErrorValue>() {
-                                        @Override
-                                        public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
-                                            view.hideProgressBar();
-                                            getListProduct(orderId, times, departmentId, true);
-                                            localRepository.updateStatusScanStages(orderId, departmentId, times).subscribe(new Action1<String>() {
-                                                @Override
-                                                public void call(String s) {
-                                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
-                                                    view.showPrintDeliveryNote(successResponse.getId());
-                                                    getListScanStages(orderId, departmentId, times);
 
-
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onError(ScanProductDetailOutUsecase.ErrorValue errorResponse) {
-                                            view.hideProgressBar();
-                                            view.showError(errorResponse.getDescription());
-                                        }
-                                    });
-                        }
-                    });
                 }
+
+
             }
         });
     }
@@ -416,7 +387,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                 }
                 view.turnOnVibrator();
                 view.hideProgressBar();
-                view.refreshLayout();
 
             }
         });
@@ -425,23 +395,21 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getListGroupCode(long orderId) {
-        UserEntity user = UserManager.getInstance().getUser();
+        view.showProgressBar();
         getListProductDetailGroupUsecase.executeIO(new GetListProductDetailGroupUsecase.RequestValue(orderId),
                 new BaseUseCase.UseCaseCallback<GetListProductDetailGroupUsecase.ResponseValue,
                         GetListProductDetailGroupUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
-
+                        view.hideProgressBar();
                         ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
                         localRepository.addGroupScan(successResponse.getEntity()).subscribe();
-                        getListTimes(orderId, user.getRole());
                     }
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
-
+                        view.hideProgressBar();
                         ListGroupManager.getInstance().setListGroup(new ArrayList<>());
-                        getListTimes(orderId, user.getRole());
                         //  view.showError(errorResponse.getDescription());
                     }
                 });
@@ -484,61 +452,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                 }
                 view.hideProgressBar();
 
-            }
-        });
-    }
-
-    @Override
-    public void print(int id, int idPrint) {
-
-        localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
-            @Override
-            public void call(IPAddress address) {
-                if (address == null) {
-                    //view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
-                    view.showDialogCreateIPAddress(idPrint);
-                    view.hideProgressBar();
-                    return;
-                }
-                ConnectSocketDelivery connectSocket = new ConnectSocketDelivery(address.getIpAddress(), address.getPortNumber(),
-                        id, new ConnectSocketDelivery.onPostExecuteResult() {
-                    @Override
-                    public void onPostExecute(SocketRespone respone) {
-                        if (respone.getConnect() == 1 && respone.getResult() == 1) {
-
-                            if (id == -1) {
-                                print(idPrint, idPrint);
-
-
-                            } else {
-
-                                view.hideProgressBar();
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
-
-
-                            }
-                        } else {
-                            view.hideProgressBar();
-                            view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
-
-                        }
-                    }
-                });
-
-                connectSocket.execute();
-            }
-        });
-    }
-
-    @Override
-    public void saveIPAddress(String ipAddress, int port, int idPrint) {
-        long userId = UserManager.getInstance().getUser().getId();
-        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
-        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
-            @Override
-            public void call(IPAddress address) {
-                //  view.showIPAddress(address);
-                print(-1, idPrint);
             }
         });
     }
@@ -598,7 +511,8 @@ public class StagesPresenter implements StagesContract.Presenter {
                                         getListScanStages(orderId, department, times);
                                     }
                                 }
-                                getListGroupCode(orderId);
+                                view.hideProgressBar();
+                                getListTimes(orderId, user.getRole());
                             }
                         });
 

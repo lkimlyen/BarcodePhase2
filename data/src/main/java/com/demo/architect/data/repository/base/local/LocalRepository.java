@@ -42,7 +42,7 @@ public interface LocalRepository {
     Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times);
     Observable<Integer> countAllDetailWaitingUpload(final long orderId);
 
-    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId, int departmentId, int times);
+    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId);
 
     Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate();
 
@@ -61,9 +61,9 @@ public interface LocalRepository {
 
     Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, int departmentId, long userId, int times);
 
-    Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final long deliveryNoteId);
+    Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list);
 
-    Observable<RealmResults<LogScanConfirm>> getListConfirm(long  deliveryNoteId,final long orderId, final int departmentIdOut, final int times);
+    Observable<RealmResults<LogScanConfirm>> getListConfirm(final long orderId, final int departmentIdOut, final int times);
 
     Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times);
 
@@ -77,7 +77,7 @@ public interface LocalRepository {
 
     Observable<String> updateStatusScanStagesByOrder(long orderId);
 
-    Observable<String> updateStatusScanStages(long orderId, int departmentId, int times);
+    Observable<String> updateStatusScanStages();
 
     Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, long serverId);
 
@@ -163,6 +163,4 @@ public interface LocalRepository {
     Observable<String> updateNumberTotalProduct(List<ProductEntity> entity);
 
     Observable<String> deleteDataLocal();
-
-    Observable<List<GroupScan>> getListGroupScanVersion(long orderId, int departmentId, int times);
 }

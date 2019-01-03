@@ -72,7 +72,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(3)
+                        .schemaVersion(2)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
@@ -81,7 +81,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(3)
+                        .schemaVersion(2)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
@@ -164,9 +164,9 @@ public class DatabaseRealm {
         return count;
     }
 
-    public List<LogScanStages> getListLogScanStagesUpload(long orderId, int departmentId, int times) {
+    public List<LogScanStages> getListLogScanStagesUpload(long orderId) {
         Realm realm = getRealmInstance();
-        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, departmentId, times, userId);
+        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, userId);
         return list;
     }
 
@@ -243,21 +243,21 @@ public class DatabaseRealm {
 
     }
 
-    public void addOrderConfirm(final List<OrderConfirmEntity> list, final long deliveryNoteId) {
+    public void addOrderConfirm(final List<OrderConfirmEntity> list) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 for (OrderConfirmEntity orderConfirmEntity : list) {
-                    LogScanConfirm.createOrUpdate(realm, orderConfirmEntity, userId,deliveryNoteId);
+                    LogScanConfirm.createOrUpdate(realm, orderConfirmEntity, userId);
                 }
             }
         });
     }
 
-    public RealmResults<LogScanConfirm> getListConfirm(long  deliveryNoteId,long orderId, final int departmentIdOut, int times) {
+    public RealmResults<LogScanConfirm> getListConfirm(long orderId, final int departmentIdOut, int times) {
         Realm realm = getRealmInstance();
-        final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm,deliveryNoteId, orderId, departmentIdOut, times, userId);
+        final RealmResults<LogScanConfirm> results = LogScanConfirm.getListScanConfirm(realm, orderId, departmentIdOut, times, userId);
         return results;
     }
 
@@ -304,12 +304,12 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusScanStages(final long orderId, final int departmentId, final int times) {
+    public void updateStatusScanStages() {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogListScanStages.updateStatusScanStages(realm, orderId, departmentId, times, userId);
+                LogListScanStages.updateStatusScanStages(realm, userId);
             }
         });
     }
@@ -721,12 +721,6 @@ public class DatabaseRealm {
         });
     }
 
-    public List<GroupScan> getListGroupScanVersion(long orderId, int departmentId, int times) {
-        Realm realm = getRealmInstance();
-        List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm, orderId, departmentId, times, userId);
-        return list;
-    }
-
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
@@ -750,6 +744,7 @@ public class DatabaseRealm {
                         .addField("isPrint", boolean.class);
                 oldVersion++;
             }
+<<<<<<< HEAD
             if (oldVersion == 2) {
                 schema.get("LogScanConfirm")
                         .removeField("lastIDOutput")
@@ -762,6 +757,8 @@ public class DatabaseRealm {
             }
 
 
+=======
+>>>>>>> parent of 7c6ccc7... update print delivery note
 
 
         }

@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +36,6 @@ import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
-import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
@@ -129,6 +128,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 String result = data.getStringExtra("Message");
                 showSuccess(result);
                 mPresenter.getListScanStages(orderId, departmentId, times);
+                mPresenter.getListGroupCode(orderId);
                 return;
             }
         }
@@ -140,6 +140,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 mPresenter.checkBarcode(barcode, departmentId, times, typeScan == 2);
             }
         }
+
     }
 
     @Override
@@ -157,9 +158,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
 
     private void initView() {
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL);
-        rvCode.addItemDecoration(dividerItemDecoration);
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
@@ -455,6 +453,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 orderId = list.get(position).getOrderId();
                 if (orderId > 0) {
                     mPresenter.getListProduct(orderId, times, departmentId, false);
+                    //mPresenter.getListTimes(orderId);
+                    mPresenter.getListGroupCode(orderId);
 
                 }
 
@@ -576,7 +576,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(orderId, departmentId, times);
+                        mPresenter.uploadDataAll(orderId, departmentId, times);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -601,48 +601,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             }
         });
 
-    }
-
-    @Override
-    public void refreshLayout() {
-        rvCode.requestLayout();
-    }
-
-    @Override
-    public void showPrintDeliveryNote(int id) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_do_you_want_print_delivery_note))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        mPresenter.print(-1, id);
-
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .show();
-    }
-
-    @Override
-    public void showDialogCreateIPAddress(int idPrint) {
-        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
-        dialog.show(getActivity().getFragmentManager(), TAG);
-        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
-            @Override
-            public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port, idPrint);
-                dialog.dismiss();
-            }
-        });
     }
 
 
@@ -715,7 +673,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId, departmentId, times);
+                            mPresenter.uploadDataAll(orderId, departmentId, times);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -744,7 +702,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(orderId, departmentId, times);
+                        mPresenter.uploadDataAll(orderId, departmentId, times);
                         sweetAlertDialog.dismiss();
                     }
                 })

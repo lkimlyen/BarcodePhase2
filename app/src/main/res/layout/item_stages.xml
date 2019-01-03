@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="@dimen/distance_8dp"
-        android:id="@+id/ll_root"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -246,9 +245,5 @@
         android:layout_alignParentRight="true"
         android:paddingLeft="@dimen/distance_8dp"
         android:src="@drawable/ic_clear" />
-<View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_above="@+id/ll_root"
-    android:background="@color/md_divider_black"/>
+
 </RelativeLayout>

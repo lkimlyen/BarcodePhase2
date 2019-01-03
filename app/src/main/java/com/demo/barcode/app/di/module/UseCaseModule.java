@@ -4,7 +4,6 @@ package com.demo.barcode.app.di.module;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
-import com.demo.architect.data.repository.base.order.remote.OrderRepositoryImpl;
 import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
@@ -19,8 +18,6 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
-import com.demo.architect.domain.GetListInputUnConfirmByMaPhieuUsecase;
-import com.demo.architect.domain.GetListMaPhieuGiaoUsecase;
 import com.demo.architect.domain.GetListModuleByOrderUsecase;
 import com.demo.architect.domain.GetListPrintPackageHistoryUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
@@ -187,18 +184,8 @@ public class UseCaseModule {
     }
 
     @Provides
-    AddPhieuGiaoNhanUsecase provideAddPhieuGiaoNhanUsecase(ProductRepository productRepository){
+    AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase(ProductRepository productRepository){
         return new AddPhieuGiaoNhanUsecase(productRepository);
-    }
-
-    @Provides
-    GetListMaPhieuGiaoUsecase provideAddGetListMaPhieuGiaoUsecase(OrderRepository productRepository){
-        return new GetListMaPhieuGiaoUsecase(productRepository);
-    }
-
-    @Provides
-    GetListInputUnConfirmByMaPhieuUsecase provideGetListInputUnConfirmByMaPhieuUsecase(OrderRepository productRepository){
-        return new GetListInputUnConfirmByMaPhieuUsecase(productRepository);
     }
 }
 

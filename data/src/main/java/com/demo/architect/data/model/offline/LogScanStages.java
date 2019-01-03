@@ -204,10 +204,12 @@ public class LogScanStages extends RealmObject {
                 .equalTo("userId", scanStages.getUserId()).findFirst();
         if (productDetail == null) {
             productDetail = ProductDetail.create(realm, productEntity, scanStages.userId);
-        }
-        LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
-                .equalTo("groupCode", scanStages.groupCode)
-                .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
+        }LogScanStages
+
+
+            logScanStages   = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
+                    .equalTo("groupCode",scanStages.groupCode )
+                    .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
 
 
         if (logScanStages == null) {
@@ -224,12 +226,12 @@ public class LogScanStages extends RealmObject {
         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());
     }
 
-    public static RealmResults<LogScanStages> getScanByProductDetailId(Realm realm, LogScanStages logScanStages) {
+    public static RealmResults<LogScanStages> getScanByProductDetailId(Realm realm, LogScanStages logScanStages){
         LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
         LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                .equalTo("times", logScanStages.getTimes())
-                .equalTo("userId", logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+               .equalTo("times", logScanStages.getTimes())
+                .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
         RealmList<LogScanStages> parentList = parent.getList();
@@ -246,8 +248,8 @@ public class LogScanStages extends RealmObject {
             LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
             LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                    .equalTo("times", logScanStages.getTimes())
-                    .equalTo("userId", logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                  .equalTo("times", logScanStages.getTimes())
+                    .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
             RealmList<LogScanStages> parentList = parent.getList();
@@ -283,8 +285,8 @@ public class LogScanStages extends RealmObject {
             LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
             LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                    .equalTo("times", logScanStages.getTimes())
-                    .equalTo("userId", logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                   .equalTo("times", logScanStages.getTimes())
+                    .equalTo("userId",logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
 
 
             RealmList<LogScanStages> parentList = parent.getList();
