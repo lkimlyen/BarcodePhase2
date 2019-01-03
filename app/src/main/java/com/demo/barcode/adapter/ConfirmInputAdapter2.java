@@ -1,16 +1,13 @@
 package com.demo.barcode.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
@@ -18,51 +15,36 @@ import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
-import java.util.LinkedHashMap;
-
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmBaseAdapter;
+import io.realm.RealmRecyclerViewAdapter;
 
-public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implements ListAdapter {
+public class ConfirmInputAdapter2 extends RealmRecyclerViewAdapter<LogScanConfirm, ConfirmInputAdapter2.HistoryHolder> {
     private OnEditTextChangeListener onEditTextChangeListener;
-    private int times;
     private onErrorListener onErrorListener;
 
-<<<<<<< HEAD
-    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
+    public ConfirmInputAdapter2(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
         super(data, true);
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
+        // Only set this if the model class has a primary key that is also a integer or long.
+        // In that case, {@code getItemId(int)} must also be overridden to return the key.
+        // See https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html#hasStableIds()
+        // See https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html#getItemId(int)
         setHasStableIds(true);
-=======
-    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
-                               OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener, ConfirmInputAdapter.onClickEditTextListener onClickEditTextListener) {
-        super(realmResults);
-        this.times = times;
-        this.onEditTextChangeListener = onEditTextChangeListener;
-        this.onErrorListener = onErrorListener;
-        this.onClickEditTextListener = onClickEditTextListener;
->>>>>>> parent of 1e8da56... fixed focus listview scan stages
+    }
+
+
+    @Override
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_confirm_order, parent, false);
+        return new HistoryHolder(itemView);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_confirm_order, parent, false);
-            viewHolder = new HistoryHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
-        }
+    public void onBindViewHolder(HistoryHolder holder, int position) {
+        final LogScanConfirm obj = getItem(position);
+        setDataToViews(holder, obj);
 
-        if (adapterData != null) {
-            final LogScanConfirm item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
-
-        }
-        return convertView;
     }
 
     private void setDataToViews(HistoryHolder holder, LogScanConfirm item) {
@@ -85,7 +67,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
-                    if (numberInput > item.getNumberRest()) {
+                    if (numberInput > item.getNumberScanOut()) {
                         holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
@@ -102,8 +84,7 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
         holder.txtSerialModule.setText(item.getModule());
         holder.txtNameDetail.setText(item.getProductDetailName());
-        holder.txtNumberDelivery.setText(String.valueOf((int) item.getNumberOut()));
-        holder.txtNumberConfirmed.setText(String.valueOf((int) item.getNumberUsed()));
+        holder.txtNumberDelivery.setText(String.valueOf((int) item.getNumberScanOut()));
         holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
 
         switch (item.getStatusConfirm()) {
@@ -143,8 +124,13 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
 
     }
 
-    public class HistoryHolder extends RecyclerView.ViewHolder {
+    @Override
+    public long getItemId(int index) {
+        //noinspection ConstantConditions
+        return getItem(index).getId();
+    }
 
+    class HistoryHolder extends RecyclerView.ViewHolder {
         TextView txtSerialModule;
         TextView txtNameDetail;
         //ImageView btnDelete;
@@ -152,7 +138,6 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
         TextView txtNumberDelivery;
         EditText edtNumberReceive;
         TextView txtStatus;
-        TextView txtNumberConfirmed;
 
         private HistoryHolder(View v) {
             super(v);
@@ -160,12 +145,9 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
             txtNameDetail = (TextView) v.findViewById(R.id.txt_name_detail);
             layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);
             txtNumberDelivery = (TextView) v.findViewById(R.id.txt_number_delivery);
-
-            txtNumberConfirmed = (TextView) v.findViewById(R.id.txt_number_confirmed);
             edtNumberReceive = (EditText) v.findViewById(R.id.txt_number_receive);
             txtStatus = (TextView) v.findViewById(R.id.txt_status);
         }
-
     }
 
     public interface OnEditTextChangeListener {

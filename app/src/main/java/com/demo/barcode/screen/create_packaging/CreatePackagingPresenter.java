@@ -201,6 +201,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
+
         List<Result> resultList = ListModulePackagingManager.getInstance().getListProductByBarcode(barcode);
         if (resultList.size() == 0) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));

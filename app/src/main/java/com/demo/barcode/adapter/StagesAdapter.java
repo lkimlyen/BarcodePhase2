@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,9 +21,9 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmBaseAdapter;
 
-public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, StagesAdapter.HistoryHolder> {
+public class StagesAdapter extends RealmBaseAdapter<LogScanStages> implements ListAdapter {
 
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
@@ -31,31 +32,37 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
     private onClickEditTextListener onClickEditTextListener;
 
     public StagesAdapter(OrderedRealmCollection<LogScanStages> realmResults, OnItemClearListener listener,
-                         OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener, onOpenDetailListener onOpenDetailListener, onClickEditTextListener onClickEditTextListener) {
-        super(realmResults, true);
+                         OnEditTextChangeListener onEditTextChangeListener, StagesAdapter.onErrorListener onErrorListener, StagesAdapter.onOpenDetailListener onOpenDetailListener, StagesAdapter.onClickEditTextListener onClickEditTextListener) {
+        super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
         this.onOpenDetailListener = onOpenDetailListener;
         this.onClickEditTextListener = onClickEditTextListener;
-
-        setHasStableIds(true);
     }
-
 
 
     @Override
-    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stages, parent, false);
-        return new HistoryHolder(itemView);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        HistoryHolder viewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_stages, parent, false);
+            viewHolder = new HistoryHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (HistoryHolder) convertView.getTag();
+        }
+
+        if (adapterData != null) {
+            final LogScanStages item = adapterData.get(position);
+            setDataToViews(viewHolder, item);
+
+        }
+        return convertView;
     }
 
-    @Override
-    public void onBindViewHolder(HistoryHolder holder, int position) {
-        final LogScanStages obj = getItem(position);
-        setDataToViews(holder, obj);
-
-    }
+    boolean edit = false;
 
     private void setDataToViews(HistoryHolder holder, LogScanStages item) {
         final ProductDetail productDetail = item.getProductDetail();
@@ -88,7 +95,23 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
                     if (numberInput == item.getNumberInput()) {
                         return;
                     }
+//                    edit = false;
+//                    final Timer timer = new Timer();
+//                    if (!edit) {
+//                        edit = true;
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                edit = false;
+//                                timer.cancel();
+//                            }
+//                        }, 1000);
+//                    } else {
+//                        timer.cancel();
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
+
+//                    }
+
 
                 } catch (Exception e) {
 
@@ -154,15 +177,11 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
             holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
             holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
         }
+
     }
 
-    @Override
-    public long getItemId(int index) {
-        //noinspection ConstantConditions
-        return getItem(index).getId();
-    }
+    public class HistoryHolder extends RecyclerView.ViewHolder {
 
-    class HistoryHolder extends RecyclerView.ViewHolder {
         TextView txtBarcode;
         TextView txtNameDetail;
         TextView txtModule;

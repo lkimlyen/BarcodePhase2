@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+<<<<<<< HEAD
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -80,7 +83,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     EditText edtBarcode;
 
     @Bind(R.id.lv_code)
-    RecyclerView rvCode;
+    ListView rvCode;
 
     @Bind(R.id.ss_type_product)
     SearchableSpinner ssTypeProduct;
@@ -434,10 +437,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
             }
         });
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        linearLayoutManager.setAutoMeasureEnabled(true);
-        rvCode.setLayoutManager(linearLayoutManager);
-        rvCode.setHasFixedSize(true);
         rvCode.setAdapter(adapter);
 
 

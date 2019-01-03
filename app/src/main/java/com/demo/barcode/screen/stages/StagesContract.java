@@ -47,6 +47,7 @@ public interface StagesContract {
         void showDialogUpload();
 
         void showDialogChooseGroup(List<GroupEntity> list);
+<<<<<<< HEAD
 
         void refreshLayout();
 
@@ -54,6 +55,8 @@ public interface StagesContract {
 
         void showDialogCreateIPAddress(int idPrint);
 
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
     }
 
     interface Presenter extends BasePresenter {
