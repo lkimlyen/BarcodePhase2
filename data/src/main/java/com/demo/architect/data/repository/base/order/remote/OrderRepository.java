@@ -20,7 +20,7 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(long orderId, int departmentIDIn, int departmentIDOut);
 
-    Observable<BaseListResponse> scanProductDetailOut(String key, String json);
+    Observable<BaseResponse<Integer>> scanProductDetailOut(String key, String json);
 
     Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);
 

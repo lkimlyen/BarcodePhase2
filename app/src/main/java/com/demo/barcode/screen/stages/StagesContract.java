@@ -48,6 +48,12 @@ public interface StagesContract {
 
         void showDialogChooseGroup(List<GroupEntity> list);
 
+        void refreshLayout();
+
+        void showPrintDeliveryNote(int id);
+
+        void showDialogCreateIPAddress(int idPrint);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -69,7 +75,7 @@ public interface StagesContract {
 
         void getListTimes(long orderId, int departmentId);
 
-        void uploadDataAll(long orderId, int departmentId, int times);
+        void uploadData(long orderId, int departmentId, int times);
 
         void saveBarcodeToDataBase(int times, ProductEntity
                 productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
@@ -83,5 +89,9 @@ public interface StagesContract {
         void countListAllData(long orderId);
 
         void updateNumberScan(long stagesId, double number, boolean update);
+
+        void print(int id, int idPrint);
+        void saveIPAddress(String ipAddress, int port, int idPrint);
+
     }
 }

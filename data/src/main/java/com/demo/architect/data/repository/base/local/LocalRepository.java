@@ -42,7 +42,8 @@ public interface LocalRepository {
     Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times);
     Observable<Integer> countAllDetailWaitingUpload(final long orderId);
 
-    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId);
+    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId, int departmentId, int times);
+
 
     Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate();
 
@@ -77,7 +78,8 @@ public interface LocalRepository {
 
     Observable<String> updateStatusScanStagesByOrder(long orderId);
 
-    Observable<String> updateStatusScanStages();
+    Observable<String> updateStatusScanStages(long orderId, int departmentId, int times);
+
 
     Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, long serverId);
 
@@ -90,6 +92,7 @@ public interface LocalRepository {
     Observable<List<LogScanPackaging>> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPack);
 
 
+    Observable<List<GroupScan>> getListGroupScanVersion(long orderId, int departmentId, int times);
 
     Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentI);
 

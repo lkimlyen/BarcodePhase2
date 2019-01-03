@@ -120,7 +120,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     @Override
                     public void onSuccess(GetTimesInputAndOutputByDepartmentUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        view.showListTimes(successResponse.getEntity().getListTimesOutput());
+                        view.showListTimes(successResponse.getEntity().getListTimesInput());
                     }
 
                     @Override

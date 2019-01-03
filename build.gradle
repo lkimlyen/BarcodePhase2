@@ -30,8 +30,8 @@ allprojects {
         androidMinSdkVersion = 19
         androidTargetSdkVersion = 23
         androidCompileSdkVersion = 26
-        androidVersionCode = 8
-        androidVersionName = "1.0.5"
+        androidVersionCode = 9
+        androidVersionName = "1.0.6"
 
         //Android support
         androidAppcombatVersion = '25.+'

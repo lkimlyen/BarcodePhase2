@@ -113,12 +113,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId) {
+    public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId, final int departmentId, final int times) {
+
         return Observable.create(new Observable.OnSubscribe<List<LogScanStages>>() {
             @Override
             public void call(Subscriber<? super List<LogScanStages>> subscriber) {
                 try {
-                    List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload(orderId);
+                    List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload(orderId,departmentId,times);
+
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -390,12 +392,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusScanStages() {
+    public Observable<String> updateStatusScanStages(final long orderId, final int departmentId, final int times) {
+
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusScanStages();
+                    databaseRealm.updateStatusScanStages(orderId,departmentId,times);
+
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1081,4 +1085,21 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+    @Override
+    public Observable<List<GroupScan>> getListGroupScanVersion(final long orderId, final int departmentId, final int times) {
+        return Observable.create(new Observable.OnSubscribe<List<GroupScan>>() {
+            @Override
+            public void call(Subscriber<? super List<GroupScan>> subscriber) {
+                try {
+                    List<GroupScan> result = databaseRealm.getListGroupScanVersion(orderId,departmentId,times);
+                    subscriber.onNext(result);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 }

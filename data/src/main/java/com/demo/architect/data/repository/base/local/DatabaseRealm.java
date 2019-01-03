@@ -164,9 +164,11 @@ public class DatabaseRealm {
         return count;
     }
 
-    public List<LogScanStages> getListLogScanStagesUpload(long orderId) {
+    public List<LogScanStages> getListLogScanStagesUpload(long orderId, int departmentId, int times) {
+
         Realm realm = getRealmInstance();
-        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, userId);
+        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, departmentId, times, userId);
+
         return list;
     }
 
@@ -304,14 +306,21 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusScanStages() {
+    public void updateStatusScanStages(final long orderId, final int departmentId, final int times) {
+
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogListScanStages.updateStatusScanStages(realm, userId);
+                LogListScanStages.updateStatusScanStages(realm, orderId, departmentId, times, userId);
+
             }
         });
+    }
+    public List<GroupScan> getListGroupScanVersion(long orderId, int departmentId, int times) {
+        Realm realm = getRealmInstance();
+        List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm, orderId, departmentId, times, userId);
+        return list;
     }
 
     public LogScanConfirm findConfirmByBarcode(String barcode, long orderId,

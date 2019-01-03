@@ -3,6 +3,7 @@ package com.demo.architect.domain;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseListResponse;
+import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 
 import rx.Observable;
@@ -24,7 +25,7 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
 
     @Override
     protected Subscriber buildUseCaseSubscriber() {
-        return new Subscriber<BaseListResponse>() {
+        return new Subscriber<BaseResponse<Integer>>() {
             @Override
             public void onCompleted() {
                 Log.d(TAG, "onCompleted");
@@ -39,11 +40,11 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
             }
 
             @Override
-            public void onNext(BaseListResponse data) {
+            public void onNext(BaseResponse<Integer> data) {
                 Log.d(TAG, "onNext: " + String.valueOf(data.getStatus()));
                 if (useCaseCallback != null) {
                     if (data.getStatus() == 1) {
-                        useCaseCallback.onSuccess(new ResponseValue(data.getDescription()));
+                        useCaseCallback.onSuccess(new ResponseValue(data.getData()));
                     } else {
                         useCaseCallback.onError(new ErrorValue(data.getDescription()));
                     }
@@ -62,14 +63,14 @@ public class ScanProductDetailOutUsecase extends BaseUseCase {
     }
 
     public static final class ResponseValue implements ResponseValues {
-        private String description;
+        private int maPhieuGiaoId;
 
-        public ResponseValue(String description) {
-            this.description = description;
+        public ResponseValue(int maPhieuGiaoId) {
+            this.maPhieuGiaoId = maPhieuGiaoId;
         }
 
-        public String getDescription() {
-            return description;
+        public int getMaPhieuGiaoId() {
+            return maPhieuGiaoId;
         }
     }
 

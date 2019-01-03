@@ -34,7 +34,7 @@ public interface OrderApiInterface {
                                                                    @Field("pDepartmentIDOut") int departmentIDOut);
     @FormUrlEncoded
     @POST
-    Call<BaseListResponse> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
+    Call<BaseResponse<Integer>> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
 
     @FormUrlEncoded
     @POST
