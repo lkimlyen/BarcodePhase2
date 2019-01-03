@@ -438,11 +438,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 turnOnVibrator();
                 startMusicError();
             }
-        }, new ConfirmInputAdapter.onClickEditTextListener() {
-            @Override
-            public void onClick() {
-                //    lLRoot.setVisibility(View.GONE);
-            }
         });
 
         lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -454,7 +449,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     public void clearDataNoProduct(boolean chooseType) {
         if (chooseType) {
             txtCustomerName.setText("");
-
             ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
             ssCodeSO.setAdapter(adapter);
             orderId = 0;
@@ -540,7 +534,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 maPhieuId = list.get(position).getId();
                 mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 

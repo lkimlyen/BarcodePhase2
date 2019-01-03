@@ -167,7 +167,7 @@
     <string name="text_choose_times_scan">Chọn lần quét</string>
     <string name="text_delivery_department">Bộ phận giao</string>
     <string name="text_choose_delivery_department">Chọn bộ phận giao</string>
-    <string name="text_number_receive">SL \n nhận</string>
+    <string name="text_number_receive">SL đã\n xác nhận</string>
     <string name="text_number_delivery">SL \n giao</string>
     <string name="text_number_order">SL đơn hàng:</string>
     <string name="text_choose_all">Chọn tất cả</string>
