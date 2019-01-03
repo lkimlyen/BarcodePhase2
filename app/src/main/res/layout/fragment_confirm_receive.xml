@@ -94,6 +94,7 @@
                 android:textStyle="bold" />
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -403,6 +404,154 @@
                     android:text="@string/text_group_code"
                     android:textSize="@dimen/text_14sp" />
             </RadioGroup>
+=======
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_type_product"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_type_product" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_code_so"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_code_so"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_code_so" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_customer_name"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_customer_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                android:textSize="@dimen/text_14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_delivery_department"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_delivery_department"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_delivery_department" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_times"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <com.demo.barcode.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_times"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                app:hintText="@string/text_choose_times_scan" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="@string/text_type_scan"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3.5"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_default"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_default"
+                    android:textSize="@dimen/text_14sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/distance_8dp"
+                    android:text="@string/text_group_code"
+                    android:textSize="@dimen/text_14sp" />
+            </RadioGroup>
         </LinearLayout>
 
         <LinearLayout
@@ -412,6 +561,29 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
+            <CheckBox
+                android:id="@+id/cb_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_confirm_all" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bt_print"
+                android:text="In phiếu" />
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+<<<<<<< HEAD
             <CheckBox
                 android:id="@+id/cb_all"
                 android:layout_width="wrap_content"
@@ -509,6 +681,84 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+=======
+            <EditText
+                android:id="@+id/edt_barcode"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_marginEnd="@dimen/distance_5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edittext_stroke_white"
+                android:hint="Nhập mã barcode"
+                android:inputType="textMultiLine"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_weight="0"
+                android:background="@drawable/bg_button_blue_small"
+                android:gravity="center"
+                android:text="@string/text_add"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_confirm_all"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginTop="@dimen/distance_5dp"
+            android:layout_weight="0"
+            android:background="@drawable/bg_button_blue_small"
+            android:gravity="center"
+            android:text="@string/text_confirm_all"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!--<com.demo.barcode.widgets.legacytableview.LegacyTableView-->
+    <!--android:id="@+id/tb_product"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1"-->
+    <!--/>-->
+
+    <TableLayout
+        android:id="@+id/table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:id="@+id/table_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="@dimen/size_60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="@string/text_serial_module_break"
+                android:textColor="#000"
+                android:textSize="@dimen/text_12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
                 android:fontFamily="serif"
                 android:gravity="center"
 

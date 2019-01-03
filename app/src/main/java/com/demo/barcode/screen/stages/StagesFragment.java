@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
 import android.text.TextUtils;

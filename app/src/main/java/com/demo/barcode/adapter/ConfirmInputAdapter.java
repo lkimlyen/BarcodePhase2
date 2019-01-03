@@ -29,11 +29,21 @@ public class ConfirmInputAdapter extends RealmBaseAdapter<LogScanConfirm> implem
     private onErrorListener onErrorListener;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
         super(data, true);
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
         setHasStableIds(true);
+=======
+    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
+                               OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener, ConfirmInputAdapter.onClickEditTextListener onClickEditTextListener) {
+        super(realmResults);
+        this.times = times;
+        this.onEditTextChangeListener = onEditTextChangeListener;
+        this.onErrorListener = onErrorListener;
+        this.onClickEditTextListener = onClickEditTextListener;
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
     public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> realmResults, int times,
                                OnEditTextChangeListener onEditTextChangeListener, ConfirmInputAdapter.onErrorListener onErrorListener, ConfirmInputAdapter.onClickEditTextListener onClickEditTextListener) {

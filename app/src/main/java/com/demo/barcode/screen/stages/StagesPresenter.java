@@ -165,6 +165,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
         allowedToSave = true;
 <<<<<<< HEAD
+<<<<<<< HEAD
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
             if (productEntity != null) {
@@ -178,6 +179,8 @@ public class StagesPresenter implements StagesContract.Presenter {
                                 numberInput = input;
                                 break;
 =======
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
        // if (existDepartment) {
             for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
                 ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
@@ -192,6 +195,9 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     numberInput = input;
                                     break;
                                 }
+<<<<<<< HEAD
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
+=======
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
                             }
                             if (numberInput != null) {
@@ -216,8 +222,11 @@ public class StagesPresenter implements StagesContract.Presenter {
             }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         saveListWithGroupCode(times, groupEntity, departmentId);
 =======
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
             saveListWithGroupCode(times, groupEntity, departmentId);
 //        } else {
 //            showError(CoreApplication.getInstance().getString(R.string.no_product_in_group_to_department));
@@ -451,8 +460,11 @@ public class StagesPresenter implements StagesContract.Presenter {
                 view.turnOnVibrator();
                 view.hideProgressBar();
 <<<<<<< HEAD
+<<<<<<< HEAD
                 view.refreshLayout();
 
+=======
+>>>>>>> parent of 1e8da56... fixed focus listview scan stages
 =======
 >>>>>>> parent of 1e8da56... fixed focus listview scan stages
             }
