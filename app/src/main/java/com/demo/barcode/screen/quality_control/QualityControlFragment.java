@@ -40,8 +40,6 @@ import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;

@@ -6,6 +6,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
         mavenCentral()
+        google()
 
     }
     dependencies {
@@ -14,7 +15,7 @@ buildscript {
         classpath "com.fernandocejas.frodo:frodo-plugin:0.8.3"
         classpath "io.realm:realm-gradle-plugin:5.3.1"
         classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-        classpath 'com.google.gms:google-services:3.2.1'
+        classpath 'com.google.gms:google-services:4.2.0'
         classpath 'com.google.firebase:firebase-plugins:1.0.5'
     }
 }
@@ -46,8 +47,8 @@ allprojects {
         facebookSDKVersion = "4.+"
         facebookAccountKitSDKVersion = "4.+"
 
-        googlePlatServicesVersion = "11.6.0"
-        firebaseMessagingVersion = "11.6.0"
+        googlePlatServicesVersion = "15.0.0"
+        firebaseMessagingVersion = "17.3.4"
         firebaseCrashVersion = "11.6.0"
         firebaseJobVersion = "0.8.5"
 

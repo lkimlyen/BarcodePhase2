@@ -104,14 +104,24 @@
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
 
-                    <com.demo.barcode.widgets.spinner.SearchableSpinner
-                        android:id="@+id/ss_type_product"
+                    <!--<com.demo.barcode.widgets.spinner.SearchableSpinner-->
+                        <!--android:id="@+id/ss_type_product"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="3.5"-->
+                        <!--android:spinnerMode="dialog"-->
+                        <!--app:hintText="@string/text_choose_type_product" />-->
+
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
-                        android:spinnerMode="dialog"
-                        app:hintText="@string/text_choose_type_product" />
-
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_type_product"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_type_product"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -130,13 +140,15 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
-
-                    <com.demo.barcode.widgets.spinner.SearchableSpinner
-                        android:id="@+id/ss_code_so"
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
-                        app:hintText="@string/text_choose_code_so" />
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_code_so"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_code_so" />
 
                 </LinearLayout>
 
@@ -182,14 +194,15 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
-
-                    <com.demo.barcode.widgets.spinner.SearchableSpinner
-                        android:id="@+id/ss_receiving_department"
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
-                        app:hintText="@string/text_choose_receiving_department" />
-
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_receiving_department"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_receiving_department" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -208,14 +221,15 @@
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
-
-                    <com.demo.barcode.widgets.spinner.SearchableSpinner
-                        android:id="@+id/ss_times"
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
-                        app:hintText="@string/text_choose_times_scan" />
-
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_times"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_times_scan" />
                 </LinearLayout>
 
                 <LinearLayout

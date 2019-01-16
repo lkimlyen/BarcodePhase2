@@ -238,7 +238,6 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                     if (isAdded()) {
                         showSuccess(getString(R.string.text_backup_success));
                         hideProgressBar();

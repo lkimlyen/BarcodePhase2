@@ -48,6 +48,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths"></meta-data>
         </provider>
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="barcode" />
         <activity android:name=".screen.login.LoginActivity"></activity>
         <activity android:name=".screen.dashboard.DashboardActivity" />
         <activity android:name=".screen.setting.SettingActivity" />
@@ -64,10 +68,8 @@
         <activity android:name=".screen.chang_password.ChangePasswordActivity" />
         <activity android:name=".screen.create_packaging.CreatePackagingActivity" />
         <activity android:name=".screen.print_stamp.PrintStempActivity" />
-        <activity android:name=".screen.capture.ScanActivity"
-            android:screenOrientation="fullSensor"
-            android:stateNotNeeded="true"
-            android:theme="@style/zxing_CaptureTheme"
+        <activity android:name=".widgets.barcodereader.BarcodeScannerActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".screen.history_pack.HistoryPackageActivity"/>
         <activity android:name=".screen.detail_package.DetailPackageActivity"/>

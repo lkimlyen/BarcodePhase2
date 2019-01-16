@@ -276,6 +276,9 @@
     <string name="text_do_you_want_print_delivery_note">Bạn có muốn in phiếu giao nhận!</string>
     <string name="text_delivery_code">Mã phiếu giao:</string>
     <string name="text_choose_delivery_code">Chọn mã phiếu giao</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

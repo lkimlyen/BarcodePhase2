@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.stages;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.demo.architect.data.model.GroupEntity;
@@ -103,12 +104,10 @@ public class StagesPresenter implements StagesContract.Presenter {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-
         List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
 
         if (list.size() == 0) {
             showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-
             return;
         }
 

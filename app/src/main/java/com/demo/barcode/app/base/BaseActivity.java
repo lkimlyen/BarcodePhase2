@@ -1,23 +1,16 @@
 package com.demo.barcode.app.base;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.location.Location;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -27,12 +20,6 @@ import com.demo.barcode.app.di.component.ApplicationComponent;
 import com.demo.barcode.app.permission.PermissionHelper;
 import com.demo.barcode.app.permission.PermissionListener;
 import com.demo.barcode.util.ConvertUtils;
-import com.demo.barcode.util.LocationHelper;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.security.ProviderInstaller;
 
 import java.util.ArrayList;
 

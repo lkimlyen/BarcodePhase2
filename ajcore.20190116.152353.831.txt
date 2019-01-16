@@ -1,0 +1,256 @@
+---- AspectJ Properties ---
+AspectJ Compiler 1.8.6 built on Friday Jun 5, 2015 at 23:41:42 GMT
+---- Dump Properties ---
+Dump file: ajcore.20190116.152353.831.txt
+Dump reason: java.lang.IllegalStateException
+Dump on exception: true
+Dump at exit condition: abort
+---- Exception Information ---
+java.lang.IllegalStateException: Expecting .,<, or ;, but found authapi while unpacking <R::Lcom/google/android/gms/common/api/Result;>Lcom/google/android/gms/common/api/internal/BaseImplementation$ApiMethodImpl<TR;Lcom/google/android/gms/internal/auth-api/zzr;>;
+	at org.aspectj.util.GenericSignatureParser.parseClassTypeSignature(GenericSignatureParser.java:204)
+	at org.aspectj.util.GenericSignatureParser.parseFieldTypeSignature(GenericSignatureParser.java:155)
+	at org.aspectj.util.GenericSignatureParser.parseTypeArgument(GenericSignatureParser.java:267)
+	at org.aspectj.util.GenericSignatureParser.maybeParseTypeArguments(GenericSignatureParser.java:275)
+	at org.aspectj.util.GenericSignatureParser.parseClassTypeSignature(GenericSignatureParser.java:196)
+	at org.aspectj.util.GenericSignatureParser.parseAsClassSignature(GenericSignatureParser.java:56)
+	at org.aspectj.weaver.UnresolvedType.forGenericTypeSignature(UnresolvedType.java:274)
+	at org.aspectj.weaver.bcel.BcelWorld.addSourceObjectType(BcelWorld.java:482)
+	at org.aspectj.weaver.bcel.BcelWorld.addSourceObjectType(BcelWorld.java:456)
+	at org.aspectj.weaver.bcel.BcelWeaver.addAspectsFromJarFile(BcelWeaver.java:263)
+	at org.aspectj.weaver.bcel.BcelWeaver.addLibraryJarFile(BcelWeaver.java:236)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.initBcelWorld(AjBuildManager.java:874)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performBuild(AjBuildManager.java:249)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:185)
+	at org.aspectj.ajdt.ajc.AjdtCommand.doCommand(AjdtCommand.java:112)
+	at org.aspectj.ajdt.ajc.AjdtCommand.runCommand(AjdtCommand.java:60)
+	at org.aspectj.tools.ajc.Main.run(Main.java:371)
+	at org.aspectj.tools.ajc.Main$run.call(Unknown Source)
+	at com.fernandocejas.frodo.plugin.FrodoPlugin$_apply_closure4$_closure5.doCall(FrodoPlugin.groovy:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:93)
+	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:325)
+	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:294)
+	at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1022)
+	at groovy.lang.Closure.call(Closure.java:414)
+	at groovy.lang.Closure.call(Closure.java:430)
+	at org.gradle.api.internal.AbstractTask$ClosureTaskAction.execute(AbstractTask.java:681)
+	at org.gradle.api.internal.AbstractTask$ClosureTaskAction.execute(AbstractTask.java:656)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter$1.run(ExecuteActionsTaskExecuter.java:122)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:336)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:328)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.execute(DefaultBuildOperationExecutor.java:197)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:107)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeAction(ExecuteActionsTaskExecuter.java:111)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeActions(ExecuteActionsTaskExecuter.java:92)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:70)
+	at org.gradle.api.internal.tasks.execution.SkipUpToDateTaskExecuter.execute(SkipUpToDateTaskExecuter.java:63)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskOutputCachingStateExecuter.execute(ResolveTaskOutputCachingStateExecuter.java:54)
+	at org.gradle.api.internal.tasks.execution.ValidatingTaskExecuter.execute(ValidatingTaskExecuter.java:58)
+	at org.gradle.api.internal.tasks.execution.SkipEmptySourceFilesTaskExecuter.execute(SkipEmptySourceFilesTaskExecuter.java:88)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskArtifactStateTaskExecuter.execute(ResolveTaskArtifactStateTaskExecuter.java:52)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:52)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:54)
+	at org.gradle.api.internal.tasks.execution.ExecuteAtMostOnceTaskExecuter.execute(ExecuteAtMostOnceTaskExecuter.java:43)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker$1.run(DefaultTaskGraphExecuter.java:248)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:336)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:328)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.execute(DefaultBuildOperationExecutor.java:197)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:107)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker.execute(DefaultTaskGraphExecuter.java:241)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker.execute(DefaultTaskGraphExecuter.java:230)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.processTask(DefaultTaskPlanExecutor.java:124)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.access$200(DefaultTaskPlanExecutor.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker$1.execute(DefaultTaskPlanExecutor.java:105)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker$1.execute(DefaultTaskPlanExecutor.java:99)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionPlan.execute(DefaultTaskExecutionPlan.java:625)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionPlan.executeWithTask(DefaultTaskExecutionPlan.java:580)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.run(DefaultTaskPlanExecutor.java:99)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:63)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:46)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:55)
+	at java.lang.Thread.run(Thread.java:745)
+---- System Properties ---
+java.vendor=JetBrains s.r.o
+sun.java.launcher=SUN_STANDARD
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+idea.paths.selector=AndroidStudio3.1
+jnidispatch.path=C:\Users\ImarkYPC\.AndroidStudio3.1\system\tmp\jna3882999685167576152.dll
+winp.unpack.dll.to.parent.dir=false
+os.name=Windows 10
+sun.boot.class.path=D:\Android\Studio\jre\jre\lib\resources.jar;D:\Android\Studio\jre\jre\lib\rt.jar;D:\Android\Studio\jre\jre\lib\sunrsasign.jar;D:\Android\Studio\jre\jre\lib\jsse.jar;D:\Android\Studio\jre\jre\lib\jce.jar;D:\Android\Studio\jre\jre\lib\charsets.jar;D:\Android\Studio\jre\jre\lib\jfr.jar;D:\Android\Studio\jre\jre\classes
+sun.desktop=windows
+java.vm.specification.vendor=Oracle Corporation
+java.runtime.version=1.8.0_152-release-1024-b02
+jna.loaded=true
+jb.vmOptionsFile=D:\Android\Studio\bin\studio64.exe.vmoptions,C:\Users\ImarkYPC\.AndroidStudio3.1\config\studio64.exe.vmoptions
+io.netty.serviceThreadPrefix=Netty 
+user.name=ImarkYPC
+java.rmi.server.disableHttp=true
+user.language=en
+sun.boot.library.path=D:\Android\Studio\jre\jre\bin
+jna.nosys=true
+idea.fatal.error.notification=disabled
+java.version=1.8.0_152-release
+swing.bufferPerWindow=true
+user.timezone=Asia/Bangkok
+java.net.preferIPv4Stack=true
+sun.arch.data.model=64
+java.util.concurrent.ForkJoinPool.common.threadFactory=com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory
+jna.tmpdir=C:\Users\ImarkYPC\.AndroidStudio3.1\system\tmp
+java.endorsed.dirs=D:\Android\Studio\jre\jre\lib\endorsed
+ide.native.launcher=true
+sun.cpu.isalist=amd64
+sun.jnu.encoding=Cp1252
+file.encoding.pkg=sun.io
+file.separator=\
+java.specification.name=Java Platform API Specification
+java.class.version=52.0
+user.country=US
+jna.boot.library.path=C:\Users\ImarkYPC\.gradle\native\jna\win32-amd64
+java.home=D:\Android\Studio\jre\jre
+java.vm.info=mixed mode
+os.version=10.0
+path.separator=;
+java.vm.version=25.152-b02
+idea.no.launcher=false
+user.variant=
+idea.max.content.load.filesize=20000
+java.awt.printerjob=sun.awt.windows.WPrinterJob
+javax.swing.rebaseCssSizeMap=true
+sun.io.unicode.encoding=UnicodeLittle
+awt.toolkit=sun.awt.windows.WToolkit
+idea.cycle.buffer.size=1024
+ide.new.welcome.screen.force=true
+io.netty.processId=51515
+log4j.defaultInitOverride=true
+user.script=
+idea.platform.prefix=AndroidStudio
+idea.dynamic.classpath=false
+user.home=C:\Users\ImarkYPC
+__idea.mac.env.lock=unlocked
+java.specification.vendor=Oracle Corporation
+library.jansi.path=C:\Users\ImarkYPC\.gradle\native\jansi\1.14\windows64
+java.library.path=D:\Android\Studio\jre\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft SQL Server\120\DTS\Binn\;C:\Users\ImarkYPC\AppData\Local\Microsoft\WindowsApps;C:\Users\ImarkYPC\AppData\Local\GitHubDesktop\bin;.
+java.vendor.url=https://www.jetbrains.com/
+java.vm.vendor=JetBrains s.r.o
+crashlytics.logger.home=C:\Users\ImarkYPC\.crashlytics\com.crashlytics.tools\crashlytics.log
+java.runtime.name=OpenJDK Runtime Environment
+sun.java.command=org.gradle.launcher.daemon.bootstrap.GradleDaemon 4.1
+java.class.path=C:\Users\ImarkYPC\.gradle\wrapper\dists\gradle-4.1-all\bzyivzo6n839fup2jbap0tjew\gradle-4.1\lib\gradle-launcher-4.1.jar
+io.netty.machineId=28:f0:76:ff:fe:16:65:0e
+java.vm.specification.name=Java Virtual Machine Specification
+idea.xdebug.key=-Xdebug
+idea.popup.weight=heavy
+java.vm.specification.version=1.8
+sun.cpu.endian=little
+sun.os.patch.level=
+java.io.tmpdir=C:\Users\ImarkYPC\AppData\Local\Temp\
+java.vendor.url.bug=https://youtrack.jetbrains.com
+java.rmi.server.hostname=localhost
+os.arch=amd64
+java.awt.graphicsenv=sun.awt.Win32GraphicsEnvironment
+idea.max.intellisense.filesize=2500
+java.ext.dirs=D:\Android\Studio\jre\jre\lib\ext;C:\Windows\Sun\Java\lib\ext
+idea.jre.check=true
+user.dir=D:\Documents\ancuong\BarcodePhase2
+line.separator=
+
+java.vm.name=OpenJDK 64-Bit Server VM
+java.util.Arrays.useLegacyMergeSort=true
+file.encoding=Cp1252
+studio.record.file=C:\Users\ImarkYPC\.AndroidStudio3.1\system\tmp\AndroidStudio.7a253c7e-cbd9-45dc-bbea-5ce418bec016
+java.specification.version=1.8
+---- Command Line ---
+-showWeaveInfo
+-1.5
+-inpath
+D:\Documents\ancuong\BarcodePhase2\app\build\retrolambda\devDebug
+-aspectpath
+C:\Users\ImarkYPC\.android\build-cache\ba86a6237c29501ea1a54ee027048c2ba4a53de0\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8e40f2e01a6279386c937e8f74ebe5821616da61\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7664b3831f36cef6725e83a614d699aabe8ff4ed\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f05db44ca348991559b1f32144a5af85461b6428\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8e8f2d6996e72d3e3cccefc90241e69d57548caa\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\aaac02f72af8aaaefeb736909c70f444ead37da9\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\026631373e4ae4b66fa18e1bf2bcdabb651874f7\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8f41dc9821197b1bd1ba3834268fa2b6bff53e33\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\a683354c4cb30cfa8a3f6b7f141cf94145658653\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\100f1e22e786004c4af3ee3b1517a0cf2ed6f975\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f07c7f79fd8de7b6f229afc7783335dbca8423ea\output\jars\classes.jar;C:\Users\ImarkYPC\AppData\Local\Android\Sdk\extras\m2repository\com\android\support\constraint\constraint-layout-solver\1.0.2\constraint-layout-solver-1.0.2.jar;C:\Users\ImarkYPC\.android\build-cache\519b4b4dd497068bae473be16465b7c27c8a2b0a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\071677d30576bd806974ae652b0fcc0f3614b938\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\cb1291ad9fea50e139da3d83e109539e6718d84a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\846025dd04d105b6dec7f947c6ac40e247677e16\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\682871ce5d75e1a7efacf5ffbcd0f3873f046c7b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3e8e0658ac5435b4bfefca60a2d225ac2a200efd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1dfb5aba9cf6bfd714b70a90667a999959fb5502\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\249e1be55fe02aded2894d3928acc2c29be0e13d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1d8fa7991b8a98e5302889c551ada96a1b14d990\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.dagger\dagger\2.0.2\de8416eda7b2fd7c25836b140c39e1cbf10542f6\dagger-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\javax.inject\javax.inject\1\6975da39a7040257bd51d21a231b76c915872d38\javax.inject-1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife\7.0.1\d5d13ea991eab0252e3710e5df3d6a9d4b21d461\butterknife-7.0.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\logging-interceptor\3.4.1\381fc1096ba65040d8e80ea43b2e1d9bad02345e\logging-interceptor-3.4.1.jar;C:\Users\ImarkYPC\.android\build-cache\fd630182feb1f32790fad16a07aaba0eb31f203d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\e89aec30ae1c99acddc9db10119a7e1a4f86c43d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\aeff192cfa95e0d90d6fca398fee52d45370f8f6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\32a4848b45923bd329e614fc4b8e474fe03f8412\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2e4a110952ebccb9f58a2eb4400b7db603a5917f\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\221b7082b058d1149e0fef1cf1ed3613fca91853\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b441328925d0c6ac5f5791983712f5ade95bd504\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\4556df25e64d035b8b007d903b763f29753bf709\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup\otto\1.3.8\cf615176cd1177edf71d3c9605f8dc148fede6be\otto-1.3.8.jar;C:\Users\ImarkYPC\.android\build-cache\eeca1c3c34b36759c97861aa231ee625b9a5cd51\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.googlecode.libphonenumber\libphonenumber\8.0.0\ce021971974ee6a26572e43eaba7edf184c3c63d\libphonenumber-8.0.0.jar;C:\Users\ImarkYPC\.android\build-cache\f4daea77146ff8c82b96b8fb6f0318c69c73eca6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b607f3700a0acef8a7ebc062e74562425f55e726\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\db6c4efdd614bbdf3392f9ab1652d8cd8c9a7eb3\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\9eb347abf754342e5d65c31614ab6608574bc742\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\0c9a00fc7d838896021d1067cc3ad87357fca1f5\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\02b8fb54f3fc86076eb58321509bcce6899a8a26\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7bb85188fa6f4b71c73b52809f31ccb878e3b1dc\output\jars\classes.jar;D:\Documents\ancuong\BarcodePhase2\domain\build\intermediates\bundles\default\classes.jar;D:\Documents\ancuong\BarcodePhase2\data\build\intermediates\bundles\default\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3801eb11c41c9366b5f23b8d32322c5f7d4390f2\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\adapter-rxjava\2.0.2\a60c039ba54c73d1133b72178e1b04133c73d13d\adapter-rxjava-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\io.reactivex\rxjava\1.1.1\b494968f6050d494de55dc3ce005e59c7eb40012\rxjava-1.1.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\converter-gson\2.0.2\f8d87f15b94b8d74e7ccf61d7eedb558811cdb30\converter-gson-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.2\3edcfe49d2c6053a70a2a47e4e1c2f94998a49cf\gson-2.8.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit\2.0.2\43eeae0b9fb087bb3194ba59ab63a38a32fbf3e\retrofit-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.9.1\84b4b7d1c4a238e7899972b7446c250691e65f1f\okhttp-3.9.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.13.0\a9283170b7305c8d92d25aff02a6ab7e45d06cbe\okio-1.13.0.jar;D:\Documents\ancuong\BarcodePhase2\utils\build\intermediates\bundles\default\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.sun.mail\android-mail\1.5.5\53a2f927b235acb565dbe9314ececfb7e6d43020\android-mail-1.5.5.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.sun.mail\android-activation\1.5.5\5442d5e05808145434b750c9f8a0c3f537383c5a\android-activation-1.5.5.jar;C:\Users\ImarkYPC\.android\build-cache\4dd8a797cfc07f268636b41db82a4a8ddcaec917\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\166878f6397677c8123842083a1981b5750e96fb\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\10332c83333fa8adbde067782921c30842cccc29\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f67c5d46a09a6741f90055227222b35cceacf0ad\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\95c7f42c9505b1df4f6637f819e36274376a12fa\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar;C:\Users\ImarkYPC\.android\build-cache\f9851c4a879fbf09c8b21096b7f386d7686f05b5\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.thefinestartist\annotations\0.9.0\b69d23b00ca5fd30feea91ab4b24a192d6b928ef\annotations-0.9.0.jar;C:\Users\ImarkYPC\.android\build-cache\d2df82429c06177a8cee8f28d1bfccfad9c4911c\output\jars\classes.jar;D:\Documents\ancuong\BarcodePhase2\thirdparty\build\intermediates\bundles\devDebug\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.fernandocejas.frodo\frodo-api\0.8.3\3709f3ceb3fa644bb032a45f327dbbff87635ef3\frodo-api-0.8.3.jar;C:\Users\ImarkYPC\.android\build-cache\108e91ad00648f39e8ee1e80dfef591ecaf94cdf\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\3.0.2\25ea2e8b0c338a877313bd4672d3fe056ea78f0d\jsr305-3.0.2.jar;C:\Users\ImarkYPC\.android\build-cache\02421bf4ca4371ae29ed20db68085e22cd7dfdd6\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\io.realm\realm-annotations\5.3.1\314fca65a3dbd4e09d04f96a2efa824b6ff268d0\realm-annotations-5.3.1.jar;C:\Users\ImarkYPC\.android\build-cache\5454a5422522506eea09b151a44ec178db65b29d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\06a6e68d3d31eb33354aadb40c4e47e63f9c0b44\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\31383dadf1e9d216d485332b5f74d0b47c2142e2\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\4cb24b673eeb2719c775cc757d0b72f2f4cb494d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\d389c72a6c67ff92bf8b3d4f2d3ab135bf7e2d6e\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\73c55fd9eb1e981ebe0e644531d48a35a1ef4f44\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3c0fda1e56693e20bc742b7efbf2181f649bb5b1\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\a550a7514ad175cbfd71215af6253134f8aa757e\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\54325fda95c8bb1b633b0566bf099aa8c95f23e8\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.3.2\f47e3fc99fb2755b8a354d60efa021a0b88f4180\core-3.3.2.jar;C:\Users\ImarkYPC\.android\build-cache\f9115b58d515d8b83919fc6ae169bd3468e3f6d0\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f7939fa84141eb8d6a06cdc4f96defa25f860bb8\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\39256b1217c58cf090881ad230c880059c9a516a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\67d7888d83f78ed3a76936993aefe96f7d2ba609\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1cff83cd6690454de82b2010dff824fade334745\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-android\1.4.0\cc174c559b5177982887bf6e1b76003aebad9516\bolts-android-1.4.0.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar;C:\Users\ImarkYPC\.android\build-cache\40aa4283f23312bdef023b3c168463c294f1b7be\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f6d852d5f5f3f3d48bd53e5122fffd015a5417f8\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\9028bcf02db93196f180cc421ba7df6a30b81408\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\fce7c610f729ebc4817447a9492fb8e1b8eae68a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7e4443b0649b084423012d06eafe958456c98495\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\147ceb079681b487e274e0ab4a56b6f0397daabd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\658cd7c32630208ba5e68336d37513d5de3258c6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\804be981683072088cc2036ed30d7c6722634e7b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\15ac4f32806980a1b06b133c4f4c809bb1ba4cd2\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\68cdd7b6d480affea343d79e5e5f527885bf9f83\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2b3ef2d51b00abecf31b795c6f95c337e9e5241b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\54b5c841a337fb3f696bc64f47a1b3466ea5cb52\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\fb7752a1533cc7bfe131cc780e335385d11e49dd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7c39828f5c5c06557b77cbfaad9ab5d37ff49835\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\c5139830d38579280186bb6d18bcb6d3103d3833\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2f1b5a7284e1059d3893c88a75f132553747809f\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b6ed9f48494006c6c572d4a7d0f4b453f6f6d707\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\d7e390e00d63df2c3326deaddae722afdaa6f9e4\output\jars\classes.jar;C:\Users\ImarkYPC\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\25.3.0\support-annotations-25.3.0.jar;C:\Users\ImarkYPC\.android\build-cache\6c972ecedb4e409223c00997c440d1d8e20aaea3\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2aae8c477cff46d00a68cb5198e2110bf96e1781\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\6670aef7c108574eea0fa988895acc7190f6f74a\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\org.aspectj\aspectjrt\1.8.6\a7db7ea5f7bb18a1cbd9f24edd0e666504800be\aspectjrt-1.8.6.jar;C:\Users\ImarkYPC\.android\build-cache\2568b07f9a05fea81e457eae317c79bcb10ffcf9\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\javax.annotation\jsr250-api\1.0\5025422767732a1ab45d93abfea846513d742dcf\jsr250-api-1.0.jar;D:\Android\Studio\jre\jre\lib\rt.jar
+-d
+D:\Documents\ancuong\BarcodePhase2\app\build\retrolambda\devDebug
+-classpath
+C:\Users\ImarkYPC\.android\build-cache\ba86a6237c29501ea1a54ee027048c2ba4a53de0\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8e40f2e01a6279386c937e8f74ebe5821616da61\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7664b3831f36cef6725e83a614d699aabe8ff4ed\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f05db44ca348991559b1f32144a5af85461b6428\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8e8f2d6996e72d3e3cccefc90241e69d57548caa\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\aaac02f72af8aaaefeb736909c70f444ead37da9\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\026631373e4ae4b66fa18e1bf2bcdabb651874f7\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\8f41dc9821197b1bd1ba3834268fa2b6bff53e33\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\a683354c4cb30cfa8a3f6b7f141cf94145658653\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\100f1e22e786004c4af3ee3b1517a0cf2ed6f975\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f07c7f79fd8de7b6f229afc7783335dbca8423ea\output\jars\classes.jar;C:\Users\ImarkYPC\AppData\Local\Android\Sdk\extras\m2repository\com\android\support\constraint\constraint-layout-solver\1.0.2\constraint-layout-solver-1.0.2.jar;C:\Users\ImarkYPC\.android\build-cache\519b4b4dd497068bae473be16465b7c27c8a2b0a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\071677d30576bd806974ae652b0fcc0f3614b938\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\cb1291ad9fea50e139da3d83e109539e6718d84a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\846025dd04d105b6dec7f947c6ac40e247677e16\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\682871ce5d75e1a7efacf5ffbcd0f3873f046c7b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3e8e0658ac5435b4bfefca60a2d225ac2a200efd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1dfb5aba9cf6bfd714b70a90667a999959fb5502\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\249e1be55fe02aded2894d3928acc2c29be0e13d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1d8fa7991b8a98e5302889c551ada96a1b14d990\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.dagger\dagger\2.0.2\de8416eda7b2fd7c25836b140c39e1cbf10542f6\dagger-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\javax.inject\javax.inject\1\6975da39a7040257bd51d21a231b76c915872d38\javax.inject-1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife\7.0.1\d5d13ea991eab0252e3710e5df3d6a9d4b21d461\butterknife-7.0.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\logging-interceptor\3.4.1\381fc1096ba65040d8e80ea43b2e1d9bad02345e\logging-interceptor-3.4.1.jar;C:\Users\ImarkYPC\.android\build-cache\fd630182feb1f32790fad16a07aaba0eb31f203d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\e89aec30ae1c99acddc9db10119a7e1a4f86c43d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\aeff192cfa95e0d90d6fca398fee52d45370f8f6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\32a4848b45923bd329e614fc4b8e474fe03f8412\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2e4a110952ebccb9f58a2eb4400b7db603a5917f\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\221b7082b058d1149e0fef1cf1ed3613fca91853\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b441328925d0c6ac5f5791983712f5ade95bd504\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\4556df25e64d035b8b007d903b763f29753bf709\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup\otto\1.3.8\cf615176cd1177edf71d3c9605f8dc148fede6be\otto-1.3.8.jar;C:\Users\ImarkYPC\.android\build-cache\eeca1c3c34b36759c97861aa231ee625b9a5cd51\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.googlecode.libphonenumber\libphonenumber\8.0.0\ce021971974ee6a26572e43eaba7edf184c3c63d\libphonenumber-8.0.0.jar;C:\Users\ImarkYPC\.android\build-cache\f4daea77146ff8c82b96b8fb6f0318c69c73eca6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b607f3700a0acef8a7ebc062e74562425f55e726\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\db6c4efdd614bbdf3392f9ab1652d8cd8c9a7eb3\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\9eb347abf754342e5d65c31614ab6608574bc742\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\0c9a00fc7d838896021d1067cc3ad87357fca1f5\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\02b8fb54f3fc86076eb58321509bcce6899a8a26\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7bb85188fa6f4b71c73b52809f31ccb878e3b1dc\output\jars\classes.jar;D:\Documents\ancuong\BarcodePhase2\domain\build\intermediates\bundles\default\classes.jar;D:\Documents\ancuong\BarcodePhase2\data\build\intermediates\bundles\default\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3801eb11c41c9366b5f23b8d32322c5f7d4390f2\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\adapter-rxjava\2.0.2\a60c039ba54c73d1133b72178e1b04133c73d13d\adapter-rxjava-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\io.reactivex\rxjava\1.1.1\b494968f6050d494de55dc3ce005e59c7eb40012\rxjava-1.1.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\converter-gson\2.0.2\f8d87f15b94b8d74e7ccf61d7eedb558811cdb30\converter-gson-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.2\3edcfe49d2c6053a70a2a47e4e1c2f94998a49cf\gson-2.8.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit\2.0.2\43eeae0b9fb087bb3194ba59ab63a38a32fbf3e\retrofit-2.0.2.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.9.1\84b4b7d1c4a238e7899972b7446c250691e65f1f\okhttp-3.9.1.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.13.0\a9283170b7305c8d92d25aff02a6ab7e45d06cbe\okio-1.13.0.jar;D:\Documents\ancuong\BarcodePhase2\utils\build\intermediates\bundles\default\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.sun.mail\android-mail\1.5.5\53a2f927b235acb565dbe9314ececfb7e6d43020\android-mail-1.5.5.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.sun.mail\android-activation\1.5.5\5442d5e05808145434b750c9f8a0c3f537383c5a\android-activation-1.5.5.jar;C:\Users\ImarkYPC\.android\build-cache\4dd8a797cfc07f268636b41db82a4a8ddcaec917\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\166878f6397677c8123842083a1981b5750e96fb\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\10332c83333fa8adbde067782921c30842cccc29\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f67c5d46a09a6741f90055227222b35cceacf0ad\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\95c7f42c9505b1df4f6637f819e36274376a12fa\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar;C:\Users\ImarkYPC\.android\build-cache\f9851c4a879fbf09c8b21096b7f386d7686f05b5\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.thefinestartist\annotations\0.9.0\b69d23b00ca5fd30feea91ab4b24a192d6b928ef\annotations-0.9.0.jar;C:\Users\ImarkYPC\.android\build-cache\d2df82429c06177a8cee8f28d1bfccfad9c4911c\output\jars\classes.jar;D:\Documents\ancuong\BarcodePhase2\thirdparty\build\intermediates\bundles\devDebug\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.fernandocejas.frodo\frodo-api\0.8.3\3709f3ceb3fa644bb032a45f327dbbff87635ef3\frodo-api-0.8.3.jar;C:\Users\ImarkYPC\.android\build-cache\108e91ad00648f39e8ee1e80dfef591ecaf94cdf\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\3.0.2\25ea2e8b0c338a877313bd4672d3fe056ea78f0d\jsr305-3.0.2.jar;C:\Users\ImarkYPC\.android\build-cache\02421bf4ca4371ae29ed20db68085e22cd7dfdd6\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\io.realm\realm-annotations\5.3.1\314fca65a3dbd4e09d04f96a2efa824b6ff268d0\realm-annotations-5.3.1.jar;C:\Users\ImarkYPC\.android\build-cache\5454a5422522506eea09b151a44ec178db65b29d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\06a6e68d3d31eb33354aadb40c4e47e63f9c0b44\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\31383dadf1e9d216d485332b5f74d0b47c2142e2\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\4cb24b673eeb2719c775cc757d0b72f2f4cb494d\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\d389c72a6c67ff92bf8b3d4f2d3ab135bf7e2d6e\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\73c55fd9eb1e981ebe0e644531d48a35a1ef4f44\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\3c0fda1e56693e20bc742b7efbf2181f649bb5b1\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\a550a7514ad175cbfd71215af6253134f8aa757e\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\54325fda95c8bb1b633b0566bf099aa8c95f23e8\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.3.2\f47e3fc99fb2755b8a354d60efa021a0b88f4180\core-3.3.2.jar;C:\Users\ImarkYPC\.android\build-cache\f9115b58d515d8b83919fc6ae169bd3468e3f6d0\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f7939fa84141eb8d6a06cdc4f96defa25f860bb8\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\39256b1217c58cf090881ad230c880059c9a516a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\67d7888d83f78ed3a76936993aefe96f7d2ba609\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\1cff83cd6690454de82b2010dff824fade334745\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-android\1.4.0\cc174c559b5177982887bf6e1b76003aebad9516\bolts-android-1.4.0.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-applinks\1.4.0\8ad21bf21784dacce5f2043afb97218cc377e835\bolts-applinks-1.4.0.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\com.parse.bolts\bolts-tasks\1.4.0\d85884acf6810a3bbbecb587f239005cbc846dc4\bolts-tasks-1.4.0.jar;C:\Users\ImarkYPC\.android\build-cache\40aa4283f23312bdef023b3c168463c294f1b7be\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\f6d852d5f5f3f3d48bd53e5122fffd015a5417f8\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\9028bcf02db93196f180cc421ba7df6a30b81408\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\fce7c610f729ebc4817447a9492fb8e1b8eae68a\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7e4443b0649b084423012d06eafe958456c98495\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\147ceb079681b487e274e0ab4a56b6f0397daabd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\658cd7c32630208ba5e68336d37513d5de3258c6\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\804be981683072088cc2036ed30d7c6722634e7b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\15ac4f32806980a1b06b133c4f4c809bb1ba4cd2\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\68cdd7b6d480affea343d79e5e5f527885bf9f83\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2b3ef2d51b00abecf31b795c6f95c337e9e5241b\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\54b5c841a337fb3f696bc64f47a1b3466ea5cb52\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\fb7752a1533cc7bfe131cc780e335385d11e49dd\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\7c39828f5c5c06557b77cbfaad9ab5d37ff49835\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\c5139830d38579280186bb6d18bcb6d3103d3833\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2f1b5a7284e1059d3893c88a75f132553747809f\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\b6ed9f48494006c6c572d4a7d0f4b453f6f6d707\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\d7e390e00d63df2c3326deaddae722afdaa6f9e4\output\jars\classes.jar;C:\Users\ImarkYPC\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\25.3.0\support-annotations-25.3.0.jar;C:\Users\ImarkYPC\.android\build-cache\6c972ecedb4e409223c00997c440d1d8e20aaea3\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\2aae8c477cff46d00a68cb5198e2110bf96e1781\output\jars\classes.jar;C:\Users\ImarkYPC\.android\build-cache\6670aef7c108574eea0fa988895acc7190f6f74a\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\org.aspectj\aspectjrt\1.8.6\a7db7ea5f7bb18a1cbd9f24edd0e666504800be\aspectjrt-1.8.6.jar;C:\Users\ImarkYPC\.android\build-cache\2568b07f9a05fea81e457eae317c79bcb10ffcf9\output\jars\classes.jar;C:\Users\ImarkYPC\.gradle\caches\modules-2\files-2.1\javax.annotation\jsr250-api\1.0\5025422767732a1ab45d93abfea846513d742dcf\jsr250-api-1.0.jar;D:\Android\Studio\jre\jre\lib\rt.jar
+-bootclasspath
+C:\Users\ImarkYPC\AppData\Local\Android\Sdk\platforms\android-26\android.jar
+---- Full Classpath ---
+Empty
+---- Compiler Messages ---
+abort ABORT -- (IllegalStateException) Expecting .,<, or ;, but found authapi while unpacking <R::Lcom/google/android/gms/common/api/Result;>Lcom/google/android/gms/common/api/internal/BaseImplementation$ApiMethodImpl<TR;Lcom/google/android/gms/internal/auth-api/zzr;>;
+Expecting .,<, or ;, but found authapi while unpacking <R::Lcom/google/android/gms/common/api/Result;>Lcom/google/android/gms/common/api/internal/BaseImplementation$ApiMethodImpl<TR;Lcom/google/android/gms/internal/auth-api/zzr;>;
+java.lang.IllegalStateException: Expecting .,<, or ;, but found authapi while unpacking <R::Lcom/google/android/gms/common/api/Result;>Lcom/google/android/gms/common/api/internal/BaseImplementation$ApiMethodImpl<TR;Lcom/google/android/gms/internal/auth-api/zzr;>;
+	at org.aspectj.util.GenericSignatureParser.parseClassTypeSignature(GenericSignatureParser.java:204)
+	at org.aspectj.util.GenericSignatureParser.parseFieldTypeSignature(GenericSignatureParser.java:155)
+	at org.aspectj.util.GenericSignatureParser.parseTypeArgument(GenericSignatureParser.java:267)
+	at org.aspectj.util.GenericSignatureParser.maybeParseTypeArguments(GenericSignatureParser.java:275)
+	at org.aspectj.util.GenericSignatureParser.parseClassTypeSignature(GenericSignatureParser.java:196)
+	at org.aspectj.util.GenericSignatureParser.parseAsClassSignature(GenericSignatureParser.java:56)
+	at org.aspectj.weaver.UnresolvedType.forGenericTypeSignature(UnresolvedType.java:274)
+	at org.aspectj.weaver.bcel.BcelWorld.addSourceObjectType(BcelWorld.java:482)
+	at org.aspectj.weaver.bcel.BcelWorld.addSourceObjectType(BcelWorld.java:456)
+	at org.aspectj.weaver.bcel.BcelWeaver.addAspectsFromJarFile(BcelWeaver.java:263)
+	at org.aspectj.weaver.bcel.BcelWeaver.addLibraryJarFile(BcelWeaver.java:236)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.initBcelWorld(AjBuildManager.java:874)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performBuild(AjBuildManager.java:249)
+	at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:185)
+	at org.aspectj.ajdt.ajc.AjdtCommand.doCommand(AjdtCommand.java:112)
+	at org.aspectj.ajdt.ajc.AjdtCommand.runCommand(AjdtCommand.java:60)
+	at org.aspectj.tools.ajc.Main.run(Main.java:371)
+	at org.aspectj.tools.ajc.Main$run.call(Unknown Source)
+	at com.fernandocejas.frodo.plugin.FrodoPlugin$_apply_closure4$_closure5.doCall(FrodoPlugin.groovy:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:93)
+	at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:325)
+	at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:294)
+	at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1022)
+	at groovy.lang.Closure.call(Closure.java:414)
+	at groovy.lang.Closure.call(Closure.java:430)
+	at org.gradle.api.internal.AbstractTask$ClosureTaskAction.execute(AbstractTask.java:681)
+	at org.gradle.api.internal.AbstractTask$ClosureTaskAction.execute(AbstractTask.java:656)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter$1.run(ExecuteActionsTaskExecuter.java:122)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:336)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:328)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.execute(DefaultBuildOperationExecutor.java:197)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:107)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeAction(ExecuteActionsTaskExecuter.java:111)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeActions(ExecuteActionsTaskExecuter.java:92)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:70)
+	at org.gradle.api.internal.tasks.execution.SkipUpToDateTaskExecuter.execute(SkipUpToDateTaskExecuter.java:63)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskOutputCachingStateExecuter.execute(ResolveTaskOutputCachingStateExecuter.java:54)
+	at org.gradle.api.internal.tasks.execution.ValidatingTaskExecuter.execute(ValidatingTaskExecuter.java:58)
+	at org.gradle.api.internal.tasks.execution.SkipEmptySourceFilesTaskExecuter.execute(SkipEmptySourceFilesTaskExecuter.java:88)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskArtifactStateTaskExecuter.execute(ResolveTaskArtifactStateTaskExecuter.java:52)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:52)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:54)
+	at org.gradle.api.internal.tasks.execution.ExecuteAtMostOnceTaskExecuter.execute(ExecuteAtMostOnceTaskExecuter.java:43)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker$1.run(DefaultTaskGraphExecuter.java:248)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:336)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor$RunnableBuildOperationWorker.execute(DefaultBuildOperationExecutor.java:328)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.execute(DefaultBuildOperationExecutor.java:197)
+	at org.gradle.internal.progress.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:107)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker.execute(DefaultTaskGraphExecuter.java:241)
+	at org.gradle.execution.taskgraph.DefaultTaskGraphExecuter$EventFiringTaskWorker.execute(DefaultTaskGraphExecuter.java:230)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.processTask(DefaultTaskPlanExecutor.java:124)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.access$200(DefaultTaskPlanExecutor.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker$1.execute(DefaultTaskPlanExecutor.java:105)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker$1.execute(DefaultTaskPlanExecutor.java:99)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionPlan.execute(DefaultTaskExecutionPlan.java:625)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionPlan.executeWithTask(DefaultTaskExecutionPlan.java:580)
+	at org.gradle.execution.taskgraph.DefaultTaskPlanExecutor$TaskExecutorWorker.run(DefaultTaskPlanExecutor.java:99)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:63)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:46)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:55)
+	at java.lang.Thread.run(Thread.java:745)
+

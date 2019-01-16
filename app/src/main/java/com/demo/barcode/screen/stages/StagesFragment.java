@@ -40,9 +40,12 @@ import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
-import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
+import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
+import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -53,8 +56,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -67,11 +68,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private StagesAdapter adapter;
     public MediaPlayer mp1, mp2, mp3;
     private int times = 0;
-    @Bind(R.id.ss_code_so)
-    SearchableSpinner ssCodeSO;
+    @Bind(R.id.tv_code_so)
+    TextView tvCodeSO;
 
-    @Bind(R.id.ss_times)
-    SearchableSpinner ssTimes;
+    @Bind(R.id.tv_times)
+    TextView tvTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -82,11 +83,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     @Bind(R.id.lv_code)
     RecyclerView rvCode;
 
-    @Bind(R.id.ss_type_product)
-    SearchableSpinner ssTypeProduct;
+    @Bind(R.id.tv_type_product)
+    TextView tvTypeProduct;
 
-    @Bind(R.id.ss_receiving_department)
-    SearchableSpinner ssDepartment;
+    @Bind(R.id.tv_receiving_department)
+    TextView tvDepartment;
 
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
@@ -163,85 +164,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
 
-        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                uploadData();
-            }
-        });
-
-        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                uploadData();
-            }
-        });
-
-        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                uploadData();
-            }
-        });
-        ssTimes.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                uploadData();
-            }
-        });
-        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
-                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
-        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        ssTypeProduct.setAdapter(adapter);
-
-        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         mPresenter.getListDepartment();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -323,23 +246,31 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListDepartment(List<DepartmentEntity> list) {
-        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssDepartment.setAdapter(adapter);
-        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departmentId = list.get(position).getId();
-                if (times > 0 && orderId > 0) {
-                    mPresenter.getListScanStages(orderId, departmentId, times);
+        if (list.size() > 0){
+            tvDepartment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            DepartmentEntity departmentEntity = (DepartmentEntity) item;
+                            tvDepartment.setText(departmentEntity.getName());
+                            departmentId = list.get(position).getId();
+                            if (times > 0 && orderId > 0) {
+                                mPresenter.getListScanStages(orderId, departmentId, times);
+                            }
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
                 }
-            }
+            });
+        }else {
+            tvDepartment.setOnClickListener(null);
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
     }
 
     @Override
@@ -445,27 +376,29 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListSO(List<SOEntity> list) {
-        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                orderId = list.get(position).getOrderId();
-                if (orderId > 0) {
-                    mPresenter.getListProduct(orderId, times, departmentId, false);
-
+        if (list.size() > 0){
+            tvCodeSO.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            SOEntity soItem = (SOEntity) item;
+                            tvCodeSO.setText(soItem.getCodeSO());
+                            txtCustomerName.setText(soItem.getCustomerName());
+                            orderId = soItem.getOrderId();
+                            mPresenter.getListProduct(orderId, times, departmentId, false);
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
                 }
+            });
+        }else {
+            tvCodeSO.setOnClickListener(null);
+        }
 
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
 
@@ -530,22 +463,30 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListTimes(List<Integer> list) {
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssTimes.setAdapter(adapter);
-        ssTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                times = list.get(position);
-                if (orderId > 0 && departmentId > 0) {
-                    mPresenter.getListScanStages(orderId, departmentId, times);
+        if(list.size() > 0){
+            tvTimes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            Integer number = (Integer) item;
+                            tvTimes.setText(String.valueOf(number));
+                            times = number;
+                            if (orderId > 0 && departmentId > 0) {
+                                mPresenter.getListScanStages(orderId, departmentId, number);
+                            }
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
                 }
-            }
+            });
+        }else {
+            tvTimes.setOnClickListener(null);
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -554,13 +495,11 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             txtCustomerName.setText("");
 
             ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
-            ssCodeSO.setAdapter(adapter);
+            //ssCodeSO.setAdapter(adapter);
             orderId = 0;
 
         }
 
-        ArrayAdapter<Integer> adapterTimes = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
-        ssTimes.setAdapter(adapterTimes);
         times = 0;
         rvCode.setAdapter(null);
 
@@ -781,16 +720,40 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             showError(getString(R.string.text_type_scan_null));
             return;
         }
-        integrator = new IntentIntegrator(getActivity());
-        integrator.setCaptureActivity(ScanActivity.class);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Đặt mã cần quét vào khung");
-        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-        integrator.setBeepEnabled(false);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.setOrientationLocked(false);
-        integrator.initiateScan();
+
+        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
+                .withActivity(getActivity())
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withCenterTracker()
+                .withText("Scanning...")
+                .withResultListener(new BarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        //  barcodeResult = barcode;
+                        String contents = barcode.rawValue;
+                        String barcode2 = contents.replace("DEMO", "");
+                        mPresenter.checkBarcode(barcode2, departmentId, times, typeScan == 2);
+                    }
+                })
+                .build();
+        barcodeScanner.startScan();
     }
 
+    @OnClick(R.id.tv_type_product)
+    public void chooseProduct() {
+        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                (TypeSOManager.getInstance().getListType());
+        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+            @Override
+            public void onSearchableItemClicked(Object item, int position) {
+                TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                tvTypeProduct.setText(typeSO.getName());
+                mPresenter.getListSO(typeSO.getValue());
+            }
+        });
+        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+    }
 
 }

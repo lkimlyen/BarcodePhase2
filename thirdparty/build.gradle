@@ -36,7 +36,6 @@ dependencies {
     def appDependencies = rootProject.ext.appDependencies
 
     compile appDependencies.facebookSDK
-    compile appDependencies.googlePlatServices
     compile appDependencies.firebaseMessaging
     compile appDependencies.firebaseCrash
 
