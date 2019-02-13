@@ -53,7 +53,7 @@ public interface LocalRepository {
 
     Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
 
-    Observable<ProductDetail> getProductDetail(ProductEntity productEntity);
+    Observable<ProductDetail> getProductDetail(ProductEntity productEntity, int times);
 
     Observable<String> updateNumberScanStages(final long stagesId, final double numberInput);
 
@@ -165,4 +165,6 @@ public interface LocalRepository {
     Observable<String> deleteDataLocal();
 
     Observable<List<GroupScan>> getListGroupScanVersion(long orderId, int departmentId, int times);
+
+    Observable<String> saveListProductDetail(List<ProductEntity> entity);
 }

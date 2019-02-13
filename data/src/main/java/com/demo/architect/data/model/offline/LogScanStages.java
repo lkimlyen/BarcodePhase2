@@ -201,10 +201,9 @@ public class LogScanStages extends RealmObject {
 
         RealmList<LogScanStages> parentList = parent.getList();
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", scanStages.getProductDetailId())
+                .equalTo("times",scanStages.getTimes())
                 .equalTo("userId", scanStages.getUserId()).findFirst();
-        if (productDetail == null) {
-            productDetail = ProductDetail.create(realm, productEntity, scanStages.userId);
-        }
+
         LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
                 .equalTo("groupCode", scanStages.groupCode)
                 .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
@@ -219,6 +218,7 @@ public class LogScanStages extends RealmObject {
             logScanStages.setNumberInput(logScanStages.getNumberInput() + scanStages.getNumberInput());
             logScanStages.setNumberGroup(logScanStages.getNumberInput());
         }
+
         NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", scanStages.getTimes()).findFirst();
         numberInputModel.setNumberScanned(numberInputModel.getNumberScanned() + scanStages.getNumberInput());
         numberInputModel.setNumberRest(numberInputModel.getNumberTotal() - numberInputModel.getNumberScanned());

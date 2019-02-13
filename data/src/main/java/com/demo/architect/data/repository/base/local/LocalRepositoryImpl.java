@@ -195,12 +195,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ProductDetail> getProductDetail(final ProductEntity product) {
+    public Observable<ProductDetail> getProductDetail(final ProductEntity product, final int times) {
         return Observable.create(new Observable.OnSubscribe<ProductDetail>() {
             @Override
             public void call(Subscriber<? super ProductDetail> subscriber) {
                 try {
-                    ProductDetail productDetail = databaseRealm.getProductDetail(product);
+                    ProductDetail productDetail = databaseRealm.getProductDetail(product,times);
                     subscriber.onNext(productDetail);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1090,6 +1090,22 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     List<GroupScan> result = databaseRealm.getListGroupScanVersion(orderId,departmentId,times);
                     subscriber.onNext(result);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> saveListProductDetail(final List<ProductEntity> entity) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.saveListProductDetail(entity);
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

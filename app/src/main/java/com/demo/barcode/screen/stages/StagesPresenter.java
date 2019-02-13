@@ -115,19 +115,11 @@ public class StagesPresenter implements StagesContract.Presenter {
         if (model != null) {
             if (!groupCode) {
                 // if (model.getListDepartmentID().contains(departmentId)) {
-                localRepository.getProductDetail(model).subscribe(new Action1<ProductDetail>() {
+                localRepository.getProductDetail(model,times).subscribe(new Action1<ProductDetail>() {
                     @Override
                     public void call(ProductDetail productDetail) {
-                        NumberInputModel numberInput = null;
-                        for (int i = 0; i < productDetail.getListInput().size(); i++) {
-                            NumberInputModel input = productDetail.getListInput().get(i);
-                            if (input.getTimes() == times) {
-                                numberInput = input;
-                                break;
-                            }
-                        }
-                        if (numberInput != null) {
-                            if (numberInput.getNumberRest() > 0) {
+                        if (productDetail != null) {
+                            if (productDetail.getNumberRest() > 0) {
                                 saveBarcodeToDataBase(times, model, 1, departmentId, null, true, false);
                             } else {
                                 view.showCheckResidual(times, model, departmentId);
@@ -161,7 +153,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId) {
-
         allowedToSave = true;
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
@@ -587,19 +578,24 @@ public class StagesPresenter implements StagesContract.Presenter {
                     public void onSuccess(GetInputForProductDetailUsecase.ResponseValue successResponse) {
 
                         ListProductManager.getInstance().setListProduct(successResponse.getEntity());
-
-                        localRepository.updateNumberTotalProduct(successResponse.getEntity()).subscribe(new Action1<String>() {
+                        localRepository.saveListProductDetail(successResponse.getEntity()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                if (!refresh) {
-                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
-                                    if (times > 0 && department > 0) {
-                                        getListScanStages(orderId, department, times);
-                                    }
-                                }
-                                getListGroupCode(orderId);
+
                             }
                         });
+//                        localRepository.updateNumberTotalProduct(successResponse.getEntity()).subscribe(new Action1<String>() {
+//                            @Override
+//                            public void call(String s) {
+//                                if (!refresh) {
+//                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
+//                                    if (times > 0 && department > 0) {
+//                                        getListScanStages(orderId, department, times);
+//                                    }
+//                                }
+//                                getListGroupCode(orderId);
+//                            }
+//                        });
 
 
                     }

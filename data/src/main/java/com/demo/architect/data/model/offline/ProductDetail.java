@@ -8,6 +8,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class ProductDetail extends RealmObject {
@@ -16,20 +17,28 @@ public class ProductDetail extends RealmObject {
     private long productId;
     private String productName;
     private String productDetailCode;
+    private int times;
+    private double numberTotal;
+    private double numberSuccess;
+    private double numberScanned;
+    private double numberRest;
     private long userId;
-    @SuppressWarnings("unused")
-    private RealmList<NumberInputModel> listInput;
     private RealmList<Integer> listStages;
 
 
     public ProductDetail() {
     }
 
-    public ProductDetail(long id, long productId, String productName, String productDetailCode, long userId) {
+    public ProductDetail(long id, long productId, String productName, String productDetailCode, int times, double numberTotal, double numberSuccess, double numberScanned, double numberRest, long userId) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.productDetailCode = productDetailCode;
+        this.times = times;
+        this.numberTotal = numberTotal;
+        this.numberSuccess = numberSuccess;
+        this.numberScanned = numberScanned;
+        this.numberRest = numberRest;
         this.userId = userId;
     }
 
@@ -69,60 +78,35 @@ public class ProductDetail extends RealmObject {
         return productId;
     }
 
-    public RealmList<NumberInputModel> getListInput() {
-        return listInput;
-    }
-
-    public static ProductDetail create(Realm realm, ProductEntity productEntity, long userId) {
-        ProductDetail productDetail = new ProductDetail(id(realm) + 1, productEntity.getProductDetailID(),
-                productEntity.getProductDetailName(), productEntity.getProductDetailCode(), userId);
-        productDetail = realm.copyToRealm(productDetail);
-        RealmList<NumberInputModel> numberInputModels = productDetail.getListInput();
-        for (NumberInput numberInput : productEntity.getListInput()) {
-            numberInputModels.add(NumberInputModel.create(realm, numberInput));
-        }
-        RealmList<Integer> listStages = productDetail.getListStages();
-        for (Integer id : productEntity.getListDepartmentID()) {
-            listStages.add(id);
-        }
-        return productDetail;
-    }
-
-    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity, long userId) {
-        ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
-                .equalTo("userId", userId).findFirst();
-        if (productDetail == null) {
-            realm.beginTransaction();
-            productDetail = ProductDetail.create(realm, productEntity, userId);
-            realm.commitTransaction();
-        } else {
-            realm.beginTransaction();
-            RealmList<NumberInputModel> list = productDetail.getListInput();
+    public static void create(Realm realm, List<ProductEntity> list, long userId) {
+        RealmResults<ProductDetail> results = realm.where(ProductDetail.class).findAll();
+        results.deleteAllFromRealm();
+        for (ProductEntity productEntity : list) {
             for (NumberInput numberInput : productEntity.getListInput()) {
-
-                NumberInputModel numberInputModel = list.where().equalTo("times", numberInput.getTimesInput()).findFirst();
-                if (numberInputModel == null) {
-                    list.add(NumberInputModel.create(realm, numberInput));
-                } else {
-                    double numberTotal = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
-                    numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotal);
-                    numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
-                    numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
-                    numberInputModel.setNumberScanned(numberInputModel.getNumberTotal() - numberInputModel.getNumberRest());
+                ProductDetail productDetail = new ProductDetail(id(realm) + 1, productEntity.getProductDetailID(),
+                        productEntity.getProductDetailName(), productEntity.getProductDetailCode(), numberInput.getTimesInput(), numberInput.getNumberTotalInput(),
+                        numberInput.getNumberSuccess(), numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), userId);
+                productDetail = realm.copyToRealm(productDetail);
+                RealmList<Integer> listStages = productDetail.getListStages();
+                for (Integer id : productEntity.getListDepartmentID()) {
+                    listStages.add(id);
                 }
-
             }
-            realm.commitTransaction();
-
         }
+    }
+
+    public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity,int times, long userId) {
+        ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
+                .equalTo("times",times)
+                .equalTo("userId", userId).findFirst();
         return productDetail;
     }
 
     public static void updateProductDetail(Realm realm, List<ProductEntity> list, long userId) {
-        for (ProductEntity productEntity : list){
+        for (ProductEntity productEntity : list) {
             ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productId", productEntity.getProductDetailID())
                     .equalTo("userId", userId).findFirst();
-            if (productDetail != null){
+            if (productDetail != null) {
                 RealmList<NumberInputModel> listNumberInput = productDetail.getListInput();
                 for (NumberInput numberInput : productEntity.getListInput()) {
                     NumberInputModel numberInputModel = listNumberInput.where().equalTo("times", numberInput.getTimesInput()).findFirst();
@@ -140,7 +124,33 @@ public class ProductDetail extends RealmObject {
             }
 
         }
+    }
 
+    public long getId() {
+        return id;
+    }
 
+    public int getTimes() {
+        return times;
+    }
+
+    public double getNumberTotal() {
+        return numberTotal;
+    }
+
+    public double getNumberSuccess() {
+        return numberSuccess;
+    }
+
+    public double getNumberScanned() {
+        return numberScanned;
+    }
+
+    public double getNumberRest() {
+        return numberRest;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 }

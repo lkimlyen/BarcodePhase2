@@ -238,9 +238,9 @@ public class DatabaseRealm {
         return results;
     }
 
-    public ProductDetail getProductDetail(final ProductEntity productEntity) {
+    public ProductDetail getProductDetail(final ProductEntity productEntity, int times) {
         Realm realm = getRealmInstance();
-        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity, userId);
+        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity,times, userId);
         return productDetail;
 
     }
@@ -733,6 +733,16 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm, orderId, departmentId, times, userId);
         return list;
+    }
+
+    public void saveListProductDetail(final List<ProductEntity> entity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ProductDetail.create(realm,entity,userId);
+            }
+        });
     }
 
     public class MyMigration implements RealmMigration {

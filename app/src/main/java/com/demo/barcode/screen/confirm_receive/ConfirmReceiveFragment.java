@@ -39,7 +39,11 @@ import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
+import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
+import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -69,17 +73,17 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private boolean change;
     private long maPhieuId = 0;
     private String maPhieu;
-    @Bind(R.id.ss_code_so)
-    SearchableSpinner ssCodeSO;
+    @Bind(R.id.tv_code_so)
+    TextView tvCodeSO;
 
-    @Bind(R.id.ss_times)
-    SearchableSpinner ssTimes;
+    @Bind(R.id.tv_times)
+    TextView tvTimes;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.ss_delivery_department)
-    SearchableSpinner ssDepartment;
+    @Bind(R.id.tv_delivery_department)
+    TextView tvDepartment;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
@@ -87,8 +91,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Bind(R.id.lv_confirm)
     RecyclerView lvConfirm;
 
-    @Bind(R.id.ss_type_product)
-    SearchableSpinner ssTypeProduct;
+    @Bind(R.id.tv_type_product)
+    TextView tvTypeProduct;
 
     @Bind(R.id.radioGroup)
     RadioGroup radioGroup;
@@ -96,8 +100,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Bind(R.id.cb_all)
     CheckBox cbConfirmAll;
 
-    @Bind(R.id.ss_delivery_code)
-    SearchableSpinner ssDeliveryCode;
+    @Bind(R.id.tv_delivery_code)
+    TextView tvDeliveryCode;
 
     @Bind(R.id.ll_root)
     LinearLayout lLRoot;
@@ -154,93 +158,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
-            }
-        });
-        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        ssDeliveryCode.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
-            }
-        });
-        ssTimes.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssTimes.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
-            }
-        });
-        ssDepartment.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        ssDepartment.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
-            }
-        });
-        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
-                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
-        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        ssTypeProduct.setAdapter(adapter);
-
-
-        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         mPresenter.getListDepartment();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -361,66 +278,92 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListSO(List<SOEntity> list) {
-        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+        if (list.size() > 0) {
+            tvCodeSO.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            SOEntity soItem = (SOEntity) item;
+                            tvCodeSO.setText(soItem.getCodeSO());
+                            txtCustomerName.setText(soItem.getCustomerName());
+                            orderId = soItem.getOrderId();
+                            mPresenter.getListGroupCode(orderId);
 
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                orderId = list.get(position).getOrderId();
-                mPresenter.getListGroupCode(orderId);
-
-                if (departmentId > 0) {
-                    mPresenter.getListConfirm(maPhieuId, orderId, departmentId, times, false);
+                            if (departmentId > 0) {
+                                mPresenter.getListConfirm(maPhieuId, orderId, departmentId, times, false);
+                            }
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
                 }
-            }
+            });
+        } else {
+            tvCodeSO.setOnClickListener(null);
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
     public void showListTimes(List<Integer> list) {
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssTimes.setAdapter(adapter);
-        ssTimes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                times = list.get(position);
-                if (orderId > 0 && departmentId > 0) {
-                    mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
+
+        if (list.size() > 0) {
+            tvTimes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            Integer number = (Integer) item;
+                            tvTimes.setText(String.valueOf(number));
+                            times = number;
+                            if (orderId > 0 && departmentId > 0) {
+                                mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
+                            }
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
                 }
-            }
+            });
+        } else {
+            tvTimes.setOnClickListener(null);
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
     public void showListDepartment(List<DepartmentEntity> list) {
-        ArrayAdapter<DepartmentEntity> adapter = new ArrayAdapter<DepartmentEntity>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssDepartment.setAdapter(adapter);
-        ssDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departmentId = list.get(position).getId();
-                mPresenter.getListDeliveryCode(orderId, departmentId);
+        if (list.size() > 0) {
+            tvDepartment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            DepartmentEntity departmentEntity = (DepartmentEntity) item;
+                            tvDepartment.setText(departmentEntity.getName());
+                            departmentId = list.get(position).getId();
+                            mPresenter.getListDeliveryCode(orderId, departmentId);
+                            if (times > 0 && orderId > 0) {
+                                mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
+                            }
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                }
+            });
+        } else {
+            tvDepartment.setOnClickListener(null);
+        }
 
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -446,11 +389,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void clearDataNoProduct(boolean chooseType) {
-        lvConfirm.setAdapter(null);
-        ArrayAdapter<DeliveryNoteEntity> adapter = new ArrayAdapter<DeliveryNoteEntity>(getContext(), android.R.layout.simple_spinner_item);
-        ssDeliveryCode.setAdapter(adapter);
-        ArrayAdapter<Integer> adapter1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item);
-        ssTimes.setAdapter(adapter);
+//        lvConfirm.setAdapter(null);
+//        ArrayAdapter<DeliveryNoteEntity> adapter = new ArrayAdapter<DeliveryNoteEntity>(getContext(), android.R.layout.simple_spinner_item);
+//        ssDeliveryCode.setAdapter(adapter);
+//        ArrayAdapter<Integer> adapter1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item);
+//        ssTimes.setAdapter(adapter);
     }
 
     @Override
@@ -502,7 +445,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         // mPresenter.deleteAllItemLog();
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId,maPhieu, orderId, departmentId, times, -1, true);
+                                maPhieuId, maPhieu, orderId, departmentId, times, -1, true);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -510,7 +453,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, true);
+                        mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, true);
 
                     }
                 })
@@ -519,51 +462,29 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListDeliveryCode(List<DeliveryNoteEntity> list) {
-        ArrayAdapter<DeliveryNoteEntity> adapter = new ArrayAdapter<DeliveryNoteEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-        ssDeliveryCode.setAdapter(adapter);
-        ssDeliveryCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                maPhieuId = list.get(position).getId();
-                maPhieu = list.get(position).getNoteCode();
-                mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        if (list.size() > 0) {
+            tvDeliveryCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            DeliveryNoteEntity deliveryNoteEntity = (DeliveryNoteEntity) item;
+                            tvDeliveryCode.setText(deliveryNoteEntity.getNoteCode());
+                            maPhieuId = deliveryNoteEntity.getId();
+                            mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                }
+            });
+        } else {
+            tvDeliveryCode.setOnClickListener(null);
+        }
 
-            }
-        });
-    }
-
-    @OnClick(R.id.ic_refresh)
-    public void refresh() {
-//        if (mPresenter.countListScan(orderId) > 0) {
-//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                    .setTitleText(getString(R.string.text_title_noti))
-//                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
-//                    .setConfirmText(getString(R.string.text_yes))
-//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            mPresenter.deleteAllItemLog();
-//                            sweetAlertDialog.dismiss();
-//                            mPresenter.getData();
-//                        }
-//                    })
-//                    .setCancelText(getString(R.string.text_no))
-//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                        @Override
-//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                            sweetAlertDialog.dismiss();
-//                        }
-//                    })
-//                    .show();
-//
-//        } else {
-//
-//            mPresenter.getData();
-//        }
     }
 
     public void showToast(String message) {
@@ -630,7 +551,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 // mPresenter.deleteAllItemLog();
-                                mPresenter.uploadData(maPhieuId,maPhieu, orderId, departmentId, times, false);
+                                mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, false);
                                 sweetAlertDialog.dismiss();
                             }
                         })
@@ -661,7 +582,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(maPhieuId, maPhieu,orderId, departmentId, times, false);
+                        mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, false);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -696,15 +617,35 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             showError(getString(R.string.text_type_scan_null));
             return;
         }
-        integrator = new IntentIntegrator(getActivity());
-        integrator.setCaptureActivity(ScanActivity.class);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Đặt mã cần quét vào khung");
-        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-        integrator.setBeepEnabled(false);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.setOrientationLocked(false);
-        integrator.initiateScan();
+//        integrator = new IntentIntegrator(getActivity());
+//        integrator.setCaptureActivity(ScanActivity.class);
+//        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+//        integrator.setPrompt("Đặt mã cần quét vào khung");
+//        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
+//        integrator.setBeepEnabled(false);
+//        integrator.setBarcodeImageEnabled(true);
+//        integrator.setOrientationLocked(false);
+//        integrator.initiateScan();
+
+
+        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
+                .withActivity(getActivity())
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withCenterTracker()
+                .withText("Scanning...")
+                .withResultListener(new BarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        //  barcodeResult = barcode;
+                        String contents = barcode.rawValue;
+                        String barcode2 = contents.replace("DEMO", "");
+                        mPresenter.checkBarcode(maPhieuId, orderId, barcode2, departmentId, times, typeScan == 2);
+                    }
+                })
+                .build();
+        barcodeScanner.startScan();
     }
 
     @OnClick(R.id.btn_confirm_all)
@@ -742,7 +683,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId,maPhieu, orderId, departmentId, times, -1, false);
+                                maPhieuId, maPhieu, orderId, departmentId, times, -1, false);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -762,10 +703,26 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
-                        maPhieuId,maPhieu, orderId, departmentId, times, -1, upload);
+                        maPhieuId, maPhieu, orderId, departmentId, times, -1, upload);
                 dialog.dismiss();
             }
         });
     }
+
+    @OnClick(R.id.tv_type_product)
+    public void chooseProduct() {
+        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                (TypeSOManager.getInstance().getListType());
+        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+            @Override
+            public void onSearchableItemClicked(Object item, int position) {
+                TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                tvTypeProduct.setText(typeSO.getName());
+                mPresenter.getListSO(typeSO.getValue());
+            }
+        });
+        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+    }
+
 
 }

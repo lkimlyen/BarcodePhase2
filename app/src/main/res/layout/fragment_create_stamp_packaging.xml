@@ -94,13 +94,16 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_type_product"
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3.5"
-                android:spinnerMode="dialog"
-                app:hintText="@string/text_choose_type_product" />
+                android:textColor="@android:color/black"
+                android:id="@+id/tv_type_product"
+                android:textSize="@dimen/text_14sp"
+                android:drawableRight="@drawable/ic_short_down"
+                android:text="@string/text_choose_type_product"
+                />
 
         </LinearLayout>
         <LinearLayout
@@ -120,12 +123,16 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_code_so"
+
+            <TextView
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_code_so"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
+                android:layout_weight="3.5"
+                android:textColor="@android:color/black"
+                android:id="@+id/tv_code_so"
+                android:textSize="@dimen/text_14sp"
+                android:drawableRight="@drawable/ic_short_down"
+                android:text="@string/text_choose_code_so" />
 
         </LinearLayout>
 
@@ -172,13 +179,15 @@
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
 
-            <com.demo.barcode.widgets.spinner.SearchableSpinner
-                android:id="@+id/ss_apartment"
+            <TextView
                 android:layout_width="0dp"
-                app:hintText="@string/text_choose_floor"
                 android:layout_height="wrap_content"
-                android:layout_weight="3.5" />
-
+                android:layout_weight="3.5"
+                android:textColor="@android:color/black"
+                android:id="@+id/tv_apartment"
+                android:textSize="@dimen/text_14sp"
+                android:drawableRight="@drawable/ic_short_down"
+                android:text="@string/text_choose_floor" />
         </LinearLayout>
 
         <LinearLayout

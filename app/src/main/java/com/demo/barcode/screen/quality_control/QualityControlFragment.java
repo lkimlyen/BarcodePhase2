@@ -39,9 +39,13 @@ import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.Precondition;
+import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
+import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -68,11 +72,11 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private long orderId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
-    @Bind(R.id.ss_code_so)
-    SearchableSpinner ssCodeSO;
+    @Bind(R.id.tv_code_so)
+    TextView tvCodeSO;
 
-    @Bind(R.id.ss_type_product)
-    SearchableSpinner ssTypeProduct;
+    @Bind(R.id.tv_type_product)
+    TextView tvTypeProduct;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -148,36 +152,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
-        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-
-                return false;
-            }
-        });
-        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
-
-        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
-                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
-        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        ssTypeProduct.setAdapter(adapter);
-
-        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
 
@@ -304,25 +278,31 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @Override
     public void showListSO(List<SOEntity> list) {
-        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
 
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                orderId = list.get(position).getOrderId();
 
-                mPresenter.getListProduct(orderId);
-                mPresenter.getListQualityControl(orderId);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        if (list.size() > 0){
+            tvCodeSO.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                            (list);
+                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                        @Override
+                        public void onSearchableItemClicked(Object item, int position) {
+                            SOEntity soItem = (SOEntity) item;
+                            tvCodeSO.setText(soItem.getCodeSO());
+                            txtCustomerName.setText(soItem.getCustomerName());
+                            orderId = soItem.getOrderId();
+                            mPresenter.getListProduct(orderId);
+                            mPresenter.getListQualityControl(orderId);
+                        }
+                    });
+                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                }
+            });
+        }else {
+            tvCodeSO.setOnClickListener(null);
+        }
     }
 
 
@@ -371,20 +351,44 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             showError(getString(R.string.text_order_id_null));
             return;
         }
-
-        integrator = new IntentIntegrator(getActivity());
-        integrator.setCaptureActivity(ScanActivity.class);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Đặt mã cần quét vào khung");
-        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-        integrator.setBeepEnabled(false);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.setOrientationLocked(false);
-        integrator.initiateScan();
+        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
+                .withActivity(getActivity())
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withCenterTracker()
+                .withText("Scanning...")
+                .withResultListener(new BarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        //  barcodeResult = barcode;
+                        String contents = barcode.rawValue;
+                        String barcode2 = contents.replace("DEMO", "");
+                        mPresenter.checkBarcode(barcode2, orderId);
+                    }
+                })
+                .build();
+        barcodeScanner.startScan();
     }
 
     @OnClick(R.id.img_upload)
     public void upload() {
         mPresenter.uploadData();
+    }
+
+
+    @OnClick(R.id.tv_type_product)
+    public void chooseProduct() {
+        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                (TypeSOManager.getInstance().getListType());
+        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+            @Override
+            public void onSearchableItemClicked(Object item, int position) {
+                TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                tvTypeProduct.setText(typeSO.getName());
+                mPresenter.getListSO(typeSO.getValue());
+            }
+        });
+        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
     }
 }

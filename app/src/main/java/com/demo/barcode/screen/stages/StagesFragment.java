@@ -257,7 +257,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         public void onSearchableItemClicked(Object item, int position) {
                             DepartmentEntity departmentEntity = (DepartmentEntity) item;
                             tvDepartment.setText(departmentEntity.getName());
-                            departmentId = list.get(position).getId();
+                            departmentId = departmentEntity.getId();
                             if (times > 0 && orderId > 0) {
                                 mPresenter.getListScanStages(orderId, departmentId, times);
                             }
