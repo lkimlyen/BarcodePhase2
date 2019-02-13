@@ -71,7 +71,7 @@ public interface ConfirmReceiveContract {
 
         void updateNumberConfirm(long maPhieuId,long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan);
 
-        void uploadData(long maPhieuId,String maPhieu,long orderId, int departmentIdOut, int times, boolean checkPrint);
+        void uploadData(long maPhieuId,long orderId, int departmentIdOut, int times, boolean checkPrint);
 
         void getListGroupCode(long orderId);
 
@@ -85,7 +85,7 @@ public interface ConfirmReceiveContract {
 
         void saveNumberConfirmGroup(GroupEntity groupEntity,long maPhieuId, long orderId, int times, int deparmentId);
 
-        void print(long maPhieuId,String maPhieu,long orderId, int departmentIdOut, int times, long serverId, boolean upload);
+        void print(long maPhieuId,long orderId, int departmentIdOut, int times, long serverId, boolean upload);
 
     }
 }

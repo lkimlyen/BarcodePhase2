@@ -25,6 +25,7 @@ import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetTimesInputAndOutputByDepartmentUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListDeliveryNoteManager;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListOrderConfirmManager;
 import com.demo.barcode.manager.ListGroupManager;
@@ -185,11 +186,14 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     @Override
                     public void onSuccess(GetListMaPhieuGiaoUsecase.ResponseValue successResponse) {
                         view.showListDeliveryCode(successResponse.getEntity());
+                        ListDeliveryNoteManager.getInstance().setListDeliveryNote(successResponse.getEntity());
                         getListTimes(orderId, departmentIdOut);
                     }
 
                     @Override
                     public void onError(GetListMaPhieuGiaoUsecase.ErrorValue errorResponse) {
+
+                        ListDeliveryNoteManager.getInstance().setListDeliveryNote(new ArrayList<>());
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         view.clearDataNoProduct(true);
@@ -299,7 +303,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void uploadData(long maPhieuId, String maPhieu, long orderId, int departmentIdOut, int times, boolean checkPrint) {
+    public void uploadData(long maPhieuId, long orderId, int departmentIdOut, int times, boolean checkPrint) {
         //    view.showError(CoreApplication.getInstance().getString(R.string.text_not_print_before_upload));
         view.showProgressBar();
         localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
@@ -333,7 +337,9 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
                     list.add(detailItem);
                 }
-                DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu,list);
+
+               String maPhieu1 = ListDeliveryNoteManager.getInstance().getDeliveryNoteById(maPhieuId);
+                DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu1,list);
                 String jsonWithData = new Gson().toJson(deliveryEntity);
                 confirmInputUsecase.executeIO(new ConfirmInputUsecase.RequestValue(UserManager.getInstance().getUser().getRole(),
                         json), new BaseUseCase.UseCaseCallback<ConfirmInputUsecase.ResponseValue,
@@ -406,7 +412,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                print(maPhieuId, maPhieu, orderId, departmentIdOut, times, serverId, upload);
+                print(maPhieuId, orderId, departmentIdOut, times, serverId, upload);
             }
         });
     }
@@ -503,7 +509,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void print(long maPhieuId, String maPhieu, long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
+    public void print(long maPhieuId, long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
@@ -539,7 +545,8 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                                 list.add(detailItem);
                                             }
 
-                                            DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu,list);
+                                            String maPhieu1 = ListDeliveryNoteManager.getInstance().getDeliveryNoteById(maPhieuId);
+                                            DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu1,list);
                                             String jsonWithData = new Gson().toJson(deliveryEntity);
                                             addPhieuGiaoNhanUsecase.executeIO(new AddPhieuGiaoNhanUsecase.RequestValue(orderId, user.getRole(),
                                                     departmentIdOut, times, jsonWithData, user.getId()
@@ -547,7 +554,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                                     AddPhieuGiaoNhanUsecase.ErrorValue>() {
                                                 @Override
                                                 public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
-                                                    print(maPhieuId, maPhieu, orderId, departmentIdOut, times, successResponse.getId(), upload);
+                                                    print(maPhieuId, orderId, departmentIdOut, times, successResponse.getId(), upload);
                                                 }
 
                                                 @Override
@@ -571,7 +578,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
 
                                         if (upload) {
-                                            uploadData(maPhieuId, maPhieu, orderId, departmentIdOut, times, true);
+                                            uploadData(maPhieuId, orderId, departmentIdOut, times, true);
                                         }
 
                                     }
