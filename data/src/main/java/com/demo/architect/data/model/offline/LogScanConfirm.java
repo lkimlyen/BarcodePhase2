@@ -205,7 +205,7 @@ public class LogScanConfirm extends RealmObject {
                 .notEqualTo("timesInput", times).equalTo("status", Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findAll();
         for (LogScanConfirm logScanConfirm : results) {
-            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberOut() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
+            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberTotalOrder() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
 
             if (logScanConfirm.getNumberConfirmed() > 0) {
                 if (logScanConfirm.getNumberRestInTimes() > 0) {
@@ -300,7 +300,7 @@ public class LogScanConfirm extends RealmObject {
             deliveryNoteModel.setNumberConfirm(deliveryNoteModel.getNumberConfirm() - logScanConfirm.getNumberConfirmed());
             deliveryNoteModel.setNumberRest(deliveryNoteModel.getNumberRest() + logScanConfirm.getNumberConfirmed());
             logScanConfirm.setNumberConfirmedAll(logScanConfirm.getNumberConfirmed());
-            logScanConfirm.setNumberConfirmed(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberOut() - logScanConfirm.getNumberUsedInTimes()));
+            logScanConfirm.setNumberConfirmed(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberTotalOrder() - logScanConfirm.getNumberUsedInTimes()));
             logScanConfirm.setNumberRestInTimes(0);
             logScanConfirm.setAll(true);
             logScanConfirm.setStatusConfirm(Constants.FULL);
@@ -309,7 +309,7 @@ public class LogScanConfirm extends RealmObject {
         }
         for (LogScanConfirm logScanConfirm : resultNotInTimes) {
             DeliveryNoteModel deliveryNoteModel = realm.where(DeliveryNoteModel.class).equalTo("deliveryNoteId", logScanConfirm.getDeliveryNoteId()).equalTo("outputId",logScanConfirm.getMasterOutputID()).findFirst();
-            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberOut() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
+            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberTotalOrder() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
             if (logScanConfirm.getNumberConfirmed() > 0) {
                 if (logScanConfirm.getNumberRestInTimes() > 0) {
                     logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
@@ -347,7 +347,7 @@ public class LogScanConfirm extends RealmObject {
             logScanConfirm.setNumberConfirmed(0);
             logScanConfirm.setNumberConfirmedAll(0);
             logScanConfirm.setAll(false);
-            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberOut() - logScanConfirm.getNumberUsedInTimes()));
+            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberTotalOrder() - logScanConfirm.getNumberUsedInTimes()));
             deliveryNoteModel.setNumberConfirm(deliveryNoteModel.getNumberConfirm() + logScanConfirm.getNumberConfirmed());
             deliveryNoteModel.setNumberRest(deliveryNoteModel.getNumberRest() - logScanConfirm.getNumberConfirmed());
             if (logScanConfirm.getNumberConfirmed() > 0) {
@@ -369,7 +369,7 @@ public class LogScanConfirm extends RealmObject {
         for (LogScanConfirm logScanConfirm : resultNotInTimes) {
             DeliveryNoteModel deliveryNoteModel = realm.where(DeliveryNoteModel.class).equalTo("deliveryNoteId", logScanConfirm.getDeliveryNoteId())
                     .equalTo("outputId",logScanConfirm.getMasterOutputID()).findFirst();
-            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberOut() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
+            logScanConfirm.setNumberRestInTimes(Math.min(deliveryNoteModel.getNumberRest(), logScanConfirm.getNumberTotalOrder() - logScanConfirm.getNumberConfirmed() - logScanConfirm.getNumberUsedInTimes()));
 
             if (logScanConfirm.getNumberConfirmed() > 0) {
                 if (logScanConfirm.getNumberRestInTimes() > 0) {

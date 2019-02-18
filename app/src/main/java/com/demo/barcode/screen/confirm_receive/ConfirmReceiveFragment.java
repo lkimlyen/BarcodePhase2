@@ -55,6 +55,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.RealmResults;
+import retrofit2.http.HEAD;
 
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -443,15 +444,16 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         // mPresenter.deleteAllItemLog();
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId, maPhieu, orderId, departmentId, times, -1, true);
-                    }
+                                maPhieuId, orderId, departmentId, times, -1, true);
+}
                 })
                 .setCancelText(getString(R.string.text_no))
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, true);
+
+                        mPresenter.uploadData(maPhieuId, orderId, departmentId, times, true);
 
                     }
                 })
@@ -549,7 +551,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 // mPresenter.deleteAllItemLog();
-                                mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, false);
+                                mPresenter.uploadData(maPhieuId, orderId, departmentId, times, false);
                                 sweetAlertDialog.dismiss();
                             }
                         })
@@ -580,7 +582,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(maPhieuId, maPhieu, orderId, departmentId, times, false);
+                        mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -681,7 +684,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
-                                maPhieuId, maPhieu, orderId, departmentId, times, -1, false);
+                                maPhieuId, orderId, departmentId, times, -1, false);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
