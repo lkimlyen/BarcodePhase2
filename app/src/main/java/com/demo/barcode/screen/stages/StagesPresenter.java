@@ -510,12 +510,18 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getAllListStages() {
-        localRepository.getAllListStages().subscribe(new Action1<RealmResults<LogScanStages>>() {
+        localRepository.deleteAlScanStages().subscribe(new Action1<String>() {
             @Override
-            public void call(RealmResults<LogScanStages> results) {
-                view.showListLogScanStages(results);
+            public void call(String s) {
+                localRepository.getAllListStages().subscribe(new Action1<RealmResults<LogScanStages>>() {
+                    @Override
+                    public void call(RealmResults<LogScanStages> results) {
+                        view.showListLogScanStages(results);
+                    }
+                });
             }
         });
+
     }
 
 

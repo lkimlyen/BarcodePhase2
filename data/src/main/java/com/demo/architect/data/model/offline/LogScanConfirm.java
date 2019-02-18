@@ -107,8 +107,9 @@ public class LogScanConfirm extends RealmObject {
                 LogScanConfirm logScanConfirm = new LogScanConfirm(id(realm) + 1, orderConfirmEntity.getMasterOutputID(),
                         orderConfirmEntity.getOrderId(), orderConfirmEntity.getDepartmentIDIn(), orderConfirmEntity.getDepartmentIDOut(),
                         orderConfirmEntity.getProductDetailID(), orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
-                        orderConfirmEntity.getNumberTotalOrder(), 0, numberRestInTimes, 0, input.getNumberConfirmed(), false, userId, input.getTimesInput(), orderConfirmEntity.getProductId(), orderConfirmEntity.getNumberOut(),
-                        Constants.WAITING_UPLOAD, orderConfirmEntity.isState(), deliveryNoteId);
+                        orderConfirmEntity.getNumberTotalOrder(), 0, numberRestInTimes, 0, input.getNumberConfirmed(), false, userId,
+                        input.getTimesInput(), orderConfirmEntity.getProductId(), orderConfirmEntity.getNumberOut(),
+                        Constants.WAITING_UPLOAD, orderConfirmEntity.isState() || orderConfirmEntity.getNumberTotalOrder() <= input.getNumberConfirmed(), deliveryNoteId);
                 logScanConfirm.setPrint(false);
                 logScanConfirm = realm.copyToRealm(logScanConfirm);
                 logScanConfirm.setDeliveryNoteModel(deliveryNoteModel);

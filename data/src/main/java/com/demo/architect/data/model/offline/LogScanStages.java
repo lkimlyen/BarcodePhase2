@@ -194,17 +194,12 @@ public class LogScanStages extends RealmObject {
 
 
     public static void addLogScanStages(Realm realm, LogScanStages scanStages, final long productId) {
-        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", scanStages.getOrderId()).findFirst();
 
-        LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", scanStages.getDepartmentIdIn())
-                .equalTo("times", scanStages.getTimes()).equalTo("userId", scanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-
-        RealmList<LogScanStages> parentList = parent.getList();
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productDetailId", scanStages.getProductDetailId())
                 .equalTo("times",scanStages.getTimes())
                 .equalTo("userId", scanStages.getUserId()).findFirst();
 
-        LogScanStages logScanStages = parent.getList().where().equalTo("barcode", scanStages.getBarcode())
+        LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("barcode", scanStages.getBarcode())
                 .equalTo("groupCode", scanStages.groupCode)
                 .equalTo("module", scanStages.getModule()).equalTo("typeScan", scanStages.typeScan).equalTo("times", scanStages.getTimes()).findFirst();
 
@@ -213,7 +208,6 @@ public class LogScanStages extends RealmObject {
             scanStages.setProductDetail(productDetail);
             scanStages.setId(id(realm) + 1);
             logScanStages = realm.copyToRealm(scanStages);
-            parentList.add(logScanStages);
         } else {
             logScanStages.setNumberInput(logScanStages.getNumberInput() + scanStages.getNumberInput());
             logScanStages.setNumberGroup(logScanStages.getNumberInput());
@@ -243,20 +237,15 @@ public class LogScanStages extends RealmObject {
         LogScanStages logScanStages = realm.where(LogScanStages.class).equalTo("id", stagesId).findFirst();
         double number = numberInput - logScanStages.getNumberInput();
         if (!logScanStages.getTypeScan()) {
-            LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", logScanStages.getOrderId()).findFirst();
 
-            LogListScanStages parent = mainParent.getList().where().equalTo("departmentId", logScanStages.getDepartmentIdIn())
-                    .equalTo("times", logScanStages.getTimes())
-                    .equalTo("userId", logScanStages.getUserId()).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-            RealmList<LogScanStages> parentList = parent.getList();
-            RealmResults<LogScanStages> scanStages = parentList.where().equalTo("groupCode", logScanStages.getGroupCode())
+            RealmResults<LogScanStages> scanStages = realm.where(LogScanStages.class).equalTo("groupCode", logScanStages.getGroupCode())
                     .equalTo("userId", logScanStages.getUserId())
                     .findAll();
             for (LogScanStages item : scanStages) {
                 item.setNumberInput(item.getNumberInput() + number);
                 item.setNumberGroup(item.getNumberInput() + number);
                 ProductDetail productDetail = item.getProductDetail();
-                productDetail.setNumberScanned(productDetail.getNumberScanned() + logScanStages.getNumberInput());
+                productDetail.setNumberScanned(productDetail.getNumberScanned() + number);
                 productDetail.setNumberRest(productDetail.getNumberTotal() - productDetail.getNumberScanned());
             }
 
@@ -264,8 +253,9 @@ public class LogScanStages extends RealmObject {
             logScanStages.setNumberInput(numberInput);
             logScanStages.setNumberGroup(numberInput);
             ProductDetail productDetail = logScanStages.getProductDetail();
-            productDetail.setNumberScanned(productDetail.getNumberScanned() + logScanStages.getNumberInput());
+            productDetail.setNumberScanned(productDetail.getNumberScanned() + number);
             productDetail.setNumberRest(productDetail.getNumberTotal() - productDetail.getNumberScanned());
+
         }
 
 

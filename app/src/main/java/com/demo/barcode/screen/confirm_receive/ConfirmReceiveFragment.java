@@ -174,22 +174,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 }
             }
         });
-        cbConfirmAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!change) {
-                    if (isChecked) {
-                        mPresenter.confirmAll(orderId, departmentId, times);
-                    } else {
 
-                        mPresenter.cancelConfirmAll(orderId, departmentId, times);
-                    }
-                } else {
-                    change = false;
-                }
-
-            }
-        });
     }
 
 
@@ -384,6 +369,28 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         lvConfirm.setHasFixedSize(true);
         lvConfirm.setAdapter(adapter);
+        if (list.size() > 0) {
+            cbConfirmAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (!change) {
+                        if (isChecked) {
+                            mPresenter.confirmAll(orderId, departmentId, times);
+                        } else {
+
+                            mPresenter.cancelConfirmAll(orderId, departmentId, times);
+                        }
+                    } else {
+                        change = false;
+                    }
+
+                }
+            });
+            cbConfirmAll.setClickable(true);
+        } else {
+            cbConfirmAll.setOnCheckedChangeListener(null);
+            cbConfirmAll.setClickable(false);
+        }
     }
 
     @Override
@@ -445,7 +452,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         sweetAlertDialog.dismiss();
                         mPresenter.print(
                                 maPhieuId, orderId, departmentId, times, -1, true);
-}
+                    }
                 })
                 .setCancelText(getString(R.string.text_no))
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -582,7 +589,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(maPhieuId,orderId, departmentId, times, false);
+                        mPresenter.uploadData(maPhieuId, orderId, departmentId, times, false);
 
                         sweetAlertDialog.dismiss();
                     }

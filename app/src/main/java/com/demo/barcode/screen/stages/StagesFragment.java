@@ -218,9 +218,9 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void onDestroy() {
-        mPresenter.deleteAllData();
         super.onDestroy();
     }
+
 
     public void showNotification(String content, int type) {
         new SweetAlertDialog(getContext(), type)
