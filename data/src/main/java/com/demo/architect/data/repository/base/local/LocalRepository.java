@@ -31,6 +31,7 @@ import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import rx.Completable;
 import rx.Observable;
 
 public interface LocalRepository {
@@ -39,19 +40,17 @@ public interface LocalRepository {
 
     Observable<List<MessageModel>> findAll();
 
-    Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times);
     Observable<Integer> countAllDetailWaitingUpload(final long orderId);
 
-    Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId, int departmentId, int times);
+    Observable<List<LogScanStages>> getListLogScanStagesUpload();
 
-    Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate();
 
     Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module);
 
     Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId);
 
 
-    Observable<String> addLogScanStagesAsync(final LogScanStages model,final ProductEntity productEntity);
+    Observable<String> addLogScanStagesAsync(final LogScanStages model,final long productId);
 
     Observable<ProductDetail> getProductDetail(ProductEntity productEntity, int times);
 
@@ -164,7 +163,13 @@ public interface LocalRepository {
 
     Observable<String> deleteDataLocal();
 
-    Observable<List<GroupScan>> getListGroupScanVersion(long orderId, int departmentId, int times);
+    Observable<List<GroupScan>> getListGroupScanVersion();
 
     Observable<String> saveListProductDetail(List<ProductEntity> entity);
+
+    Observable<String> deleteAllProductDetail();
+
+    Observable<RealmResults<LogScanStages>> getAllListStages();
+
+    Observable<String>  deleteAlScanStages();
 }

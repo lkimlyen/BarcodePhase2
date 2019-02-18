@@ -8,10 +8,13 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
 import java.util.List;
+
+import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -25,7 +28,7 @@ public interface StagesContract {
 
         void showListDepartment(List<DepartmentEntity> list);
 
-        void showListLogScanStages(LogListScanStages parent);
+        void showListLogScanStages(RealmResults<LogScanStages> parent);
 
         void showListSO(List<SOEntity> list);
 
@@ -35,7 +38,7 @@ public interface StagesContract {
 
         void turnOnVibrator();
 
-        void showCheckResidual(int times, ProductEntity
+        void showCheckResidual(int times, ProductDetail
                 productEntity, int departmentId);
 
         void showCheckResidualInGroup(long id, double number, double numberInput);
@@ -54,6 +57,7 @@ public interface StagesContract {
 
         void showDialogCreateIPAddress(int idPrint);
 
+
     }
 
     interface Presenter extends BasePresenter {
@@ -61,24 +65,20 @@ public interface StagesContract {
 
         void getListSO(int orderType);
 
-        void getListProduct(long orderId, int times, int department, boolean refresh);
+        void getListProduct(long orderId, boolean refresh);
 
         void checkBarcode(String barcode, int departmentId, int times, boolean groupCode);
-
-        int countLogScanStages(long orderId, int departmentId, int times);
 
         void deleteScanStages(long stagesId);
 
         void updateNumberScanInGroup(LogScanStages logScanStages, double numberInput);
 
-        void getListScanStages(long orderId, int departmentId, int times);
-
         void getListTimes(long orderId, int departmentId);
 
-        void uploadData(long orderId, int departmentId, int times);
+        void uploadData(long orderId);
 
-        void saveBarcodeToDataBase(int times, ProductEntity
-                productEntity, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
+        void saveBarcodeToDataBase(int times, ProductDetail
+                productDetail, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
 
         void getListGroupCode(long orderId);
 
@@ -91,7 +91,13 @@ public interface StagesContract {
         void updateNumberScan(long stagesId, double number, boolean update);
 
         void print(int id, int idPrint);
-        void saveIPAddress(String ipAddress, int port,int idPrint);
+
+        void saveIPAddress(String ipAddress, int port, int idPrint);
+
+
+        void deleteAllData();
+
+        void getAllListStages();
 
     }
 }

@@ -49,14 +49,13 @@ public class StagesInGroupAdapter extends RealmBaseAdapter<LogScanStages> implem
 
     private void setDataToViews(HistoryHolder holder, LogScanStages item) {
         final ProductDetail productDetail = item.getProductDetail();
-        final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
 
         holder.txtBarcode.setText(item.getBarcode());
         holder.txtNameDetail.setText(item.getProductDetail().getProductName());
         holder.txtModule.setText(item.getModule());
-        holder.txtQuantityProduct.setText(numberInputModel.getNumberTotal() + "");
-        holder.txtQuantityRest.setText(numberInputModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText(numberInputModel.getNumberSuccess() + "");
+        holder.txtQuantityProduct.setText(productDetail.getNumberTotal() + "");
+        holder.txtQuantityRest.setText(productDetail.getNumberRest() + "");
+        holder.txtQuantityScan.setText(productDetail.getNumberSuccess() + "");
         holder.txtNumberScan.setText(String.valueOf(item.getNumberInput()));
 
 

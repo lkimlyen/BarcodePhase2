@@ -59,7 +59,6 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
 
     private void setDataToViews(HistoryHolder holder, LogScanStages item) {
         final ProductDetail productDetail = item.getProductDetail();
-        final NumberInputModel numberInputModel = productDetail.getListInput().where().equalTo("times", item.getTimes()).findFirst();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,7 +80,7 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
                         return;
 
                     }
-                    if (numberInput - item.getNumberInput() > numberInputModel.getNumberRest()) {
+                    if (numberInput - item.getNumberInput() > productDetail.getNumberRest()) {
                         onErrorListener.errorListener(item, numberInput, null);
                         return;
                     }
@@ -98,9 +97,9 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
         holder.txtBarcode.setText(item.getBarcode());
         holder.txtNameDetail.setText(item.getProductDetail().getProductName());
         holder.txtModule.setText(item.getModule());
-        holder.txtQuantityProduct.setText((int) numberInputModel.getNumberTotal() + "");
-        holder.txtQuantityRest.setText((int) numberInputModel.getNumberRest() + "");
-        holder.txtQuantityScan.setText((int) numberInputModel.getNumberSuccess() + "");
+        holder.txtQuantityProduct.setText((int) productDetail.getNumberTotal() + "");
+        holder.txtQuantityRest.setText((int) productDetail.getNumberRest() + "");
+        holder.txtQuantityScan.setText((int) productDetail.getNumberSuccess() + "");
         holder.edtNumberScan.setText(String.valueOf((int) item.getNumberInput()));
         holder.edtNumberScan.setSelection(holder.edtNumberScan.getText().length());
 
@@ -139,12 +138,12 @@ public class StagesAdapter extends RealmRecyclerViewAdapter<LogScanStages, Stage
             }
         });
 
-        if (numberInputModel.getNumberRest() > 0) {
+        if (productDetail.getNumberRest() > 0) {
             holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));
             holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
 
             holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
-        } else if (numberInputModel.getNumberRest() == 0) {
+        } else if (productDetail.getNumberRest() == 0) {
             holder.llMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
             holder.edtNumberScan.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));
             holder.txtQuantityRest.setTextColor(CoreApplication.getInstance().getResources().getColor(android.R.color.white));

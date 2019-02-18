@@ -78,22 +78,6 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<Integer> countLogScanStages(final long orderId, final int departmentId, final int times) {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                try {
-                    int count = databaseRealm.countLogScanStagesWatingUpload(orderId, departmentId, times);
-
-                    subscriber.onNext(count);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<Integer> countAllDetailWaitingUpload(final long orderId) {
@@ -113,12 +97,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<LogScanStages>> getListLogScanStagesUpdate(final long orderId, final int departmentId, final int times) {
+    public Observable<List<LogScanStages>> getListLogScanStagesUpload() {
         return Observable.create(new Observable.OnSubscribe<List<LogScanStages>>() {
             @Override
             public void call(Subscriber<? super List<LogScanStages>> subscriber) {
                 try {
-                    List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload(orderId,departmentId,times);
+                    List<LogScanStages> list = databaseRealm.getListLogScanStagesUpload();
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -128,21 +112,6 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<HashMap<List<LogScanStages>, Set<GroupScan>>> getListLogScanStagesUpdate() {
-        return Observable.create(new Observable.OnSubscribe<HashMap<List<LogScanStages>, Set<GroupScan>>>() {
-            @Override
-            public void call(Subscriber<? super HashMap<List<LogScanStages>, Set<GroupScan>>> subscriber) {
-                try {
-                    HashMap<List<LogScanStages>, Set<GroupScan>> list = databaseRealm.getListLogScanStagesUpload();
-                    subscriber.onNext(list);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module) {
@@ -179,12 +148,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
+    public Observable<String> addLogScanStagesAsync(final LogScanStages model, final long productId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addLogScanStagesAsync(model, productEntity);
+                    databaseRealm.addLogScanStagesAsync(model, productId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1083,12 +1052,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<List<GroupScan>> getListGroupScanVersion(final long orderId, final int departmentId, final int times) {
+    public Observable<List<GroupScan>> getListGroupScanVersion() {
         return Observable.create(new Observable.OnSubscribe<List<GroupScan>>() {
             @Override
             public void call(Subscriber<? super List<GroupScan>> subscriber) {
                 try {
-                    List<GroupScan> result = databaseRealm.getListGroupScanVersion(orderId,departmentId,times);
+                    List<GroupScan> result = databaseRealm.getListGroupScanVersion();
                     subscriber.onNext(result);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1105,6 +1074,54 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     databaseRealm.saveListProductDetail(entity);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAllProductDetail() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAllProductDetail();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<LogScanStages>> getAllListStages() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStages>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
+                try {
+                    RealmResults<LogScanStages> results =  databaseRealm.getAllListStages();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAlScanStages() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAlScanStages();
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

@@ -31,9 +31,11 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.StagesAdapter;
+import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
@@ -56,6 +58,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -129,7 +132,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("Message");
                 showSuccess(result);
-                mPresenter.getListScanStages(orderId, departmentId, times);
                 return;
             }
         }
@@ -165,6 +167,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
+        mPresenter.getAllListStages();
         mPresenter.getListDepartment();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -215,6 +218,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void onDestroy() {
+        mPresenter.deleteAllData();
         super.onDestroy();
     }
 
@@ -246,37 +250,72 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListDepartment(List<DepartmentEntity> list) {
-        if (list.size() > 0){
+        if (list.size() > 0) {
             tvDepartment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                            (list);
-                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                        @Override
-                        public void onSearchableItemClicked(Object item, int position) {
-                            DepartmentEntity departmentEntity = (DepartmentEntity) item;
-                            tvDepartment.setText(departmentEntity.getName());
-                            departmentId = departmentEntity.getId();
-                            if (times > 0 && orderId > 0) {
-                                mPresenter.getListScanStages(orderId, departmentId, times);
+                    if (adapter.getItemCount() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.uploadData(orderId);
+                                    }
+                                })
+                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.deleteAllData();
+                                        sweetAlertDialog.dismiss();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                DepartmentEntity departmentEntity = (DepartmentEntity) item;
+                                                tvDepartment.setText(departmentEntity.getName());
+                                                departmentId = departmentEntity.getId();
+
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+                                    }
+                                })
+                                .show();
+                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                DepartmentEntity departmentEntity = (DepartmentEntity) item;
+                                tvDepartment.setText(departmentEntity.getName());
+                                departmentId = departmentEntity.getId();
+
                             }
-                        }
-                    });
-                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+
                 }
             });
-        }else {
+        } else {
             tvDepartment.setOnClickListener(null);
         }
-
-
     }
 
-    @Override
-    public void showListLogScanStages(LogListScanStages parent) {
 
-        adapter = new StagesAdapter(parent.getList(), new StagesAdapter.OnItemClearListener() {
+    @Override
+    public void showListLogScanStages(RealmResults<LogScanStages> parent) {
+
+        adapter = new StagesAdapter(parent, new StagesAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanStages item) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -376,26 +415,66 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListSO(List<SOEntity> list) {
-        if (list.size() > 0){
+        if (list.size() > 0) {
             tvCodeSO.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                            (list);
-                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                        @Override
-                        public void onSearchableItemClicked(Object item, int position) {
-                            SOEntity soItem = (SOEntity) item;
-                            tvCodeSO.setText(soItem.getCodeSO());
-                            txtCustomerName.setText(soItem.getCustomerName());
-                            orderId = soItem.getOrderId();
-                            mPresenter.getListProduct(orderId, times, departmentId, false);
-                        }
-                    });
-                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    if (adapter.getItemCount() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.uploadData(orderId);
+                                    }
+                                })
+                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.deleteAllData();
+                                        sweetAlertDialog.dismiss();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                SOEntity soItem = (SOEntity) item;
+                                                tvCodeSO.setText(soItem.getCodeSO());
+                                                txtCustomerName.setText(soItem.getCustomerName());
+                                                orderId = soItem.getOrderId();
+                                                mPresenter.getListProduct(orderId, false);
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+                                    }
+                                })
+                                .show();
+                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                SOEntity soItem = (SOEntity) item;
+                                tvCodeSO.setText(soItem.getCodeSO());
+                                txtCustomerName.setText(soItem.getCustomerName());
+                                orderId = soItem.getOrderId();
+                                mPresenter.getListProduct(orderId, false);
+                            }
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+
                 }
+
             });
-        }else {
+        } else {
             tvCodeSO.setOnClickListener(null);
         }
 
@@ -423,7 +502,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidual(int times, ProductEntity
+    public void showCheckResidual(int times, ProductDetail
             productEntity, int departmentId) {
         mp3.start();
         turnOnVibrator();
@@ -463,27 +542,61 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showListTimes(List<Integer> list) {
-        if(list.size() > 0){
+        if (list.size() > 0) {
             tvTimes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                            (list);
-                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                        @Override
-                        public void onSearchableItemClicked(Object item, int position) {
-                            Integer number = (Integer) item;
-                            tvTimes.setText(String.valueOf(number));
-                            times = number;
-                            if (orderId > 0 && departmentId > 0) {
-                                mPresenter.getListScanStages(orderId, departmentId, number);
+                    if (adapter.getItemCount() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.uploadData(orderId);
+                                    }
+                                })
+                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.deleteAllData();
+                                        sweetAlertDialog.dismiss();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                Integer number = (Integer) item;
+                                                tvTimes.setText(String.valueOf(number));
+                                                times = number;
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+                                    }
+                                })
+                                .show();
+                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                Integer number = (Integer) item;
+                                tvTimes.setText(String.valueOf(number));
+                                times = number;
                             }
-                        }
-                    });
-                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+
                 }
             });
-        }else {
+        } else {
             tvTimes.setOnClickListener(null);
         }
 
@@ -493,13 +606,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     public void clearDataNoProduct(boolean chooseType) {
         if (chooseType) {
             txtCustomerName.setText("");
-
             ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
             //ssCodeSO.setAdapter(adapter);
             orderId = 0;
-
         }
-
         times = 0;
         rvCode.setAdapter(null);
 
@@ -515,7 +625,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(orderId, departmentId, times);
+                        mPresenter.uploadData(orderId);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -645,7 +755,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             btnScan.setVisibility(View.VISIBLE);
             return;
         }
-        if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
+        if (adapter.getItemCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -654,7 +764,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             // mPresenter.deleteAllItemLog();
-                            mPresenter.uploadData(orderId, departmentId, times);
+                            mPresenter.uploadData(orderId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -683,7 +793,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(orderId, departmentId, times);
+                        mPresenter.uploadData(orderId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -743,17 +853,56 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.tv_type_product)
     public void chooseProduct() {
-        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                (TypeSOManager.getInstance().getListType());
-        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-            @Override
-            public void onSearchableItemClicked(Object item, int position) {
-                TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
-                tvTypeProduct.setText(typeSO.getName());
-                mPresenter.getListSO(typeSO.getValue());
-            }
-        });
-        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+        if (adapter.getItemCount() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+                    .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+                    .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                            sweetAlertDialog.dismiss();
+                            mPresenter.uploadData(orderId);
+                        }
+                    })
+                    .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            mPresenter.deleteAllData();
+                            sweetAlertDialog.dismiss();
+                            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                    (TypeSOManager.getInstance().getListType());
+                            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                @Override
+                                public void onSearchableItemClicked(Object item, int position) {
+                                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                                    tvTypeProduct.setText(typeSO.getName());
+                                    mPresenter.getListSO(typeSO.getValue());
+                                }
+                            });
+                            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+                        }
+                    })
+                    .show();
+        } else {
+            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                    (TypeSOManager.getInstance().getListType());
+            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                @Override
+                public void onSearchableItemClicked(Object item, int position) {
+                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                    tvTypeProduct.setText(typeSO.getName());
+                    mPresenter.getListSO(typeSO.getValue());
+                }
+            });
+            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+        }
+
+
     }
 
 }

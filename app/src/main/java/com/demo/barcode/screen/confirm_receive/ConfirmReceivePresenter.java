@@ -451,7 +451,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 //                        } else {
 //                            saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber() + logScanConfirm.getNumberConfirmed());
 //                        }
-//                    }
+                   // }
 
                 }
             });

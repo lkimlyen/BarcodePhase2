@@ -309,7 +309,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListTimes(List<Integer> list) {
-
         if (list.size() > 0) {
             tvTimes.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -338,7 +337,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showListDepartment(List<DepartmentEntity> list) {
-
         if (list.size() > 0) {
             tvDepartment.setOnClickListener(new View.OnClickListener() {
                 @Override

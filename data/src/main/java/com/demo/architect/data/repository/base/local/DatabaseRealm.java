@@ -1,6 +1,7 @@
 package com.demo.architect.data.repository.base.local;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.demo.architect.data.R;
 import com.demo.architect.data.helper.Constants;
@@ -166,25 +167,20 @@ public class DatabaseRealm {
         return count;
     }
 
-    public List<LogScanStages> getListLogScanStagesUpload(long orderId, int departmentId, int times) {
+    public List<LogScanStages> getListLogScanStagesUpload() {
         Realm realm = getRealmInstance();
-        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm, orderId, departmentId, times, userId);
-        return list;
-    }
-
-    public HashMap<List<LogScanStages>, Set<GroupScan>> getListLogScanStagesUpload() {
-        Realm realm = getRealmInstance();
-        final HashMap<List<LogScanStages>, Set<GroupScan>> list = LogListScanStages.getListScanStagesWaitingUpload(realm, userId);
+        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm);
         return list;
     }
 
 
-    public void addLogScanStagesAsync(final LogScanStages model, final ProductEntity productEntity) {
+
+    public void addLogScanStagesAsync(final LogScanStages model, final long productId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStages.addLogScanStages(realm, model, productEntity);
+                LogScanStages.addLogScanStages(realm, model, productId);
             }
         });
     }
@@ -240,7 +236,10 @@ public class DatabaseRealm {
 
     public ProductDetail getProductDetail(final ProductEntity productEntity, int times) {
         Realm realm = getRealmInstance();
-        final ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity,times, userId);
+        ProductDetail productDetail = ProductDetail.getProductDetail(realm, productEntity, times, userId);
+        if (productDetail == null) {
+            productDetail = ProductDetail.create(realm, productEntity, times, userId);
+        }
         return productDetail;
 
     }
@@ -287,7 +286,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirm.updateNumberScan(realm,maPhieuId, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
+                LogScanConfirm.updateNumberScan(realm, maPhieuId, orderId, orderProductId, departmentIdOut, times, numberScan, userId, scan);
             }
         });
     }
@@ -322,10 +321,10 @@ public class DatabaseRealm {
         });
     }
 
-    public LogScanConfirm findConfirmByBarcode(long maPhieuId,String barcode, long orderId,
+    public LogScanConfirm findConfirmByBarcode(long maPhieuId, String barcode, long orderId,
                                                int departmentIDOut, int times) {
         Realm realm = getRealmInstance();
-        LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, maPhieuId,barcode, orderId, departmentIDOut, times, userId);
+        LogScanConfirm logScanConfirm = LogScanConfirm.findConfirmByBarcode(realm, maPhieuId, barcode, orderId, departmentIDOut, times, userId);
         return logScanConfirm;
     }
 
@@ -729,9 +728,9 @@ public class DatabaseRealm {
         });
     }
 
-    public List<GroupScan> getListGroupScanVersion(long orderId, int departmentId, int times) {
+    public List<GroupScan> getListGroupScanVersion() {
         Realm realm = getRealmInstance();
-        List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm, orderId, departmentId, times, userId);
+        List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm);
         return list;
     }
 
@@ -740,7 +739,41 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ProductDetail.create(realm,entity,userId);
+                // ProductDetail.create(realm, entity, userId);
+            }
+        });
+    }
+
+    public void deleteAllProductDetail() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).findAll();
+                results.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public RealmResults<LogScanStages> getAllListStages() {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).findAll();
+        return results;
+    }
+
+    public void deleteAlScanStages() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).findAll();
+                results.deleteAllFromRealm();
+
+                RealmResults<LogScanStages> results1 = realm.where(LogScanStages.class).findAll();
+                results1.deleteAllFromRealm();
+
+                RealmResults<GroupScan> results2 = realm.where(GroupScan.class).findAll();
+                results2.deleteAllFromRealm();
             }
         });
     }
@@ -785,7 +818,7 @@ public class DatabaseRealm {
                         .removeField("numberScanOut")
                         .addField("numberRestInTimes", double.class)
                         .removeField("list").addField("numberUsedInTimes", double.class)
-                .addRealmObjectField("deliveryNoteModel",schema.get("DeliveryNoteModel"));
+                        .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteModel"));
 
 
                 oldVersion++;
