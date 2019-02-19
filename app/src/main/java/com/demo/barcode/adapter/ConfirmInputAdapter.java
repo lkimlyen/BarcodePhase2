@@ -91,6 +91,11 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_full));
                 holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorGreen));
                 break;
+
+            case Constants.RESIDUAL:
+                holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_residual));
+                holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(R.color.colorYellow));
+                break;
             case Constants.INCOMPLETE:
                 holder.txtStatus.setText(CoreApplication.getInstance().getString(R.string.text_incomplete));
                 holder.layoutMain.setBackgroundColor(CoreApplication.getInstance().getResources().getColor(android.R.color.holo_red_dark));

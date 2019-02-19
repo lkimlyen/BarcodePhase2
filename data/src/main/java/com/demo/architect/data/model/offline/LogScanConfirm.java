@@ -109,7 +109,7 @@ public class LogScanConfirm extends RealmObject {
                         orderConfirmEntity.getProductDetailID(), orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getModule(), orderConfirmEntity.getBarcode(),
                         orderConfirmEntity.getNumberTotalOrder(), 0, numberRestInTimes, 0, input.getNumberConfirmed(), false, userId,
                         input.getTimesInput(), orderConfirmEntity.getProductId(), orderConfirmEntity.getNumberOut(),
-                        Constants.WAITING_UPLOAD, orderConfirmEntity.isState() || orderConfirmEntity.getNumberTotalOrder() <= input.getNumberConfirmed(), deliveryNoteId);
+                        Constants.WAITING_UPLOAD, orderConfirmEntity.isState(), deliveryNoteId);
                 logScanConfirm.setPrint(false);
                 logScanConfirm = realm.copyToRealm(logScanConfirm);
                 logScanConfirm.setDeliveryNoteModel(deliveryNoteModel);
@@ -211,8 +211,10 @@ public class LogScanConfirm extends RealmObject {
             if (logScanConfirm.getNumberConfirmed() > 0) {
                 if (logScanConfirm.getNumberRestInTimes() > 0) {
                     logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
-                } else {
+                } else  if (logScanConfirm.getNumberRestInTimes() == 0){
                     logScanConfirm.setStatusConfirm(Constants.FULL);
+                }else {
+                    logScanConfirm.setStatus(Constants.RESIDUAL);
                 }
             } else {
                 logScanConfirm.setStatusConfirm(-1);
