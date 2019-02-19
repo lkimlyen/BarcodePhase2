@@ -21,11 +21,13 @@ import io.realm.RealmRecyclerViewAdapter;
 public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm, ConfirmInputAdapter.HistoryHolder> {
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
+    private OnWarningListener onWarningListener;
 
-    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener) {
+    public ConfirmInputAdapter(OrderedRealmCollection<LogScanConfirm> data, OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener, OnWarningListener onWarningListener) {
         super(data, true);
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
+        this.onWarningListener = onWarningListener;
         setHasStableIds(true);
     }
 
@@ -64,8 +66,7 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
                         return;
                     }
                     if (numberInput - item.getNumberConfirmed() > item.getNumberRestInTimes()) {
-                        holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
-                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                        onWarningListener.warningListener(item, numberInput);
                         return;
                     }
                     if (numberInput == item.getNumberConfirmed()) {
@@ -167,5 +168,9 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
 
     public interface onClickEditTextListener {
         void onClick();
+    }
+
+    public interface OnWarningListener {
+        void warningListener(LogScanConfirm item, int number);
     }
 }

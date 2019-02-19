@@ -13,8 +13,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -37,17 +35,14 @@ import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
-import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
-import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -55,9 +50,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.RealmResults;
-import retrofit2.http.HEAD;
-
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -363,6 +355,34 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 showToast(message);
                 turnOnVibrator();
                 startMusicError();
+            }
+        },  new ConfirmInputAdapter.OnWarningListener() {
+            @Override
+            public void warningListener(LogScanConfirm item, int number) {
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_exceed_the_number_of_requests))
+                        .setConfirmText(getString(R.string.text_yes))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
+
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_no))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), item.getNumberConfirmed());
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .show();
             }
         });
 

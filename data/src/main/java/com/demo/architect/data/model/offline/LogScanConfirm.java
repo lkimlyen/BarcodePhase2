@@ -116,8 +116,10 @@ public class LogScanConfirm extends RealmObject {
                 if (logScanConfirm.getNumberConfirmed() > 0) {
                     if (logScanConfirm.getNumberRestInTimes() > 0) {
                         logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
-                    } else {
+                    } else if (logScanConfirm.getNumberRestInTimes() == 0){
                         logScanConfirm.setStatusConfirm(Constants.FULL);
+                    }else {
+                        logScanConfirm.setStatus(Constants.RESIDUAL);
                     }
                 } else {
                     logScanConfirm.setStatusConfirm(-1);
@@ -192,8 +194,10 @@ public class LogScanConfirm extends RealmObject {
         if (scanConfirm.getNumberConfirmed() > 0) {
             if (scanConfirm.getNumberRestInTimes() > 0) {
                 scanConfirm.setStatusConfirm(Constants.INCOMPLETE);
-            } else {
+            } else if (scanConfirm.getNumberRestInTimes() == 0){
                 scanConfirm.setStatusConfirm(Constants.FULL);
+            }else {
+                scanConfirm.setStatusConfirm(Constants.RESIDUAL);
             }
         } else {
             scanConfirm.setStatusConfirm(-1);
@@ -214,7 +218,7 @@ public class LogScanConfirm extends RealmObject {
                 } else  if (logScanConfirm.getNumberRestInTimes() == 0){
                     logScanConfirm.setStatusConfirm(Constants.FULL);
                 }else {
-                    logScanConfirm.setStatus(Constants.RESIDUAL);
+                    logScanConfirm.setStatusConfirm(Constants.RESIDUAL);
                 }
             } else {
                 logScanConfirm.setStatusConfirm(-1);
