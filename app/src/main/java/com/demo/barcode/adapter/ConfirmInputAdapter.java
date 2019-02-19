@@ -65,13 +65,40 @@ public class ConfirmInputAdapter extends RealmRecyclerViewAdapter<LogScanConfirm
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
                     }
-                    if (numberInput - item.getNumberConfirmed() > item.getNumberRestInTimes()) {
-                        onWarningListener.warningListener(item, numberInput);
-                        return;
-                    }
                     if (numberInput == item.getNumberConfirmed()) {
+
                         return;
                     }
+
+                    if (item.getDeliveryNoteModel().getNumberRest() == 0){
+                        holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                        return;
+                    }
+                    int numberResidualDeli = (int)(item.getNumberUsedInTimes() + item.getNumberOut() - item.getNumberTotalOrder());
+
+                    if (numberResidualDeli > 0){
+                        if (numberInput - item.getNumberConfirmed() - item.getNumberRestInTimes() > numberResidualDeli){
+                            holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
+                            onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                            return;
+                        }
+                        if (numberInput - item.getNumberConfirmed() > item.getNumberRestInTimes()) {
+                            onWarningListener.warningListener(item, numberInput);
+                            return;
+                        }
+                    }else {
+                        if (numberInput - item.getNumberConfirmed() > item.getNumberRestInTimes()) {
+                            holder.edtNumberReceive.setText(String.valueOf((int) item.getNumberConfirmed()));
+                            onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
+                            return;
+                        }
+
+
+                    }
+
+
+
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
                 } catch (Exception e) {
 

@@ -358,7 +358,7 @@ public class LogScanConfirm extends RealmObject {
             deliveryNoteModel.setNumberConfirm(deliveryNoteModel.getNumberConfirm() + logScanConfirm.getNumberConfirmed());
             deliveryNoteModel.setNumberRest(deliveryNoteModel.getNumberRest() - logScanConfirm.getNumberConfirmed());
             if (logScanConfirm.getNumberConfirmed() > 0) {
-                if (logScanConfirm.getNumberUsedInTimes() > 0) {
+                if (logScanConfirm.getNumberRestInTimes() > 0) {
                     logScanConfirm.setStatusConfirm(Constants.INCOMPLETE);
                 } else {
                     logScanConfirm.setStatusConfirm(Constants.FULL);
