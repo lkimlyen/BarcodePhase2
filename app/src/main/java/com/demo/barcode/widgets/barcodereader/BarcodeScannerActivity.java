@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.demo.barcode.widgets.barcodereader.ui.camera.CameraSource;
 import com.demo.barcode.widgets.barcodereader.ui.camera.CameraSourcePreview;
@@ -85,25 +87,25 @@ public class BarcodeScannerActivity extends AppCompatActivity {
     }
 
     private void setupButtons() {
-//        final LinearLayout flashOnButton = (LinearLayout)findViewById(R.id.flashIconButton);
-//        final ImageView flashToggleIcon = (ImageView)findViewById(R.id.flashIcon);
-//        assertNotNull(flashOnButton);
-//        flashOnButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mFlashOn) {
-//                    flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_on_white_24dp);
-//                    disableTorch();
-//                } else {
-//                    flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_off_white_24dp);
-//                    enableTorch();
-//                }
-//                mFlashOn ^= true;
-//            }
-//        });
-//        if(mBarcodeScannerBuilder.isFlashEnabledByDefault()){
-//            flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_off_white_24dp);
-//        }
+        final LinearLayout flashOnButton = (LinearLayout)findViewById(R.id.flashIconButton);
+        final ImageView flashToggleIcon = (ImageView)findViewById(R.id.flashIcon);
+        assertNotNull(flashOnButton);
+        flashOnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFlashOn) {
+                    flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_on_white_24dp);
+                    disableTorch();
+                } else {
+                    flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_off_white_24dp);
+                    enableTorch();
+                }
+                mFlashOn ^= true;
+            }
+        });
+        if(mBarcodeScannerBuilder.isFlashEnabledByDefault()){
+            flashToggleIcon.setBackgroundResource(R.drawable.ic_flash_off_white_24dp);
+        }
     }
 
     /**
