@@ -49,7 +49,7 @@ public interface CreatePackagingContract {
 
         void deleteLogScan(LogScanPackaging log);
 
-        void updateNumberScan(long id, int number);
+        void updateNumberScan(LogScanPackaging logScanPackaging, int number);
 
         void checkBarcode(String barcode, long orderId, long apartmentId);
 

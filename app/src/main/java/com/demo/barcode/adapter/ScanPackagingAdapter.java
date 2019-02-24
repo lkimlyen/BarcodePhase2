@@ -13,10 +13,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListModulePackagingManager;
+import com.demo.barcode.manager.ListPositionScanManager;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -82,14 +85,27 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                         return;
 
                     }
+                    if (numberInput == item.getNumberInput()) {
+                        return;
+                    }
+                    PositionScan positionScan = ListPositionScanManager.getInstance().getPositionScanByOrderId(item.getOrderId(), item.getApartmentId());
+                    String module = ListModulePackagingManager.getInstance().getModuleByModule(item.getModule()).getModule();
+                    if (positionScan != null) {
+                        if (!positionScan.getCodePack().equals(item.getCodePack())) {
+                            if (!module.equals(positionScan.getModule()) || !item.getSttPack().equals(positionScan.getSerialPack())) {
+                                holder.edtNumberScan.setText((int) item.getNumberInput() + "");
+                                onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
+                                return;
+                            }
+                        }
+
+                    }
                     if (numberInput - item.getNumberInput() > productPackagingModel.getNumberRest()) {
                         holder.edtNumberScan.setText((int) item.getNumberInput() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getString(R.string.text_quantity_input_bigger_quantity_rest));
                         return;
                     }
-                    if (numberInput == item.getNumberInput()) {
-                        return;
-                    }
+
                     onEditTextChangeListener.onEditTextChange(item, Integer.parseInt(holder.edtNumberScan.getText().toString()));
 
                 } catch (Exception e) {

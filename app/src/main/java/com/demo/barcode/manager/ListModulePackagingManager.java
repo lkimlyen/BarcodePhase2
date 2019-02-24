@@ -52,6 +52,16 @@ public class ListModulePackagingManager {
         return null;
     }
 
+    public ListModuleEntity getModuleByModule(long module) {
+        for (ListModuleEntity requestEntity : list) {
+
+            if (requestEntity.getProductId() == module) {
+                return requestEntity;
+            }
+        }
+        return null;
+    }
+
     public PackageEntity getPackingBySerialPack(String module, String serialPack) {
         for (ListModuleEntity requestEntity : list) {
 
