@@ -1,7 +1,9 @@
 package com.demo.barcode.screen.stages;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -16,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -71,6 +74,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     private StagesAdapter adapter;
     public MediaPlayer mp1, mp2, mp3;
     private int times = 0;
+    private int typeProduct;
     @Bind(R.id.tv_code_so)
     TextView tvCodeSO;
 
@@ -239,7 +243,21 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @Override
     public void showError(String message) {
-        showNotification(message, SweetAlertDialog.ERROR_TYPE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.text_title_noti));
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.text_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.show();
     }
 
 
@@ -281,6 +299,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                                 DepartmentEntity departmentEntity = (DepartmentEntity) item;
                                                 tvDepartment.setText(departmentEntity.getName());
                                                 departmentId = departmentEntity.getId();
+                                                tvTimes.setText(getString(R.string.text_choose_times_scan));
+                                                times = 0;
 
                                             }
                                         });
@@ -298,6 +318,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 DepartmentEntity departmentEntity = (DepartmentEntity) item;
                                 tvDepartment.setText(departmentEntity.getName());
                                 departmentId = departmentEntity.getId();
+                                tvTimes.setText(getString(R.string.text_choose_times_scan));
+                                times = 0;
 
                             }
                         });
@@ -447,6 +469,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                                 tvCodeSO.setText(soItem.getCodeSO());
                                                 txtCustomerName.setText(soItem.getCustomerName());
                                                 orderId = soItem.getOrderId();
+                                                tvTimes.setText(getString(R.string.text_choose_times_scan));
+                                                times = 0;
+                                                tvDepartment.setText(getString(R.string.text_choose_receiving_department));
+                                                departmentId = 0;
                                                 mPresenter.getListProduct(orderId, false);
                                             }
                                         });
@@ -465,6 +491,10 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 tvCodeSO.setText(soItem.getCodeSO());
                                 txtCustomerName.setText(soItem.getCustomerName());
                                 orderId = soItem.getOrderId();
+                                tvTimes.setText(getString(R.string.text_choose_times_scan));
+                                times = 0;
+                                tvDepartment.setText(getString(R.string.text_choose_receiving_department));
+                                departmentId = 0;
                                 mPresenter.getListProduct(orderId, false);
                             }
                         });
@@ -602,18 +632,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     }
 
-    @Override
-    public void clearDataNoProduct(boolean chooseType) {
-        if (chooseType) {
-            txtCustomerName.setText("");
-            ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, new ArrayList<>());
-            //ssCodeSO.setAdapter(adapter);
-            orderId = 0;
-        }
-        times = 0;
-        rvCode.setAdapter(null);
 
-    }
 
     @Override
     public void showDialogUpload() {
@@ -880,6 +899,14 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                                 public void onSearchableItemClicked(Object item, int position) {
                                     TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
                                     tvTypeProduct.setText(typeSO.getName());
+                                    typeProduct = typeSO.getValue();
+                                    tvTimes.setText(getString(R.string.text_choose_times_scan));
+                                    times = 0;
+                                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                                    orderId = 0;
+                                    tvDepartment.setText(getString(R.string.text_choose_receiving_department));
+                                    departmentId = 0;
+                                    txtCustomerName.setText("");
                                     mPresenter.getListSO(typeSO.getValue());
                                 }
                             });
@@ -896,6 +923,14 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 public void onSearchableItemClicked(Object item, int position) {
                     TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
                     tvTypeProduct.setText(typeSO.getName());
+                    typeProduct = typeSO.getValue();
+                    tvTimes.setText(getString(R.string.text_choose_times_scan));
+                    times = 0;
+                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                    orderId = 0;
+                    tvDepartment.setText(getString(R.string.text_choose_receiving_department));
+                    departmentId = 0;
+                    txtCustomerName.setText("");
                     mPresenter.getListSO(typeSO.getValue());
                 }
             });

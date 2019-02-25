@@ -141,10 +141,16 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
     }
 
+    private int numberLoop = 0;
+    private int countProductNull = 0;
+
     @Override
     public void saveBarcodeWithGroup(GroupEntity groupEntity, int times, int departmentId) {
         allowedToSave = true;
+        numberLoop = 0;
+        countProductNull = 0;
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+            numberLoop++;
             ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
             if (productEntity != null) {
                 localRepository.getProductDetail(productEntity, times).subscribe(new Action1<ProductDetail>() {
@@ -153,12 +159,24 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                         if (productDetail != null) {
                             if (productDetail.getNumberRest() > 0 && productDetail.getNumberRest() >= item.getNumber()) {
-                                allowedToSave = true;
+                               // allowedToSave = true;
                             } else {
                                 allowedToSave = false;
-                                showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
                             }
                         } else {
+                            countProductNull ++;
+
+                        }
+
+                        if (countProductNull == 0){
+                            if (numberLoop == groupEntity.getProducGroupList().size()) {
+                                if (allowedToSave) {
+                                    saveListWithGroupCode(times, groupEntity, departmentId);
+                                }else {
+                                    showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
+                                }
+                            }
+                        }else {
                             showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                         }
                     }
@@ -167,12 +185,9 @@ public class StagesPresenter implements StagesContract.Presenter {
             }
 
 
-            if (!allowedToSave) {
-                return;
-            }
         }
 
-        saveListWithGroupCode(times, groupEntity, departmentId);
+
     }
 
     public void showError(String error) {
@@ -278,7 +293,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                                                 public void call(String s) {
                                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                                                     view.showPrintDeliveryNote(successResponse.getId());
-                                                                    getListProduct(orderId,  true);
+                                                                    getListProduct(orderId, true);
                                                                 }
                                                             });
                                                         }
@@ -449,7 +464,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void print(int id, int idPrint) {
-
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
@@ -553,7 +567,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
-                        view.clearDataNoProduct(true);
+
                     }
                 });
     }
@@ -587,7 +601,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListProductManager.getInstance().setListProduct(new ArrayList<>());
-                        view.clearDataNoProduct(false);
+
                     }
                 });
 

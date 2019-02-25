@@ -45,8 +45,6 @@ public interface StagesContract {
 
         void showListTimes(List<Integer> list);
 
-        void clearDataNoProduct(boolean chooseType);
-
         void showDialogUpload();
 
         void showDialogChooseGroup(List<GroupEntity> list);

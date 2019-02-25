@@ -2,7 +2,9 @@ package com.demo.barcode.screen.quality_control;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,6 +20,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -212,7 +215,21 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @Override
     public void showError(String message) {
-        showNotification(message, SweetAlertDialog.ERROR_TYPE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.text_title_noti));
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.text_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.show();
     }
 
     @Override
@@ -386,6 +403,9 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             public void onSearchableItemClicked(Object item, int position) {
                 TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
                 tvTypeProduct.setText(typeSO.getName());
+                txtCustomerName.setText("");
+                tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                orderId = 0;
                 mPresenter.getListSO(typeSO.getValue());
             }
         });

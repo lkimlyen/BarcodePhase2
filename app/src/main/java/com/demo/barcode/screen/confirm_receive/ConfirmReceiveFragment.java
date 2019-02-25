@@ -1,6 +1,8 @@
 package com.demo.barcode.screen.confirm_receive;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -13,6 +15,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -60,6 +63,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
     private int departmentId = 0;
+    private int typeProduct = 0;
     private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
@@ -224,8 +228,21 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @Override
     public void showError(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.text_title_noti));
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.text_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
 
-        showNotification(message, SweetAlertDialog.ERROR_TYPE);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.show();
     }
 
     @Override
@@ -269,11 +286,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             tvCodeSO.setText(soItem.getCodeSO());
                             txtCustomerName.setText(soItem.getCustomerName());
                             orderId = soItem.getOrderId();
+                            tvTimes.setText(getString(R.string.text_choose_times_scan));
+                            times = 0;
+                            tvDeliveryCode.setText(getString(R.string.text_choose_delivery_code));
+                            maPhieuId = 0;
+                            tvDepartment.setText(getString(R.string.text_choose_receiving_department));
+                            departmentId = 0;
                             mPresenter.getListGroupCode(orderId);
-
-                            if (departmentId > 0) {
-                                mPresenter.getListConfirm(maPhieuId, orderId, departmentId, times, false);
-                            }
                         }
                     });
                     searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -327,10 +346,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             DepartmentEntity departmentEntity = (DepartmentEntity) item;
                             tvDepartment.setText(departmentEntity.getName());
                             departmentId = list.get(position).getId();
+                            tvDeliveryCode.setText(getString(R.string.text_choose_delivery_code));
+                            maPhieuId = 0;
+                            tvTimes.setText(getString(R.string.text_choose_times_scan));
+                            times = 0;
                             mPresenter.getListDeliveryCode(orderId, departmentId);
-                            if (times > 0 && orderId > 0) {
-                                mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
-                            }
+
                         }
                     });
                     searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -502,6 +523,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             DeliveryNoteEntity deliveryNoteEntity = (DeliveryNoteEntity) item;
                             tvDeliveryCode.setText(deliveryNoteEntity.getNoteCode());
                             maPhieuId = deliveryNoteEntity.getId();
+                            tvTimes.setText(getString(R.string.text_choose_times_scan));
+                            times = 0;
                             mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
                         }
                     });
@@ -746,6 +769,16 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onSearchableItemClicked(Object item, int position) {
                 TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
                 tvTypeProduct.setText(typeSO.getName());
+                typeProduct = typeSO.getValue();
+                tvTimes.setText(getString(R.string.text_choose_times_scan));
+                times = 0;
+                tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                orderId = 0;
+                tvDeliveryCode.setText(getString(R.string.text_choose_delivery_code));
+                maPhieuId = 0;
+                tvDepartment.setText(getString(R.string.text_choose_delivery_department));
+                departmentId = 0;
+                txtCustomerName.setText("");
                 mPresenter.getListSO(typeSO.getValue());
             }
         });

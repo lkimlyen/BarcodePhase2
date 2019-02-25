@@ -212,8 +212,13 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
     private Result resultFind;
 
+    private int numberLoop = 0;
+    PackageEntity packageEntity;
+    ListModuleEntity listModuleEntity;
+    ProductPackagingEntity productPackagingEntity;
     @Override
     public void checkBarcode(String barcode, long orderId, long apartmentId) {
+        numberLoop = 0;
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -223,60 +228,63 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
             return;
         }
-        PackageEntity packageEntity;
-        ListModuleEntity listModuleEntity;
-        ProductPackagingEntity productPackagingEntity;
+
+
         resultFind = null;
 
         Log.d("bambi", "1");
         if (resultList.size() == 1) {
             resultFind = resultList.get(0);
+            checkBarcode(orderId,apartmentId);
         } else {
             Log.d("bambi", "2");
             for (Result result : resultList) {
+                numberLoop++;
                 localRepository.findProductPackaging(result.getProductPackagingEntity().getId(), result.getPackageEntity().getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
                     @Override
                     public void call(ProductPackagingModel productPackagingModel) {
-
-
                         Log.d("bambi", "loop");
-                            if ((productPackagingModel == null || productPackagingModel.getNumberRest() > 0) && result.getPackageEntity().getNumberScan() < result.getListModuleEntity().getNumberRequired()) {
+                        if ((productPackagingModel == null || productPackagingModel.getNumberRest() > 0) && result.getPackageEntity().getNumberScan() < result.getListModuleEntity().getNumberRequired()) {
+                            if (resultFind == null){
                                 resultFind = result;
-
+                            }
                         } else {
-                            if (positionScan != null) {
+                            if (positionScan != null && resultFind == null) {
                                 if (!positionScan.getCodePack().equals(result.getPackageEntity().getPackCode())) {
                                     if (!result.getListModuleEntity().getModule().equals(positionScan.getModule()) || !result.getPackageEntity().getSerialPack().equals(positionScan.getSerialPack())) {
                                         resultFind = new Result();
-
                                         // return;
                                     }
                                 }
 
                             }
                         }
+
+                        if (numberLoop == resultList.size()){
+                            if (resultFind == null) {
+                                showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
+                                //return;
+                            }else {
+                                if (resultFind.getListModuleEntity() == null) {
+                                    showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
+                                    //return;
+                                }else {
+                                    checkBarcode(orderId,apartmentId);
+                                }
+
+                            }
+                        }
+
                     }
                 });
 
-                if (resultFind != null) {
-
-                    break;
-                }
             }
 
         }
-
-
         Log.d("bambi", "3");
-        if (resultFind == null) {
-            showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-            return;
-        }
-        if (resultFind.getListModuleEntity() == null) {
-            showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
-            return;
-        }
+    }
 
+    private void checkBarcode(long orderId, long apartmentId){
         packageEntity = resultFind.getPackageEntity();
         listModuleEntity = resultFind.getListModuleEntity();
         productPackagingEntity = resultFind.getProductPackagingEntity();
@@ -289,11 +297,11 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     if (packageEntity1.getTotal() == integer) {
                         if (packageEntity.getSerialPack().equals(positionScan.getSerialPack()) && listModuleEntity.getModule().equals(positionScan.getModule())) {
                             showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
-                            return;
+                            // return;
                         } else {
                             if (packageEntity.getNumberScan() == listModuleEntity.getNumberRequired()) {
                                 showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-                                return;
+                                //  return;
                             } else {
                                 saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
                             }
@@ -301,7 +309,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     } else {
                         if (!listModuleEntity.getModule().equals(positionScan.getModule()) || !packageEntity.getSerialPack().equals(positionScan.getSerialPack())) {
                             showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
-                            return;
+                            //  return;
                         } else {
                             saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
                         }
@@ -312,12 +320,13 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
         } else {
             if (packageEntity.getNumberScan() == listModuleEntity.getNumberRequired()) {
                 showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-                return;
+                //  return;
+            }else {
+
+                saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
             }
-            saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
         }
     }
-
 
     @Override
     public void getListProduct(long orderId, long apartmentId) {

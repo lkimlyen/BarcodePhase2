@@ -374,7 +374,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                         view.hideProgressBar();
                         ListProductManager.getInstance().setListProduct(successResponse.getEntity());
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
-                        getListModule(orderId);
+                   //     getListModule(orderId);
 
                     }
 

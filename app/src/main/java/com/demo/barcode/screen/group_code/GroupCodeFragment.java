@@ -1,6 +1,8 @@
 package com.demo.barcode.screen.group_code;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -14,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,7 +43,11 @@ import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
+import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
+import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -82,8 +89,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @Bind(R.id.ss_serial_module)
     SearchableSpinner ssModule;
 
-    @Bind(R.id.ss_code_so)
-    SearchableSpinner ssCodeSO;
+    @Bind(R.id.tv_code_so)
+    TextView tvCodeSO;
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
@@ -91,8 +98,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
-    @Bind(R.id.ss_type_product)
-    SearchableSpinner ssTypeProduct;
+    @Bind(R.id.tv_type_product)
+    TextView tvTypeProduct;
 
     @Bind(R.id.lv_code)
     ListView lvCode;
@@ -154,28 +161,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-        ssModule.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-                return false;
-            }
-        });
-        ssCodeSO.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-//                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-//                    return true;
-//                }
-                return false;
-            }
-        });
 
-        ssCodeSO.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                // uploadData();
-            }
-        });
 
         cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -186,37 +172,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 } else {
                     cbAll.setChecked(false);
                 }
-
-            }
-        });
-        ssTypeProduct.setListener(new SearchableSpinner.OnClickListener() {
-            @Override
-            public boolean onClick() {
-//                if (mPresenter.countLogScanStages(orderId, departmentId, times) > 0) {
-//                    return true;
-//                }
-                return false;
-            }
-        });
-        ssTypeProduct.setUploadDataListener(new SearchableSpinner.OnUploadDataListener() {
-            @Override
-            public void uploadData() {
-                uploadData();
-            }
-        });
-        ArrayAdapter<TypeSOManager.TypeSO> adapter = new ArrayAdapter<TypeSOManager.TypeSO>(
-                getContext(), android.R.layout.simple_spinner_item, TypeSOManager.getInstance().getListType());
-        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        ssTypeProduct.setAdapter(adapter);
-
-        ssTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.getListSO(TypeSOManager.getInstance().getValueByPositon(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
@@ -267,7 +222,21 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showError(String message) {
-        showNotification(message, SweetAlertDialog.ERROR_TYPE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.text_title_noti));
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.text_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.show();
     }
 
     @Override
@@ -590,26 +559,73 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @Override
     public void showListSO(List<SOEntity> list) {
-        ArrayAdapter<SOEntity> adapter = new ArrayAdapter<SOEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+        if (list.size() > 0) {
+            tvCodeSO.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    if (adapter.getItemCount() > 0) {
+//                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+//                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+//                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+//                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+//                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                                    @Override
+//                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//
+//                                        sweetAlertDialog.dismiss();
+//                                        mPresenter.uploadData(orderId);
+//                                    }
+//                                })
+//                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+//                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                                    @Override
+//                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                        mPresenter.deleteAllData();
+//                                        sweetAlertDialog.dismiss();
+//                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+//                                                (list);
+//                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+//                                            @Override
+//                                            public void onSearchableItemClicked(Object item, int position) {
+//                                                SOEntity soItem = (SOEntity) item;
+//                                                tvCodeSO.setText(soItem.getCodeSO());
+//                                                txtCustomerName.setText(soItem.getCustomerName());
+//                                                orderId = soItem.getOrderId();
+//                                                mPresenter.getListProduct(orderId, false);
+//                                            }
+//                                        });
+//                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+//
+//                                    }
+//                                })
+//                                .show();
+//                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                SOEntity soItem = (SOEntity) item;
+                                tvCodeSO.setText(soItem.getCodeSO());
+                                txtCustomerName.setText(soItem.getCustomerName());
+                                orderId = soItem.getOrderId();
+                                if (orderId > 0) {
+                                    mPresenter.getListProductDetailInGroupCode(orderId);
+                                    mPresenter.getListProduct(orderId);
+                                    mPresenter.getGroupCodeScanList(orderId);
+                                }
 
-        ssCodeSO.setAdapter(adapter);
-        ssCodeSO.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCustomerName.setText(list.get(position).getCustomerName());
-                orderId = list.get(position).getOrderId();
-                if (orderId > 0) {
-                    mPresenter.getListProductDetailInGroupCode(orderId);
-                    mPresenter.getListProduct(orderId);
-                    mPresenter.getGroupCodeScanList(orderId);
+                            }
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    //}
+
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+            });
+        } else {
+            tvCodeSO.setOnClickListener(null);
+        }
     }
 
 
@@ -731,15 +747,88 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
             return;
         }
 
-        integrator = new IntentIntegrator(getActivity());
-        integrator.setCaptureActivity(ScanActivity.class);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("Đặt mã cần quét vào khung");
-        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-        integrator.setBeepEnabled(false);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.setOrientationLocked(false);
-        integrator.initiateScan();
+
+        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
+                .withActivity(getActivity())
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withCenterTracker()
+                .withText("Scanning...")
+                .withResultListener(new BarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        //  barcodeResult = barcode;
+                        String contents = barcode.rawValue;
+                        String barcode2 = contents.replace("DEMO", "");
+                        mPresenter.checkBarcode(barcode2);
+                    }
+                })
+                .build();
+        barcodeScanner.startScan();
+    }
+    @OnClick(R.id.tv_type_product)
+    public void chooseProduct() {
+
+//        if (adapter.getItemCount() > 0) {
+//            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+//                    .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
+//                    .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
+//                    .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
+//                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//
+//                            sweetAlertDialog.dismiss();
+//                            mPresenter.uploadData(orderId);
+//                        }
+//                    })
+//                    .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
+//                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                        @Override
+//                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                            mPresenter.deleteAllData();
+//                            sweetAlertDialog.dismiss();
+//                            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+//                                    (TypeSOManager.getInstance().getListType());
+//                            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+//                                @Override
+//                                public void onSearchableItemClicked(Object item, int position) {
+//                                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+//                                    tvTypeProduct.setText(typeSO.getName());
+//
+//                                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+//                                    orderId = 0;
+//
+//                                    txtCustomerName.setText("");
+//                                    mPresenter.getListSO(typeSO.getValue());
+//                                }
+//                            });
+//                            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+//
+//                        }
+//                    })
+//                    .show();
+//        } else {
+            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                    (TypeSOManager.getInstance().getListType());
+            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                @Override
+                public void onSearchableItemClicked(Object item, int position) {
+                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                    tvTypeProduct.setText(typeSO.getName());
+
+                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                    orderId = 0;
+
+                    txtCustomerName.setText("");
+                    mPresenter.getListSO(typeSO.getValue());
+                }
+            });
+            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+      //  }
+
+
     }
 }
 
