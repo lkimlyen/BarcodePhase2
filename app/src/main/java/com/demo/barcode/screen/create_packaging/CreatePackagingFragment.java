@@ -272,7 +272,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                 }, new SerialPackAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
-                mPresenter.updateNumberScan(item.getId(), number);
+
+                mPresenter.updateNumberScan(item, number);
             }
         }, new SerialPackAdapter.onErrorListener() {
             @Override

@@ -9,11 +9,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListPositionScanManager;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -71,6 +73,7 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
                 }, new ScanPackagingAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanPackaging item, int number) {
+
                 onEditTextChangeListener.onEditTextChange(item, number);
             }
         }, new ScanPackagingAdapter.onErrorListener() {
