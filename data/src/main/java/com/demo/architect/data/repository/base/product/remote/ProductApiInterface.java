@@ -8,6 +8,7 @@ import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductWindowEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -76,4 +77,9 @@ public interface ProductApiInterface {
                                                  @Field("pData") String data,
                                                 @Field("pUserID") long userId);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<ProductWindowEntity>> getInputForProductDetailWindow(@Url String url,
+                                                                               @Field("pOrderID") long orderId,
+                                                                               @Field("pDepartmentID") int departmentId);
 }

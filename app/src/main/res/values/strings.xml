@@ -138,15 +138,15 @@
     <string name="text_error_network_host">Unable to resolve host</string>
     <string name="text_port_null">Vui lòng nhập số port!</string>
     <string name="text_floor_or_apartment">Căn/Tầng</string>
-    <string name="text_serial_module">STT module</string>
-    <string name="text_serial_module_break">STT \n module</string>
-    <string name="text_serial_module_print">STT module:</string>
+    <string name="text_serial_module">STT Module</string>
+    <string name="text_serial_module_break">STT \n Module</string>
+    <string name="text_serial_module_print">STT Module:</string>
     <string name="text_package">Kiện</string>
     <string name="text_date_print">Ngày in:</string>
     <string name="text_code_pack">Mã gói/ SP:</string>
     <string name="text_choose_code_so">Chọn mã SO</string>
     <string name="text_choose_floor">Chọn căn/tầng</string>
-    <string name="text_choose_serial_module">Chọn STT module</string>
+    <string name="text_choose_serial_module">Chọn STT Module</string>
     <string name="text_serial_package">STT Kiện</string>
     <string name="text_choose_serial_package">Chọn STT kiện</string>
     <string name="text_receiving_department">Bộ phận nhận</string>
@@ -225,14 +225,14 @@
     <string name="text_not_product_detached">Bạn chưa chọn Chi tiết để tách!</string>
     <string name="text_product_in_group">Chi tiết này có gộp mã không?</string>
     <string name="text_edit_group_code">Chỉnh sửa gộp mã</string>
-    <string name="text_module_is_empty">Bạn chưa chọn module</string>
+    <string name="text_module_is_empty">Bạn chưa chọn Module</string>
     <string name="text_list_group_code">Danh sách mã đã gộp</string>
     <string name="text_list_code_scan">Danh sách mã đã quét</string>
     <string name="text_serial_pack_null">Bạn chưa chọn mã gói</string>
     <string name="text_apartment_null">Bạn chưa chọn căn!</string>
     <string name="text_number_total">SL tổng</string>
     <string name="text_product_scanned">Chi tiết đã được quét!</string>
-    <string name="text_product_not_in_module">Chi tiết không có trong module!</string>
+    <string name="text_product_not_in_module">Chi tiết không có trong Module!</string>
     <string name="text_number_scan_enough">Số lượng quét đã đủ!</string>
     <string name="text_no_image_in_detail">Bạn chưa chụp hình ảnh lỗi!</string>
     <string name="text_no_reason_selected">Bạn chưa chọn nguyên nhân lỗi!</string>
@@ -279,6 +279,7 @@
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="text_window_name">Bộ cửa: </string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

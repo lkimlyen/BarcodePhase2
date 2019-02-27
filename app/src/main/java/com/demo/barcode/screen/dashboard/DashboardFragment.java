@@ -15,6 +15,7 @@ import com.demo.barcode.R;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ServerManager;
+import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.group_code.GroupCodeActivity;
@@ -23,6 +24,7 @@ import com.demo.barcode.screen.login.LoginActivity;
 import com.demo.barcode.screen.quality_control.QualityControlActivity;
 import com.demo.barcode.screen.setting.SettingActivity;
 import com.demo.barcode.screen.stages.StagesActivity;
+import com.demo.barcode.screen.stages_window.StagesWindowActivity;
 import com.demo.barcode.util.Precondition;
 
 import butterknife.Bind;
@@ -131,6 +133,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Override
     public void showUser(UserEntity user) {
         txtName.setText(user.getName());
+
         if (user.getUserType().equals("SP")) {
             btnQC.setVisibility(View.GONE);
             if (user.getRole() > 0) {
@@ -144,6 +147,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                     btnScanPackaging.setVisibility(View.VISIBLE);
                     btnHistory.setVisibility(View.VISIBLE);
                 }
+
             }else {
                 btnScanStages.setVisibility(View.GONE);
                 btnConfirmreceive.setVisibility(View.GONE);
@@ -194,7 +198,12 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_scan_stages)
     public void scanStages() {
-        StagesActivity.start(getContext());
+        if(UserManager.getInstance().getUser().getOrderType() ==4){
+            StagesWindowActivity.start(getContext());
+        }else {
+
+            StagesActivity.start(getContext());
+        }
     }
 
     @OnClick(R.id.btn_confirm_receive)

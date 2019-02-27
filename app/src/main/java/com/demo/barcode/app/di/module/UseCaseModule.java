@@ -17,6 +17,7 @@ import com.demo.architect.domain.GetApartmentUsecase;
 import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
+import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.GetListInputUnConfirmByMaPhieuUsecase;
@@ -34,6 +35,7 @@ import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.PostCheckBarCodeUsecase;
 import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
+import com.demo.architect.domain.ScanProductDetailOutWindowUsecase;
 import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
@@ -199,6 +201,16 @@ public class UseCaseModule {
     @Provides
     GetListInputUnConfirmByMaPhieuUsecase provideGetListInputUnConfirmByMaPhieuUsecase(OrderRepository productRepository){
         return new GetListInputUnConfirmByMaPhieuUsecase(productRepository);
+    }
+
+    @Provides
+    GetInputForProductDetailWindowUsecase provideGetInputForProductDetailWindowUsecase(ProductRepository productRepository){
+        return new GetInputForProductDetailWindowUsecase(productRepository);
+    }
+
+    @Provides
+    ScanProductDetailOutWindowUsecase provideScanProductDetailOutWindowUsecase(OrderRepository productRepository){
+        return new ScanProductDetailOutWindowUsecase(productRepository);
     }
 }
 

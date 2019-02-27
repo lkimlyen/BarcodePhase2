@@ -12,6 +12,10 @@ public class DepartmentEntity {
     @Expose
     private String name;
 
+    @SerializedName("OrderType")
+    @Expose
+    private int orderType;
+
     public DepartmentEntity() {
     }
 
@@ -21,6 +25,10 @@ public class DepartmentEntity {
 
     public String getName() {
         return name;
+    }
+
+    public int getOrderType() {
+        return orderType;
     }
 
     @Override

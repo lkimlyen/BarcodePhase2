@@ -9,6 +9,7 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
@@ -20,7 +21,9 @@ import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
@@ -171,5 +174,19 @@ public interface LocalRepository {
 
     Observable<RealmResults<LogScanStages>> getAllListStages();
 
-    Observable<String>  deleteAlScanStages();
+    Observable<String> deleteAllScanStages();
+
+    Observable<ProductDetailWindowModel> getProductDetailWindow(ProductWindowEntity model);
+
+    Observable<String> addLogScanStagesWindow(LogScanStagesWindowModel logScanStages);
+
+    Observable<String> updateNumberScanStagesWindow(long stagesId, int number);
+
+    Observable<String> deleteAllScanStagesWindow();
+
+    Observable<RealmResults<LogScanStagesWindowModel>> getAllListStagesWindow();
+
+    Observable<String> deleteScanStagesWindow(long stagesId);
+
+    Observable<List<LogScanStagesWindowModel>> getListLogScanStagesWindowUpload();
 }

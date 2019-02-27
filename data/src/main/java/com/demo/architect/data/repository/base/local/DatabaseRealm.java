@@ -15,6 +15,7 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.DeliveryNoteModel;
@@ -34,9 +35,11 @@ import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.NumberInputConfirmModel;
 import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
@@ -172,7 +175,6 @@ public class DatabaseRealm {
         final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm);
         return list;
     }
-
 
 
     public void addLogScanStagesAsync(final LogScanStages model, final long productId) {
@@ -761,7 +763,7 @@ public class DatabaseRealm {
         return results;
     }
 
-    public void deleteAlScanStages() {
+    public void deleteAllScanStages() {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -776,6 +778,71 @@ public class DatabaseRealm {
                 results2.deleteAllFromRealm();
             }
         });
+    }
+
+    public ProductDetailWindowModel getProductDetailWindow(ProductWindowEntity model) {
+        Realm realm = getRealmInstance();
+        ProductDetailWindowModel productDetail = ProductDetailWindowModel.getProductDetail(realm, model, userId);
+        if (productDetail == null) {
+            productDetail = ProductDetailWindowModel.create(realm, model, userId);
+        }
+        return productDetail;
+    }
+
+    public void addLogScanStagesWindow(final LogScanStagesWindowModel logScanStages) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStagesWindowModel.addLogScanStages(realm, logScanStages);
+            }
+        });
+    }
+
+    public void updateNumberScanStagesWindow(final long stagesId, final int number) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStagesWindowModel.updateNumberInput(realm, stagesId,number);
+            }
+        });
+    }
+
+    public void deleteAlScanStagesWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<ProductDetailWindowModel> results = realm.where(ProductDetailWindowModel.class).findAll();
+                results.deleteAllFromRealm();
+
+                RealmResults<LogScanStagesWindowModel> results1 = realm.where(LogScanStagesWindowModel.class).findAll();
+                results1.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public RealmResults<LogScanStagesWindowModel> getAllListStagesWindow() {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanStagesWindowModel> results = LogScanStagesWindowModel.getAllList(realm);
+        return results;
+    }
+
+    public void deleteScanStagesWindow(final long stagesId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStagesWindowModel.deleteScanStages(realm,stagesId);
+            }
+        });
+    }
+
+    public List<LogScanStagesWindowModel> getListLogScanStagesWindowUpload() {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanStagesWindowModel> results = LogScanStagesWindowModel.getAllList(realm);
+        return realm.copyFromRealm(results);
     }
 
     public class MyMigration implements RealmMigration {

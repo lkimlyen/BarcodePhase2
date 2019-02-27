@@ -288,7 +288,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                                         @Override
                                                         public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                                             view.hideProgressBar();
-                                                            localRepository.deleteAlScanStages().subscribe(new Action1<String>() {
+                                                            localRepository.deleteAllScanStages().subscribe(new Action1<String>() {
                                                                 @Override
                                                                 public void call(String s) {
                                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
@@ -334,7 +334,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                         public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                             view.hideProgressBar();
 
-                                            localRepository.deleteAlScanStages().subscribe(new Action1<String>() {
+                                            localRepository.deleteAllScanStages().subscribe(new Action1<String>() {
                                                 @Override
                                                 public void call(String s) {
                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
@@ -519,12 +519,12 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void deleteAllData() {
 
-        localRepository.deleteAlScanStages().subscribe();
+        localRepository.deleteAllScanStages().subscribe();
     }
 
     @Override
     public void getAllListStages() {
-        localRepository.deleteAlScanStages().subscribe(new Action1<String>() {
+        localRepository.deleteAllScanStages().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 localRepository.getAllListStages().subscribe(new Action1<RealmResults<LogScanStages>>() {

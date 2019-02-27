@@ -34,6 +34,8 @@ import com.demo.barcode.screen.setting.SettingComponent;
 import com.demo.barcode.screen.setting.SettingModule;
 import com.demo.barcode.screen.stages.StagesComponent;
 import com.demo.barcode.screen.stages.StagesModule;
+import com.demo.barcode.screen.stages_window.StagesWindowComponent;
+import com.demo.barcode.screen.stages_window.StagesWindowModule;
 
 import javax.inject.Singleton;
 
@@ -81,4 +83,6 @@ public interface ApplicationComponent {
     DetailErrorComponent plus(DetailErrorModule module);
 
     GroupCodeComponent plus(GroupCodeModule module);
+
+    StagesWindowComponent plus(StagesWindowModule module);
 }

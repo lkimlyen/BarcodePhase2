@@ -20,6 +20,10 @@ public class UserEntity {
     @Expose
     private String userType;
 
+    @SerializedName("OrderType")
+    @Expose
+    private int orderType;
+
     public long getId() {
         return id;
     }
@@ -34,5 +38,9 @@ public class UserEntity {
 
     public String getUserType() {
         return userType;
+    }
+
+    public int getOrderType() {
+        return orderType;
     }
 }

@@ -92,6 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:gravity="center_vertical"
+                    android:id="@+id/ll_type_product"
                     android:orientation="horizontal"
                     android:weightSum="5">
 
@@ -211,6 +212,8 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
+
+                    android:id="@+id/ll_times"
                     android:weightSum="5">
 
                     <TextView
@@ -263,6 +266,7 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
+                    android:id="@+id/ll_type_scan"
                     android:weightSum="5">
 
                     <TextView

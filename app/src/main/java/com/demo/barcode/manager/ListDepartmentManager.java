@@ -4,6 +4,7 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.barcode.app.CoreApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListDepartmentManager {
@@ -24,18 +25,30 @@ public class ListDepartmentManager {
 
     public List<DepartmentEntity> getListDepartment(int role) {
         list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
-        int position = -1;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getId() == role) {
-                position = i;
-                break;
+        List<DepartmentEntity> departmentEntityList = new ArrayList<>();
+
+        for (DepartmentEntity entity : list) {
+
+            if (entity.getId() != role && entity.getOrderType() == -1) {
+                departmentEntityList.add(entity);
             }
         }
-        if (position > -1) {
-            list.remove(position);
+
+        return departmentEntityList;
+    }
+
+    public List<DepartmentEntity> getListDepartmentWithOrderType(int role, int orderType) {
+        list = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getListDepartmentObject();
+        List<DepartmentEntity> departmentEntityList = new ArrayList<>();
+
+        for (DepartmentEntity entity : list) {
+
+            if (entity.getId() != role && entity.getOrderType() == orderType) {
+                departmentEntityList.add(entity);
+            }
         }
 
-        return list;
+        return departmentEntityList;
     }
 
     public String getDepartmentByRole(int role) {

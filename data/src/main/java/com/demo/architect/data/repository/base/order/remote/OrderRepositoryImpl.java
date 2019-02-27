@@ -264,6 +264,19 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<BaseResponse<Integer>> scanProductDetailOutWindow(final String key, final long orderId, final int departmentOut,
+                                                                        final int departmentIn, final long userId, final String json) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse<Integer>>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse<Integer>> subscriber) {
+                handleIntegerResponse(mRemoteApiInterface.scanProductDetailOutWindow(
+                        server + "/WS/api/GD2ScanDetailOutCua", key, orderId,departmentOut,departmentIn,userId,json), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<BaseListResponse> confirmInput(final String key, final int departmentId, final String json) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {

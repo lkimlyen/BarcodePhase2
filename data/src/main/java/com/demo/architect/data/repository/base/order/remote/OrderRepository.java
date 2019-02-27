@@ -26,6 +26,10 @@ public interface OrderRepository {
 
     Observable<BaseResponse<Integer>> scanProductDetailOut(String key, String json);
 
+    Observable<BaseResponse<Integer>> scanProductDetailOutWindow(String key,long orderId,int departmentOut,
+                                                                 int departmentIn, long userId,String json);
+
+
     Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);
 
     Observable<BaseListResponse<CodePackEntity>> getCodePack(long orderId, int orderType, long productId);
@@ -44,8 +48,6 @@ public interface OrderRepository {
     Observable<BaseListResponse<DeliveryNoteEntity>> getListMaPhieuGiao(String key, long orderId,
                                                                          int departmentIdIn,int departmentIdOut);
 
-
     Observable<BaseListResponse<OrderConfirmEntity>> getListInputUnConfirmByMaPhieu(long maPhieu);
-
 
 }

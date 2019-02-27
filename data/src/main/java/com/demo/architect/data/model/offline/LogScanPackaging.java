@@ -244,11 +244,11 @@ public class LogScanPackaging extends RealmObject {
         LogListFloorPagkaging logListFloorPagkaging = logListOrderPackaging.getList().where().equalTo("id", apartmentId)
                 .findFirst();
 
-//        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleEntity.getProductDetailId())
+//        LogListModulePagkaging logListModulePagkaging = logListFloorPagkaging.getList().where().equalTo("id", moduleEntity.getProductSetDetailID())
 //                .findFirst();
 //
 //        if (logListModulePagkaging == null) {
-//            logListModulePagkaging = LogListModulePagkaging.create(realm, moduleEntity.getModule(), moduleEntity.getProductDetailId());
+//            logListModulePagkaging = LogListModulePagkaging.create(realm, moduleEntity.getProductSetName(), moduleEntity.getProductSetDetailID());
 //            logListFloorPagkaging.getList().add(logListModulePagkaging);
 //        }
 

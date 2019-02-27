@@ -37,6 +37,16 @@ public interface OrderApiInterface {
     @POST
     Call<BaseResponse<Integer>> scanProductDetailOut(@Url String url,@Field("pKey") String key, @Field("pJsonProductDetailOut") String jsonProductDetailOut);
 
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse<Integer>> scanProductDetailOutWindow(@Url String url,@Field("pKey") String key,
+                                                           @Field("pOrderID") long orderId,
+                                                           @Field("pDepartmentIDOut") int departmentOut,
+                                                           @Field("pDepartmentIDIn") int departmentIn,
+                                                           @Field("pUserID") long userId,
+                                                           @Field("pJson") String jsonProductDetailOut);
+
     @FormUrlEncoded
     @POST
     Call<BaseListResponse> confirmInput(@Url String url,@Field("pKey") String key, @Field("pDepartmentID") int departmentID, @Field("pJsonListInputComfirmed") String jsonListInputComfirmed);

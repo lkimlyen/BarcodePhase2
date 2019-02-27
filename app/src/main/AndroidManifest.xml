@@ -80,6 +80,7 @@
         <activity android:name=".screen.quality_control.QualityControlActivity"/>
         <activity android:name=".screen.stages.StagesActivity"/>
         <activity android:name=".app.permission.PermissionActivity"/>
+        <activity android:name=".screen.stages_window.StagesWindowActivity"/>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"

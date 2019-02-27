@@ -11,25 +11,25 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductDetail;
+import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -1116,13 +1116,125 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteAlScanStages() {
+    public Observable<String> deleteAllScanStages() {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.deleteAlScanStages();
+                    databaseRealm.deleteAllScanStages();
                     subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ProductDetailWindowModel> getProductDetailWindow(final ProductWindowEntity model) {
+        return Observable.create(new Observable.OnSubscribe<ProductDetailWindowModel>() {
+            @Override
+            public void call(Subscriber<? super ProductDetailWindowModel> subscriber) {
+                try {
+                    ProductDetailWindowModel productDetail = databaseRealm.getProductDetailWindow(model);
+                    subscriber.onNext(productDetail);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addLogScanStagesWindow(final LogScanStagesWindowModel logScanStages) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addLogScanStagesWindow(logScanStages);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateNumberScanStagesWindow(final long stagesId, final int number) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateNumberScanStagesWindow(stagesId,number);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAllScanStagesWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAlScanStagesWindow();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<LogScanStagesWindowModel>> getAllListStagesWindow() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStagesWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<LogScanStagesWindowModel>> subscriber) {
+                try {
+                    RealmResults<LogScanStagesWindowModel> results =  databaseRealm.getAllListStagesWindow();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteScanStagesWindow(final long stagesId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteScanStagesWindow(stagesId);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<LogScanStagesWindowModel>> getListLogScanStagesWindowUpload() {
+        return Observable.create(new Observable.OnSubscribe<List<LogScanStagesWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super List<LogScanStagesWindowModel>> subscriber) {
+                try {
+                    List<LogScanStagesWindowModel> list =  databaseRealm.getListLogScanStagesWindowUpload();
+                    subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
