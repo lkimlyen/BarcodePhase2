@@ -93,6 +93,7 @@ public class LogScanStagesWindowModel extends RealmObject {
         this.productDetail = productDetail;
     }
 
+
     public void setNumberInput(int numberInput) {
         this.numberInput = numberInput;
     }

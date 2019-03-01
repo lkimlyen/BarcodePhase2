@@ -12,6 +12,8 @@ import com.demo.barcode.screen.chang_password.ChangePasswordComponent;
 import com.demo.barcode.screen.chang_password.ChangePasswordModule;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveComponent;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveModule;
+import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowComponent;
+import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowModule;
 import com.demo.barcode.screen.create_packaging.CreatePackagingComponent;
 import com.demo.barcode.screen.create_packaging.CreatePackagingModule;
 import com.demo.barcode.screen.dashboard.DashboardComponent;
@@ -85,4 +87,6 @@ public interface ApplicationComponent {
     GroupCodeComponent plus(GroupCodeModule module);
 
     StagesWindowComponent plus(StagesWindowModule module);
+
+    ConfirmReceiveWindowComponent plus(ConfirmReceiveWindowModule module);
 }

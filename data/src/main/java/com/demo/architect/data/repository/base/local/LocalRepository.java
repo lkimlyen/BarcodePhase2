@@ -5,6 +5,7 @@ import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -19,6 +20,7 @@ import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
@@ -189,4 +191,20 @@ public interface LocalRepository {
     Observable<String> deleteScanStagesWindow(long stagesId);
 
     Observable<List<LogScanStagesWindowModel>> getListLogScanStagesWindowUpload();
+
+    Observable<String> addOrderConfirmWindow(List<OrderConfirmWindowEntity> list);
+
+    Observable<RealmResults<LogScanConfirmWindowModel>> getListConfirmWindow();
+
+    Observable<LogScanConfirmWindowModel> findConfirmByBarcodeInWindow(String barcode);
+
+    Observable<String> updateNumnberLogConfirmWindow(long outputId,int number, boolean scan);
+
+    Observable<List<LogScanConfirmWindowModel>> getListLogScanConfirmWindow();
+
+    Observable<String> confirmAllProductReceiveWindow();
+
+    Observable<String> cancelConfirmAllProductReceiveWindow();
+
+    Observable<String>  updateStatusLogConfirmWindow();
 }

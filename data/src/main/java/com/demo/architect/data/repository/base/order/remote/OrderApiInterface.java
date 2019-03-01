@@ -8,6 +8,7 @@ import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.SOEntity;
@@ -90,4 +91,11 @@ public interface OrderApiInterface {
     @POST
     Call<BaseListResponse<OrderConfirmEntity>> getListInputUnConfirmByMaPhieu(@Url String url, @Field("pMaPhieuID") long maPhieuId);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<OrderConfirmWindowEntity>> getDetailInByDeliveryWindow(@Url String url, @Field("pMaPhieuID") long maPhieuId);
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse> confirmInputWindow(@Url String url, @Field("pKey") String key, @Field("pDepartmentID")int departmentId,
+                                              @Field("pUserID") long userId,@Field("pJson") String json);
 }

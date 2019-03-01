@@ -11,6 +11,7 @@ import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 
@@ -72,7 +73,24 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         }
     }
-
+    private void handleOrderConfirmWindowResponse(Call<BaseListResponse<OrderConfirmWindowEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<OrderConfirmWindowEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
     private void handleListStringResponse(Call<BaseListResponse<String>> call, Subscriber subscriber) {
         try {
             BaseListResponse<String> response = call.execute().body();
@@ -290,6 +308,18 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<BaseListResponse> confirmInputWindow(final String key, final int departmentId, final long userId, final String json) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.confirmInputWindow(
+                        server + "/WS/api/GD2ConfirmDetailInByMaPhieuCua", key, departmentId,userId, json), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<BaseListResponse<CodePackEntity>> getCodePack(final long orderId, final int orderType, final long productId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<CodePackEntity>>() {
@@ -371,6 +401,18 @@ public class OrderRepositoryImpl implements OrderRepository {
             public void call(Subscriber<? super BaseListResponse<OrderConfirmEntity>> subscriber) {
                 handleOrderConfirmResponse(mRemoteApiInterface.getListInputUnConfirmByMaPhieu(
                         server + "/WS/api/GD2GetListInputUnConfirmByMaPhieu", maPhieu), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<OrderConfirmWindowEntity>> getDetailInByDeliveryWindow(final long maPhieu) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderConfirmWindowEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<OrderConfirmWindowEntity>> subscriber) {
+                handleOrderConfirmWindowResponse(mRemoteApiInterface.getDetailInByDeliveryWindow(
+                        server + "/WS/api/GD2GetDetailInByMaPhieuCua", maPhieu), subscriber);
             }
         });
     }

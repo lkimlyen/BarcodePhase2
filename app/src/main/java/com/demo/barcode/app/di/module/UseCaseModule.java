@@ -12,10 +12,12 @@ import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
+import com.demo.architect.domain.ConfirmInputWindowUsecase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
 import com.demo.architect.domain.GetApartmentUsecase;
 import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
+import com.demo.architect.domain.GetDetailInByDeliveryWindowUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
@@ -212,5 +214,15 @@ public class UseCaseModule {
     ScanProductDetailOutWindowUsecase provideScanProductDetailOutWindowUsecase(OrderRepository productRepository){
         return new ScanProductDetailOutWindowUsecase(productRepository);
     }
+    @Provides
+    ConfirmInputWindowUsecase provideConfirmInputWindowUsecase(OrderRepository orderRepository){
+        return new ConfirmInputWindowUsecase(orderRepository);
+    }
+
+    @Provides
+    GetDetailInByDeliveryWindowUsecase provideGetDetailInByDeliveryWindowUsecase(OrderRepository orderRepository){
+        return new GetDetailInByDeliveryWindowUsecase(orderRepository);
+    }
+
 }
 

@@ -7,6 +7,7 @@ import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 
@@ -32,6 +33,8 @@ public interface OrderRepository {
 
     Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);
 
+    Observable<BaseListResponse> confirmInputWindow(String key, int departmentId, long userId,String json);
+
     Observable<BaseListResponse<CodePackEntity>> getCodePack(long orderId, int orderType, long productId);
 
     Observable<BaseListResponse<ModuleEntity>> getModule(long orderId, int orderType, int departmentId);
@@ -49,5 +52,8 @@ public interface OrderRepository {
                                                                          int departmentIdIn,int departmentIdOut);
 
     Observable<BaseListResponse<OrderConfirmEntity>> getListInputUnConfirmByMaPhieu(long maPhieu);
+
+
+    Observable<BaseListResponse<OrderConfirmWindowEntity>> getDetailInByDeliveryWindow(long maPhieu);
 
 }

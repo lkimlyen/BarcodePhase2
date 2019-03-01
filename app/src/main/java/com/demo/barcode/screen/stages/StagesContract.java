@@ -38,8 +38,7 @@ public interface StagesContract {
 
         void turnOnVibrator();
 
-        void showCheckResidual(int times, ProductDetail
-                productEntity, int departmentId);
+        void showCheckResidual();
 
         void showCheckResidualInGroup(long id, double number, double numberInput);
 

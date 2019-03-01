@@ -280,6 +280,7 @@
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="text_window_name">Bộ cửa: </string>
+    <string name="text_detail_confirm_complete">Chi tiết đã được xác nhận đủ</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

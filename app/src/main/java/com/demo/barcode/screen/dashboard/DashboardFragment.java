@@ -17,6 +17,7 @@ import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
+import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
@@ -148,7 +149,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                     btnHistory.setVisibility(View.VISIBLE);
                 }
 
-            }else {
+            } else {
                 btnScanStages.setVisibility(View.GONE);
                 btnConfirmreceive.setVisibility(View.GONE);
                 txtPosition.setText("Bộ  phận: In tem bao bì");
@@ -198,9 +199,9 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_scan_stages)
     public void scanStages() {
-        if(UserManager.getInstance().getUser().getOrderType() ==4){
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
             StagesWindowActivity.start(getContext());
-        }else {
+        } else {
 
             StagesActivity.start(getContext());
         }
@@ -208,7 +209,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_confirm_receive)
     public void confirmReceive() {
-        ConfirmReceiveActivity.start(getContext());
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            ConfirmReceiveWindowActivity.start(getContext());
+        } else {
+            ConfirmReceiveActivity.start(getContext());
+        }
     }
 
     @OnClick(R.id.btn_scan_packaging)

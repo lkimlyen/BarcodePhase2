@@ -93,6 +93,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="@dimen/distance_5dp"
                     android:gravity="center_vertical"
+                    android:id="@+id/ll_type_product"
                     android:orientation="horizontal"
                     android:weightSum="5">
 
@@ -241,6 +242,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:gravity="center_vertical"
+                    android:id="@+id/ll_times"
                     android:orientation="horizontal"
                     android:weightSum="5">
 
@@ -268,6 +270,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:id="@+id/ll_type_scan"
                     android:orientation="horizontal"
                     android:weightSum="5">
 

@@ -7,6 +7,7 @@ import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -20,6 +21,7 @@ import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
@@ -1235,6 +1237,133 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     List<LogScanStagesWindowModel> list =  databaseRealm.getListLogScanStagesWindowUpload();
                     subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addOrderConfirmWindow(final List<OrderConfirmWindowEntity> list) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.addOrderConfirmWindow(list);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<LogScanConfirmWindowModel>> getListConfirmWindow() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanConfirmWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<LogScanConfirmWindowModel>> subscriber) {
+                try {
+                    RealmResults<LogScanConfirmWindowModel> results =   databaseRealm.getListConfirmWindow();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<LogScanConfirmWindowModel> findConfirmByBarcodeInWindow(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<LogScanConfirmWindowModel>() {
+            @Override
+            public void call(Subscriber<? super LogScanConfirmWindowModel> subscriber) {
+                try {
+                    LogScanConfirmWindowModel model = databaseRealm.findConfirmByBarcodeInWindow(barcode);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateNumnberLogConfirmWindow(final long outputId, final int number, final boolean scan) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateNumnberLogConfirmWindow(outputId,number,scan);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<LogScanConfirmWindowModel>> getListLogScanConfirmWindow() {
+        return Observable.create(new Observable.OnSubscribe<List<LogScanConfirmWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super List<LogScanConfirmWindowModel>> subscriber) {
+                try {
+                    List<LogScanConfirmWindowModel> list =  databaseRealm.getListLogScanConfirmWindow();
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> confirmAllProductReceiveWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.confirmAllProductReceiveWindow();
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> cancelConfirmAllProductReceiveWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.cancelConfirmAllProductReceiveWindow();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusLogConfirmWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusLogConfirmWindow();
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

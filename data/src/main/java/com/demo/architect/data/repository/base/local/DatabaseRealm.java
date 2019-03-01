@@ -11,6 +11,7 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
+import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -19,6 +20,7 @@ import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.DeliveryNoteModel;
+import com.demo.architect.data.model.offline.DeliveryNoteWindowModel;
 import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
@@ -33,6 +35,7 @@ import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListScanStagesMain;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
@@ -804,7 +807,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStagesWindowModel.updateNumberInput(realm, stagesId,number);
+                LogScanStagesWindowModel.updateNumberInput(realm, stagesId, number);
             }
         });
     }
@@ -834,7 +837,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanStagesWindowModel.deleteScanStages(realm,stagesId);
+                LogScanStagesWindowModel.deleteScanStages(realm, stagesId);
             }
         });
     }
@@ -843,6 +846,84 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         RealmResults<LogScanStagesWindowModel> results = LogScanStagesWindowModel.getAllList(realm);
         return realm.copyFromRealm(results);
+    }
+
+    public void addOrderConfirmWindow(final List<OrderConfirmWindowEntity> list) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<DeliveryNoteWindowModel> deliveryNoteModels = realm.where(DeliveryNoteWindowModel.class)
+                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                deliveryNoteModels.deleteAllFromRealm();
+                RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                results.deleteAllFromRealm();
+                for (OrderConfirmWindowEntity orderConfirmEntity : list) {
+                    LogScanConfirmWindowModel.createOrUpdate(realm, orderConfirmEntity, userId);
+                }
+            }
+        });
+    }
+
+    public RealmResults<LogScanConfirmWindowModel> getListConfirmWindow() {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class)
+                .equalTo("state",false)
+                .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+        return results;
+    }
+
+    public LogScanConfirmWindowModel findConfirmByBarcodeInWindow(String barcode) {
+        Realm realm = getRealmInstance();
+        LogScanConfirmWindowModel model = LogScanConfirmWindowModel.findConfirmByBarcode(realm,barcode);
+        return model;
+    }
+
+    public void updateNumnberLogConfirmWindow(final long outputId, final int number, final boolean scan) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirmWindowModel.updateNumberScan(realm,outputId,number,scan);
+            }
+        });
+    }
+
+    public List<LogScanConfirmWindowModel> getListLogScanConfirmWindow() {
+        Realm realm = getRealmInstance();
+        RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class)
+                .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+        return realm.copyFromRealm(results);
+    }
+
+    public void cancelConfirmAllProductReceiveWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirmWindowModel.cancelConfirmAllReceive(realm);
+            }
+        });
+    }
+
+    public void confirmAllProductReceiveWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirmWindowModel.confirmAllReceive(realm);
+            }
+        });
+    }
+
+    public void updateStatusLogConfirmWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanConfirmWindowModel.updateStatusScanConfirm(realm);
+            }
+        });
     }
 
     public class MyMigration implements RealmMigration {

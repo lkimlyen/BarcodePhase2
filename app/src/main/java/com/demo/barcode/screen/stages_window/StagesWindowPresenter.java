@@ -163,8 +163,8 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                         view.showPrintDeliveryNote(successResponse.getId());
+                                        view.refreshLayout();
                                         getListProduct(orderId, true);
-
 
                                     }
                                 });

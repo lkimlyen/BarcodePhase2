@@ -112,7 +112,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                             if (productDetail.getNumberRest() > 0) {
                                 saveBarcodeToDataBase(times, productDetail, 1, departmentId, null, true, false);
                             } else {
-                                view.showCheckResidual(times, productDetail, departmentId);
+                                saveBarcodeToDataBase(times, productDetail, 1, departmentId, null, true, false);
                             }
                         } else {
                             showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
@@ -379,6 +379,8 @@ public class StagesPresenter implements StagesContract.Presenter {
                 if (!residual) {
                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                     view.startMusicSuccess();
+                }else {
+                    view.showCheckResidual();
                 }
                 view.turnOnVibrator();
                 view.hideProgressBar();

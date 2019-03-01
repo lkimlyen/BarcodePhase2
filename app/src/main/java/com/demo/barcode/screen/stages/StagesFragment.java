@@ -532,11 +532,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidual(int times, ProductDetail
-            productEntity, int departmentId) {
+    public void showCheckResidual() {
         mp3.start();
-        turnOnVibrator();
-        mPresenter.saveBarcodeToDataBase(times, productEntity, 1, departmentId, null, typeScan == 1, true);
         Toast toast = Toast.makeText(getActivity(), "Mã quét vượt số lượng yêu cầu!", Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
