@@ -20,7 +20,7 @@ import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -231,12 +231,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final long deliveryNoteId) {
+    public Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final int times) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addOrderConfirm(list,deliveryNoteId);
+                    databaseRealm.addOrderConfirm(list, times);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -247,12 +247,29 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogScanConfirm>> getListConfirm(final long  deliveryNoteId, final long orderId, final int departmentIdOut, final int times) {
-        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanConfirm>>() {
+    public Observable<RealmResults<LogScanConfirmModel>> getListConfirm() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanConfirmModel>>() {
             @Override
-            public void call(Subscriber<? super RealmResults<LogScanConfirm>> subscriber) {
+            public void call(Subscriber<? super RealmResults<LogScanConfirmModel>> subscriber) {
                 try {
-                    RealmResults<LogScanConfirm> realmList = databaseRealm.getListConfirm(deliveryNoteId,orderId, departmentIdOut, times);
+                    RealmResults<LogScanConfirmModel> realmList = databaseRealm.getListConfirm();
+                    subscriber.onNext(realmList);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public Observable<List<LogScanConfirmModel>> getListLogScanConfirm() {
+        return Observable.create(new Observable.OnSubscribe<List<LogScanConfirmModel>>() {
+            @Override
+            public void call(Subscriber<? super List<LogScanConfirmModel>> subscriber) {
+                try {
+                    List<LogScanConfirmModel> realmList = databaseRealm.getListLogScanConfirm();
                     subscriber.onNext(realmList);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -263,45 +280,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times) {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
+    public Observable<LogScanConfirmModel> findConfirmByBarcode(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<LogScanConfirmModel>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void call(Subscriber<? super LogScanConfirmModel> subscriber) {
                 try {
-                    int count = databaseRealm.countListConfirmByTimesWaitingUpload(orderId, departmentIdOut, times);
-                    subscriber.onNext(count);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
-
-    @Override
-    public Observable<List<LogScanConfirm>> getListLogScanConfirm(final long orderId, final int departmentIdOut, final int times) {
-        return Observable.create(new Observable.OnSubscribe<List<LogScanConfirm>>() {
-            @Override
-            public void call(Subscriber<? super List<LogScanConfirm>> subscriber) {
-                try {
-                    List<LogScanConfirm> realmList = databaseRealm.getListLogScanConfirm(orderId, departmentIdOut, times);
-                    subscriber.onNext(realmList);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
-
-    @Override
-    public Observable<LogScanConfirm> findConfirmByBarcode(final long maPhieuId, final long orderId, final int departmentIdOut, final int times, final String barcode) {
-        return Observable.create(new Observable.OnSubscribe<LogScanConfirm>() {
-            @Override
-            public void call(Subscriber<? super LogScanConfirm> subscriber) {
-                try {
-                    LogScanConfirm model = databaseRealm.findConfirmByBarcode(maPhieuId,barcode, orderId, departmentIdOut,
-                            times);
+                    LogScanConfirmModel model = databaseRealm.findConfirmByBarcode(barcode);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -313,12 +297,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> updateNumnberLogConfirm(final long maPhieuId, final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan) {
+    public Observable<String> updateNumnberLogConfirm(final long outputId, final int numberScan, final boolean scan) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateNumberLogConfirm(maPhieuId,orderId, orderProductId, departmentIdOut, times, numberScan, scan);
+                    databaseRealm.updateNumberLogConfirm(outputId, numberScan, scan);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -893,12 +877,12 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> confirmAllProductReceive(final long orderId, final int departmentId, final int times) {
+    public Observable<String> confirmAllProductReceive() {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.confirmAllProductReceive(orderId, departmentId, times);
+                    databaseRealm.confirmAllProductReceive();
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -909,12 +893,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> cancelConfirmAllProductReceive(final long orderId, final int departmentId, final int times) {
+    public Observable<String> cancelConfirmAllProductReceive() {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.cancelConfirmAllProductReceive(orderId, departmentId, times);
+                    databaseRealm.cancelConfirmAllProductReceive();
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1005,21 +989,6 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<String> updateStatusPrint(final long orderId, final int departmentIdOut, final int times) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    databaseRealm.updateStatusPrint(orderId,departmentIdOut,times);
-                    subscriber.onNext("success");
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<String> updateNumberTotalProduct(final List<ProductEntity> entity) {

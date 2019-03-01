@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class NumberInputConfirm {
     @SerializedName("NumberConfirmed")
     @Expose
-    private double numberConfirmed;
+    private int numberConfirmed;
 
     @SerializedName("TimesInput")
     @Expose
     private int timesInput;
 
-    public double getNumberConfirmed() {
+    public int getNumberConfirmed() {
         return numberConfirmed;
     }
 

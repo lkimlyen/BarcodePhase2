@@ -25,11 +25,11 @@ public class ProductGroupEntity {
     private String groupCode;
 
     @SerializedName("NumberTotalDetail")
-    private double numberTotal;
+    private int numberTotal;
 
     @SerializedName("Number")
     @Expose
-    private double number;
+    private int number;
 
 
 
@@ -45,7 +45,7 @@ public class ProductGroupEntity {
         return groupCode;
     }
 
-    public double getNumber() {
+    public int getNumber() {
         return number;
     }
 
@@ -57,7 +57,7 @@ public class ProductGroupEntity {
         return Module;
     }
 
-    public double getNumberTotal() {
+    public int getNumberTotal() {
         return numberTotal;
     }
 

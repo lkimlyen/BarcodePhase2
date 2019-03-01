@@ -11,7 +11,7 @@ import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocketConfirm;
 import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
@@ -25,6 +25,7 @@ import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetTimesInputAndOutputByDepartmentUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.ListDeliveryNoteManager;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListOrderConfirmManager;
@@ -36,7 +37,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -114,7 +114,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
-                        view.clearDataNoProduct(true);
 
                     }
                 });
@@ -134,13 +133,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     public void onError(GetTimesInputAndOutputByDepartmentUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
-                        view.clearDataNoProduct(true);
                     }
                 });
     }
 
     @Override
-    public void getListConfirm(long maPhieuId, long orderId, int departmentIdOut, int times, boolean refresh) {
+    public void getListConfirm(long maPhieuId,int times, boolean refresh) {
         view.showProgressBar();
         getListInputUnConfirmByMaPhieuUsecase.executeIO(new GetListInputUnConfirmByMaPhieuUsecase.RequestValue(maPhieuId),
                 new BaseUseCase.UseCaseCallback<GetListInputUnConfirmByMaPhieuUsecase.ResponseValue,
@@ -148,19 +146,14 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     @Override
                     public void onSuccess(GetListInputUnConfirmByMaPhieuUsecase.ResponseValue successResponse) {
                         ListOrderConfirmManager.getInstance().setListOrder(successResponse.getEntity());
-                        localRepository.addOrderConfirm(successResponse.getEntity(), maPhieuId).subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String s) {
-                                if (!refresh) {
-                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_confirm_success));
-                                }
-                                if (times > 0) {
+                        if (!refresh) {
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_confirm_success));
+                        }
+                        view.hideProgressBar();
+                        if (times > 0){
+                            getListConfirm(times);
+                        }
 
-                                    getListConfirmByTimes(maPhieuId, orderId, departmentIdOut, times);
-                                }
-                                view.hideProgressBar();
-                            }
-                        });
                     }
 
                     @Override
@@ -169,7 +162,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         if (!refresh) {
                             view.showError(errorResponse.getDescription());
                             ListOrderConfirmManager.getInstance().setListOrder(new ArrayList<>());
-                            view.clearDataNoProduct(false);
+
                         }
 
 
@@ -196,7 +189,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         ListDeliveryNoteManager.getInstance().setListDeliveryNote(new ArrayList<>());
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
-                        view.clearDataNoProduct(true);
+
                     }
                 });
     }
@@ -209,74 +202,62 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListConfirmByTimes(long deliveryNoteId, long orderId, int deparmentId, int times) {
-        localRepository.getListConfirm(deliveryNoteId, orderId, deparmentId, times).subscribe(new Action1<RealmResults<LogScanConfirm>>() {
-            @Override
-            public void call(RealmResults<LogScanConfirm> logScanConfirms) {
-                view.showListConfirm(logScanConfirms);
-            }
-        });
+    public void getListConfirm(int times) {
+        localRepository.addOrderConfirm(ListOrderConfirmManager.getInstance().getListOrder(), times)
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        localRepository.getListConfirm().subscribe(new Action1<RealmResults<LogScanConfirmModel>>() {
+                            @Override
+                            public void call(RealmResults<LogScanConfirmModel> logScanConfirmModels) {
+                                view.showListConfirm(logScanConfirmModels);
+                            }
+                        });
+                    }
+                });
 
-        localRepository.getCheckedConfirmAll(orderId, deparmentId, times).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-                view.setCheckedAll(aBoolean);
-            }
-        });
+
     }
 
-    int count = 0;
-
-    @Override
-    public int countListConfirmByTimesWaitingUpload(long orderId, int deparmentId, int times) {
-        count = 0;
-        localRepository.countListConfirmByTimesWaitingUpload(orderId, deparmentId, times).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                count = integer;
-            }
-        });
-        return count;
-    }
 
     private boolean allowedToSave = false;
 
     @Override
-    public void checkBarcode(long maPhieuId, long orderId, String barcode, int departmentId, int times, boolean groupCode) {
+    public void checkBarcode(String barcode, boolean groupCode) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-        localRepository.findConfirmByBarcode(maPhieuId, orderId, departmentId, times, barcode).subscribe(new Action1<LogScanConfirm>() {
+        localRepository.findConfirmByBarcode(barcode).subscribe(new Action1<LogScanConfirmModel>() {
             @Override
-            public void call(LogScanConfirm logScanConfirm) {
-                if (logScanConfirm == null) {
+            public void call(LogScanConfirmModel logScanConfirmModel) {
+                if (logScanConfirmModel == null) {
                     showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
                 } else {
 
-                    if (logScanConfirm.getDeliveryNoteModel().getNumberRest() == 0) {
+                    if (logScanConfirmModel.getDeliveryNoteModel().getNumberRest() == 0) {
                         showError(CoreApplication.getInstance().getString(R.string.text_number_confirm_residual));
                         return;
                     }
                     if (!groupCode) {
-                        if (logScanConfirm.getNumberRestInTimes() == 0) {
+                        if (logScanConfirmModel.getNumberRestInTimes() == 0) {
                             showError(CoreApplication.getInstance().getString(R.string.text_number_confirm_residual));
                         } else {
-                            saveConfirm(maPhieuId, orderId, logScanConfirm.getMasterOutputID(), logScanConfirm.getDepartmentIDOut(), times, 1);
+                            saveConfirm(logScanConfirmModel.getOutputId(), 1);
                         }
 
                     } else {
-                        int count = ListGroupManager.getInstance().countProductById(logScanConfirm.getProductDetailId());
+                        int count = ListGroupManager.getInstance().countProductById(logScanConfirmModel.getProductDetailId());
                         if (count > 1) {
-                            view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(logScanConfirm.getProductDetailId()));
+                            view.showDialogChooseGroup(ListGroupManager.getInstance().getListGroupEntityByProductId(logScanConfirmModel.getProductDetailId()));
                         } else if (count == 1) {
-                            ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirm.getProductDetailId());
+                            ProductGroupEntity productGroupEntity = ListGroupManager.getInstance().getProductById(logScanConfirmModel.getProductDetailId());
                             GroupEntity groupEntityList = ListGroupManager.getInstance().getGroupEntityByGroupCode(productGroupEntity.getGroupCode());
                             if (productGroupEntity == null) {
                                 showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_group));
                                 return;
                             }
-                            saveNumberConfirmGroup(groupEntityList, maPhieuId, orderId, times, departmentId);
+                            //saveNumberConfirmGroup(groupEntityList, maPhieuId, orderId, times, departmentId);
                         }
 
 
@@ -290,10 +271,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void updateNumberConfirm(long maPhieuId, long orderId, long masterOutputId, int departmentIdOut, int times, double numberScan) {
-        localRepository.updateNumnberLogConfirm(maPhieuId, orderId, masterOutputId, departmentIdOut, times, numberScan, false).subscribe(new Action1<String>() {
+    public void updateNumberConfirm(long outputId, int numberScan) {
+        localRepository.updateNumnberLogConfirm(outputId, numberScan, false).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
+                view.setValuePrint(false);
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
@@ -303,37 +285,29 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void uploadData(long maPhieuId, long orderId, int departmentIdOut, int times, boolean checkPrint) {
+    public void uploadData(long maPhieuId, long orderId, int departmentIdOut, int times) {
         //    view.showError(CoreApplication.getInstance().getString(R.string.text_not_print_before_upload));
         view.showProgressBar();
-        localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
+        localRepository.getListLogScanConfirm().subscribe(new Action1<List<LogScanConfirmModel>>() {
             @Override
-            public void call(List<LogScanConfirm> logScanConfirms) {
-                if (logScanConfirms.size() == 0) {
-                    view.hideProgressBar();
-                    view.showError(CoreApplication.getInstance().getString(R.string.text_no_data_upload_in_times_scan));
-                    return;
-                }
-                if (!checkPrint) {
-                    for (LogScanConfirm logScanConfirm : logScanConfirms) {
-                        if (!logScanConfirm.isPrint()) {
-                            view.showProgressBar();
-                            view.showWarningPrint();
-                            return;
-                        }
+            public void call(List<LogScanConfirmModel> logScanConfirmModels) {
+
+                List<LogScanConfirmModel> listUpload = new ArrayList<>();
+                for (LogScanConfirmModel logScanConfirmModel : logScanConfirmModels) {
+                    if (logScanConfirmModel.getStatusConfirm() != -1) {
+                        listUpload.add(logScanConfirmModel);
                     }
                 }
-
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 Gson gson = builder.create();
-                String json = gson.toJson(logScanConfirms);
+                String json = gson.toJson(listUpload);
 
                 List<PrintConfirmEntity> list = new ArrayList<>();
-                for (LogScanConfirm logScanConfirm : logScanConfirms) {
-                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
-                            logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberOut(),
-                            (int) logScanConfirm.getDeliveryNoteModel().getNumberUsed(), (int) logScanConfirm.getNumberConfirmed());
+                for (LogScanConfirmModel logScanConfirmModel : logScanConfirmModels) {
+                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirmModel.getDeliveryNoteModel().getProductId(),
+                            logScanConfirmModel.getProductDetailId(), (int) logScanConfirmModel.getNumberOut(),
+                            (int) logScanConfirmModel.getDeliveryNoteModel().getNumberUsed(), (int) logScanConfirmModel.getNumberConfirmed());
 
                     list.add(detailItem);
                 }
@@ -357,7 +331,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                     public void onSuccess(AddPhieuGiaoNhanUsecase.ResponseValue successResponse) {
                                         view.hideProgressBar();
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
-                                        getListConfirm(maPhieuId, orderId, departmentIdOut, times, true);
+                                        getListConfirm(maPhieuId,times, true);
                                     }
 
                                     @Override
@@ -405,7 +379,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port, long maPhieuId, String maPhieu, long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
+    public void saveIPAddress(String ipAddress, int port, long maPhieuId,  long orderId, int departmentIdOut, int times, long serverId, boolean upload) {
         long userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
@@ -418,10 +392,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void confirmAll(long orderId, int departmentId, int times) {
-        localRepository.confirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
+    public void confirmAll() {
+        localRepository.confirmAllProductReceive().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
+
+                view.setValuePrint(false);
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_confirm_all_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
@@ -431,10 +407,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void cancelConfirmAll(long orderId, int departmentId, int times) {
-        localRepository.cancelConfirmAllProductReceive(orderId, departmentId, times).subscribe(new Action1<String>() {
+    public void cancelConfirmAll() {
+        localRepository.cancelConfirmAllProductReceive().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
+
+                view.setValuePrint(false);
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_cancle_confirm_all_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
@@ -443,26 +421,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
         });
     }
 
-
-    @Override
-    public void saveListWithGroupCodeEnough(long maPhieuId, int times, List<ProductGroupEntity> list) {
-        for (ProductGroupEntity item : list) {
-            OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
-            localRepository.findConfirmByBarcode(maPhieuId, item.getOrderId(), orderConfirmEntity.getDepartmentIDOut(), times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
-                @Override
-                public void call(LogScanConfirm logScanConfirm) {
-//                    if (logScanConfirm.getNumberScanOut() > logScanConfirm.getNumberConfirmed()) {
-//                        if (item.getNumber() + logScanConfirm.getNumberConfirmed() > logScanConfirm.getNumberScanOut()) {
-//                            saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, logScanConfirm.getNumberScanOut());
-//                        } else {
-//                            saveConfirm(orderConfirmEntity.getOrderId(), orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber() + logScanConfirm.getNumberConfirmed());
-//                        }
-                    // }
-
-                }
-            });
-        }
-    }
 
     private int numberLoop = 0;
 
@@ -474,11 +432,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             numberLoop++;
             OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
             if (orderConfirmEntity != null) {
-                localRepository.findConfirmByBarcode(maPhieuId, orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                localRepository.findConfirmByBarcode(orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirmModel>() {
                     @Override
-                    public void call(LogScanConfirm logScanConfirm) {
-                        if (logScanConfirm.getNumberRestInTimes() >= item.getNumber()) {
-                            if (logScanConfirm.getNumberRestInTimes() == 0) {
+                    public void call(LogScanConfirmModel logScanConfirmModel) {
+                        if (logScanConfirmModel.getNumberRestInTimes() >= item.getNumber()) {
+                            if (logScanConfirmModel.getNumberRestInTimes() == 0) {
                                 allowedToSave = false;
                             }
                         } else {
@@ -489,10 +447,10 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                 for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
                                     OrderConfirmEntity orderConfirmEntity = ListOrderConfirmManager.getInstance().getDetailByProductDetailId(item.getProductDetailID());
                                     if (orderConfirmEntity != null) {
-                                        localRepository.findConfirmByBarcode(maPhieuId, orderId, departmentId, times, orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirm>() {
+                                        localRepository.findConfirmByBarcode(orderConfirmEntity.getBarcode()).subscribe(new Action1<LogScanConfirmModel>() {
                                             @Override
-                                            public void call(LogScanConfirm logScanConfirm) {
-                                                saveConfirm(maPhieuId, orderId, orderConfirmEntity.getMasterOutputID(), orderConfirmEntity.getDepartmentIDOut(), times, item.getNumber());
+                                            public void call(LogScanConfirmModel logScanConfirmModel) {
+                                                saveConfirm(orderConfirmEntity.getOutputID(), item.getNumber());
                                             }
                                         });
                                     }
@@ -532,17 +490,17 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
 
                             if (serverId == -1) {
-                                localRepository.getListLogScanConfirm(orderId, departmentIdOut, times).subscribe(new Action1<List<LogScanConfirm>>() {
+                                localRepository.getListLogScanConfirm().subscribe(new Action1<List<LogScanConfirmModel>>() {
                                     @Override
-                                    public void call(List<LogScanConfirm> logScanConfirms) {
+                                    public void call(List<LogScanConfirmModel> logScanConfirms) {
 
                                         if (logScanConfirms.size() == 0) {
                                             view.hideProgressBar();
                                             view.showError(CoreApplication.getInstance().getString(R.string.text_not_data_print));
                                         } else {
                                             List<PrintConfirmEntity> list = new ArrayList<>();
-                                            for (LogScanConfirm logScanConfirm : logScanConfirms) {
-                                                PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getProductId(),
+                                            for (LogScanConfirmModel logScanConfirm : logScanConfirms) {
+                                                PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getDeliveryNoteModel().getProductId(),
                                                         logScanConfirm.getProductDetailId(), (int) logScanConfirm.getNumberOut(),
                                                         (int) logScanConfirm.getDeliveryNoteModel().getNumberUsed(), (int) logScanConfirm.getNumberConfirmed());
 
@@ -574,19 +532,16 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                 });
 
                             } else {
-                                localRepository.updateStatusPrint(orderId, departmentIdOut, times).subscribe(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
 
-                                        view.hideProgressBar();
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
+                                view.setValuePrint(true);
+                                view.hideProgressBar();
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
 
-                                        if (upload) {
-                                            uploadData(maPhieuId, orderId, departmentIdOut, times, true);
-                                        }
+                                if (upload) {
+                                    uploadData(maPhieuId, orderId, departmentIdOut, times);
+                                }
 
-                                    }
-                                });
+
                             }
                         } else {
                             view.hideProgressBar();
@@ -602,11 +557,12 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
 
-    public void saveConfirm(long maPhieuId, long orderId, long marterOutputId, int departmentIdOut, int times,
-                            double number) {
-        localRepository.updateNumnberLogConfirm(maPhieuId, orderId, marterOutputId, departmentIdOut, times, number, true).subscribe(new Action1<String>() {
+    public void saveConfirm(long outputId, int number) {
+        localRepository.updateNumnberLogConfirm(outputId, number, true).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
+
+                view.setValuePrint(false);
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();

@@ -21,32 +21,22 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.GroupEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.adapter.ConfirmInputWindowAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
-import com.demo.barcode.dialogs.ChooseGroupDialog;
-import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
 
@@ -73,6 +63,9 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
     private long maPhieuId = 0;
     @Bind(R.id.tv_code_so)
     TextView tvCodeSO;
+
+    @Bind(R.id.bt_print)
+    Button btPrint;
 
     @Bind(R.id.ll_times)
     LinearLayout llTimes;
@@ -103,11 +96,12 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
 
     @Bind(R.id.ll_root)
     LinearLayout lLRoot;
-    private int typeScan = 0;
+
+    @Bind(R.id.tv_column)
+    TextView tvColumn;
     private Vibrator vibrate;
     private long orderId = 0;
 
-    private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
     public ConfirmReceiveWindowFragment() {
         // Required empty public constructor
@@ -144,6 +138,8 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
     }
 
     private void initView() {
+        tvColumn.setText(getString(R.string.text_product_window_break));
+        btPrint.setVisibility(View.GONE);
         llTypeProduct.setVisibility(View.GONE);
         llTimes.setVisibility(View.GONE);
         llTypeScan.setVisibility(View.GONE);
@@ -314,7 +310,7 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
 
     @Override
     public void showListConfirm(RealmResults<LogScanConfirmWindowModel> list) {
-        if(cbConfirmAll.isChecked()){
+        if (cbConfirmAll.isChecked()) {
             change = true;
             cbConfirmAll.setChecked(false);
 

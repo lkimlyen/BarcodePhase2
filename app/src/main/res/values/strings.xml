@@ -140,6 +140,8 @@
     <string name="text_floor_or_apartment">Căn/Tầng</string>
     <string name="text_serial_module">STT Module</string>
     <string name="text_serial_module_break">STT \n Module</string>
+
+    <string name="text_product_window_break">Bộ \n cửa</string>
     <string name="text_serial_module_print">STT Module:</string>
     <string name="text_package">Kiện</string>
     <string name="text_date_print">Ngày in:</string>

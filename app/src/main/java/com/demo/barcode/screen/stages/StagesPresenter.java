@@ -112,7 +112,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                             if (productDetail.getNumberRest() > 0) {
                                 saveBarcodeToDataBase(times, productDetail, 1, departmentId, null, true, false);
                             } else {
-                                saveBarcodeToDataBase(times, productDetail, 1, departmentId, null, true, false);
+                                saveBarcodeToDataBase(times, productDetail, 1, departmentId, null, true, true);
                             }
                         } else {
                             showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));

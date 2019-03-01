@@ -15,11 +15,10 @@ import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
@@ -30,13 +29,10 @@ import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import io.realm.RealmList;
 import io.realm.RealmResults;
-import rx.Completable;
 import rx.Observable;
 
 public interface LocalRepository {
@@ -65,17 +61,15 @@ public interface LocalRepository {
 
     Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, int departmentId, long userId, int times);
 
-    Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final long deliveryNoteId);
+    Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final int times);
 
-    Observable<RealmResults<LogScanConfirm>> getListConfirm(long  deliveryNoteId,final long orderId, final int departmentIdOut, final int times);
+    Observable<RealmResults<LogScanConfirmModel>> getListConfirm();
 
-    Observable<Integer> countListConfirmByTimesWaitingUpload(final long orderId, final int departmentIdOut, final int times);
+    Observable<List<LogScanConfirmModel>> getListLogScanConfirm();
 
-    Observable<List<LogScanConfirm>> getListLogScanConfirm(long orderId, int departmentIdOut, int times);
+    Observable<LogScanConfirmModel> findConfirmByBarcode( final String barcode);
 
-    Observable<LogScanConfirm> findConfirmByBarcode(long maPhieuId,final long orderId, int departmentIdOut, int times, final String barcode);
-
-    Observable<String> updateNumnberLogConfirm(long maPhieuId,final long orderId, final long orderProductId, final int departmentIdOut, final int times, final double numberScan, final boolean scan);
+    Observable<String> updateNumnberLogConfirm(long outputId, final int numberScan, final boolean scan);
 
     Observable<String> updateStatusLogConfirm();
 
@@ -151,9 +145,9 @@ public interface LocalRepository {
 
     Observable<String> updateGroupCode(String groupCode, long orderId, GroupCode[] listSelect);
 
-    Observable<String> confirmAllProductReceive(long orderId, int departmentId, int times);
+    Observable<String> confirmAllProductReceive();
 
-    Observable<String> cancelConfirmAllProductReceive(long orderId, int departmentId, int times);
+    Observable<String> cancelConfirmAllProductReceive();
     Observable<Boolean> getCheckedConfirmAll(final long orderId, final int departmentIdOut, final int times);
 
 
@@ -162,7 +156,6 @@ public interface LocalRepository {
 
     Observable<Double> totalNumberScanGroup(long productDetailId);
 
-    Observable<String> updateStatusPrint(long orderId, int departmentIdOut, int times);
 
     Observable<String> updateNumberTotalProduct(List<ProductEntity> entity);
 

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.offline.DeliveryNoteWindowModel;
-import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;

@@ -766,12 +766,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (llRoot.getVisibility() == View.GONE) {
-            llRoot.setVisibility(View.VISIBLE);
-            btnScan.setVisibility(View.VISIBLE);
-            return;
-        }
-        if (adapter.getItemCount() > 0) {
+        if ( adapter != null && adapter.getItemCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))

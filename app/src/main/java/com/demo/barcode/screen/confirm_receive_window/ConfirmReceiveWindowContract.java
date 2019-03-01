@@ -2,10 +2,7 @@ package com.demo.barcode.screen.confirm_receive_window;
 
 import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.GroupEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogScanConfirm;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;

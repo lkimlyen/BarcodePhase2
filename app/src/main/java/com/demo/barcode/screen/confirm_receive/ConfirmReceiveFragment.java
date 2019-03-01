@@ -30,7 +30,7 @@ import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogScanConfirm;
+import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.app.base.BaseFragment;
@@ -63,13 +63,12 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private final String TAG = ConfirmReceiveFragment.class.getName();
     private ConfirmReceiveContract.Presenter mPresenter;
     private int departmentId = 0;
-    private int typeProduct = 0;
     private ConfirmInputAdapter adapter;
     public MediaPlayer mp1, mp2;
     private int times = 0;
     private boolean change;
     private long maPhieuId = 0;
-    private String maPhieu;
+    private boolean printed;
     @Bind(R.id.tv_code_so)
     TextView tvCodeSO;
 
@@ -129,15 +128,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
-                String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(maPhieuId, orderId, barcode, departmentId, times, typeScan == 2);
 
-            }
-        }
     }
 
     @Override
@@ -318,9 +309,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             Integer number = (Integer) item;
                             tvTimes.setText(String.valueOf(number));
                             times = number;
-                            if (orderId > 0 && departmentId > 0) {
-                                mPresenter.getListConfirmByTimes(maPhieuId, orderId, departmentId, times);
-                            }
+                            mPresenter.getListConfirm(times);
+
                         }
                     });
                     searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -349,7 +339,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             tvDeliveryCode.setText(getString(R.string.text_choose_delivery_code));
                             maPhieuId = 0;
                             tvTimes.setText(getString(R.string.text_choose_times_scan));
-                            times = 0;
+                            times = 0;lvConfirm.setAdapter(null);
                             mPresenter.getListDeliveryCode(orderId, departmentId);
 
                         }
@@ -364,62 +354,21 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     }
 
     @Override
-    public void showListConfirm(RealmResults<LogScanConfirm> list) {
-        adapter = new ConfirmInputAdapter(list, new ConfirmInputAdapter.OnEditTextChangeListener() {
-            @Override
-            public void onEditTextChange(LogScanConfirm item, int number) {
-                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
-            }
-        }, new ConfirmInputAdapter.onErrorListener() {
-            @Override
-            public void errorListener(String message) {
-                showToast(message);
-                turnOnVibrator();
-                startMusicError();
-            }
-        },  new ConfirmInputAdapter.OnWarningListener() {
-            @Override
-            public void warningListener(LogScanConfirm item, int number) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_exceed_the_number_of_requests))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), number);
-
-                                sweetAlertDialog.dismiss();
-
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mPresenter.updateNumberConfirm(maPhieuId, item.getOrderId(), item.getMasterOutputID(), item.getDepartmentIDOut(), item.getTimesInput(), item.getNumberConfirmed());
-                                sweetAlertDialog.dismiss();
-
-                            }
-                        })
-                        .show();
-            }
-        });
-
-        lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        lvConfirm.setHasFixedSize(true);
-        lvConfirm.setAdapter(adapter);
+    public void showListConfirm(RealmResults<LogScanConfirmModel> list) {
+        if (cbConfirmAll.isChecked()) {
+            change = true;
+            cbConfirmAll.setChecked(false);
+        }
         if (list.size() > 0) {
             cbConfirmAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (!change) {
                         if (isChecked) {
-                            mPresenter.confirmAll(orderId, departmentId, times);
+                            mPresenter.confirmAll();
                         } else {
 
-                            mPresenter.cancelConfirmAll(orderId, departmentId, times);
+                            mPresenter.cancelConfirmAll();
                         }
                     } else {
                         change = false;
@@ -432,40 +381,59 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             cbConfirmAll.setOnCheckedChangeListener(null);
             cbConfirmAll.setClickable(false);
         }
+        adapter = new ConfirmInputAdapter(list, new ConfirmInputAdapter.OnEditTextChangeListener() {
+            @Override
+            public void onEditTextChange(long outputId, int number) {
+                mPresenter.updateNumberConfirm(outputId, number);
+            }
+        }, new ConfirmInputAdapter.onErrorListener() {
+            @Override
+            public void errorListener(String message) {
+                showToast(message);
+                turnOnVibrator();
+                startMusicError();
+            }
+        }, new ConfirmInputAdapter.OnWarningListener() {
+            @Override
+            public void warningListener(LogScanConfirmModel item, int number) {
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_exceed_the_number_of_requests))
+                        .setConfirmText(getString(R.string.text_yes))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                mPresenter.updateNumberConfirm(item.getOutputId(), number);
+
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_no))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                mPresenter.updateNumberConfirm(item.getOutputId(), item.getNumberConfirmed());
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        lvConfirm.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        lvConfirm.setHasFixedSize(true);
+        lvConfirm.setAdapter(adapter);
+
     }
 
     @Override
-    public void clearDataNoProduct(boolean chooseType) {
-//        lvConfirm.setAdapter(null);
-//        ArrayAdapter<DeliveryNoteEntity> adapter = new ArrayAdapter<DeliveryNoteEntity>(getContext(), android.R.layout.simple_spinner_item);
-//        ssDeliveryCode.setAdapter(adapter);
-//        ArrayAdapter<Integer> adapter1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_spinner_item);
-//        ssTimes.setAdapter(adapter);
+    public void setValuePrint(boolean printed) {
+        this.printed = printed;
     }
 
-    @Override
-    public void showDialogConfirm(List<ProductGroupEntity> list, int times) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_number_in_group_exceed_number_received_save_enough))
-                .setConfirmText(getString(R.string.text_ok))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .show();
-    }
-
-    @Override
-    public void setCheckedAll(boolean checkedAll) {
-        if (cbConfirmAll.isChecked() != checkedAll) {
-            change = true;
-            cbConfirmAll.setChecked(checkedAll);
-        }
-    }
 
     @Override
     public void showDialogChooseGroup(List<GroupEntity> list) {
@@ -480,33 +448,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         });
     }
 
-    @Override
-    public void showWarningPrint() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_do_you_want_print))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        // mPresenter.deleteAllItemLog();
-                        sweetAlertDialog.dismiss();
-                        mPresenter.print(
-                                maPhieuId, orderId, departmentId, times, -1, true);
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                        mPresenter.uploadData(maPhieuId, orderId, departmentId, times, true);
-
-                    }
-                })
-                .show();
-    }
 
     @Override
     public void showListDeliveryCode(List<DeliveryNoteEntity> list) {
@@ -525,7 +466,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             maPhieuId = deliveryNoteEntity.getId();
                             tvTimes.setText(getString(R.string.text_choose_times_scan));
                             times = 0;
-                            mPresenter.getListConfirm(list.get(position).getId(), orderId, departmentId, times, false);
+                            lvConfirm.setAdapter(null);
+                            mPresenter.getListConfirm(list.get(position).getId(), times, false);
                         }
                     });
                     searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -572,7 +514,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(maPhieuId, orderId, edtBarcode.getText().toString(), departmentId, times, typeScan == 2);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), typeScan == 2);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -592,7 +534,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
         if (lLRoot.getVisibility() == View.GONE) {
             lLRoot.setVisibility(View.VISIBLE);
         } else {
-            if (mPresenter.countListConfirmByTimesWaitingUpload(orderId, departmentId, times) > 0) {
+            if (adapter.getDataEdit() > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -601,8 +543,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 // mPresenter.deleteAllItemLog();
-                                mPresenter.uploadData(maPhieuId, orderId, departmentId, times, false);
+
                                 sweetAlertDialog.dismiss();
+                                if (!printed) {
+                                    showDialogPrint();
+                                } else {
+                                    mPresenter.uploadData(maPhieuId, orderId, departmentId, times);
+                                }
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -625,16 +572,50 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_upload)
     public void upload() {
+        if (adapter.getDataEdit() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_upload_data))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                            sweetAlertDialog.dismiss();
+                            if (!printed) {
+                                showDialogPrint();
+                            } else {
+                                mPresenter.uploadData(maPhieuId, orderId, departmentId, times);
+                            }
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .show();
+
+        } else {
+            showError(getString(R.string.text_no_data_upload_in_times_scan));
+        }
+
+    }
+
+    public void showDialogPrint() {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_upload_data))
+                .setContentText(getString(R.string.text_do_you_want_print))
                 .setConfirmText(getString(R.string.text_yes))
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(maPhieuId, orderId, departmentId, times, false);
-
+                        // mPresenter.deleteAllItemLog();
                         sweetAlertDialog.dismiss();
+                        mPresenter.print(
+                                maPhieuId, orderId, departmentId, times, -1, true);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -642,11 +623,13 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
+                        mPresenter.uploadData(maPhieuId, orderId, departmentId, times);
 
                     }
                 })
                 .show();
     }
+
 
     @OnClick(R.id.btn_scan)
     public void scan() {
@@ -668,16 +651,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             showError(getString(R.string.text_type_scan_null));
             return;
         }
-//        integrator = new IntentIntegrator(getActivity());
-//        integrator.setCaptureActivity(ScanActivity.class);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-//        integrator.setPrompt("Đặt mã cần quét vào khung");
-//        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-//        integrator.setBeepEnabled(false);
-//        integrator.setBarcodeImageEnabled(true);
-//        integrator.setOrientationLocked(false);
-//        integrator.initiateScan();
-
 
         final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
                 .withActivity(getActivity())
@@ -692,35 +665,11 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                         //  barcodeResult = barcode;
                         String contents = barcode.rawValue;
                         String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(maPhieuId, orderId, barcode2, departmentId, times, typeScan == 2);
+                        mPresenter.checkBarcode(barcode2, typeScan == 2);
                     }
                 })
                 .build();
         barcodeScanner.startScan();
-    }
-
-    @OnClick(R.id.btn_confirm_all)
-    public void confirmAll() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_confirm_all_scan))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.confirmAll(orderId, departmentId, times);
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .show();
     }
 
     @OnClick(R.id.bt_print)
@@ -754,7 +703,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             @Override
             public void onSave(String ipAddress, int port) {
                 mPresenter.saveIPAddress(ipAddress, port,
-                        maPhieuId, maPhieu, orderId, departmentId, times, -1, upload);
+                        maPhieuId, orderId, departmentId, times, -1, upload);
                 dialog.dismiss();
             }
         });
@@ -769,7 +718,6 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             public void onSearchableItemClicked(Object item, int position) {
                 TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
                 tvTypeProduct.setText(typeSO.getName());
-                typeProduct = typeSO.getValue();
                 tvTimes.setText(getString(R.string.text_choose_times_scan));
                 times = 0;
                 tvCodeSO.setText(getString(R.string.text_choose_code_so));
@@ -780,6 +728,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                 departmentId = 0;
                 txtCustomerName.setText("");
                 mPresenter.getListSO(typeSO.getValue());
+                lvConfirm.setAdapter(null);
             }
         });
         searchableListDialog.show(getActivity().getFragmentManager(), TAG);

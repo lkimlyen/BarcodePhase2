@@ -8,7 +8,7 @@ import java.util.List;
 public class OrderConfirmEntity {
     @SerializedName("OutputID")
     @Expose
-    private long masterOutputID;
+    private long outputID;
 
     @SerializedName("OrderID")
     @Expose
@@ -67,8 +67,8 @@ public class OrderConfirmEntity {
     private boolean state;
 
 
-    public long getMasterOutputID() {
-        return masterOutputID;
+    public long getOutputID() {
+        return outputID;
     }
 
     public long getOrderId() {

@@ -1,7 +1,6 @@
 package com.demo.architect.data.model;
 
 import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.offline.LogScanConfirm;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
