@@ -37,6 +37,18 @@ public interface OtherApiInterface {
     Call<BaseResponse> addLogQC(@Url String url, @Field("pKey") String key,
                                 @Field("pJsonListQC") String json);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> addLogQCWindow(@Url String url, @Field("pKey") String key,
+                                      @Field("pTenMay") String machineName,
+                                      @Field("pNguoiViPham") String violator,
+                                      @Field("pMaSoQC") String qcCode,
+                                      @Field("pOrderID") long orderId,
+                                      @Field("pDepartmentID") int departmentId,
+                                      @Field("pUserID") long userId,
+                                      @Field("pJson") String json);
+
+
     @Multipart
     @POST()
     Call<BaseResponse<UploadEntity>> uploadImage(

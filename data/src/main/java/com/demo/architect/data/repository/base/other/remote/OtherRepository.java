@@ -11,6 +11,7 @@ import com.demo.architect.data.model.UploadEntity;
 
 import java.io.File;
 
+import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.Url;
 import rx.Observable;
@@ -26,8 +27,14 @@ public interface OtherRepository {
 
     Observable<BaseResponse> addLogQC(String key, String json);
 
+    Observable<BaseResponse> addLogQCWindow(String key, String machineName, String violator,
+                                            String qcCode, long orderId, int departmentId,
+                                            long userId, String json);
+
     Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, long orderId,
                                                        int departmentId, String fileName, long userId);
+
     Observable<BaseListResponse<ApartmentEntity>> getApartment(long orderId);
+
     Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(long orderId, int departmentId);
 }

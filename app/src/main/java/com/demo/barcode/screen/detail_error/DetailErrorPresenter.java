@@ -5,12 +5,14 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListReasonManager;
+import com.demo.barcode.manager.UserManager;
 
 import java.util.Collection;
 
@@ -58,7 +60,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
     @Override
     public void addImage(long id, String pathFile) {
         view.showProgressBar();
-        localRepository.addImageModel(id, pathFile).subscribe(new Action1<String>() {
+        localRepository.addImageModel(id, pathFile, UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.hideProgressBar();
@@ -89,7 +91,7 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
                     public void onSuccess(GetListReasonUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         view.showListReason(successResponse.getEntity().getList());
-                        localRepository.getListReasonQualityControl(id).subscribe(new Action1<RealmList<Integer>>() {
+                        localRepository.getListReasonQualityControl(id,UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<RealmList<Integer>>() {
                             @Override
                             public void call(RealmList<Integer> integerRealmList) {
                                 view.showUpdateListCounterSelect(integerRealmList);
@@ -108,23 +110,44 @@ public class DetailErrorPresenter implements DetailErrorContract.Presenter {
 
     @Override
     public void getDetailQualityControl(long id) {
-        localRepository.getDetailQualityControl(id).subscribe(new Action1<QualityControlModel>() {
-            @Override
-            public void call(QualityControlModel qualityControlModel) {
-                view.showDetailQualityControl(qualityControlModel);
-                view.showImageError(qualityControlModel.getImageList());
-            }
-        });
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            localRepository.getDetailQualityControlWindow(id).subscribe(new Action1<QualityControlWindowModel>() {
+                @Override
+                public void call(QualityControlWindowModel qualityControlModel) {
+                    view.showDetailQualityControlƯindow(qualityControlModel);
+                    view.showImageError(qualityControlModel.getImageList());
+                }
+            });
+        } else {
+            localRepository.getDetailQualityControl(id).subscribe(new Action1<QualityControlModel>() {
+                @Override
+                public void call(QualityControlModel qualityControlModel) {
+                    view.showDetailQualityControl(qualityControlModel);
+                    view.showImageError(qualityControlModel.getImageList());
+                }
+            });
+        }
     }
 
     @Override
     public void save(long id, int numberFailed, String description, Collection<Integer> idList) {
-        localRepository.updateDetailErrorQC(id, numberFailed, description, idList).subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                view.goBackQualityControl();
-            }
-        });
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            localRepository.updateDetailErrorQCWindow(id, numberFailed, description, idList).subscribe(new Action1<String>() {
+                @Override
+                public void call(String s) {
+                    view.goBackQualityControl();
+                }
+            });
+        }else {
+            localRepository.updateDetailErrorQC(id, numberFailed, description, idList).subscribe(new Action1<String>() {
+                @Override
+                public void call(String s) {
+                    view.goBackQualityControl();
+                }
+            });
+        }
+
+
     }
 
 }

@@ -8,6 +8,7 @@ import com.demo.architect.data.repository.base.order.remote.OrderRepositoryImpl;
 import com.demo.architect.data.repository.base.other.remote.OtherRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
+import com.demo.architect.domain.AddLogQCWindowUsecase;
 import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.CheckUpdateForGroupUsecase;
@@ -222,6 +223,11 @@ public class UseCaseModule {
     @Provides
     GetDetailInByDeliveryWindowUsecase provideGetDetailInByDeliveryWindowUsecase(OrderRepository orderRepository){
         return new GetDetailInByDeliveryWindowUsecase(orderRepository);
+    }
+
+    @Provides
+    AddLogQCWindowUsecase provideAddLogQCWindowUsecase(OtherRepository otherRepository){
+        return new AddLogQCWindowUsecase(otherRepository);
     }
 
 }

@@ -42,6 +42,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 
 import java.io.File;
 import java.util.Collection;
@@ -247,13 +248,13 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 RealmResults<DeliveryNoteModel> deliveryNoteModels = realm.where(DeliveryNoteModel.class)
-                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                        .equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 deliveryNoteModels.deleteAllFromRealm();
                 RealmResults<LogScanConfirmModel> results = realm.where(LogScanConfirmModel.class)
-                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                        .equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
                 for (OrderConfirmEntity orderConfirmEntity : list) {
-                    LogScanConfirmModel.createOrUpdate(realm, orderConfirmEntity,times, userId);
+                    LogScanConfirmModel.createOrUpdate(realm, orderConfirmEntity, times, userId);
                 }
             }
         });
@@ -319,12 +320,16 @@ public class DatabaseRealm {
         return logScanConfirmModel;
     }
 
-    public void addImageModel(final long id, final String pathFile) {
+    public void addImageModel(final long id, final String pathFile, final int type) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateListImage(realm, id, pathFile);
+                if (type == 4) {
+                    QualityControlWindowModel.updateListImage(realm, id, pathFile);
+                } else {
+                    QualityControlModel.updateListImage(realm, id, pathFile);
+                }
             }
         });
     }
@@ -478,9 +483,9 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<QualityControlModel> getListQualityControl(long orderId, int departmentId) {
+    public RealmResults<QualityControlModel> getListQualityControl() {
         Realm realm = getRealmInstance();
-        RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm, orderId, departmentId);
+        RealmResults<QualityControlModel> results = QualityControlModel.getListQualityControl(realm);
         return results;
     }
 
@@ -490,18 +495,24 @@ public class DatabaseRealm {
         return results;
     }
 
-    public RealmList<Integer> getListReasonQualityControl(long id) {
+    public RealmList<Integer> getListReasonQualityControl(long id, int type) {
         Realm realm = getRealmInstance();
-        RealmList<Integer> results = QualityControlModel.getListReasonQualityControl(realm, id);
+        RealmList<Integer> results;
+        if (type != 4) {
+
+            results = QualityControlModel.getListReasonQualityControl(realm, id);
+        } else {
+            results = QualityControlWindowModel.getListReasonQualityControl(realm, id);
+        }
         return results;
     }
 
-    public void saveBarcodeQC(final long orderId, final int departmentId, final ProductEntity productEntity) {
+    public void saveBarcodeQC(final long orderId, final int departmentId, final String machineName, final String violator, final String qcCode, final ProductEntity productEntity) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.create(realm, orderId, departmentId, productEntity, userId);
+                QualityControlModel.create(realm, orderId, departmentId, machineName, violator, qcCode, productEntity, userId);
             }
         });
     }
@@ -522,12 +533,18 @@ public class DatabaseRealm {
         return result;
     }
 
-    public void updateImageIdAndStatus(final long qcId, final long id, final long imageId) {
+    public void updateImageIdAndStatus(final long qcId, final long id, final long imageId, final int type) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.updateImageIdAndStatus(realm, qcId, id, imageId);
+                if (type != 4) {
+
+                    QualityControlModel.updateImageIdAndStatus(realm, qcId, id, imageId);
+                } else {
+
+                    QualityControlWindowModel.updateImageIdAndStatus(realm, qcId, id, imageId);
+                }
             }
         });
     }
@@ -831,9 +848,9 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 RealmResults<DeliveryNoteWindowModel> deliveryNoteModels = realm.where(DeliveryNoteWindowModel.class)
-                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                        .equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 deliveryNoteModels.deleteAllFromRealm();
-                RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
                 for (OrderConfirmWindowEntity orderConfirmEntity : list) {
                     LogScanConfirmWindowModel.createOrUpdate(realm, orderConfirmEntity, userId);
@@ -845,14 +862,14 @@ public class DatabaseRealm {
     public RealmResults<LogScanConfirmWindowModel> getListConfirmWindow() {
         Realm realm = getRealmInstance();
         RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class)
-                .equalTo("state",false)
-                .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                .equalTo("state", false)
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return results;
     }
 
     public LogScanConfirmWindowModel findConfirmByBarcodeInWindow(String barcode) {
         Realm realm = getRealmInstance();
-        LogScanConfirmWindowModel model = LogScanConfirmWindowModel.findConfirmByBarcode(realm,barcode);
+        LogScanConfirmWindowModel model = LogScanConfirmWindowModel.findConfirmByBarcode(realm, barcode);
         return model;
     }
 
@@ -861,7 +878,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanConfirmWindowModel.updateNumberScan(realm,outputId,number,scan);
+                LogScanConfirmWindowModel.updateNumberScan(realm, outputId, number, scan);
             }
         });
     }
@@ -869,7 +886,7 @@ public class DatabaseRealm {
     public List<LogScanConfirmWindowModel> getListLogScanConfirmWindow() {
         Realm realm = getRealmInstance();
         RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class)
-                .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return realm.copyFromRealm(results);
     }
 
@@ -899,6 +916,86 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 LogScanConfirmWindowModel.updateStatusScanConfirm(realm);
+            }
+        });
+    }
+
+    public Boolean checkBarcodeExistInQC(String barcode) {
+        Realm realm = getRealmInstance();
+        boolean exist = QualityControlModel.checkBarcodeExistInQC(realm, barcode);
+        return exist;
+    }
+
+    public void deleteAlLQC() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlModel.deleteAlLQC(realm);
+            }
+        });
+    }
+
+    public void saveBarcodeQCWindow(final String machineName, final String violator, final String qcCode, final ProductWindowEntity productEntity) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlWindowModel.create(realm, machineName, violator, qcCode, productEntity, userId);
+            }
+        });
+    }
+
+    public RealmResults<QualityControlWindowModel> getListQualityControlWindow() {
+        Realm realm = getRealmInstance();
+        RealmResults<QualityControlWindowModel> results = QualityControlWindowModel.getListQualityControl(realm);
+        return results;
+    }
+
+    public void deleteAlLQCWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlWindowModel.deleteAlLQC(realm);
+            }
+        });
+    }
+
+    public Boolean checkBarcodeExistInQCWindow(String barcode) {
+        Realm realm = getRealmInstance();
+        boolean exist = QualityControlWindowModel.checkBarcodeExistInQC(realm, barcode);
+        return exist;
+    }
+
+    public QualityControlWindowModel getDetailQualityControlWindow(long id) {
+        Realm realm = getRealmInstance();
+        QualityControlWindowModel model = QualityControlWindowModel.getDetailQualityControl(realm, id);
+        return model;
+    }
+
+    public void updateDetailErrorQCWindow(final long id, final int numberFailed, final String description, final Collection<Integer> idList) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlWindowModel.updateDetailErrorQC(realm, id, numberFailed, description, idList);
+            }
+        });
+    }
+
+    public List<QualityControlWindowModel> getListQualityControlUploadWindow() {
+        Realm realm = getRealmInstance();
+        List<QualityControlWindowModel> list = QualityControlWindowModel.getListQualityControlUpload(realm);
+        return list;
+    }
+
+    public void updateStatusQCWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                QualityControlWindowModel.updateStatusQC(realm);
             }
         });
     }

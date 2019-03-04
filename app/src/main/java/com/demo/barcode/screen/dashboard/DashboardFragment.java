@@ -22,6 +22,7 @@ import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
 import com.demo.barcode.screen.login.LoginActivity;
+import com.demo.barcode.screen.qc_window.QualityControlWindowActivity;
 import com.demo.barcode.screen.quality_control.QualityControlActivity;
 import com.demo.barcode.screen.setting.SettingActivity;
 import com.demo.barcode.screen.stages.StagesActivity;
@@ -138,7 +139,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         if (user.getUserType().equals("SP")) {
             btnQC.setVisibility(View.GONE);
             if (user.getRole() > 0) {
-                if (user.getRole() == 6 || user.getRole() == 8) {
+                if ((user.getRole() == 6 || user.getRole() == 8) && user.getOrderType() != 4) {
                     btnGroupCode.setVisibility(View.VISIBLE);
                 }
                 txtPosition.setText("Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
@@ -234,7 +235,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_quality_control)
     public void qualityControl() {
-        QualityControlActivity.start(getContext());
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            QualityControlWindowActivity.start(getContext());
+        } else {
+            QualityControlActivity.start(getContext());
+        }
     }
 
     @OnClick(R.id.btn_group_code)

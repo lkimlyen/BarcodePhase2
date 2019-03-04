@@ -25,6 +25,18 @@ public class QualityControlModel extends RealmObject {
     private String barcode;
     private String module;
 
+    @SerializedName("pTenMay")
+    @Expose
+    private String machineName;
+
+    @SerializedName("pNguoiViPham")
+    @Expose
+    private String violator;
+
+    @SerializedName("pMaSoQC")
+    @Expose
+    private String qcCode;
+
     @SerializedName("pDepartmentID")
     @Expose
     private int departmentId;
@@ -78,10 +90,13 @@ public class QualityControlModel extends RealmObject {
     public QualityControlModel() {
     }
 
-    public QualityControlModel(long id, String barcode, String module, int departmentId, long orderId, long productDetailId, String productName, double totalNumber, double number, long userId, int status, boolean edit) {
+    public QualityControlModel(long id, String barcode, String module, String machineName, String violator, String qcCode, int departmentId, long orderId, long productDetailId, String productName, double totalNumber, double number, long userId, int status, boolean edit) {
         this.id = id;
         this.barcode = barcode;
         this.module = module;
+        this.machineName = machineName;
+        this.violator = violator;
+        this.qcCode = qcCode;
         this.departmentId = departmentId;
         this.orderId = orderId;
         this.productDetailId = productDetailId;
@@ -217,38 +232,19 @@ public class QualityControlModel extends RealmObject {
         return nextId;
     }
 
-    public static void create(Realm realm, long orderId, int departmentId, ProductEntity product, long userId) {
+    public static void create(Realm realm, long orderId, int departmentId, String machineName, String violator, String qcCode, ProductEntity product, long userId) {
 
-        ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId).findFirst();
-        ListDepartmentQualityControl listDepartmentQualityControl = listOrderQualityControl.getList().where().equalTo("departmentId", departmentId).findFirst();
-        RealmList<QualityControlModel> parentList = listDepartmentQualityControl.getList();
-        QualityControlModel qualityControlModel = new QualityControlModel(id(realm) + 1, product.getBarcode(), product.getModule(), departmentId,
+        QualityControlModel qualityControlModel = new QualityControlModel(id(realm) + 1, product.getBarcode(), product.getModule(), machineName, violator, qcCode, departmentId,
                 product.getOrderId(), product.getProductDetailID(), product.getProductDetailName(), product.getNumberTotalOrder(),
                 1, userId, Constants.WAITING_UPLOAD, false);
         qualityControlModel = realm.copyToRealm(qualityControlModel);
-        parentList.add(qualityControlModel);
     }
 
-    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm, long orderId, int departmentId) {
+    public static RealmResults<QualityControlModel> getListQualityControl(Realm realm) {
 
-        ListOrderQualityControl listOrderQualityControl = realm.where(ListOrderQualityControl.class).equalTo("orderId", orderId)
-              .findFirst();
-        if (listOrderQualityControl == null) {
-            realm.beginTransaction();
-            listOrderQualityControl = ListOrderQualityControl.create(realm, orderId);
-            realm.commitTransaction();
-        }
 
-        RealmList<ListDepartmentQualityControl> parentList = listOrderQualityControl.getList();
-        ListDepartmentQualityControl listDepartmentQualityControl = listOrderQualityControl.getList().where().equalTo("departmentId", departmentId).findFirst();
-        if (listDepartmentQualityControl == null) {
-            realm.beginTransaction();
-            listDepartmentQualityControl = ListDepartmentQualityControl.create(realm, departmentId);
-            parentList.add(listDepartmentQualityControl);
-            realm.commitTransaction();
-        }
-
-        RealmResults<QualityControlModel> results = listDepartmentQualityControl.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class)
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return results;
 
     }
@@ -343,5 +339,30 @@ public class QualityControlModel extends RealmObject {
     public static void deleteQC(Realm realm, long id) {
         QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("id", id).findFirst();
         qualityControlModel.deleteFromRealm();
+    }
+
+    public static boolean checkBarcodeExistInQC(Realm realm, String barcode) {
+
+        QualityControlModel qualityControlModel = realm.where(QualityControlModel.class).equalTo("barcode", barcode)
+                .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        return qualityControlModel != null;
+    }
+
+    public String getMachineName() {
+        return machineName;
+    }
+
+    public String getViolator() {
+        return violator;
+    }
+
+    public String getQcCode() {
+        return qcCode;
+    }
+
+    public static void deleteAlLQC(Realm realm) {
+        RealmResults<QualityControlModel> results = realm.where(QualityControlModel.class)
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        results.deleteAllFromRealm();
     }
 }

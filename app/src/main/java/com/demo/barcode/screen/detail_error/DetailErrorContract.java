@@ -4,6 +4,7 @@ import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 
@@ -33,6 +34,8 @@ public interface DetailErrorContract {
         void showListReason(List<ReasonsEntity> list);
 
         void showDetailQualityControl(QualityControlModel qualityControlModel);
+
+        void showDetailQualityControlƯindow(QualityControlWindowModel qualityControlModel);
 
         void showUpdateListCounterSelect(RealmList<Integer> integerRealmList);
 

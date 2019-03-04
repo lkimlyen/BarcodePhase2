@@ -70,7 +70,7 @@
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
     <string name="text_not_done_pack_current_refresh">Chưa hoàn thành gói hiện tại!Bạn có muốn hủy không?</string>
     <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
-    <string name="text_upload_data">Bạn có muốn tải tất cả dữ liệu lên server không?</string>
+    <string name="text_upload_data">Bạn có muốn tải dữ liệu lên server không?</string>
     <string name="text_back_have_detail_waiting">Bạn chưa tải dữ liệu lên server!\n Bạn có muốn tải dữ liệu không?</string>
     <string name="text_ip_address">Địa chỉ ip</string>
     <string name="text_port">Port</string>
@@ -283,6 +283,22 @@
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="text_window_name">Bộ cửa: </string>
     <string name="text_detail_confirm_complete">Chi tiết đã được xác nhận đủ</string>
+    <string name="text_machine_name">Tên máy</string>
+    <string name="text_violator">Người vi phạm</string>
+    <string name="text_qc_code">Mã số QC</string>
+    <string name="text_product_in_qc">Chi tiết đã được quét</string>
+    <string name="text_product_delivery">Chi tiết đã được giao hết qua công đoạn khác</string>
+    <string name="text_barcode_null">Bạn chưa nhập mã barcode!</string>
+    <string name="text_machine_name_null">Bạn chưa nhập tên máy!</string>
+    <string name="text_violator_null">Bạn chưa nhập người vi phạm!</string>
+    <string name="text_qc_code_null">Bạn chưa nhập mã số QC!</string>
+    <string name="text_edit_violator">Bạn có muốn chỉnh sửa thông tin?
+    Dữ liệu quét sẽ bị mất.</string>
+    <string name="text_save_qc_code">Bạn chưa lưu thông tin mã số qc!</string>
+    <string name="text_save_machine_name">Bạn chưa lưu thông tin tên máy!</string>
+    <string name="text_save_violator">Bạn chưa lưu thông tin người vi phạm!</string>
+    <string name="text_do_you_want_exit">Bạn có muốn thoát không?</string>
+    <string name="text_edit_data_before_upload">Vui lòng nhập đầy đủ thông tin chi tiết lỗi!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

@@ -29,6 +29,7 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 
 import java.util.Collection;
 import java.util.List;
@@ -377,12 +378,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addImageModel(final long id, final String pathFile) {
+    public Observable<String> addImageModel(final long id, final String pathFile, final int type) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.addImageModel(id, pathFile);
+                    databaseRealm.addImageModel(id, pathFile,type);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -683,12 +684,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<QualityControlModel>> getListQualityControl(final long orderId, final int departmentId) {
+    public Observable<RealmResults<QualityControlModel>> getListQualityControl() {
         return Observable.create(new Observable.OnSubscribe<RealmResults<QualityControlModel>>() {
             @Override
             public void call(Subscriber<? super RealmResults<QualityControlModel>> subscriber) {
                 try {
-                    RealmResults<QualityControlModel> results = databaseRealm.getListQualityControl(orderId, departmentId);
+                    RealmResults<QualityControlModel> results = databaseRealm.getListQualityControl();
                     subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -715,12 +716,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmList<Integer>> getListReasonQualityControl(final long id) {
+    public Observable<RealmList<Integer>> getListReasonQualityControl(final long id,final int type) {
         return Observable.create(new Observable.OnSubscribe<RealmList<Integer>>() {
             @Override
             public void call(Subscriber<? super RealmList<Integer>> subscriber) {
                 try {
-                    RealmList<Integer> results = databaseRealm.getListReasonQualityControl(id);
+                    RealmList<Integer> results = databaseRealm.getListReasonQualityControl(id,type);
                     subscriber.onNext(results);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -731,12 +732,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> saveBarcodeQC(final long orderId, final int departmentId, final ProductEntity productEntity) {
+    public Observable<String> saveBarcodeQC(final long orderId, final int departmentId,
+                                            final String machineName, final String violator, final String qcCode,
+                                            final ProductEntity productEntity) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.saveBarcodeQC(orderId, departmentId, productEntity);
+                    databaseRealm.saveBarcodeQC(orderId, departmentId,machineName,violator,qcCode, productEntity);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -779,12 +782,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateImageIdAndStatus(final long qcId, final long id, final long imageId) {
+    public Observable<String> updateImageIdAndStatus(final long qcId, final long id, final long imageId,final int type) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateImageIdAndStatus(qcId, id, imageId);
+                    databaseRealm.updateImageIdAndStatus(qcId, id, imageId, type);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1340,4 +1343,166 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
+
+    @Override
+    public Observable<Boolean> checkBarcodeExistInQC(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean exist =  databaseRealm.checkBarcodeExistInQC(barcode);
+                    subscriber.onNext(exist);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAlLQC() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAlLQC();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> saveBarcodeQCWindow(final String machineName, final String violator, final String qcCode, final ProductWindowEntity productEntity) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.saveBarcodeQCWindow(machineName,violator,qcCode,productEntity);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<QualityControlWindowModel>> getListQualityControlWindow() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<QualityControlWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<QualityControlWindowModel>> subscriber) {
+                try {
+                    RealmResults<QualityControlWindowModel> results =
+                            databaseRealm.getListQualityControlWindow();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAlLQCWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAlLQCWindow();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkBarcodeExistInQCWindow(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean exist =  databaseRealm.checkBarcodeExistInQCWindow(barcode);
+                    subscriber.onNext(exist);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<QualityControlWindowModel> getDetailQualityControlWindow(final long id) {
+        return Observable.create(new Observable.OnSubscribe<QualityControlWindowModel>() {
+            @Override
+            public void call(Subscriber<? super QualityControlWindowModel> subscriber) {
+                try {
+                    QualityControlWindowModel model =  databaseRealm.getDetailQualityControlWindow(id);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateDetailErrorQCWindow(final long id, final int numberFailed, final String description, final Collection<Integer> idList) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateDetailErrorQCWindow(id,numberFailed,description,idList);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<QualityControlWindowModel>> getListQualityControlUploadWindow() {
+        return Observable.create(new Observable.OnSubscribe<List<QualityControlWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super List<QualityControlWindowModel>> subscriber) {
+                try {
+                    List<QualityControlWindowModel> list =  databaseRealm.getListQualityControlUploadWindow();
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusQCWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusQCWindow();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 }

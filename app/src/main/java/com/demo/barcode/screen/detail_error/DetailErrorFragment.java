@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ImageAdapter;
 import com.demo.barcode.adapter.ReasonAdapter;
@@ -103,6 +104,10 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     @Bind(R.id.edt_description)
     EditText edtDescription;
 
+
+    @Bind(R.id.tv_title)
+    TextView tvTitle;
+
     public DetailErrorFragment() {
         // Required empty public constructor
     }
@@ -152,6 +157,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     }
 
     private void initView() {
+        tvTitle.setText(getString(R.string.text_window_name).replace(":",""));
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvImage.setLayoutManager(layoutManager);
@@ -339,6 +345,17 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         txtBarcode.setText(qualityControlModel.getBarcode());
         txtModule.setText(qualityControlModel.getModule());
         txtNameDetail.setText(qualityControlModel.getProductName());
+        txtNumberOrder.setText(String.valueOf((int)qualityControlModel.getTotalNumber()));
+        edtNumberFailed.setText(String.valueOf((int)qualityControlModel.getNumber()));
+        edtDescription.setText(qualityControlModel.getDescription());
+        edit = qualityControlModel.isEdit();
+    }
+
+    @Override
+    public void showDetailQualityControlƯindow(QualityControlWindowModel qualityControlModel) {
+        txtBarcode.setText(qualityControlModel.getBarcode());
+        txtModule.setText(qualityControlModel.getProductSetName());
+        txtNameDetail.setText(qualityControlModel.getProductSetDetailName());
         txtNumberOrder.setText(String.valueOf((int)qualityControlModel.getTotalNumber()));
         edtNumberFailed.setText(String.valueOf((int)qualityControlModel.getNumber()));
         edtDescription.setText(qualityControlModel.getDescription());

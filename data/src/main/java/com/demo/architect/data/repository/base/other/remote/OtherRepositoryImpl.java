@@ -186,6 +186,19 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
+    public Observable<BaseResponse> addLogQCWindow(final String key, final String machineName, final String violator, final String qcCode, final long orderId, final int departmentId, final long userId, final String json) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.addLogQCWindow(
+                        server + "/WS/api/GD2AddLogQCCua",key,machineName, violator,qcCode,
+                        orderId,departmentId,userId,json), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<BaseResponse<UploadEntity>> uploadImage(final File file, final String key, final long orderId, final int departmentId, final String fileName, final long userId) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse<UploadEntity>>() {

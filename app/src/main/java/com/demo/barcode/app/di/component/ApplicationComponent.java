@@ -30,6 +30,8 @@ import com.demo.barcode.screen.login.LoginComponent;
 import com.demo.barcode.screen.login.LoginModule;
 import com.demo.barcode.screen.print_stamp.PrintStempComponent;
 import com.demo.barcode.screen.print_stamp.PrintStempModule;
+import com.demo.barcode.screen.qc_window.QualityControlWindowComponent;
+import com.demo.barcode.screen.qc_window.QualityControlWindowModule;
 import com.demo.barcode.screen.quality_control.QualityControlComponent;
 import com.demo.barcode.screen.quality_control.QualityControlModule;
 import com.demo.barcode.screen.setting.SettingComponent;
@@ -89,4 +91,6 @@ public interface ApplicationComponent {
     StagesWindowComponent plus(StagesWindowModule module);
 
     ConfirmReceiveWindowComponent plus(ConfirmReceiveWindowModule module);
+
+    QualityControlWindowComponent plus(QualityControlWindowModule module);
 }
