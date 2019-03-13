@@ -130,22 +130,14 @@ public class CameraSourcePreview extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int previewWidth = 320;
-        int previewHeight = 240;
         if (mCameraSource != null) {
             Size size = mCameraSource.getPreviewSize();
             if (size != null) {
                 previewWidth = size.getWidth();
-                previewHeight = size.getHeight();
             }
         }
 
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if (isPortraitMode()) {
-            int tmp = previewWidth;
-            previewWidth = previewHeight;
-            previewHeight = tmp;
-        }
-
         final int viewWidth = right - left;
         final int viewHeight = bottom - top;
 
@@ -154,7 +146,7 @@ public class CameraSourcePreview extends ViewGroup {
         int childXOffset = 0;
         int childYOffset = 0;
         float widthRatio = (float) viewWidth / (float) previewWidth;
-        float heightRatio = (float) viewHeight / (float) previewHeight;
+        float heightRatio = (float) viewHeight / (float) previewWidth;
 
         // To fill the view with the camera preview, while also preserving the correct aspect ratio,
         // it is usually necessary to slightly oversize the child and to crop off portions along one
@@ -162,7 +154,7 @@ public class CameraSourcePreview extends ViewGroup {
         // compute a crop offset for the other dimension.
         if (widthRatio > heightRatio) {
             childWidth = viewWidth;
-            childHeight = (int) ((float) previewHeight * widthRatio);
+            childHeight = (int) ((float) previewWidth * widthRatio);
             childYOffset = (childHeight - viewHeight) / 2;
         } else {
             childWidth = (int) ((float) previewWidth * heightRatio);

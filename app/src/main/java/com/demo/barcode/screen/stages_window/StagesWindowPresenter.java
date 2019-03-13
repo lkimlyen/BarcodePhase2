@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SocketRespone;
+import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
@@ -12,11 +13,13 @@ import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocketDelivery;
 import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetAllStaffUsecase;
 import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.ScanProductDetailOutWindowUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListProductWindowManager;
 import com.demo.barcode.manager.ListSOManager;
@@ -44,6 +47,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
     private final GetInputForProductDetailWindowUsecase getInputForProductDetail;
     private final GetListSOUsecase getListSOUsecase;
     private final ScanProductDetailOutWindowUsecase scanProductDetailOutUsecase;
+    private final GetAllStaffUsecase getAllStaffUsecase;
 
     @Inject
     LocalRepository localRepository;
@@ -51,11 +55,12 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
     @Inject
     StagesWindowPresenter(@NonNull StagesWindowContract.View view,
                           GetInputForProductDetailWindowUsecase getInputForProductDetail, GetListSOUsecase getListSOUsecase,
-                          ScanProductDetailOutWindowUsecase scanProductDetailOutUsecase) {
+                          ScanProductDetailOutWindowUsecase scanProductDetailOutUsecase, GetAllStaffUsecase getAllStaffUsecase) {
         this.view = view;
         this.getInputForProductDetail = getInputForProductDetail;
         this.getListSOUsecase = getListSOUsecase;
         this.scanProductDetailOutUsecase = scanProductDetailOutUsecase;
+        this.getAllStaffUsecase = getAllStaffUsecase;
     }
 
     @Inject
@@ -77,7 +82,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
     private boolean allowedToSave = true;
 
     @Override
-    public void checkBarcode(String barcode, int departmentId) {
+    public void checkBarcode(String barcode, int departmentId,int staffId) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -91,21 +96,17 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
 
         ProductWindowEntity model = ListProductWindowManager.getInstance().getProductByBarcode(barcode);
         if (model != null) {
-            // if (model.getListDepartmentID().contains(departmentId)) {
             localRepository.getProductDetailWindow(model).subscribe(new Action1<ProductDetailWindowModel>() {
                 @Override
                 public void call(ProductDetailWindowModel productDetail) {
                     if (productDetail != null) {
                         if (productDetail.getNumberRest() > 0) {
-                            saveBarcodeToDataBase(productDetail, 1, departmentId, false);
+                            saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,false);
                         } else {
-                            saveBarcodeToDataBase(productDetail, 1, departmentId, true);
+                            saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,true);
                         }
-                    } else {
-                        showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                     }
                 }
-
             });
         } else {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
@@ -118,9 +119,6 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
         view.startMusicError();
         view.turnOnVibrator();
     }
-
-    private int count = 0;
-
 
     @Override
     public void deleteScanStages(long stagesId) {
@@ -137,7 +135,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
 
 
     @Override
-    public void uploadData(long orderId, int departmentIn) {
+    public void uploadData(long orderId, int departmentIn, int staffId) {
         view.showProgressBar();
         GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithoutExposeAnnotation();
@@ -146,19 +144,15 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
         localRepository.getListLogScanStagesWindowUpload().subscribe(new Action1<List<LogScanStagesWindowModel>>() {
             @Override
             public void call(List<LogScanStagesWindowModel> list) {
-                if (list.size() == 0) {
-                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
-                    return;
-                }
                 scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutWindowUsecase.RequestValue(
-                        orderId,user.getRole(),departmentIn,user.getId(),gson.toJson(list)),
+                        orderId,user.getRole(),departmentIn,user.getId(), staffId, gson.toJson(list)),
                         new BaseUseCase.UseCaseCallback<ScanProductDetailOutWindowUsecase.ResponseValue,
                                 ScanProductDetailOutWindowUsecase.ErrorValue>() {
                             @Override
                             public void onSuccess(ScanProductDetailOutWindowUsecase.ResponseValue successResponse) {
                                 view.hideProgressBar();
 
-                                localRepository.deleteAllScanStagesWindow().subscribe(new Action1<String>() {
+                                localRepository.updateStatusLogStagesWindow().subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
@@ -183,12 +177,12 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
 
     @Override
     public void saveBarcodeToDataBase(ProductDetailWindowModel
-                                              productDetail, int number, int departmentId, boolean residual) {
+                                              productDetail, int number, int departmentId,int staffId, boolean residual) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
 
-        LogScanStagesWindowModel logScanStages = new LogScanStagesWindowModel(productDetail.getOrderId(), departmentId, user.getRole(), productDetail.getProductSetDetailID(),
-                productDetail.getBarcode(), number, ConvertUtils.getDateTimeCurrent(), user.getId());
+        LogScanStagesWindowModel logScanStages = new LogScanStagesWindowModel(productDetail.getOrderId(), departmentId, user.getRole(), staffId, productDetail.getProductSetDetailID(),
+                productDetail.getBarcode(), number, ConvertUtils.getDateTimeCurrent(), Constants.WAITING_UPLOAD, user.getId());
         localRepository.addLogScanStagesWindow(logScanStages).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -236,7 +230,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocketDelivery connectSocket = new ConnectSocketDelivery(address.getIpAddress(), address.getPortNumber(),
-                        id, new ConnectSocketDelivery.onPostExecuteResult() {
+                        id,4,  new ConnectSocketDelivery.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
@@ -334,6 +328,34 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
     }
 
     @Override
+    public void getListStaff() {
+        view.showProgressBar();
+        getAllStaffUsecase.executeIO(new GetAllStaffUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetAllStaffUsecase.ResponseValue,
+                        GetAllStaffUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetAllStaffUsecase.ResponseValue successResponse) {
+                        List<StaffEntity> list = new ArrayList<>();
+                        for (StaffEntity item: successResponse.getEntity()){
+                            if (item.getDepartmentId() == UserManager.getInstance().getUser().getRole()){
+                                list.add(item);
+                            }
+                        }
+                        view.showListStaff(list);
+                        view.hideProgressBar();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_staff_success));
+                    }
+
+                    @Override
+                    public void onError(GetAllStaffUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+
+                    }
+                });
+    }
+
+    @Override
     public void getListProduct(long orderId, boolean refresh) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
@@ -348,7 +370,6 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
                         }
                         view.hideProgressBar();
-
                     }
 
                     @Override

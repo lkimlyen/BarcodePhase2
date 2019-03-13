@@ -531,10 +531,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (lLRoot.getVisibility() == View.GONE) {
-            lLRoot.setVisibility(View.VISIBLE);
-        } else {
-            if (adapter.getDataEdit() > 0) {
+            if (adapter != null && adapter.getDataEdit() > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -566,7 +563,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
             } else {
                 getActivity().finish();
             }
-        }
+
 
     }
 

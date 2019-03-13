@@ -183,7 +183,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberScanStages(final long stagesId, final double numberInput) {
+    public Observable<String> updateNumberScanStages(final long stagesId, final int numberInput) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -476,7 +476,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberScanPackaging(final long logId, final double number) {
+    public Observable<String> updateNumberScanPackaging(final long logId, final int number) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -572,7 +572,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Boolean> updateNumberGroup(final long group, final double numberGroup) {
+    public Observable<Boolean> updateNumberGroup(final long group, final int numberGroup) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
@@ -750,7 +750,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateDetailErrorQC(final long id, final double numberFailed, final String description, final Collection<Integer> idList) {
+    public Observable<String> updateDetailErrorQC(final long id, final int numberFailed, final String description, final Collection<Integer> idList) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -977,13 +977,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Double> totalNumberScanGroup(final long productDetailId) {
-        return Observable.create(new Observable.OnSubscribe<Double>() {
+    public Observable<Integer> totalNumberScanGroup(final long productDetailId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super Double> subscriber) {
+            public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    Double aDouble = databaseRealm.totalNumberScanGroup(productDetailId);
-                    subscriber.onNext(aDouble);
+                    int aint = databaseRealm.totalNumberScanGroup(productDetailId);
+                    subscriber.onNext(aint);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -1496,6 +1496,38 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     databaseRealm.updateStatusQCWindow();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusLogStagesWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusLogStagesWindow ();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusLogStages() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusLogStages ();
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

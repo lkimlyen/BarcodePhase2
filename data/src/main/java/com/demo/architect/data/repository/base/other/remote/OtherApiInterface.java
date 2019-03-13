@@ -7,6 +7,7 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -36,6 +37,10 @@ public interface OtherApiInterface {
     @POST
     Call<BaseResponse> addLogQC(@Url String url, @Field("pKey") String key,
                                 @Field("pJsonListQC") String json);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<StaffEntity>> getAllStaff(@Url String url, @Field("pKey") String key);
 
     @FormUrlEncoded
     @POST

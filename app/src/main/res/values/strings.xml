@@ -299,6 +299,10 @@
     <string name="text_save_violator">Bạn chưa lưu thông tin người vi phạm!</string>
     <string name="text_do_you_want_exit">Bạn có muốn thoát không?</string>
     <string name="text_edit_data_before_upload">Vui lòng nhập đầy đủ thông tin chi tiết lỗi!</string>
+    <string name="text_staff">Nhân viên</string>
+    <string name="text_choose_staff">Chọn nhân viên thống kê</string>
+    <string name="text_get_list_staff_success">Lấy danh sách nhân viên thành công</string>
+    <string name="text_staff_id_null">Bạn chưa chọn nhân viên thống kê</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

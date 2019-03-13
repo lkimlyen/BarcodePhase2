@@ -29,7 +29,7 @@ public class GroupCode extends RealmObject {
     private String productDetailName;
     @SerializedName("pNumber")
     @Expose
-    private double number;
+    private int number;
 
     private String module;
 
@@ -70,15 +70,15 @@ public class GroupCode extends RealmObject {
         this.productDetailId = productDetailId;
     }
 
-    public void setNumberTotal(double numberTotal) {
+    public void setNumberTotal(int numberTotal) {
         this.numberTotal = numberTotal;
     }
 
-    public double getNumber() {
+    public int getNumber() {
         return number;
     }
 
-    public void setNumber(double number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
@@ -101,22 +101,18 @@ public class GroupCode extends RealmObject {
     private String groupCode;
 
 
-    public double getNumberTotal() {
+    public int getNumberTotal() {
         return numberTotal;
     }
 
-    public void setNumberTotal(int numberTotal) {
-        this.numberTotal = numberTotal;
-    }
-
-    private double numberTotal;
+    private int numberTotal;
 
 
 
     public GroupCode() {
     }
 
-    public GroupCode(long id, String groupCode, long orderId, long productDetailId, String productDetailName, double numberTotal, double number, String module, long userId, String dateGroup) {
+    public GroupCode(long id, String groupCode, long orderId, long productDetailId, String productDetailName, int numberTotal, int number, String module, long userId, String dateGroup) {
         this.id = id;
         this.groupCode = groupCode;
         this.orderId = orderId;
@@ -179,7 +175,7 @@ public class GroupCode extends RealmObject {
     }
 
     public static boolean checkNumberProductInGroupCode(Realm realm, ProductEntity productEntity, long userId) {
-        double rest = 0;
+        int rest = 0;
         GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productEntity.getProductDetailID())
                 .equalTo("userId", userId).isNull("groupCode").findFirst();
         if (groupCode != null) {
@@ -191,7 +187,7 @@ public class GroupCode extends RealmObject {
         return rest > 0;
     }
 
-    public static void updateNumberGroup(Realm realm, long groupId, double numberGroup, long userId) {
+    public static void updateNumberGroup(Realm realm, long groupId, int numberGroup, long userId) {
         GroupCode groupCode = realm.where(GroupCode.class).equalTo("id", groupId).equalTo("userId", userId).findFirst();
         groupCode.setNumber(numberGroup);
     }
@@ -265,7 +261,7 @@ public class GroupCode extends RealmObject {
         this.module = module;
     }
 
-    public static Double totalNumberScanGroup(Realm realm, long productDetailId) {
+    public static int totalNumberScanGroup(Realm realm, long productDetailId) {
         GroupCode groupCode = realm.where(GroupCode.class).equalTo("productDetailId", productDetailId).isNull("groupCode").findFirst();
         return groupCode != null ? groupCode.getNumber() : 0;
     }

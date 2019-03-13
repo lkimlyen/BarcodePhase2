@@ -54,7 +54,7 @@ public interface GroupCodeContract {
 
         void updateNumberInGroup(String group, long orderId,Collection<ProductGroupEntity> listUpdate);
 
-        void updateNumberGroup(long productId, long groupId, double numberGroup);
+        void updateNumberGroup(long productId, long groupId, int numberGroup);
 
         void detachedCode(long orderId, String groupCode);
 
@@ -70,7 +70,7 @@ public interface GroupCodeContract {
 
         void deleteScanGroupCode(long id);
 
-        double totalNumberScanGroup(long productDetailId);
+        int totalNumberScanGroup(long productDetailId);
 
 
     }

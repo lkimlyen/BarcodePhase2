@@ -163,6 +163,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
     @Override
     public void installApp(String path) {
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 //        Uri uriApk = FileProvider.getUriForFile(getContext(),

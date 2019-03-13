@@ -40,7 +40,7 @@ public interface StagesContract {
 
         void showCheckResidual();
 
-        void showCheckResidualInGroup(long id, double number, double numberInput);
+        void showCheckResidualInGroup(long id, int number, int numberInput);
 
         void showListTimes(List<Integer> list);
 
@@ -68,14 +68,14 @@ public interface StagesContract {
 
         void deleteScanStages(long stagesId);
 
-        void updateNumberScanInGroup(LogScanStages logScanStages, double numberInput);
+        void updateNumberScanInGroup(LogScanStages logScanStages, int numberInput);
 
         void getListTimes(long orderId, int departmentId);
 
         void uploadData(long orderId);
 
         void saveBarcodeToDataBase(int times, ProductDetail
-                productDetail, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
+                productDetail, int number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual);
 
         void getListGroupCode(long orderId);
 
@@ -85,7 +85,7 @@ public interface StagesContract {
 
         void countListAllData(long orderId);
 
-        void updateNumberScan(long stagesId, double number, boolean update);
+        void updateNumberScan(long stagesId, int number, boolean update);
 
         void print(int id, int idPrint);
 

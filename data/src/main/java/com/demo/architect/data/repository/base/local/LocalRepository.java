@@ -57,7 +57,7 @@ public interface LocalRepository {
 
     Observable<ProductDetail> getProductDetail(ProductEntity productEntity, int times);
 
-    Observable<String> updateNumberScanStages(final long stagesId, final double numberInput);
+    Observable<String> updateNumberScanStages(final long stagesId, final int numberInput);
 
     Observable<String> deleteScanStages(final long stagesId);
 
@@ -94,7 +94,7 @@ public interface LocalRepository {
 
     Observable<String> deleteScanPackaging(long logId);
 
-    Observable<String> updateNumberScanPackaging(long logId, double number);
+    Observable<String> updateNumberScanPackaging(long logId, int number);
 
     Observable<ProductPackagingModel> findProductPackaging(long productId, String serialPack);
 
@@ -106,7 +106,7 @@ public interface LocalRepository {
 
     Observable<String> addGroupCode(String groupCode, LogScanStages logScanStages, ProductEntity productEntity);
 
-    Observable<Boolean> updateNumberGroup(long groupId, double numberGroup);
+    Observable<Boolean> updateNumberGroup(long groupId, int numberGroup);
 
     Observable<String> detachedCodeStages(final List<ProductGroupEntity> list, long orderId, String groupCode);
 
@@ -130,7 +130,7 @@ public interface LocalRepository {
 
     Observable<String> saveBarcodeQC(long orderId, int departmentId, String machineName, String violator, String qcCode, ProductEntity productEntity);
 
-    Observable<String> updateDetailErrorQC(long id, double numberFailed, String description, Collection<Integer> idList);
+    Observable<String> updateDetailErrorQC(long id, int numberFailed, String description, Collection<Integer> idList);
 
     Observable<List<QualityControlModel>> getListQualityControlUpload();
 
@@ -157,7 +157,7 @@ public interface LocalRepository {
 
     Observable<String> deleteScanGroupCode(long id);
 
-    Observable<Double> totalNumberScanGroup(long productDetailId);
+    Observable<Integer> totalNumberScanGroup(long productDetailId);
 
 
     Observable<String> updateNumberTotalProduct(List<ProductEntity> entity);
@@ -224,4 +224,8 @@ public interface LocalRepository {
     Observable<List<QualityControlWindowModel>> getListQualityControlUploadWindow();
 
     Observable<String> updateStatusQCWindow();
+
+    Observable<String> updateStatusLogStagesWindow();
+
+    Observable<String> updateStatusLogStages();
 }

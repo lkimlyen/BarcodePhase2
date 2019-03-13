@@ -23,6 +23,7 @@ import com.demo.architect.domain.GetTimesInputAndOutputByDepartmentUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.ListDepartmentManager;
 import com.demo.barcode.manager.ListGroupManager;
 import com.demo.barcode.manager.ListProductManager;
@@ -159,31 +160,31 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                         if (productDetail != null) {
                             if (productDetail.getNumberRest() > 0 && productDetail.getNumberRest() >= item.getNumber()) {
-                               // allowedToSave = true;
+                                // allowedToSave = true;
                             } else {
                                 allowedToSave = false;
                             }
                         } else {
-                            countProductNull ++;
+                            countProductNull++;
 
                         }
 
-                        if (countProductNull == 0){
-                            if (numberLoop == groupEntity.getProducGroupList().size()) {
-                                if (allowedToSave) {
-                                    saveListWithGroupCode(times, groupEntity, departmentId);
-                                }else {
-                                    showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
-                                }
+
+                        if (numberLoop == groupEntity.getProducGroupList().size()) {
+                            if (allowedToSave) {
+                                saveListWithGroupCode(times, groupEntity, departmentId);
+                            } else {
+                                showError(CoreApplication.getInstance().getString(R.string.text_exceed_the_number_of_requests_in_group));
                             }
-                        }else {
-                            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
                         }
+
                     }
 
                 });
+            } else {
+                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
+                return;
             }
-
 
         }
 
@@ -213,9 +214,9 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void updateNumberScanInGroup(LogScanStages stages, double number) {
+    public void updateNumberScanInGroup(LogScanStages stages, int number) {
         allowedToSave = true;
-        double numberOut = number - stages.getNumberInput();
+        int numberOut = number - stages.getNumberInput();
         localRepository.getScanByProductDetailId(stages)
                 .subscribe(new Action1<RealmResults<LogScanStages>>() {
                     @Override
@@ -278,17 +279,13 @@ public class StagesPresenter implements StagesContract.Presenter {
                                     localRepository.getListLogScanStagesUpload().subscribe(new Action1<List<LogScanStages>>() {
                                         @Override
                                         public void call(List<LogScanStages> list) {
-                                            if (list.size() == 0) {
-                                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
-                                                return;
-                                            }
                                             scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(list)),
                                                     new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
                                                             ScanProductDetailOutUsecase.ErrorValue>() {
                                                         @Override
                                                         public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                                             view.hideProgressBar();
-                                                            localRepository.deleteAllScanStages().subscribe(new Action1<String>() {
+                                                            localRepository.updateStatusLogStages().subscribe(new Action1<String>() {
                                                                 @Override
                                                                 public void call(String s) {
                                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
@@ -323,10 +320,6 @@ public class StagesPresenter implements StagesContract.Presenter {
                     localRepository.getListLogScanStagesUpload().subscribe(new Action1<List<LogScanStages>>() {
                         @Override
                         public void call(List<LogScanStages> list) {
-                            if (list.size() == 0) {
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_no_data_upload));
-                                return;
-                            }
                             scanProductDetailOutUsecase.executeIO(new ScanProductDetailOutUsecase.RequestValue(gson.toJson(list)),
                                     new BaseUseCase.UseCaseCallback<ScanProductDetailOutUsecase.ResponseValue,
                                             ScanProductDetailOutUsecase.ErrorValue>() {
@@ -334,7 +327,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                         public void onSuccess(ScanProductDetailOutUsecase.ResponseValue successResponse) {
                                             view.hideProgressBar();
 
-                                            localRepository.deleteAllScanStages().subscribe(new Action1<String>() {
+                                            localRepository.updateStatusLogStages().subscribe(new Action1<String>() {
                                                 @Override
                                                 public void call(String s) {
                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
@@ -361,7 +354,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveBarcodeToDataBase(int times, ProductDetail
-            productDetail, double number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual) {
+            productDetail, int number, int departmentId, GroupEntity groupEntity, boolean typeScan, boolean residual) {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         String groupCode = null;
@@ -372,14 +365,14 @@ public class StagesPresenter implements StagesContract.Presenter {
         }
         LogScanStages logScanStages = new LogScanStages(productDetail.getOrderId(), departmentId, user.getRole(), productDetail.getProductDetailId(),
                 groupCodeId, groupCode, productDetail.getBarcode(), productDetail.getModule(), number, typeScan, times,
-                ConvertUtils.getDateTimeCurrent(), user.getId(), number);
+                ConvertUtils.getDateTimeCurrent(), user.getId(), number, Constants.WAITING_UPLOAD);
         localRepository.addLogScanStagesAsync(logScanStages, productDetail.getId()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 if (!residual) {
                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                     view.startMusicSuccess();
-                }else {
+                } else {
                     view.showCheckResidual();
                 }
                 view.turnOnVibrator();
@@ -419,7 +412,6 @@ public class StagesPresenter implements StagesContract.Presenter {
     public void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId) {
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-
             if (productEntity != null) {
                 localRepository.getProductDetail(productEntity, times).subscribe(new Action1<ProductDetail>() {
                     @Override
@@ -448,7 +440,7 @@ public class StagesPresenter implements StagesContract.Presenter {
     }
 
     @Override
-    public void updateNumberScan(long stagesId, double number, boolean update) {
+    public void updateNumberScan(long stagesId, int number, boolean update) {
         view.showProgressBar();
         localRepository.updateNumberScanStages(stagesId, number).subscribe(new Action1<String>() {
             @Override
@@ -477,14 +469,13 @@ public class StagesPresenter implements StagesContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocketDelivery connectSocket = new ConnectSocketDelivery(address.getIpAddress(), address.getPortNumber(),
-                        id, new ConnectSocketDelivery.onPostExecuteResult() {
+                        id, 3, new ConnectSocketDelivery.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
 
                             if (id == -1) {
                                 print(idPrint, idPrint);
-
 
                             } else {
                                 view.hideProgressBar();
@@ -543,7 +534,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getListDepartment() {
-
         view.showListDepartment(ListDepartmentManager.getInstance().getListDepartment(
                 UserManager.getInstance().getUser().getRole()
         ));
@@ -577,7 +567,6 @@ public class StagesPresenter implements StagesContract.Presenter {
     @Override
     public void getListProduct(long orderId, boolean refresh) {
         view.showProgressBar();
-        UserEntity user = UserManager.getInstance().getUser();
         getInputForProductDetail.executeIO(new GetInputForProductDetailUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
                 new BaseUseCase.UseCaseCallback<GetInputForProductDetailUsecase.ResponseValue,
                         GetInputForProductDetailUsecase.ErrorValue>() {
@@ -585,15 +574,11 @@ public class StagesPresenter implements StagesContract.Presenter {
                     public void onSuccess(GetInputForProductDetailUsecase.ResponseValue successResponse) {
 
                         ListProductManager.getInstance().setListProduct(successResponse.getEntity());
-                        localRepository.deleteAllProductDetail().subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String s) {
-                                if (!refresh) {
-                                    view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
-                                }
-                                getListGroupCode(orderId);
-                            }
-                        });
+
+                        if (!refresh) {
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_detail_success));
+                        }
+                        getListGroupCode(orderId);
 
 
                     }

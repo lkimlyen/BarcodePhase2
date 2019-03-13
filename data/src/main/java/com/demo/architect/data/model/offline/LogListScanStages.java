@@ -124,15 +124,6 @@ public class LogListScanStages extends RealmObject {
         return count;
     }
 
-    public static List<LogScanStages> getListScanStagesWaitingUpload(Realm realm) {
-        List<LogScanStages> list = new ArrayList<>();
-            RealmResults<LogScanStages> results = realm.where(LogScanStages.class).findAll();
-
-                list = realm.copyFromRealm(results);
-
-
-        return list;
-    }
 
 
     public static LogListScanStages getListScanStagesByDepartment(Realm realm, long orderId, int departmentId, long userId, int times) {

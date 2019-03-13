@@ -19,12 +19,14 @@ public class ConnectSocketDelivery extends AsyncTask<Void, Void, SocketRespone> 
     int port;
     private Socket mSocket;
     private long id;
+    private int type;
     private onPostExecuteResult listener;
 
-    public ConnectSocketDelivery(String addr, int port, long id, onPostExecuteResult listener) {
+    public ConnectSocketDelivery(String addr, int port, long id, int type, onPostExecuteResult listener) {
         ipAddress = addr;
         this.port = port;
         this.id = id;
+        this.type = type;
         this.listener = listener;
     }
 
@@ -50,7 +52,7 @@ public class ConnectSocketDelivery extends AsyncTask<Void, Void, SocketRespone> 
             Log.e(TAG, "handShake " + clientData.toString());
 
             if (!clientData.toString().isEmpty()) {
-                if(id > 0){
+                if (id > 0) {
                     sendEvent();
                 }
                 Log.e(TAG, "Send Success " + id);
@@ -76,7 +78,7 @@ public class ConnectSocketDelivery extends AsyncTask<Void, Void, SocketRespone> 
     private void sendEvent() {
         try {
             if (mSocket != null) {
-                byte[] tmp = toByteArray(true, 3, id);
+                byte[] tmp = toByteArray(true, type, id);
                 mSocket.getOutputStream().write(tmp);
             }
 

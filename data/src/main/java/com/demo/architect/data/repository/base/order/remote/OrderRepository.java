@@ -28,7 +28,7 @@ public interface OrderRepository {
     Observable<BaseResponse<Integer>> scanProductDetailOut(String key, String json);
 
     Observable<BaseResponse<Integer>> scanProductDetailOutWindow(String key,long orderId,int departmentOut,
-                                                                 int departmentIn, long userId,String json);
+                                                                 int departmentIn, long userId,int staffId,String json);
 
 
     Observable<BaseListResponse> confirmInput(String key, int departmentId, String json);

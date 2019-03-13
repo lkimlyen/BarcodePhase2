@@ -3,6 +3,7 @@ package com.demo.barcode.screen.stages_window;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductDetail;
@@ -36,11 +37,13 @@ public interface StagesWindowContract {
 
         void turnOnVibrator();
 
-        void showCheckResidual( );
+        void showCheckResidual();
 
         void showDialogUpload();
 
         void refreshLayout();
+
+        void showListStaff(List<StaffEntity> list);
 
         void showPrintDeliveryNote(int id);
 
@@ -54,16 +57,18 @@ public interface StagesWindowContract {
 
         void getListSO();
 
+        void getListStaff();
+
         void getListProduct(long orderId, boolean refresh);
 
-        void checkBarcode(String barcode, int departmentId);
+        void checkBarcode(String barcode, int departmentId,int staffId);
 
         void deleteScanStages(long stagesId);
 
-        void uploadData(long orderId, int departmentIn);
+        void uploadData(long orderId, int departmentIn, int staffId);
 
         void saveBarcodeToDataBase(ProductDetailWindowModel
-                                           productDetail, int number, int departmentId,  boolean residual);
+                                           productDetail, int number, int departmentId,int staffId, boolean residual);
 
 
         void updateNumberScan(long stagesId, int number, boolean update);

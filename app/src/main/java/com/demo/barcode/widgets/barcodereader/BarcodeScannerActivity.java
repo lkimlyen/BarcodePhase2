@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import com.demo.barcode.R;
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNotNull;
 
 public class BarcodeScannerActivity extends AppCompatActivity {
 
@@ -89,7 +88,6 @@ public class BarcodeScannerActivity extends AppCompatActivity {
     private void setupButtons() {
         final LinearLayout flashOnButton = (LinearLayout)findViewById(R.id.flashIconButton);
         final ImageView flashToggleIcon = (ImageView)findViewById(R.id.flashIcon);
-        assertNotNull(flashOnButton);
         flashOnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +119,16 @@ public class BarcodeScannerActivity extends AppCompatActivity {
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
             dialog.show();
         }
+
+
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>)findViewById(R.id.graphicOverlay);
+
+        mGraphicOverlay.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("SizeGraphicOverlay",mGraphicOverlay.getWidth()+"_"+mGraphicOverlay.getHeight());
+            }
+        });
         BarcodeGraphicTracker.BarcodeUpdateListener listener =  new BarcodeGraphicTracker.BarcodeUpdateListener() {
             @Override
             public void onBarcodeDetected(Barcode barcode) {
@@ -134,6 +141,7 @@ public class BarcodeScannerActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             finish();
+
                         }
                     },50);
                 }
@@ -146,6 +154,12 @@ public class BarcodeScannerActivity extends AppCompatActivity {
             try {
                 mCameraSourcePreview = (CameraSourcePreview) findViewById(R.id.preview);
                 mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
+                mCameraSourcePreview.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("SizeCameraSourcePreview",mCameraSourcePreview.getWidth()+"_"+mCameraSourcePreview.getHeight());
+                    }
+                });
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 mCameraSource.release();

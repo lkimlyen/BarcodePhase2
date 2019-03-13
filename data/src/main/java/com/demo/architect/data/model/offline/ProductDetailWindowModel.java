@@ -1,10 +1,7 @@
 package com.demo.architect.data.model.offline;
 
-import com.demo.architect.data.model.NumberInput;
-import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.ProductWindowEntity;
-
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -25,6 +22,8 @@ public class ProductDetailWindowModel extends RealmObject {
     private int numberScanned;
     private int numberRest;
     private long userId;
+
+    private int status;
     private RealmList<Integer> listStages;
 
 
@@ -33,7 +32,7 @@ public class ProductDetailWindowModel extends RealmObject {
 
     public ProductDetailWindowModel(long id, long orderId, long productSetDetailID, String productSetDetailName,
                                     String ProductSetDetailCode, String barcode, String productSetName,
-                                    int numberTotal, int numberSuccess, int numberScanned, int numberRest, long userId) {
+                                    int numberTotal, int numberSuccess, int numberScanned, int numberRest, long userId, int status) {
         this.id = id;
         this.orderId = orderId;
         this.productSetDetailID = productSetDetailID;
@@ -46,6 +45,7 @@ public class ProductDetailWindowModel extends RealmObject {
         this.numberScanned = numberScanned;
         this.numberRest = numberRest;
         this.userId = userId;
+        this.status = status;
     }
 
     public String getProductSetDetailName() {
@@ -76,6 +76,10 @@ public class ProductDetailWindowModel extends RealmObject {
         this.productSetDetailName = productSetDetailName;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public void setProductSetDetailCode(String productSetDetailCode) {
         this.productSetDetailCode = productSetDetailCode;
     }
@@ -89,7 +93,7 @@ public class ProductDetailWindowModel extends RealmObject {
         ProductDetailWindowModel
                 productDetail = new ProductDetailWindowModel(id(realm) + 1, productEntity.getOrderId(), productEntity.getProductSetDetailID(),
                 productEntity.getProductSetDetailName(), productEntity.getProductSetDetailName(), productEntity.getBarcode(), productEntity.getProductSetName(), productEntity.getNumberTotalInput(),
-                productEntity.getNumberSuccess(), productEntity.getNumberSuccess(), productEntity.getNumberWaitting(), userId);
+                productEntity.getNumberSuccess(), productEntity.getNumberSuccess(), productEntity.getNumberWaitting(), userId, Constants.WAITING_UPLOAD);
         productDetail = realm.copyToRealm(productDetail);
         RealmList<Integer> listStages = productDetail.getListStages();
         for (Integer id : productEntity.getListDepartmentID()) {
@@ -101,7 +105,9 @@ public class ProductDetailWindowModel extends RealmObject {
     }
 
     public static ProductDetailWindowModel getProductDetail(Realm realm, ProductWindowEntity productEntity, long userId) {
-        ProductDetailWindowModel productDetail = realm.where(ProductDetailWindowModel.class).equalTo("productSetDetailID", productEntity.getProductSetDetailID())
+        ProductDetailWindowModel productDetail =
+                realm.where(ProductDetailWindowModel.class).equalTo("productSetDetailID", productEntity.getProductSetDetailID())
+                        .equalTo("status",Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findFirst();
 
         return productDetail;

@@ -4,9 +4,10 @@ buildscript {
     repositories {
         maven { url "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+
+        google()
         jcenter()
         mavenCentral()
-        google()
 
     }
     dependencies {
@@ -22,15 +23,17 @@ buildscript {
 
 allprojects {
     repositories {
+
+        google()
         jcenter()
         maven { url 'https://maven.google.com' }
     }
     ext {
         //Android
-        androidBuildToolsVersion = "26.0.1"
+        androidBuildToolsVersion = "28.0.3"
         androidMinSdkVersion = 19
-        androidTargetSdkVersion = 23
-        androidCompileSdkVersion = 26
+        androidTargetSdkVersion = 28
+        androidCompileSdkVersion = 28
         androidVersionCode = 14
         androidVersionName = "1.1.1"
 

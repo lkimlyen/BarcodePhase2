@@ -168,7 +168,7 @@ public class DatabaseRealm {
 
     public List<LogScanStages> getListLogScanStagesUpload() {
         Realm realm = getRealmInstance();
-        final List<LogScanStages> list = LogListScanStages.getListScanStagesWaitingUpload(realm);
+        final List<LogScanStages> list = LogScanStages.getListScanStagesWaitingUpload(realm);
         return list;
     }
 
@@ -194,7 +194,7 @@ public class DatabaseRealm {
     }
 
 
-    public void updateNumberScanStages(final long stagesId, final double numberInput) {
+    public void updateNumberScanStages(final long stagesId, final int numberInput) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -373,7 +373,7 @@ public class DatabaseRealm {
 
     }
 
-    public void updateNumberScanPackaging(final long logId, final double number) {
+    public void updateNumberScanPackaging(final long logId, final int number) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -412,7 +412,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateNumberGroup(final long groupId, final double numberGroup) {
+    public void updateNumberGroup(final long groupId, final int numberGroup) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -517,7 +517,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateDetailErrorQC(final long id, final double numberFailed, final String description, final Collection<Integer> idList) {
+    public void updateDetailErrorQC(final long id, final int numberFailed, final String description, final Collection<Integer> idList) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -638,10 +638,10 @@ public class DatabaseRealm {
         return list;
     }
 
-    public Double totalNumberScanGroup(long productDetailId) {
+    public int totalNumberScanGroup(long productDetailId) {
         Realm realm = getRealmInstance();
-        Double aDouble = GroupCode.totalNumberScanGroup(realm, productDetailId);
-        return aDouble;
+        int aint = GroupCode.totalNumberScanGroup(realm, productDetailId);
+        return aint;
     }
 
     public void deleteQC(final long id) {
@@ -748,7 +748,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).findAll();
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
             }
         });
@@ -756,7 +756,7 @@ public class DatabaseRealm {
 
     public RealmResults<LogScanStages> getAllListStages() {
         Realm realm = getRealmInstance();
-        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).findAll();
+        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
         return results;
     }
 
@@ -765,10 +765,10 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).findAll();
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
 
-                RealmResults<LogScanStages> results1 = realm.where(LogScanStages.class).findAll();
+                RealmResults<LogScanStages> results1 = realm.where(LogScanStages.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
                 results1.deleteAllFromRealm();
 
                 RealmResults<GroupScan> results2 = realm.where(GroupScan.class).findAll();
@@ -811,10 +811,13 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<ProductDetailWindowModel> results = realm.where(ProductDetailWindowModel.class).findAll();
+                RealmResults<ProductDetailWindowModel> results = realm.where(ProductDetailWindowModel.class)
+                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
 
-                RealmResults<LogScanStagesWindowModel> results1 = realm.where(LogScanStagesWindowModel.class).findAll();
+                RealmResults<LogScanStagesWindowModel> results1 = realm.where(LogScanStagesWindowModel.class)
+                        .equalTo("status",Constants.WAITING_UPLOAD)
+                        .findAll();
                 results1.deleteAllFromRealm();
             }
         });
@@ -1000,6 +1003,26 @@ public class DatabaseRealm {
         });
     }
 
+    public void updateStatusLogStagesWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStagesWindowModel.updateStatusLogStagesWindow(realm);
+            }
+        });
+    }
+
+    public void updateStatusLogStages() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanStages.updateStatusLogStages(realm);
+            }
+        });
+    }
+
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
@@ -1030,16 +1053,16 @@ public class DatabaseRealm {
                         .addField("orderId", long.class)
                         .addField("outputId", long.class)
                         .addField("productDetailId", long.class)
-                        .addField("numberOut", double.class)
-                        .addField("numberRest", double.class)
-                        .addField("numberUsed", double.class)
-                        .addField("numberConfirm", double.class);
+                        .addField("numberOut", int.class)
+                        .addField("numberRest", int.class)
+                        .addField("numberUsed", int.class)
+                        .addField("numberConfirm", int.class);
                 schema.get("LogScanConfirmModel")
                         .removeField("lastIDOutput")
                         .addField("deliveryNoteId", long.class)
                         .removeField("numberScanOut")
-                        .addField("numberRestInTimes", double.class)
-                        .removeField("list").addField("numberUsedInTimes", double.class)
+                        .addField("numberRestInTimes", int.class)
+                        .removeField("list").addField("numberUsedInTimes", int.class)
                         .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteModel"));
 
 

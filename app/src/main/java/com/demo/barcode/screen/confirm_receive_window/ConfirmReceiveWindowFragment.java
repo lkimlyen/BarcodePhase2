@@ -494,7 +494,7 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
     @OnClick(R.id.img_back)
     public void back() {
 
-        if (adapter.countDataEdit() > 0) {
+        if (adapter != null && adapter.countDataEdit() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -526,7 +526,7 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        if (adapter.countDataEdit() > 0) {
+        if (adapter != null && adapter.countDataEdit() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_upload_data))

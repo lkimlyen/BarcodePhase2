@@ -6,6 +6,7 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -26,6 +27,7 @@ public interface OtherRepository {
     Observable<BaseResponse<ListReasonsEntity>> getRAndSQC();
 
     Observable<BaseResponse> addLogQC(String key, String json);
+    Observable<BaseListResponse<StaffEntity>> getAllStaff(String key);
 
     Observable<BaseResponse> addLogQCWindow(String key, String machineName, String violator,
                                             String qcCode, long orderId, int departmentId,

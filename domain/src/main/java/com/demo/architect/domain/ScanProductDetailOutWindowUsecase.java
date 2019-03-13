@@ -22,9 +22,10 @@ public class ScanProductDetailOutWindowUsecase extends BaseUseCase {
         int departmentOut = ((RequestValue) requestValues).departmentOut;
         int departmentIn = ((RequestValue) requestValues).departmentIn;
         long userId = ((RequestValue) requestValues).userId;
+        int staffId = ((RequestValue) requestValues).staffId;
         String json = ((RequestValue) requestValues).json;
         return remoteRepository.scanProductDetailOutWindow("13AKby8uFhdlayHD6oPsaU90b8o00=",
-                orderId,departmentOut,departmentIn,userId,json);
+                orderId, departmentOut, departmentIn, userId, staffId, json);
     }
 
     @Override
@@ -62,13 +63,15 @@ public class ScanProductDetailOutWindowUsecase extends BaseUseCase {
         private final int departmentOut;
         private final int departmentIn;
         private final long userId;
+        private final int staffId;
         private final String json;
 
-        public RequestValue(long orderId, int departmentOut, int departmentIn, long userId, String json) {
+        public RequestValue(long orderId, int departmentOut, int departmentIn, long userId, int staffId, String json) {
             this.orderId = orderId;
             this.departmentOut = departmentOut;
             this.departmentIn = departmentIn;
             this.userId = userId;
+            this.staffId = staffId;
             this.json = json;
         }
 

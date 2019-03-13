@@ -15,6 +15,7 @@ import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
 import com.demo.architect.domain.ConfirmInputWindowUsecase;
 import com.demo.architect.domain.DeactiveProductDetailGroupUsecase;
+import com.demo.architect.domain.GetAllStaffUsecase;
 import com.demo.architect.domain.GetApartmentUsecase;
 import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
@@ -228,6 +229,12 @@ public class UseCaseModule {
     @Provides
     AddLogQCWindowUsecase provideAddLogQCWindowUsecase(OtherRepository otherRepository){
         return new AddLogQCWindowUsecase(otherRepository);
+    }
+
+
+    @Provides
+    GetAllStaffUsecase provideGetAllStaffUsecase(OtherRepository otherRepository){
+        return new GetAllStaffUsecase(otherRepository);
     }
 
 }

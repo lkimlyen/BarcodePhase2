@@ -12,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.DownloadListener;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
@@ -22,6 +25,8 @@ import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.DownloadUtils;
+
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -73,21 +78,32 @@ public class SettingPresenter implements SettingContract.Presenter {
                 new BaseUseCase.UseCaseCallback<UpdateVersionUsecase.ResponseValue, UpdateVersionUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(UpdateVersionUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        //SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).pushString(Constants.LINK_DOWNLOAD,successResponse.getLink());
-                        DownloadUtils.DownloadFile(CoreApplication.getInstance(), successResponse.getLink());
-                        mUpdateReceiver = new BroadcastReceiver() {
-                            @Override
-                            public void onReceive(Context context, Intent intent) {
-                                Toast.makeText(CoreApplication.getInstance(), "Download Xong", Toast.LENGTH_SHORT).show();
-                                String FilePath = Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + DownloadUtils.getFileName(successResponse.getLink());
-                                CoreApplication.getInstance().unregisterReceiver(mUpdateReceiver);
-                                view.installApp(FilePath);
+                        String fileName = successResponse.getLink().substring(successResponse.getLink().lastIndexOf('/') + 1);
+                        File mDownloadDir = CoreApplication.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        if (!mDownloadDir.exists()) {
+                            mDownloadDir.mkdirs();
+                        }
+                        AndroidNetworking.download(successResponse.getLink(), mDownloadDir.getPath(), fileName)
+                                .build()
+                                .startDownload(new DownloadListener() {
+                                    @Override
+                                    public void onDownloadComplete() {
+                                        view.hideProgressBar();
+                                        File file = new File(mDownloadDir.getPath(), fileName);
+                                        if (!file.exists()) {
+                                            file.mkdirs();
+                                        }
 
-                            }
-                        };
-                        CoreApplication.getInstance().registerReceiver(mUpdateReceiver,
-                                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                                        view.installApp(file.getPath());
+                                    }
+
+                                    @Override
+                                    public void onError(ANError error) {
+                                        // handle error
+                                        view.hideProgressBar();
+                                        view.showError(error.getErrorDetail());
+                                    }
+                                });
                     }
 
                     @Override

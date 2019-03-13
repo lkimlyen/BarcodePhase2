@@ -18,6 +18,7 @@
         android:name="android.permission.FLASHLIGHT"
         android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
         android:protectionLevel="normal" />
+
     <uses-feature
         android:name="android.hardware.camera.flash"
         android:required="false" />
@@ -25,8 +26,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.hardware.camera"
-        android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
@@ -38,6 +40,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:replace="android:icon">
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -52,6 +55,7 @@
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
+
         <activity android:name=".screen.login.LoginActivity"></activity>
         <activity android:name=".screen.dashboard.DashboardActivity" />
         <activity android:name=".screen.setting.SettingActivity" />
@@ -68,26 +72,30 @@
         <activity android:name=".screen.chang_password.ChangePasswordActivity" />
         <activity android:name=".screen.create_packaging.CreatePackagingActivity" />
         <activity android:name=".screen.print_stamp.PrintStempActivity" />
-        <activity android:name=".widgets.barcodereader.BarcodeScannerActivity"
+        <activity
+            android:name=".widgets.barcodereader.BarcodeScannerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".screen.history_pack.HistoryPackageActivity"/>
-        <activity android:name=".screen.detail_package.DetailPackageActivity"/>
-        <activity android:name=".screen.confirm_receive.ConfirmReceiveActivity"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".screen.detail_error.DetailErrorActivity"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".screen.quality_control.QualityControlActivity"/>
-        <activity android:name=".screen.stages.StagesActivity"/>
-        <activity android:name=".app.permission.PermissionActivity"/>
-        <activity android:name=".screen.stages_window.StagesWindowActivity"/>
-        <activity android:name=".screen.confirm_receive_window.ConfirmReceiveWindowActivity"/>
-        <activity android:name=".screen.qc_window.QualityControlWindowActivity"/>
+        <activity android:name=".screen.history_pack.HistoryPackageActivity" />
+        <activity android:name=".screen.detail_package.DetailPackageActivity" />
+        <activity
+            android:name=".screen.confirm_receive.ConfirmReceiveActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".screen.detail_error.DetailErrorActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".screen.quality_control.QualityControlActivity" />
+        <activity android:name=".screen.stages.StagesActivity" />
+        <activity android:name=".app.permission.PermissionActivity" />
+        <activity android:name=".screen.stages_window.StagesWindowActivity" />
+        <activity android:name=".screen.confirm_receive_window.ConfirmReceiveWindowActivity" />
+        <activity android:name=".screen.qc_window.QualityControlWindowActivity" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
-        <activity android:name=".screen.group_code.GroupCodeActivity"/>
+        <activity android:name=".screen.group_code.GroupCodeActivity" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2ddb95e8e59c5d08e7fdeb87d28c0a543a077d5a" />

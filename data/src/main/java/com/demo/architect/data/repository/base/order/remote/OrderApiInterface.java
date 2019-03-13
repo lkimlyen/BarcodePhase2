@@ -46,6 +46,7 @@ public interface OrderApiInterface {
                                                            @Field("pDepartmentIDOut") int departmentOut,
                                                            @Field("pDepartmentIDIn") int departmentIn,
                                                            @Field("pUserID") long userId,
+                                                           @Field("pStaffID") int staffId,
                                                            @Field("pJson") String jsonProductDetailOut);
 
     @FormUrlEncoded

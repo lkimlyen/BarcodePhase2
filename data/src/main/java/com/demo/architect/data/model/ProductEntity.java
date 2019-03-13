@@ -36,7 +36,7 @@ public class ProductEntity {
 
     @SerializedName("NumberTotalOrder")
     @Expose
-    private double numberTotalOrder;
+    private int numberTotalOrder;
 
     @SerializedName("TimesOutput")
     @Expose
@@ -77,7 +77,7 @@ public class ProductEntity {
         return barcode;
     }
 
-    public double getNumberTotalOrder() {
+    public int getNumberTotalOrder() {
         return numberTotalOrder;
     }
 

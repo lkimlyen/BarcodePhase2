@@ -10,6 +10,7 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
 
@@ -74,6 +75,26 @@ public class OtherRepositoryImpl implements OtherRepository {
             }
         }
     }
+    private void handleStaffResponse(Call<BaseListResponse<StaffEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<StaffEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
     private void handleApartmentResponse(Call<BaseListResponse<ApartmentEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<ApartmentEntity> response = call.execute().body();
@@ -181,6 +202,18 @@ public class OtherRepositoryImpl implements OtherRepository {
             public void call(Subscriber<? super BaseResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.addLogQC(
                         server + "/WS/api/GD2AddLogQC",key,json), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<StaffEntity>> getAllStaff(final String key) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<StaffEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<StaffEntity>> subscriber) {
+                handleStaffResponse(mRemoteApiInterface.getAllStaff(
+                        server + "/WS/api/GD2GetAllStaff",key), subscriber);
             }
         });
     }

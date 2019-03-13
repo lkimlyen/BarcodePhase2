@@ -128,7 +128,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
     }
 
     @Override
-    public void checkBarcode(String barcode, long orderId,String machineName, String violator, String qcCode) {
+    public void checkBarcode(String barcode, long orderId, String machineName, String violator, String qcCode) {
         UserEntity userEntity = UserManager.getInstance().getUser();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
@@ -147,40 +147,23 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
             return;
         }
 
-        int checkBarcode = 0;
+        ProductEntity model = ListProductManager.getInstance().getProductByBarcode(barcode);
 
-        int countLoop = 0;
-        for (ProductEntity model : list) {
-            countLoop++;
-            if (model.getBarcode().equals(barcode)) {
+        if (model != null) {
+            localRepository.checkBarcodeExistInQC(barcode).subscribe(new Action1<Boolean>() {
+                @Override
+                public void call(Boolean exist) {
+                    if (!exist) {
+                            saveBarcode(orderId, userEntity.getRole(), machineName, violator, qcCode, model);
 
-                checkBarcode++;
-                localRepository.checkBarcodeExistInQC(barcode).subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean exist) {
-                        if (!exist) {
-                            if (model.getListDepartmentID().contains(userEntity.getRole())) {
-                                saveBarcode(orderId, userEntity.getRole(),machineName,violator,qcCode, model);
-                            } else {
-                                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
-                            }
-                        } else {
-                            showError(CoreApplication.getInstance().getString(R.string.text_product_in_qc));
-                        }
-
-
-                    }
-                });
-            } else {
-                if (countLoop == list.size()) {
-                    if (checkBarcode == 0) {
-                        showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+                    } else {
+                        showError(CoreApplication.getInstance().getString(R.string.text_product_in_qc));
                     }
                 }
-            }
-            if (checkBarcode > 0) {
-                break;
-            }
+            });
+        } else {
+            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+
         }
 
 
@@ -188,7 +171,6 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
     @Override
     public void getListQualityControl() {
-
         localRepository.deleteAlLQC().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

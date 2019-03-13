@@ -541,7 +541,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
     }
 
     @Override
-    public void showCheckResidualInGroup(long id, double number, double numberInput) {
+    public void showCheckResidualInGroup(long id, int number, int numberInput) {
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.text_title_noti))
                 .setContentText(getString(R.string.text_exceed_the_number_of_requests_in_group))
@@ -628,7 +628,6 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
         }
 
     }
-
 
 
     @Override
@@ -766,7 +765,7 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_back)
     public void back() {
-        if ( adapter != null && adapter.getItemCount() > 0) {
+        if (adapter != null && adapter.getItemCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_have_detail_waiting))
@@ -797,26 +796,30 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_upload_data))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.uploadData(orderId);
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
+        if (adapter != null && adapter.getItemCount() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_upload_data))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            mPresenter.uploadData(orderId);
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
 
-                    }
-                })
-                .show();
+                        }
+                    })
+                    .show();
+        } else {
+            showError(getString(R.string.text_no_data_upload));
+        }
     }
 
     @OnClick(R.id.btn_scan)

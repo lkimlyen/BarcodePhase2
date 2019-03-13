@@ -1,5 +1,6 @@
 package com.demo.architect.data.model.offline;
 
+import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 
@@ -27,11 +28,12 @@ public class ProductDetail extends RealmObject {
     private long userId;
     private RealmList<Integer> listStages;
 
+    private int status;
 
     public ProductDetail() {
     }
 
-    public ProductDetail(long id, long orderId, long productDetailId, String productName, String productDetailCode, String barcode, String module, int times, double numberTotal, double numberSuccess, double numberScanned, double numberRest, long userId) {
+    public ProductDetail(long id, long orderId, long productDetailId, String productName, String productDetailCode, String barcode, String module, int times, double numberTotal, double numberSuccess, double numberScanned, double numberRest, long userId, int status) {
         this.id = id;
         this.orderId = orderId;
         this.productDetailId = productDetailId;
@@ -45,6 +47,7 @@ public class ProductDetail extends RealmObject {
         this.numberScanned = numberScanned;
         this.numberRest = numberRest;
         this.userId = userId;
+        this.status = status;
     }
 
     public String getProductName() {
@@ -79,6 +82,10 @@ public class ProductDetail extends RealmObject {
         this.productDetailCode = productDetailCode;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public long getProductDetailId() {
         return productDetailId;
     }
@@ -90,7 +97,7 @@ public class ProductDetail extends RealmObject {
             if (numberInput.getTimesInput() == times) {
                 productDetail = new ProductDetail(id(realm) + 1, productEntity.getOrderId(), productEntity.getProductDetailID(),
                         productEntity.getProductDetailName(), productEntity.getProductDetailCode(), productEntity.getBarcode(), productEntity.getModule(), numberInput.getTimesInput(), numberInput.getNumberTotalInput(),
-                        numberInput.getNumberSuccess(), numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), userId);
+                        numberInput.getNumberSuccess(), numberInput.getNumberSuccess(), numberInput.getNumberWaitting(), userId, Constants.WAITING_UPLOAD);
                 productDetail = realm.copyToRealm(productDetail);
                 RealmList<Integer> listStages = productDetail.getListStages();
                 for (Integer id : productEntity.getListDepartmentID()) {
@@ -107,7 +114,7 @@ public class ProductDetail extends RealmObject {
 
     public static ProductDetail getProductDetail(Realm realm, ProductEntity productEntity, int times, long userId) {
         ProductDetail productDetail = realm.where(ProductDetail.class).equalTo("productDetailId", productEntity.getProductDetailID())
-                .equalTo("times", times)
+                .equalTo("times", times).equalTo("status",Constants.WAITING_UPLOAD)
                 .equalTo("userId", userId).findFirst();
 
         return productDetail;
@@ -188,4 +195,6 @@ public class ProductDetail extends RealmObject {
     public void setNumberRest(double numberRest) {
         this.numberRest = numberRest;
     }
+
+
 }

@@ -82,7 +82,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     private HashMap<String, List<EditText>> editTextList = new HashMap<>();
     private HashMap<String, List<TextView>> textViewList = new HashMap<>();
 
-    private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private long orderId = 0;
 
     public MediaPlayer mp1, mp2;

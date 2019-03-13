@@ -5,7 +5,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
@@ -17,6 +16,7 @@ public class LogScanStagesWindowModel extends RealmObject {
     private long orderId;
     private int departmentIdIn;
     private int departmentIdOut;
+    private int staffId;
 
     @Expose
     @SerializedName("pProductSetDetailID")
@@ -35,20 +35,23 @@ public class LogScanStagesWindowModel extends RealmObject {
     @Expose
     @SerializedName("pDateTimeScan")
     private String dateScan;
+    private int status;
 
     private long userId;
 
     public LogScanStagesWindowModel() {
     }
 
-    public LogScanStagesWindowModel(long orderId, int departmentIdIn, int departmentIdOut, long productSetDetailID, String barcode, int numberInput, String dateScan, long userId) {
+    public LogScanStagesWindowModel(long orderId, int departmentIdIn, int departmentIdOut, int staffId, long productSetDetailID, String barcode, int numberInput, String dateScan, int status, long userId) {
         this.orderId = orderId;
         this.departmentIdIn = departmentIdIn;
         this.departmentIdOut = departmentIdOut;
+        this.staffId = staffId;
         this.productSetDetailID = productSetDetailID;
         this.barcode = barcode;
         this.numberInput = numberInput;
         this.dateScan = dateScan;
+        this.status = status;
         this.userId = userId;
     }
 
@@ -93,6 +96,9 @@ public class LogScanStagesWindowModel extends RealmObject {
         this.productDetail = productDetail;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public void setNumberInput(int numberInput) {
         this.numberInput = numberInput;
@@ -113,7 +119,9 @@ public class LogScanStagesWindowModel extends RealmObject {
 
     public static void addLogScanStages(Realm realm, LogScanStagesWindowModel scanStages) {
 
-        ProductDetailWindowModel productDetail = realm.where(ProductDetailWindowModel.class).equalTo("productSetDetailID", scanStages.getProductSetDetailID())
+        ProductDetailWindowModel productDetail = realm.where(ProductDetailWindowModel.class)
+                .equalTo("productSetDetailID", scanStages.getProductSetDetailID())
+                .equalTo("status",Constants.WAITING_UPLOAD)
                 .equalTo("userId", scanStages.getUserId()).findFirst();
 
         LogScanStagesWindowModel logScanStages = realm.where(LogScanStagesWindowModel.class).equalTo("barcode", scanStages.getBarcode()).findFirst();
@@ -143,7 +151,7 @@ public class LogScanStagesWindowModel extends RealmObject {
 
     public static void deleteScanStages(Realm realm, long stagesId) {
         LogScanStagesWindowModel logScanStages = realm.where(LogScanStagesWindowModel.class).equalTo("id", stagesId).findFirst();
-        ProductDetailWindowModel productDetail = realm.where(ProductDetailWindowModel.class).equalTo("productSetDetailID", logScanStages.getProductSetDetailID()).findFirst();
+        ProductDetailWindowModel productDetail = logScanStages.getProductDetail();
         productDetail.deleteFromRealm();
         logScanStages.deleteFromRealm();
 
@@ -151,9 +159,20 @@ public class LogScanStagesWindowModel extends RealmObject {
 
 
     public static RealmResults<LogScanStagesWindowModel> getAllList(Realm realm) {
-
         RealmResults<LogScanStagesWindowModel> results = realm.where(LogScanStagesWindowModel.class)
+                .equalTo("status",Constants.WAITING_UPLOAD)
                 .findAll();
         return results;
+    }
+
+    public static void updateStatusLogStagesWindow(Realm realm) {
+        RealmResults<LogScanStagesWindowModel> results = realm.where(LogScanStagesWindowModel.class)
+                .equalTo("status",Constants.WAITING_UPLOAD)
+                .findAll();
+        for (LogScanStagesWindowModel model : results){
+            ProductDetailWindowModel detailWindowModel = model.getProductDetail();
+            detailWindowModel.setStatus(Constants.COMPLETE);
+            model.setStatus(Constants.COMPLETE);
+        }
     }
 }

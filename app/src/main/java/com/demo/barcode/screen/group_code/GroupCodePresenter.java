@@ -215,7 +215,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
     }
 
     @Override
-    public void updateNumberGroup(long productId, long groupId, double numberGroup) {
+    public void updateNumberGroup(long productId, long groupId, int numberGroup) {
         localRepository.updateNumberGroup(groupId, numberGroup).subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
@@ -455,14 +455,14 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
             }
         });
     }
-    private  double totalNumberScanGroup;
+    private  int totalNumberScanGroup;
 
     @Override
-    public double totalNumberScanGroup(long productDetailId) {
-        localRepository.totalNumberScanGroup(productDetailId).subscribe(new Action1<Double>() {
+    public int totalNumberScanGroup(long productDetailId) {
+        localRepository.totalNumberScanGroup(productDetailId).subscribe(new Action1<Integer>() {
             @Override
-            public void call(Double aDouble) {
-                totalNumberScanGroup = aDouble;
+            public void call(Integer aint) {
+                totalNumberScanGroup = aint;
             }
         });
         return totalNumberScanGroup;
