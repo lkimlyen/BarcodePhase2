@@ -205,7 +205,7 @@
     <string name="text_detached_code">Tách mã</string>
     <string name="text_detached_code_success">Tách mã thành công</string>
     <string name="text_remove_item_in_group_code_success">Xoá Chi tiết trong nhóm thành công</string>
-    <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng đã quét</string>
+    <string name="text_number_bigger_number_scan">Số lượng nhập vào lớn hơn số lượng còn lại</string>
 
     <string name="text_number_bigger_number_request">Số lượng nhập vào lớn hơn số lượng yêu cầu</string>
     <string name="text_reason_error">Nguyên nhân lỗi</string>

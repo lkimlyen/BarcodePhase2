@@ -60,6 +60,7 @@ public class QualityControlWindowModel extends RealmObject {
     @SerializedName("pNumber")
     @Expose
     private int number;
+    private int numberRest;
 
     private long userId;
 
@@ -78,7 +79,7 @@ public class QualityControlWindowModel extends RealmObject {
     public QualityControlWindowModel() {
     }
 
-    public QualityControlWindowModel(long id, String barcode, String productSetName, String machineName, String violator, String qcCode, int departmentId, long orderId, long productSetDetailId, String productSetDetailName, int totalNumber, int number, long userId, int status, boolean edit) {
+    public QualityControlWindowModel(long id, String barcode, String productSetName, String machineName, String violator, String qcCode, int departmentId, long orderId, long productSetDetailId, String productSetDetailName, int totalNumber, int number, int numberRest, long userId, int status, boolean edit) {
         this.id = id;
         this.barcode = barcode;
         this.productSetName = productSetName;
@@ -90,6 +91,7 @@ public class QualityControlWindowModel extends RealmObject {
         this.productSetDetailId = productSetDetailId;
         this.productSetDetailName = productSetDetailName;
         this.totalNumber = totalNumber;
+        this.numberRest = numberRest;
         this.edit = edit;
         this.listReason = listReason;
         this.description = description;
@@ -112,7 +114,7 @@ public class QualityControlWindowModel extends RealmObject {
     public static void create(Realm realm, String machineName, String violator, String qcCode, ProductWindowEntity product, long userId) {
         QualityControlWindowModel qualityControlModel = new QualityControlWindowModel(id(realm) + 1, product.getBarcode(), product.getProductSetName(), machineName, violator, qcCode,
                 product.getDepartmentID(), product.getOrderId(), product.getProductSetDetailID(), product.getProductSetDetailName(), product.getNumberTotalOrder(),
-                1, userId, Constants.WAITING_UPLOAD, false);
+                1, product.getNumberWaitting(), userId, Constants.WAITING_UPLOAD, false);
         realm.copyToRealm(qualityControlModel);
     }
 
@@ -273,6 +275,10 @@ public class QualityControlWindowModel extends RealmObject {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getNumberRest() {
+        return numberRest;
     }
 
     public RealmList<ImageModel> getImageList() {

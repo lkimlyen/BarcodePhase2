@@ -248,30 +248,30 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
                     view.showError(CoreApplication.getInstance().getString(R.string.text_no_data_upload_in_times_scan));
                     return;
                 }
-                List<LogScanConfirmWindowModel> listUpload = new ArrayList<>();
-                for (LogScanConfirmWindowModel logScanConfirm : logScanConfirms) {
-                    if (logScanConfirm.getStatusConfirm() != -1) {
-                        listUpload.add(logScanConfirm);
-                    }
-                }
+//                List<LogScanConfirmWindowModel> listUpload = new ArrayList<>();
+//                for (LogScanConfirmWindowModel logScanConfirm : logScanConfirms) {
+//                    if (logScanConfirm.getStatusConfirm() != -1) {
+//                        listUpload.add(logScanConfirm);
+//                    }
+//                }
 
                 GsonBuilder builder = new GsonBuilder();
                 builder.excludeFieldsWithoutExposeAnnotation();
                 Gson gson = builder.create();
-                String json = gson.toJson(listUpload);
+                String json = gson.toJson(logScanConfirms);
 
-                List<PrintConfirmEntity> list = new ArrayList<>();
-                for (LogScanConfirmWindowModel logScanConfirm : logScanConfirms) {
-                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getDeliveryNoteModel().getProductSetId(),
-                            logScanConfirm.getProductSetDetailId(), logScanConfirm.getNumberOut(),
-                            logScanConfirm.getDeliveryNoteModel().getNumberUsed(), logScanConfirm.getNumberConfirmed());
-
-                    list.add(detailItem);
-                }
-
-                String maPhieu1 = ListDeliveryNoteManager.getInstance().getDeliveryNoteById(maPhieuId);
-                DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu1, list);
-                String jsonWithData = new Gson().toJson(deliveryEntity);
+//                List<PrintConfirmEntity> list = new ArrayList<>();
+//                for (LogScanConfirmWindowModel logScanConfirm : logScanConfirms) {
+//                    PrintConfirmEntity detailItem = new PrintConfirmEntity(logScanConfirm.getDeliveryNoteModel().getProductSetId(),
+//                            logScanConfirm.getProductSetDetailId(), logScanConfirm.getNumberOut(),
+//                            logScanConfirm.getDeliveryNoteModel().getNumberUsed(), logScanConfirm.getNumberConfirmed());
+//
+//                    list.add(detailItem);
+//                }
+//
+//                String maPhieu1 = ListDeliveryNoteManager.getInstance().getDeliveryNoteById(maPhieuId);
+//                DeliveryEntity deliveryEntity = new DeliveryEntity(maPhieu1, list);
+//                String jsonWithData = new Gson().toJson(deliveryEntity);
                 confirmInputUsecase.executeIO(new ConfirmInputWindowUsecase.RequestValue(UserManager.getInstance().getUser().getRole(),
                         UserManager.getInstance().getUser().getId(),
                         json), new BaseUseCase.UseCaseCallback<ConfirmInputWindowUsecase.ResponseValue,
@@ -298,7 +298,7 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
 //                                        view.hideProgressBar();
 //                                    }
 //                                });
-                                Log.d(TAG, "Print: " + jsonWithData);
+                               // Log.d(TAG, "Print: " + jsonWithData);
 
                             }
                         });

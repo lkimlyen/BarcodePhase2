@@ -176,7 +176,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void getListQualityControl() {
-        localRepository.deleteAlLQCWindow().subscribe(new Action1<String>() {
+        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 localRepository.getListQualityControlWindow().subscribe(new Action1<RealmResults<QualityControlWindowModel>>() {
@@ -192,7 +192,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void removeItemQualityControl(long id) {
-        localRepository.deleteQC(id).subscribe(new Action1<String>() {
+        localRepository.deleteQC(id,UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
@@ -247,7 +247,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void deleteAllQC() {
-        localRepository.deleteAlLQC().subscribe();
+        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe();
     }
 
     public void showError(String error) {

@@ -57,7 +57,9 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     private final String TAG = QualityControlWindowFragment.class.getName();
     private QualityControlWindowContract.Presenter mPresenter;
     private QualityControlWindowAdapter adapter;
-    private boolean editMachineName, editViolator, editQCCode;
+    private boolean editMachineName = true;
+    private boolean editViolator = true;
+    private boolean editQCCode = true;
     private long orderId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
@@ -427,8 +429,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
 
     @OnClick(R.id.img_back)
     public void back() {
-
-        if (adapter.countDataEdit() > 0) {
+        if (adapter != null && adapter.countDataEdit() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.dialog_default_title))
                     .setContentText(getString(R.string.text_upload_data))
@@ -452,8 +453,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                     })
                     .show();
         } else {
-
-            if(adapter.getCount() > 0){
+            if(adapter != null && adapter.getCount() > 0){
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.dialog_default_title))
                         .setContentText(getString(R.string.text_do_you_want_exit))
@@ -462,20 +462,19 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
+                                mPresenter.deleteAllQC();
+                                getActivity().finish();
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mPresenter.deleteAllQC();
                                 sweetAlertDialog.dismiss();
-                                getActivity().finish();
                             }
                         })
                         .show();
             }else {
-
                 getActivity().finish();
             }
         }

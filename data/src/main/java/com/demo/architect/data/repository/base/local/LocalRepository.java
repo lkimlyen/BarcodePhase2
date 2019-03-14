@@ -120,7 +120,7 @@ public interface LocalRepository {
 
     Observable<String> deleteAllItemLogScanPackaging();
 
-    Observable<String> deleteQC(long id);
+    Observable<String> deleteQC(long id, int type);
 
     Observable<RealmResults<QualityControlModel>> getListQualityControl();
 
@@ -206,7 +206,7 @@ public interface LocalRepository {
 
     Observable<Boolean> checkBarcodeExistInQC(String barcode);
 
-    Observable<String> deleteAlLQC();
+    Observable<String> deleteAlLQC(final int type);
 
     Observable<String> saveBarcodeQCWindow(String machineName, String violator, String qcCode, ProductWindowEntity productEntity);
 

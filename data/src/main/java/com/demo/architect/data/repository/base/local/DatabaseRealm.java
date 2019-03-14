@@ -644,12 +644,16 @@ public class DatabaseRealm {
         return aint;
     }
 
-    public void deleteQC(final long id) {
+    public void deleteQC(final long id, final int type) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.deleteQC(realm, id);
+                if (type == 4) {
+                    QualityControlWindowModel.deleteQC(realm, id);
+                } else {
+                    QualityControlModel.deleteQC(realm, id);
+                }
             }
         });
     }
@@ -748,7 +752,7 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
             }
         });
@@ -756,7 +760,7 @@ public class DatabaseRealm {
 
     public RealmResults<LogScanStages> getAllListStages() {
         Realm realm = getRealmInstance();
-        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return results;
     }
 
@@ -765,10 +769,10 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                RealmResults<ProductDetail> results = realm.where(ProductDetail.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
 
-                RealmResults<LogScanStages> results1 = realm.where(LogScanStages.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                RealmResults<LogScanStages> results1 = realm.where(LogScanStages.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results1.deleteAllFromRealm();
 
                 RealmResults<GroupScan> results2 = realm.where(GroupScan.class).findAll();
@@ -812,11 +816,11 @@ public class DatabaseRealm {
             @Override
             public void execute(Realm realm) {
                 RealmResults<ProductDetailWindowModel> results = realm.where(ProductDetailWindowModel.class)
-                        .equalTo("status",Constants.WAITING_UPLOAD).findAll();
+                        .equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
 
                 RealmResults<LogScanStagesWindowModel> results1 = realm.where(LogScanStagesWindowModel.class)
-                        .equalTo("status",Constants.WAITING_UPLOAD)
+                        .equalTo("status", Constants.WAITING_UPLOAD)
                         .findAll();
                 results1.deleteAllFromRealm();
             }
@@ -889,6 +893,7 @@ public class DatabaseRealm {
     public List<LogScanConfirmWindowModel> getListLogScanConfirmWindow() {
         Realm realm = getRealmInstance();
         RealmResults<LogScanConfirmWindowModel> results = realm.where(LogScanConfirmWindowModel.class)
+                .notEqualTo("statusConfirm", -1)
                 .equalTo("status", Constants.WAITING_UPLOAD).findAll();
         return realm.copyFromRealm(results);
     }
@@ -929,12 +934,17 @@ public class DatabaseRealm {
         return exist;
     }
 
-    public void deleteAlLQC() {
+    public void deleteAlLQC(final int type) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlModel.deleteAlLQC(realm);
+                if (type == 4){
+                    QualityControlWindowModel.deleteAlLQC(realm);
+                }else {
+
+                    QualityControlModel.deleteAlLQC(realm);
+                }
             }
         });
     }

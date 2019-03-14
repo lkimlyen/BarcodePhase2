@@ -124,7 +124,8 @@ public class LogScanStagesWindowModel extends RealmObject {
                 .equalTo("status",Constants.WAITING_UPLOAD)
                 .equalTo("userId", scanStages.getUserId()).findFirst();
 
-        LogScanStagesWindowModel logScanStages = realm.where(LogScanStagesWindowModel.class).equalTo("barcode", scanStages.getBarcode()).findFirst();
+        LogScanStagesWindowModel logScanStages = realm.where(LogScanStagesWindowModel.class).equalTo("barcode", scanStages.getBarcode())
+                .equalTo("status",Constants.WAITING_UPLOAD).findFirst();
 
         if (logScanStages == null) {
             scanStages.setId(id(realm) + 1);

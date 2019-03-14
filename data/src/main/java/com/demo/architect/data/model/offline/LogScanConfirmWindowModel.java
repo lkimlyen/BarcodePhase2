@@ -161,10 +161,11 @@ public class LogScanConfirmWindowModel extends RealmObject {
 
         for (LogScanConfirmWindowModel logScanConfirm : results) {
             DeliveryNoteWindowModel deliveryNoteModel = logScanConfirm.getDeliveryNoteModel();
+            int number = (deliveryNoteModel.getNumberOut() - deliveryNoteModel.getNumberUsed()) - logScanConfirm.getNumberConfirmed();
             logScanConfirm.setNumberConfirmed(deliveryNoteModel.getNumberOut() - deliveryNoteModel.getNumberUsed());
             logScanConfirm.setStatusConfirm(Constants.FULL);
-            deliveryNoteModel.setNumberConfirm(deliveryNoteModel.getNumberConfirm() + logScanConfirm.getNumberConfirmed());
-            deliveryNoteModel.setNumberRest(deliveryNoteModel.getNumberRest() - logScanConfirm.getNumberConfirmed());
+            deliveryNoteModel.setNumberConfirm(deliveryNoteModel.getNumberConfirm() + number);
+            deliveryNoteModel.setNumberRest(deliveryNoteModel.getNumberRest() - number);
         }
 
 

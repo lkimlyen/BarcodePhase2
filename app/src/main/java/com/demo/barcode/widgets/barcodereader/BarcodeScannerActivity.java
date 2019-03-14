@@ -123,12 +123,7 @@ public class BarcodeScannerActivity extends AppCompatActivity {
 
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>)findViewById(R.id.graphicOverlay);
 
-        mGraphicOverlay.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("SizeGraphicOverlay",mGraphicOverlay.getWidth()+"_"+mGraphicOverlay.getHeight());
-            }
-        });
+
         BarcodeGraphicTracker.BarcodeUpdateListener listener =  new BarcodeGraphicTracker.BarcodeUpdateListener() {
             @Override
             public void onBarcodeDetected(Barcode barcode) {
@@ -154,12 +149,7 @@ public class BarcodeScannerActivity extends AppCompatActivity {
             try {
                 mCameraSourcePreview = (CameraSourcePreview) findViewById(R.id.preview);
                 mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
-                mCameraSourcePreview.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("SizeCameraSourcePreview",mCameraSourcePreview.getWidth()+"_"+mCameraSourcePreview.getHeight());
-                    }
-                });
+
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 mCameraSource.release();

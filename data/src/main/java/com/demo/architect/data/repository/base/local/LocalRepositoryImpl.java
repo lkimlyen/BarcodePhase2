@@ -668,12 +668,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteQC(final long id) {
+    public Observable<String> deleteQC(final long id,final int type) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.deleteQC(id);
+                    databaseRealm.deleteQC(id,type);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1361,12 +1361,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteAlLQC() {
+    public Observable<String> deleteAlLQC(final int type) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.deleteAlLQC();
+                    databaseRealm.deleteAlLQC(type);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

@@ -92,6 +92,9 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     @Bind(R.id.txt_number_order)
     TextView txtNumberOrder;
 
+    @Bind(R.id.txt_number_scan)
+    TextView txtNumberScan;
+
     @Bind(R.id.edt_number_failed)
     EditText edtNumberFailed;
 
@@ -135,7 +138,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
             }
 
             if (requestCode == REQUEST_CODE_PICK_IMAGE) {
-                Uri uri  = data.getData();
+                Uri uri = data.getData();
                 mPresenter.addImage(id, getPathFromURI(uri));
             }
 
@@ -157,7 +160,7 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
     }
 
     private void initView() {
-        tvTitle.setText(getString(R.string.text_window_name).replace(":",""));
+        tvTitle.setText(getString(R.string.text_window_name).replace(":", ""));
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rvImage.setLayoutManager(layoutManager);
@@ -182,6 +185,12 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                         Toast.makeText(getContext(), getString(R.string.text_number_bigger_zero), Toast.LENGTH_SHORT).show();
                         return;
 
+                    }
+                    int numberRest = Integer.parseInt(txtNumberScan.getText().toString());
+                    if (numberInput > numberRest) {
+                        edtNumberFailed.setText(numberRest + "");
+                        Toast.makeText(getContext(), getString(R.string.text_number_bigger_number_scan), Toast.LENGTH_SHORT).show();
+                        return;
                     }
                     if (numberInput > Integer.parseInt(txtNumberOrder.getText().toString())) {
                         edtNumberFailed.setText(txtNumberOrder.getText().toString());
@@ -345,8 +354,8 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         txtBarcode.setText(qualityControlModel.getBarcode());
         txtModule.setText(qualityControlModel.getModule());
         txtNameDetail.setText(qualityControlModel.getProductName());
-        txtNumberOrder.setText(String.valueOf((int)qualityControlModel.getTotalNumber()));
-        edtNumberFailed.setText(String.valueOf((int)qualityControlModel.getNumber()));
+        txtNumberOrder.setText(String.valueOf((int) qualityControlModel.getTotalNumber()));
+        edtNumberFailed.setText(String.valueOf((int) qualityControlModel.getNumber()));
         edtDescription.setText(qualityControlModel.getDescription());
         edit = qualityControlModel.isEdit();
     }
@@ -356,8 +365,10 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
         txtBarcode.setText(qualityControlModel.getBarcode());
         txtModule.setText(qualityControlModel.getProductSetName());
         txtNameDetail.setText(qualityControlModel.getProductSetDetailName());
-        txtNumberOrder.setText(String.valueOf((int)qualityControlModel.getTotalNumber()));
-        edtNumberFailed.setText(String.valueOf((int)qualityControlModel.getNumber()));
+        txtNumberOrder.setText(String.valueOf((int) qualityControlModel.getTotalNumber()));
+
+        txtNumberScan.setText(String.valueOf((int) qualityControlModel.getNumberRest()));
+        edtNumberFailed.setText(String.valueOf((int) qualityControlModel.getNumber()));
         edtDescription.setText(qualityControlModel.getDescription());
         edit = qualityControlModel.isEdit();
     }
@@ -475,7 +486,6 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
 
 
         // Save a file: path for use with ACTION_VIEW intents

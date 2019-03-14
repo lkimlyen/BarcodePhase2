@@ -77,8 +77,9 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     private long orderId;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
-
-    private boolean editMachineName, editViolator, editQCCode;
+    private boolean editMachineName = true;
+    private boolean editViolator = true;
+    private boolean editQCCode = true;
     @Bind(R.id.tv_code_so)
     TextView tvCodeSO;
 

@@ -114,6 +114,8 @@
                         android:textColor="@android:color/black"
                         android:id="@+id/tv_type_product"
                         android:textSize="@dimen/text_14sp"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:drawableRight="@drawable/ic_short_down"
                         android:text="@string/text_choose_type_product"
                         />
@@ -142,6 +144,8 @@
                         android:layout_weight="3.5"
                         android:textColor="@android:color/black"
                         android:id="@+id/tv_code_so"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:textSize="@dimen/text_14sp"
                         android:drawableRight="@drawable/ic_short_down"
                         android:text="@string/text_choose_code_so" />
@@ -169,6 +173,8 @@
                     <TextView
                         android:id="@+id/txt_customer_name"
                         android:layout_width="0dp"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
                         android:textSize="@dimen/text_14sp" />
@@ -194,6 +200,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:textColor="@android:color/black"
                         android:id="@+id/tv_delivery_department"
                         android:textSize="@dimen/text_14sp"
@@ -231,6 +239,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="3.5"
                         android:textColor="@android:color/black"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:id="@+id/tv_delivery_code"
                         android:textSize="@dimen/text_14sp"
                         android:drawableRight="@drawable/ic_short_down"
@@ -260,6 +270,8 @@
                         android:layout_weight="3.5"
                         android:textColor="@android:color/black"
                         android:id="@+id/tv_times"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
                         android:textSize="@dimen/text_14sp"
                         android:drawableRight="@drawable/ic_short_down"
                         android:text="@string/text_choose_times_scan" />
