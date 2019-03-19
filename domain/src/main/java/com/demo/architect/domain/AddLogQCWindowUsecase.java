@@ -25,13 +25,13 @@ public class AddLogQCWindowUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         String json = ((RequestValue) requestValues).json;
-        String machineName = ((RequestValue) requestValues).machineName;
+        int machineId = ((RequestValue) requestValues).machineId;
         String violator = ((RequestValue) requestValues).violator;
-        String qcCode = ((RequestValue) requestValues).qcCode;
+        int qcId = ((RequestValue) requestValues).qcId;
         long orderId = ((RequestValue) requestValues).orderId;
         int departmentId = ((RequestValue) requestValues).departmentId;
         long userId = ((RequestValue) requestValues).userId;
-        return otherRepository.addLogQCWindow(Constants.KEY,machineName,violator,qcCode,orderId,departmentId,userId, json);
+        return otherRepository.addLogQCWindow(Constants.KEY,machineId,violator,qcId,orderId,departmentId,userId, json);
     }
 
     @Override
@@ -66,18 +66,18 @@ public class AddLogQCWindowUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final String machineName;
+        private final int machineId;
         private final String violator;
-        private final String qcCode;
+        private final int qcId;
         private final long orderId;
         private final int departmentId;
         private final long userId;
         private final String json;
 
-        public RequestValue(String machineName, String violator, String qcCode, long orderId, int departmentId, long userId, String json) {
-            this.machineName = machineName;
+        public RequestValue(int machineId, String violator, int qcId, long orderId, int departmentId, long userId, String json) {
+            this.machineId = machineId;
             this.violator = violator;
-            this.qcCode = qcCode;
+            this.qcId = qcId;
             this.orderId = orderId;
             this.departmentId = departmentId;
             this.userId = userId;

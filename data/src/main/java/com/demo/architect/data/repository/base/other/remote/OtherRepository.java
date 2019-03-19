@@ -5,6 +5,8 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
+import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
@@ -29,8 +31,8 @@ public interface OtherRepository {
     Observable<BaseResponse> addLogQC(String key, String json);
     Observable<BaseListResponse<StaffEntity>> getAllStaff(String key);
 
-    Observable<BaseResponse> addLogQCWindow(String key, String machineName, String violator,
-                                            String qcCode, long orderId, int departmentId,
+    Observable<BaseResponse> addLogQCWindow(String key, int machineId, String violator,
+                                            int qcId, long orderId, int departmentId,
                                             long userId, String json);
 
     Observable<BaseResponse<UploadEntity>> uploadImage(File file, String key, long orderId,
@@ -39,4 +41,7 @@ public interface OtherRepository {
     Observable<BaseListResponse<ApartmentEntity>> getApartment(long orderId);
 
     Observable<BaseResponse<TimesEntity>> getTimesInputAndOutputByDepartment(long orderId, int departmentId);
+
+    Observable<BaseListResponse<MachineEntity>> getListMachine();
+    Observable<BaseListResponse<QCEntity>> getListQC();
 }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.demo.architect.data.model.DepartmentEntity;
+import com.demo.architect.data.model.MachineEntity;
 import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.UserEntity;
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ public class SharedPreferenceHelper {
     private static final String POSITION_SCAN_UPDATE = "POSITION_SCAN_UPDATE";
     private static final String DEPARTMENT = "DEPARTMENT";
     private static final String WAS_STARTED = "WAS_STARTED";
+    private static final String MACHINE = "MACHINE";
     private SharedPreferences sharedPreferences;
 
     private static SharedPreferenceHelper _instance;
@@ -102,12 +104,36 @@ public class SharedPreferenceHelper {
     }
 
 
+
+    public void pushListMachineObject(List<MachineEntity> object) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        String json = "";
+        if (object != null) {
+            Gson gson = new Gson();
+            json = gson.toJson(object);
+        }
+        prefsEditor.putString(MACHINE, json);
+        prefsEditor.commit();
+    }
+
+
     public List<DepartmentEntity> getListDepartmentObject() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(DEPARTMENT, "");
         List<DepartmentEntity> obj = null;
         if (!TextUtils.isEmpty(json)) {
             obj = gson.fromJson(json, new TypeToken<List<DepartmentEntity>>(){}.getType());
+        }
+        return obj;
+    }
+
+
+    public List<MachineEntity> getListMachineObject() {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(MACHINE, "");
+        List<MachineEntity> obj = null;
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson(json, new TypeToken<List<MachineEntity>>(){}.getType());
         }
         return obj;
     }

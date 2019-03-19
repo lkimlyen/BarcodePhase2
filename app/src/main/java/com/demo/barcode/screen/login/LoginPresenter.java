@@ -11,11 +11,13 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
+import com.demo.architect.domain.GetListMachineUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListDepartmentManager;
+import com.demo.barcode.manager.ListMachineManager;
 import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
@@ -34,16 +36,18 @@ public class LoginPresenter implements LoginContract.Presenter {
     private final LoginUsecase loginUsecase;
     private final UpdateSoftUsecase updateSoftUsecase;
     private final GetListDepartmentUsecase getListDepartmentUsecase;
+    private final GetListMachineUsecase getListMachineUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     LoginPresenter(@NonNull LoginContract.View view,
-                   LoginUsecase loginUsecase, UpdateSoftUsecase updateSoftUsecase, GetListDepartmentUsecase getListDepartmentUsecase) {
+                   LoginUsecase loginUsecase, UpdateSoftUsecase updateSoftUsecase, GetListDepartmentUsecase getListDepartmentUsecase, GetListMachineUsecase getListMachineUsecase) {
         this.view = view;
         this.loginUsecase = loginUsecase;
         this.updateSoftUsecase = updateSoftUsecase;
         this.getListDepartmentUsecase = getListDepartmentUsecase;
+        this.getListMachineUsecase = getListMachineUsecase;
     }
 
     @Inject
@@ -75,12 +79,12 @@ public class LoginPresenter implements LoginContract.Presenter {
                 //Save user entity to shared preferences
                 UserManager.getInstance().setUser(successResponse.getEntity());
                 boolean aBoolean = SharedPreferenceHelper.getInstance(CoreApplication.getInstance()).getBoolean(Constants.KEY_UPLOAD, false);
-                if (!aBoolean) {
-                    uploadVersionApp();
-                } else {
-                    view.hideProgressBar();
-                    view.startDashboardActivity();
-                }
+
+
+                    getListDepartment();
+
+
+
 
             }
 
@@ -112,17 +116,35 @@ public class LoginPresenter implements LoginContract.Presenter {
                     @Override
                     public void onSuccess(GetListDepartmentUsecase.ResponseValue successResponse) {
                         ListDepartmentManager.getInstance().setListDepartment(successResponse.getEntity());
+                       getListMachine();
+                    }
+
+                    @Override
+                    public void onError(GetListDepartmentUsecase.ErrorValue errorResponse) {
+                        getListMachine();
+                    }
+                });
+    }
+
+    private void getListMachine(){
+        getListMachineUsecase.executeIO(new GetListMachineUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetListMachineUsecase.ResponseValue,
+                        GetListMachineUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListMachineUsecase.ResponseValue successResponse) {
+                        ListMachineManager.getInstance().setListMachine(successResponse.getEntity());
                         view.hideProgressBar();
                         view.startDashboardActivity();
                     }
 
                     @Override
-                    public void onError(GetListDepartmentUsecase.ErrorValue errorResponse) {
+                    public void onError(GetListMachineUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.startDashboardActivity();
                     }
                 });
     }
+
 
     private void uploadVersionApp() {
         PackageManager manager = CoreApplication.getInstance().getPackageManager();

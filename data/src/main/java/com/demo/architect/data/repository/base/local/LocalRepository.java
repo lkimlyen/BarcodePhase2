@@ -208,7 +208,7 @@ public interface LocalRepository {
 
     Observable<String> deleteAlLQC(final int type);
 
-    Observable<String> saveBarcodeQCWindow(String machineName, String violator, String qcCode, ProductWindowEntity productEntity);
+    Observable<String> saveBarcodeQCWindow(int machineId, String violator, int qcId, ProductWindowEntity productEntity);
 
     Observable<RealmResults<QualityControlWindowModel>> getListQualityControlWindow();
 

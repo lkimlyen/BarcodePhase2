@@ -26,10 +26,12 @@ import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.GetListInputUnConfirmByMaPhieuUsecase;
 import com.demo.architect.domain.GetListMaPhieuGiaoUsecase;
+import com.demo.architect.domain.GetListMachineUsecase;
 import com.demo.architect.domain.GetListModuleByOrderUsecase;
 import com.demo.architect.domain.GetListPrintPackageHistoryUsecase;
 import com.demo.architect.domain.GetListProductDetailGroupUsecase;
 import com.demo.architect.domain.GetListProductInPackageUsecase;
+import com.demo.architect.domain.GetListQCUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetModuleUsecase;
@@ -235,6 +237,18 @@ public class UseCaseModule {
     @Provides
     GetAllStaffUsecase provideGetAllStaffUsecase(OtherRepository otherRepository){
         return new GetAllStaffUsecase(otherRepository);
+    }
+
+
+    @Provides
+    GetListQCUsecase provideGetListQCUsecase(OtherRepository otherRepository){
+        return new GetListQCUsecase(otherRepository);
+    }
+
+
+    @Provides
+    GetListMachineUsecase provideGetListMachineUsecase(OtherRepository otherRepository){
+        return new GetListMachineUsecase(otherRepository);
     }
 
 }

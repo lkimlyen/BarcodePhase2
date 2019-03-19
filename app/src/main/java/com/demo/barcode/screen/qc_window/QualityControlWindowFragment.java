@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
@@ -42,6 +44,8 @@ import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.List;
 
+import javax.crypto.Mac;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,10 +61,10 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     private final String TAG = QualityControlWindowFragment.class.getName();
     private QualityControlWindowContract.Presenter mPresenter;
     private QualityControlWindowAdapter adapter;
-    private boolean editMachineName = true;
     private boolean editViolator = true;
-    private boolean editQCCode = true;
     private long orderId;
+    private int qcId =0;
+    private int machineId = 0;
     public MediaPlayer mp1, mp2;
     public boolean isClick = false;
     @Bind(R.id.tv_code_so)
@@ -72,11 +76,11 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
 
-    @Bind(R.id.et_machine_name)
-    EditText etMachineName;
+    @Bind(R.id.tv_machine_name)
+    TextView tvMachineName;
 
-    @Bind(R.id.et_qc_code)
-    EditText etQCCode;
+    @Bind(R.id.tv_qc_code)
+    TextView tvQCCode;
 
     @Bind(R.id.et_violator)
     EditText etViolator;
@@ -90,14 +94,8 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     @Bind(R.id.txt_date_scan)
     TextView txtDateScan;
 
-    @Bind(R.id.iv_save_machine_name)
-    ImageView ivSaveMachineName;
-
     @Bind(R.id.iv_save_violator)
     ImageView ivSaveViolator;
-
-    @Bind(R.id.iv_save_qc_code)
-    ImageView ivSaveQCCode;
 
 
     private Vibrator vibrate;
@@ -149,6 +147,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     private void initView() {
 
         mPresenter.getListSO();
+        mPresenter.getListMachine();
         mPresenter.getListQualityControl();
         llTypeProduct.setVisibility(View.GONE);
         txtDateScan.setText(DateUtils.getShortDateCurrent());
@@ -259,6 +258,128 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     }
 
     @Override
+    public void showListMachine(List<MachineEntity> list) {
+        if (list.size() > 0) {
+            tvMachineName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (adapter.countDataEdit() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.dialog_default_title))
+                                .setContentText(getString(R.string.text_upload_data))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.uploadData(machineId,
+                                                etViolator.getText().toString(), qcId, orderId);
+                                        sweetAlertDialog.dismiss();
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.deleteAllQC();
+                                        sweetAlertDialog.dismiss();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                MachineEntity soItem = (MachineEntity) item;
+                                                tvMachineName.setText(soItem.getName());
+
+                                                machineId = soItem.getId();
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                                    }
+                                })
+                                .show();
+                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                MachineEntity soItem = (MachineEntity) item;
+                                tvMachineName.setText(soItem.getName());
+
+                                machineId = soItem.getId();
+                            }
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+                }
+            });
+        } else {
+            tvMachineName.setOnClickListener(null);
+        }
+    }
+
+    @Override
+    public void showListQC(List<QCEntity> list) {
+        if (list.size() > 0) {
+            tvQCCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (adapter.countDataEdit() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.dialog_default_title))
+                                .setContentText(getString(R.string.text_upload_data))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.uploadData(machineId,
+                                                etViolator.getText().toString(), qcId, orderId);
+                                        sweetAlertDialog.dismiss();
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mPresenter.deleteAllQC();
+                                        sweetAlertDialog.dismiss();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                QCEntity soItem = (QCEntity) item;
+                                                tvQCCode.setText(soItem.getCode() + "-"+soItem.getName());
+
+                                                qcId = soItem.getId();
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                                    }
+                                })
+                                .show();
+                    } else {
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                QCEntity soItem = (QCEntity) item;
+                                tvQCCode.setText(soItem.getCode() + "-"+soItem.getName());
+
+                                qcId = soItem.getId();
+                            }
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+                }
+            });
+        } else {
+            tvQCCode.setOnClickListener(null);
+        }
+    }
+
+    @Override
     public void showListQualityControl(RealmResults<QualityControlWindowModel> results) {
         adapter = new QualityControlWindowAdapter(results, new QualityControlWindowAdapter.OnItemClearListener() {
             @Override
@@ -308,8 +429,8 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        mPresenter.uploadData(etMachineName.getText().toString(),
-                                                etViolator.getText().toString(), etQCCode.getText().toString(), orderId);
+                                        mPresenter.uploadData(machineId,
+                                                etViolator.getText().toString(), qcId, orderId);
                                         sweetAlertDialog.dismiss();
                                     }
                                 })
@@ -378,7 +499,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
             return;
         }
 
-        if (TextUtils.isEmpty(etMachineName.getText().toString())) {
+        if (machineId == 0) {
             showError(getString(R.string.text_machine_name_null));
             return;
         }
@@ -388,22 +509,16 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
             return;
         }
 
-        if (TextUtils.isEmpty(etQCCode.getText().toString())) {
+        if (qcId == 0) {
             showError(getString(R.string.text_qc_code_null));
             return;
         }
-        if (editMachineName) {
-            showError(getString(R.string.text_save_machine_name));
-            return;
-        }
+
         if (editViolator) {
             showError(getString(R.string.text_save_violator));
             return;
         }
-        if (editQCCode) {
-            showError(getString(R.string.text_save_qc_code));
-            return;
-        }
+
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -411,8 +526,8 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, etMachineName.getText().toString()
-                                , etViolator.getText().toString(), etQCCode.getText().toString());
+                        mPresenter.checkBarcode(edtBarcode.getText().toString(), orderId, machineId
+                                , etViolator.getText().toString(), qcId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -437,8 +552,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.uploadData(etMachineName.getText().toString(),
-                                    etViolator.getText().toString(), etQCCode.getText().toString(), orderId);
+                            mPresenter.uploadData(machineId, etViolator.getText().toString(), qcId, orderId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -489,7 +603,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
         }
 
 
-        if (TextUtils.isEmpty(etMachineName.getText().toString())) {
+        if (machineId == 0) {
             showError(getString(R.string.text_machine_name_null));
             return;
         }
@@ -499,22 +613,16 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
             return;
         }
 
-        if (TextUtils.isEmpty(etQCCode.getText().toString())) {
+        if (qcId == 0) {
             showError(getString(R.string.text_qc_code_null));
             return;
         }
-        if (editMachineName) {
-            showError(getString(R.string.text_save_machine_name));
-            return;
-        }
+
         if (editViolator) {
             showError(getString(R.string.text_save_violator));
             return;
         }
-        if (editQCCode) {
-            showError(getString(R.string.text_save_qc_code));
-            return;
-        }
+
         final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
                 .withActivity(getActivity())
                 .withEnableAutoFocus(true)
@@ -528,8 +636,8 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                         //  barcodeResult = barcode;
                         String contents = barcode.rawValue;
                         String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2, orderId, etMachineName.getText().toString()
-                                , etViolator.getText().toString(), etQCCode.getText().toString());
+                        mPresenter.checkBarcode(barcode2, orderId, machineId
+                                , etViolator.getText().toString(), qcId);
                     }
                 })
                 .build();
@@ -540,8 +648,7 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
     public void upload() {
 
         if (adapter.countDataEdit() > 0) {
-            mPresenter.uploadData(etMachineName.getText().toString(),
-                    etViolator.getText().toString(), etQCCode.getText().toString(), orderId);
+            mPresenter.uploadData(machineId, etViolator.getText().toString(), qcId, orderId);
         } else {
             if(adapter.getCount() > 0){
                 showError(getString(R.string.text_edit_data_before_upload));
@@ -549,94 +656,6 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                 showError(getString(R.string.text_no_data_upload));
             }
         }
-    }
-
-    @OnClick(R.id.iv_save_qc_code)
-    public void saveQCCode() {
-        if (TextUtils.isEmpty(etQCCode.getText().toString())) {
-            return;
-        }
-
-        if (editQCCode) {
-            ivSaveQCCode.setImageResource(R.drawable.ic_edit_pencil);
-            etQCCode.setEnabled(false);
-            editQCCode = false;
-        } else {
-            if (adapter.getCount() > 0) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.dialog_default_title))
-                        .setContentText(getString(R.string.text_edit_violator))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                ivSaveQCCode.setImageResource(R.drawable.ic_save);
-                                etQCCode.setEnabled(true);
-                                editQCCode = true;
-                                mPresenter.deleteAllQC();
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
-            } else {
-                ivSaveQCCode.setImageResource(R.drawable.ic_save);
-                etQCCode.setEnabled(true);
-                editQCCode = true;
-            }
-
-
-        }
-
-    }
-
-    @OnClick(R.id.iv_save_machine_name)
-    public void saveMachineName() {
-        if (TextUtils.isEmpty(etMachineName.getText().toString())) {
-            return;
-        }
-        if (editMachineName) {
-            ivSaveMachineName.setImageResource(R.drawable.ic_edit_pencil);
-            etMachineName.setEnabled(false);
-            editMachineName = false;
-        } else {
-            if (adapter.getCount() > 0) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.dialog_default_title))
-                        .setContentText(getString(R.string.text_edit_violator))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                ivSaveMachineName.setImageResource(R.drawable.ic_save);
-                                etMachineName.setEnabled(true);
-                                editMachineName = true;
-                                mPresenter.deleteAllQC();
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
-            } else {
-                ivSaveMachineName.setImageResource(R.drawable.ic_save);
-                etMachineName.setEnabled(true);
-                editMachineName = true;
-            }
-        }
-
-
     }
 
     @OnClick(R.id.iv_save_violator)
@@ -654,22 +673,26 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
             if (adapter.getCount() > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.dialog_default_title))
-                        .setContentText(getString(R.string.text_edit_violator))
+                        .setContentText(getString(R.string.text_upload_data))
                         .setConfirmText(getString(R.string.text_yes))
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                mPresenter.uploadData(machineId, etViolator.getText().toString(), qcId, orderId);
+                                sweetAlertDialog.dismiss();
                                 ivSaveViolator.setImageResource(R.drawable.ic_save);
                                 etViolator.setEnabled(true);
                                 editViolator = true;
-                                mPresenter.deleteAllQC();
-                                sweetAlertDialog.dismiss();
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                ivSaveViolator.setImageResource(R.drawable.ic_save);
+                                etViolator.setEnabled(true);
+                                editViolator = true;
+                                mPresenter.deleteAllQC();
                                 sweetAlertDialog.dismiss();
                             }
                         })

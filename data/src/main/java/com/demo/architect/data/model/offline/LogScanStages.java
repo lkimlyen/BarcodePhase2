@@ -58,7 +58,6 @@ public class LogScanStages extends RealmObject {
 
     private int numberGroup;
 
-
     private int status;
     public LogScanStages() {
     }

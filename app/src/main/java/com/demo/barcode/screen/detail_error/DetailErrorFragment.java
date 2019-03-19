@@ -396,12 +396,6 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (edit) {
-            if (imAdapter.getItemCount() == 0) {
-                showError(getString(R.string.text_no_image_in_detail));
-                return;
-            }
-        }
         getActivity().finish();
     }
 
@@ -516,15 +510,6 @@ public class DetailErrorFragment extends BaseFragment implements DetailErrorCont
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (imAdapter == null) {
-            showError(getString(R.string.text_no_image_in_detail));
-            return;
-        }
-
-        if (imAdapter.getItemCount() == 0) {
-            showError(getString(R.string.text_no_image_in_detail));
-            return;
-        }
 
         if (rsAdapter.getCountersToSelect().size() == 0) {
             showError(getString(R.string.text_no_reason_selected));

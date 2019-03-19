@@ -6,6 +6,8 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
+import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
@@ -45,9 +47,9 @@ public interface OtherApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseResponse> addLogQCWindow(@Url String url, @Field("pKey") String key,
-                                      @Field("pTenMay") String machineName,
+                                      @Field("pMayID") int machineId,
                                       @Field("pNguoiViPham") String violator,
-                                      @Field("pMaSoQC") String qcCode,
+                                      @Field("pQCID") int qcId,
                                       @Field("pOrderID") long orderId,
                                       @Field("pDepartmentID") int departmentId,
                                       @Field("pUserID") long userId,
@@ -68,6 +70,14 @@ public interface OtherApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseListResponse<ApartmentEntity>> getApartment(@Url String url, @Field("pOrderID") long orderId);
+
+    @GET
+    Call<BaseListResponse<MachineEntity>> getListMachine(@Url String url);
+
+
+    @GET
+
+    Call<BaseListResponse<QCEntity>> getListQC(@Url String url);
 
     @FormUrlEncoded
     @POST

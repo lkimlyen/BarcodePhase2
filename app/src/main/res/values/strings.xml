@@ -289,9 +289,9 @@
     <string name="text_product_in_qc">Chi tiết đã được quét</string>
     <string name="text_product_delivery">Chi tiết đã được giao hết qua công đoạn khác</string>
     <string name="text_barcode_null">Bạn chưa nhập mã barcode!</string>
-    <string name="text_machine_name_null">Bạn chưa nhập tên máy!</string>
+    <string name="text_machine_name_null">Bạn chưa chọn tên máy!</string>
     <string name="text_violator_null">Bạn chưa nhập người vi phạm!</string>
-    <string name="text_qc_code_null">Bạn chưa nhập mã số QC!</string>
+    <string name="text_qc_code_null">Bạn chưa chọn mã số QC!</string>
     <string name="text_edit_violator">Bạn có muốn chỉnh sửa thông tin?
     Dữ liệu quét sẽ bị mất.</string>
     <string name="text_save_qc_code">Bạn chưa lưu thông tin mã số qc!</string>
@@ -303,6 +303,9 @@
     <string name="text_choose_staff">Chọn nhân viên thống kê</string>
     <string name="text_get_list_staff_success">Lấy danh sách nhân viên thành công</string>
     <string name="text_staff_id_null">Bạn chưa chọn nhân viên thống kê</string>
+    <string name="text_choose_machine_name">Chọn tên máy</string>
+    <string name="text_choose_qc_code">Chọn mã số QC</string>
+    <string name="text_get_list_qc_success">Lấy danh sách QC thành công!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

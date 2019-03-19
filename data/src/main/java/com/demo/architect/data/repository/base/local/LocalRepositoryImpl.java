@@ -1377,12 +1377,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> saveBarcodeQCWindow(final String machineName, final String violator, final String qcCode, final ProductWindowEntity productEntity) {
+    public Observable<String> saveBarcodeQCWindow(final int machineId, final String violator, final int qcId, final ProductWindowEntity productEntity) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.saveBarcodeQCWindow(machineName,violator,qcCode,productEntity);
+                    databaseRealm.saveBarcodeQCWindow(machineId,violator,qcId,productEntity);
                     subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {

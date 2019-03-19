@@ -5,22 +5,21 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.MachineEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ImageModel;
-import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
-import com.demo.architect.domain.AddLogQCUsecase;
 import com.demo.architect.domain.AddLogQCWindowUsecase;
 import com.demo.architect.domain.BaseUseCase;
-import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
+import com.demo.architect.domain.GetListQCUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.UploadImageUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.manager.ListMachineManager;
 import com.demo.barcode.manager.ListProductManager;
 import com.demo.barcode.manager.ListProductWindowManager;
 import com.demo.barcode.manager.ListSOManager;
@@ -52,6 +51,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
     private final GetInputForProductDetailWindowUsecase getInputForProductDetail;
     private final UploadImageUsecase uploadImageUsecase;
     private final AddLogQCWindowUsecase addLogQCUsecase;
+    private final GetListQCUsecase getListQCUsecase;
     @Inject
     LocalRepository localRepository;
 
@@ -60,12 +60,13 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                                   GetListSOUsecase getListSOUsecase,
                                   GetInputForProductDetailWindowUsecase getInputForProductDetailUsecase,
                                   UploadImageUsecase uploadImageUsecase,
-                                  AddLogQCWindowUsecase addLogQCUsecase) {
+                                  AddLogQCWindowUsecase addLogQCUsecase, GetListQCUsecase getListQCUsecase) {
         this.view = view;
         this.getListSOUsecase = getListSOUsecase;
         this.getInputForProductDetail = getInputForProductDetailUsecase;
         this.uploadImageUsecase = uploadImageUsecase;
         this.addLogQCUsecase = addLogQCUsecase;
+        this.getListQCUsecase = getListQCUsecase;
     }
 
     @Inject
@@ -96,8 +97,8 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                     public void onSuccess(GetListSOUsecase.ResponseValue successResponse) {
                         view.showListSO(successResponse.getEntity());
                         ListSOManager.getInstance().setListSO(successResponse.getEntity());
-                        view.hideProgressBar();
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_so_success));
+                        getListQC();
                     }
 
                     @Override
@@ -105,6 +106,33 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
+                    }
+                });
+    }
+
+    @Override
+    public void getListMachine() {
+        List<MachineEntity> list = ListMachineManager.getInstance().getMachineByRole(UserManager.getInstance().getUser().getRole());
+        view.showListMachine(list);
+    }
+
+    @Override
+    public void getListQC() {
+
+        getListQCUsecase.executeIO(new GetListQCUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetListQCUsecase.ResponseValue,
+                        GetListQCUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetListQCUsecase.ResponseValue successResponse) {
+                        view.showListQC(successResponse.getEntity());
+                        view.hideProgressBar();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_list_qc_success));
+                    }
+
+                    @Override
+                    public void onError(GetListQCUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
                     }
                 });
     }
@@ -133,7 +161,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
     }
 
     @Override
-    public void checkBarcode(String barcode, long orderId, String machineName, String violator, String qcCode) {
+    public void checkBarcode(String barcode, long orderId, int machineId, String violator, int qcId) {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -155,12 +183,10 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                     @Override
                     public void call(Boolean exist) {
                         if (!exist) {
-                            saveBarcode(machineName, violator, qcCode, productWindowEntity);
+                            saveBarcode(machineId, violator, qcId, productWindowEntity);
                         } else {
                             showError(CoreApplication.getInstance().getString(R.string.text_product_in_qc));
                         }
-
-
                     }
                 });
             } else {
@@ -192,7 +218,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void removeItemQualityControl(long id) {
-        localRepository.deleteQC(id,UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
+        localRepository.deleteQC(id, UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
@@ -204,7 +230,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
     private int positionImage = 0;
 
     @Override
-    public void uploadData(String machineName, String violator, String qcCode, long orderId) {
+    public void uploadData(int machineId, String violator, int qcId, long orderId) {
         view.showProgressBar();
         localRepository.getListQualityControlUploadWindow().subscribe(new Action1<List<QualityControlWindowModel>>() {
             @Override
@@ -214,8 +240,8 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                     builder.excludeFieldsWithoutExposeAnnotation();
                     Gson gson = builder.create();
                     String json = gson.toJson(qualityControlModels);
-                    addLogQCUsecase.executeIO(new AddLogQCWindowUsecase.RequestValue(machineName,
-                                    violator, qcCode, orderId, UserManager.getInstance().getUser().getRole(),
+                    addLogQCUsecase.executeIO(new AddLogQCWindowUsecase.RequestValue(machineId,
+                                    violator, qcId, orderId, UserManager.getInstance().getUser().getRole(),
                                     UserManager.getInstance().getUser().getId(), json),
                             new BaseUseCase.UseCaseCallback<AddLogQCWindowUsecase.ResponseValue, AddLogQCWindowUsecase.ErrorValue>() {
                                 @Override
@@ -238,7 +264,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                 } else {
                     positionList = 0;
                     positionImage = 0;
-                    uploadImage(qualityControlModels, machineName, violator, qcCode, orderId);
+                    uploadImage(qualityControlModels, machineId, violator, qcId, orderId);
                 }
 
             }
@@ -256,8 +282,8 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
         view.turnOnVibrator();
     }
 
-    public void saveBarcode(String machineName, String violator, String qcCode, ProductWindowEntity productEntity) {
-        localRepository.saveBarcodeQCWindow(machineName, violator, qcCode, productEntity).subscribe(new Action1<String>() {
+    public void saveBarcode(int machineId, String violator, int qcId, ProductWindowEntity productEntity) {
+        localRepository.saveBarcodeQCWindow(machineId, violator, qcId, productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
@@ -267,46 +293,58 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
         });
     }
 
-    public void uploadImage(List<QualityControlWindowModel> qualityControlModels, String machineName, String violator, String qcCode, long orderId) {
+    public void uploadImage(List<QualityControlWindowModel> qualityControlModels, int machineId, String violator, int qcId, long orderId) {
         QualityControlWindowModel qualityControlModel = qualityControlModels.get(positionList);
-        ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
-        //    File file = new File(imageModel.getPathFile());
-        Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
-        bitmap = getResizedBitmap(bitmap, 800);
-        File file = bitmapToFile(bitmap, imageModel.getPathFile());
-        UserEntity userEntity = UserManager.getInstance().getUser();
-        uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),
-                        qualityControlModel.getDepartmentId(), file.getName(), userEntity.getId()),
-                new BaseUseCase.UseCaseCallback<UploadImageUsecase.ResponseValue, UploadImageUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(UploadImageUsecase.ResponseValue successResponse) {
-                        localRepository.updateImageIdAndStatus(qualityControlModel.getId(), imageModel.getId(),successResponse.getImageId(),
-                                UserManager.getInstance().getUser().getOrderType())
-                                .subscribe(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
-                                        if (positionImage < qualityControlModel.getImageList().size() - 1) {
-                                            positionImage++;
-                                            uploadImage(qualityControlModels, machineName, violator, qcCode, orderId);
-                                        } else {
-                                            positionImage = 0;
-                                            positionList++;
-                                            if (positionList <= qualityControlModels.size() - 1) {
-                                                uploadImage(qualityControlModels, machineName, violator, qcCode, orderId);
+        if (qualityControlModel.getImageList().size() > 0){
+            ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
+            //    File file = new File(imageModel.getPathFile());
+
+            Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
+            bitmap = getResizedBitmap(bitmap, 800);
+            File file = bitmapToFile(bitmap, imageModel.getPathFile());
+            UserEntity userEntity = UserManager.getInstance().getUser();
+            uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),
+                            qualityControlModel.getDepartmentId(), file.getName(), userEntity.getId()),
+                    new BaseUseCase.UseCaseCallback<UploadImageUsecase.ResponseValue, UploadImageUsecase.ErrorValue>() {
+                        @Override
+                        public void onSuccess(UploadImageUsecase.ResponseValue successResponse) {
+                            localRepository.updateImageIdAndStatus(qualityControlModel.getId(), imageModel.getId(), successResponse.getImageId(),
+                                    UserManager.getInstance().getUser().getOrderType())
+                                    .subscribe(new Action1<String>() {
+                                        @Override
+                                        public void call(String s) {
+                                            if (positionImage < qualityControlModel.getImageList().size() - 1) {
+                                                positionImage++;
+                                                uploadImage(qualityControlModels, machineId, violator, qcId, orderId);
                                             } else {
-                                                uploadData(machineName, violator, qcCode, orderId);
+                                                positionImage = 0;
+                                                positionList++;
+                                                if (positionList <= qualityControlModels.size() - 1) {
+                                                    uploadImage(qualityControlModels, machineId, violator, qcId, orderId);
+                                                } else {
+                                                    uploadData(machineId, violator, qcId, orderId);
+                                                }
                                             }
                                         }
-                                    }
-                                });
-                    }
+                                    });
+                        }
 
-                    @Override
-                    public void onError(UploadImageUsecase.ErrorValue errorResponse) {
-                        view.showError(errorResponse.getDescription());
-                        view.hideProgressBar();
-                    }
-                });
+                        @Override
+                        public void onError(UploadImageUsecase.ErrorValue errorResponse) {
+                            view.showError(errorResponse.getDescription());
+                            view.hideProgressBar();
+                        }
+                    });
+        }else {
+            positionImage = 0;
+            positionList++;
+            if (positionList <= qualityControlModels.size() - 1) {
+                uploadImage(qualityControlModels, machineId, violator, qcId, orderId);
+            } else {
+                uploadData(machineId, violator, qcId, orderId);
+            }
+        }
+
     }
 
     public File bitmapToFile(Bitmap bmp, String filePath) {

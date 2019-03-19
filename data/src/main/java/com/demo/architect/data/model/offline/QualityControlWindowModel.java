@@ -25,11 +25,11 @@ public class QualityControlWindowModel extends RealmObject {
     private String barcode;
     private String productSetName;
 
-    private String machineName;
+    private int machineId;
 
     private String violator;
 
-    private String qcCode;
+    private int qcId;
 
     private int departmentId;
 
@@ -79,13 +79,13 @@ public class QualityControlWindowModel extends RealmObject {
     public QualityControlWindowModel() {
     }
 
-    public QualityControlWindowModel(long id, String barcode, String productSetName, String machineName, String violator, String qcCode, int departmentId, long orderId, long productSetDetailId, String productSetDetailName, int totalNumber, int number, int numberRest, long userId, int status, boolean edit) {
+    public QualityControlWindowModel(long id, String barcode, String productSetName, int machineId, String violator, int qcId, int departmentId, long orderId, long productSetDetailId, String productSetDetailName, int totalNumber, int number, int numberRest, long userId, int status, boolean edit) {
         this.id = id;
         this.barcode = barcode;
         this.productSetName = productSetName;
-        this.machineName = machineName;
+        this.machineId = machineId;
         this.violator = violator;
-        this.qcCode = qcCode;
+        this.qcId = qcId;
         this.departmentId = departmentId;
         this.orderId = orderId;
         this.productSetDetailId = productSetDetailId;
@@ -111,8 +111,9 @@ public class QualityControlWindowModel extends RealmObject {
         return nextId;
     }
 
-    public static void create(Realm realm, String machineName, String violator, String qcCode, ProductWindowEntity product, long userId) {
-        QualityControlWindowModel qualityControlModel = new QualityControlWindowModel(id(realm) + 1, product.getBarcode(), product.getProductSetName(), machineName, violator, qcCode,
+    public static void create(Realm realm, int machineId, String violator, int qcId, ProductWindowEntity product, long userId) {
+        QualityControlWindowModel qualityControlModel = new QualityControlWindowModel(id(realm) + 1, product.getBarcode(), product.getProductSetName(),
+                machineId, violator, qcId,
                 product.getDepartmentID(), product.getOrderId(), product.getProductSetDetailID(), product.getProductSetDetailName(), product.getNumberTotalOrder(),
                 1, product.getNumberWaitting(), userId, Constants.WAITING_UPLOAD, false);
         realm.copyToRealm(qualityControlModel);
@@ -225,16 +226,16 @@ public class QualityControlWindowModel extends RealmObject {
         return qualityControlModel != null;
     }
 
-    public String getMachineName() {
-        return machineName;
+    public int getMachineId() {
+        return machineId;
     }
 
     public String getViolator() {
         return violator;
     }
 
-    public String getQcCode() {
-        return qcCode;
+    public int getQcId() {
+        return qcId;
     }
 
     public long getId() {
@@ -309,16 +310,16 @@ public class QualityControlWindowModel extends RealmObject {
         this.productSetName = productSetName;
     }
 
-    public void setMachineName(String machineName) {
-        this.machineName = machineName;
+    public void setMachineId(int machineId) {
+        this.machineId = machineId;
     }
 
     public void setViolator(String violator) {
         this.violator = violator;
     }
 
-    public void setQcCode(String qcCode) {
-        this.qcCode = qcCode;
+    public void setQcId(int qcId) {
+        this.qcId = qcId;
     }
 
     public void setDepartmentId(int departmentId) {

@@ -949,12 +949,12 @@ public class DatabaseRealm {
         });
     }
 
-    public void saveBarcodeQCWindow(final String machineName, final String violator, final String qcCode, final ProductWindowEntity productEntity) {
+    public void saveBarcodeQCWindow(final int machineId, final String violator, final int qcId, final ProductWindowEntity productEntity) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                QualityControlWindowModel.create(realm, machineName, violator, qcCode, productEntity, userId);
+                QualityControlWindowModel.create(realm, machineId, violator, qcId, productEntity, userId);
             }
         });
     }

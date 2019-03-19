@@ -9,6 +9,8 @@ import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
+import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
@@ -98,6 +100,44 @@ public class OtherRepositoryImpl implements OtherRepository {
     private void handleApartmentResponse(Call<BaseListResponse<ApartmentEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<ApartmentEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+    private void handleMachineResponse(Call<BaseListResponse<MachineEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<MachineEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+    private void handleQCResponse(Call<BaseListResponse<QCEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<QCEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -219,13 +259,15 @@ public class OtherRepositoryImpl implements OtherRepository {
     }
 
     @Override
-    public Observable<BaseResponse> addLogQCWindow(final String key, final String machineName, final String violator, final String qcCode, final long orderId, final int departmentId, final long userId, final String json) {
+    public Observable<BaseResponse> addLogQCWindow(final String key, final int machineId,
+                                                   final String violator, final int qcId,
+                                                   final long orderId, final int departmentId, final long userId, final String json) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
                 handleBaseResponse(mRemoteApiInterface.addLogQCWindow(
-                        server + "/WS/api/GD2AddLogQCCua",key,machineName, violator,qcCode,
+                        server + "/WS/api/GD2AddLogQCCua",key,machineId, violator,qcId,
                         orderId,departmentId,userId,json), subscriber);
             }
         });
@@ -270,6 +312,30 @@ public class OtherRepositoryImpl implements OtherRepository {
             public void call(Subscriber<? super BaseResponse<TimesEntity>> subscriber) {
                 handleTimesResponse(mRemoteApiInterface.getTimesInputAndOutputByDepartment(
                         server + "/WS/api/GD2GetTimesInputAndOutputByDepartment",orderId,departmentId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<MachineEntity>> getListMachine() {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<MachineEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<MachineEntity>> subscriber) {
+                handleMachineResponse(mRemoteApiInterface.getListMachine(
+                        server + "/WS/api/GD2GetListMay"), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<QCEntity>> getListQC() {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<QCEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<QCEntity>> subscriber) {
+                handleQCResponse(mRemoteApiInterface.getListQC(
+                        server + "/WS/api/GD2GetListQC"), subscriber);
             }
         });
     }

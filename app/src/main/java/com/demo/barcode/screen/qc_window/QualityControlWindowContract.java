@@ -1,5 +1,7 @@
 package com.demo.barcode.screen.qc_window;
 
+import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
@@ -26,7 +28,12 @@ public interface QualityControlWindowContract {
 
         void turnOnVibrator();
 
+        void showListMachine(List<MachineEntity> list);
+
+        void showListQC(List<QCEntity> list);
+
         void showListQualityControl(RealmResults<QualityControlWindowModel> results);
+
         void showListSO(List<SOEntity> list);
 
     }
@@ -34,11 +41,21 @@ public interface QualityControlWindowContract {
     interface Presenter extends BasePresenter {
 
         void getListSO();
+
+        void getListMachine();
+
+        void getListQC();
+
         void getListProduct(long orderId);
-        void checkBarcode(String barcode, long orderId, String machineName, String violator, String qcCode);
+
+        void checkBarcode(String barcode, long orderId, int machineId, String violator, int qcId);
+
         void getListQualityControl();
+
         void removeItemQualityControl(long id);
-        void uploadData(String machineName, String violator, String qcCode, long orderId);
+
+        void uploadData(int machineId, String violator, int qcId, long orderId);
+
         void deleteAllQC();
     }
 }

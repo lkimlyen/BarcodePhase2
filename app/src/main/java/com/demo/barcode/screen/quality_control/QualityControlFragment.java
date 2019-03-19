@@ -314,7 +314,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             tvCodeSO.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (adapter.countDataEdit() > 0) {
+                    if (adapter != null &&adapter.countDataEdit() > 0) {
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText(getString(R.string.dialog_default_title))
                                 .setContentText(getString(R.string.text_upload_data))
@@ -472,16 +472,16 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                mPresenter.deleteAllQC();
                                 sweetAlertDialog.dismiss();
+                                getActivity().finish();
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mPresenter.deleteAllQC();
                                 sweetAlertDialog.dismiss();
-                                getActivity().finish();
                             }
                         })
                         .show();
@@ -549,7 +549,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        if (adapter.countDataEdit() > 0) {
+        if (adapter != null &&adapter.countDataEdit() > 0) {
             mPresenter.uploadData();
         } else {
             if(adapter.getCount() > 0){
@@ -563,7 +563,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.tv_type_product)
     public void chooseProduct() {
-        if (adapter.countDataEdit() > 0) {
+        if (adapter != null && adapter.countDataEdit() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.dialog_default_title))
                     .setContentText(getString(R.string.text_upload_data))
@@ -656,8 +656,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                 etQCCode.setEnabled(true);
                 editQCCode = true;
             }
-
-
         }
 
     }
