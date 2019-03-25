@@ -17,11 +17,15 @@ package com.demo.barcode.widgets.barcodereader;
 
 import android.content.Context;
 import android.support.annotation.UiThread;
+import android.util.Log;
+import android.util.SparseArray;
 
 import com.demo.barcode.widgets.barcodereader.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
+
+import java.util.List;
 
 /**
  * Generic tracker which is used for tracking or reading a barcode (and can really be used for
@@ -32,7 +36,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 public class BarcodeGraphicTracker extends Tracker<Barcode> {
     private GraphicOverlay<BarcodeGraphic> mOverlay;
     private BarcodeGraphic mGraphic;
-
     private BarcodeUpdateListener mBarcodeUpdateListener;
 
     /**
@@ -59,6 +62,7 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
      */
     @Override
     public void onNewItem(int id, Barcode item) {
+        Log.d("bambi1", "newItem");
         mGraphic.setId(id);
         mBarcodeUpdateListener.onBarcodeDetected(item);
     }
@@ -66,10 +70,18 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
     /**
      * Update the position/characteristics of the item within the overlay.
      */
+
+    private int count = 0;
+
     @Override
     public void onUpdate(Detector.Detections<Barcode> detectionResults, Barcode item) {
-        mOverlay.add(mGraphic);
-        mGraphic.updateItem(item);
+        count++;
+        Log.d("bambi1", "" + count);
+
+            mOverlay.add(mGraphic);
+            mGraphic.updateItem(item);
+
+
     }
 
     /**
@@ -90,7 +102,4 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
     public void onDone() {
         mOverlay.remove(mGraphic);
     }
-
-
-
 }

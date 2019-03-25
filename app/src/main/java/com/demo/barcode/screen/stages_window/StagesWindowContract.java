@@ -49,7 +49,7 @@ public interface StagesWindowContract {
 
         void showDialogCreateIPAddress(int idPrint);
 
-
+        void showErrorByType(String message, int type);
     }
 
     interface Presenter extends BasePresenter {

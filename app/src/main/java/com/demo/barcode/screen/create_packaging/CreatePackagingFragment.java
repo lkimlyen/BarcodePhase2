@@ -45,6 +45,7 @@ import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -67,7 +68,7 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
  */
 
 public class CreatePackagingFragment extends BaseFragment implements CreatePackagingContract.View {
-    private static final int MY_LOCATION_REQUEST_CODE = 1234;
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = CreatePackagingFragment.class.getName();
     private CreatePackagingContract.Presenter mPresenter;
     private SerialPackAdapter adapter;
@@ -123,16 +124,17 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
-                String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, orderId, apartmentId);
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+                mPresenter.checkBarcode(barcode2, orderId, apartmentId);
             }
         }
-
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 showSuccess(getString(R.string.text_print_success));
@@ -472,24 +474,9 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             showError(getString(R.string.text_apartment_null));
             return;
         }
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2, orderId, apartmentId);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
+
+        Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
     }
 
 

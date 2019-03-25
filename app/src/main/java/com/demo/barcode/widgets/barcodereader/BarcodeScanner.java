@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -17,6 +18,7 @@ import com.demo.barcode.R;
 
 
 public class BarcodeScanner {
+
 
     /**
      * Request codes
@@ -40,10 +42,12 @@ public class BarcodeScanner {
     }
 
     public void setOnResultListener(OnResultListener onResultListener) {
+
         this.onResultListener = onResultListener;
     }
     @org.greenrobot.eventbus.Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onBarcodeScannerResult(Barcode barcode){
+        Log.d("bambi5","2");
         onResultListener.onResult(barcode);
         EventBus.getDefault().removeStickyEvent(barcode);
         EventBus.getDefault().unregister(this);
@@ -75,7 +79,7 @@ public class BarcodeScanner {
             //Open activity
             EventBus.getDefault().postSticky(this);
             Intent intent = new Intent(mBarcodeScannerBuilder.getActivity(), BarcodeScannerActivity.class);
-            mBarcodeScannerBuilder.getActivity().startActivity(intent);
+            mBarcodeScannerBuilder.getActivity().startActivityForResult(intent,332);
         }
     }
 
@@ -100,5 +104,7 @@ public class BarcodeScanner {
     public BarcodeScannerBuilder getMaterialBarcodeScannerBuilder() {
         return mBarcodeScannerBuilder;
     }
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.confirm_receive_window;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -51,7 +54,7 @@ import io.realm.RealmResults;
  */
 
 public class ConfirmReceiveWindowFragment extends BaseFragment implements ConfirmReceiveWindowContract.View {
-    private static final int MY_LOCATION_REQUEST_CODE = 1234;
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = ConfirmReceiveWindowFragment.class.getName();
     private ConfirmReceiveWindowContract.Presenter mPresenter;
     private int departmentId = 0;
@@ -122,7 +125,17 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
 
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+                mPresenter.checkBarcode(barcode2);
+            }
+        }
     }
 
     @Override
@@ -565,35 +578,8 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
             showError(getString(R.string.text_department_id_null));
             return;
         }
-//        integrator = new IntentIntegrator(getActivity());
-//        integrator.setCaptureActivity(ScanActivity.class);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-//        integrator.setPrompt("Đặt mã cần quét vào khung");
-//        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
-//        integrator.setBeepEnabled(false);
-//        integrator.setBarcodeImageEnabled(true);
-//        integrator.setOrientationLocked(false);
-//        integrator.initiateScan();
-
-
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
+          Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
     }
 
     @OnClick(R.id.btn_confirm_all)

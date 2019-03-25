@@ -1,5 +1,6 @@
 package com.demo.barcode.screen.group_code;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +46,7 @@ import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -71,6 +74,7 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
  */
 
 public class GroupCodeFragment extends BaseFragment implements GroupCodeContract.View {
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = GroupCodeFragment.class.getName();
     public static final String ORDER_ID = "order_id";
     private GroupCodeContract.Presenter mPresenter;
@@ -133,13 +137,16 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
-                String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode);
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+
+                mPresenter.checkBarcode(barcode2);
             }
         }
     }
@@ -747,24 +754,9 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }
 
 
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
+        Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
+
     }
     @OnClick(R.id.tv_type_product)
     public void chooseProduct() {

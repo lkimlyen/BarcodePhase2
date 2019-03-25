@@ -320,7 +320,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                     @Override
                     public void onError(GetListSOUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        view.showErrorByType(errorResponse.getDescription(),1);
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
 
                     }
@@ -349,7 +349,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                     @Override
                     public void onError(GetAllStaffUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        view.showErrorByType(errorResponse.getDescription(),2);
 
                     }
                 });
@@ -377,6 +377,7 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListProductWindowManager.getInstance().setListProduct(new ArrayList<>());
+                        view.showErrorByType(errorResponse.getDescription(),3);
                     }
                 });
 

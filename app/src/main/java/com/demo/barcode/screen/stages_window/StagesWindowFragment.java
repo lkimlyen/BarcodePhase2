@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,12 +50,14 @@ import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -67,7 +71,7 @@ import io.realm.RealmResults;
  */
 
 public class StagesWindowFragment extends BaseFragment implements StagesWindowContract.View {
-    private static final int MY_LOCATION_REQUEST_CODE = 1234;
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = StagesWindowFragment.class.getName();
     private StagesWindowContract.Presenter mPresenter;
     private StagesWindowAdapter adapter;
@@ -113,7 +117,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     private Vibrator vibrate;
     private long orderId = 0;
     private int departmentId = 0;
-    private int staffId= 0;
+    private int staffId = 0;
 
     public StagesWindowFragment() {
         // Required empty public constructor
@@ -133,7 +137,22 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
 
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+                mPresenter.checkBarcode(barcode2, departmentId, staffId);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -244,6 +263,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     @Override
     public void showSuccess(String message) {
         showToast(message);
+
     }
 
     @Override
@@ -262,7 +282,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId,staffId);
+                                        mPresenter.uploadData(orderId, departmentId, staffId);
                                     }
                                 })
                                 .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
@@ -405,7 +425,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId,staffId);
+                                        mPresenter.uploadData(orderId, departmentId, staffId);
                                     }
                                 })
                                 .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
@@ -501,7 +521,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(orderId, departmentId,staffId);
+                        mPresenter.uploadData(orderId, departmentId, staffId);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -535,7 +555,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId,staffId);
+                                        mPresenter.uploadData(orderId, departmentId, staffId);
                                     }
                                 })
                                 .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
@@ -616,6 +636,40 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
         });
     }
 
+    @Override
+    public void showErrorByType(String message, int type) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(message)
+                .setConfirmText(getString(R.string.text_ok))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .setCancelText(getString(R.string.text_try))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        switch (type) {
+                            case 1:
+                                mPresenter.getListSO();
+                                break;
+                            case 2:
+                                mPresenter.getListStaff();
+                                break;
+                            case 3:
+                                mPresenter.getListProduct(orderId, false);
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -646,7 +700,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId,staffId);
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, staffId);
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -672,7 +726,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.uploadData(orderId, departmentId,staffId);
+                            mPresenter.uploadData(orderId, departmentId, staffId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -693,7 +747,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        if (adapter != null && adapter.getItemCount() > 0){
+        if (adapter != null && adapter.getItemCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_upload_data))
@@ -701,7 +755,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.uploadData(orderId, departmentId,staffId);
+                            mPresenter.uploadData(orderId, departmentId, staffId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -714,7 +768,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                         }
                     })
                     .show();
-        }else {
+        } else {
             showError(getString(R.string.text_no_data_upload));
         }
     }
@@ -736,25 +790,8 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
             return;
         }
 
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        Log.d(TAG,barcode2);
-                        mPresenter.checkBarcode(barcode2, departmentId,staffId);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
+        Intent launchIntent = new Intent(getActivity(),BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
     }
 
 

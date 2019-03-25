@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -57,7 +59,7 @@ import io.realm.RealmResults;
  */
 
 public class QualityControlWindowFragment extends BaseFragment implements QualityControlWindowContract.View {
-    private static final int MY_LOCATION_REQUEST_CODE = 1234;
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = QualityControlWindowFragment.class.getName();
     private QualityControlWindowContract.Presenter mPresenter;
     private QualityControlWindowAdapter adapter;
@@ -128,8 +130,20 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
                 isClick = false;
             }
 
-
         }
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+                mPresenter.checkBarcode(barcode2, orderId, machineId
+                        , etViolator.getText().toString(), qcId);
+            }
+        }
+
     }
 
     @Override
@@ -622,26 +636,9 @@ public class QualityControlWindowFragment extends BaseFragment implements Qualit
             showError(getString(R.string.text_save_violator));
             return;
         }
+        Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
 
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2, orderId, machineId
-                                , etViolator.getText().toString(), qcId);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
     }
 
     @OnClick(R.id.img_upload)

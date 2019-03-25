@@ -14,6 +14,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.demo.barcode.dialogs.DetailGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
+import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.demo.barcode.widgets.spinner.SearchableSpinner;
@@ -68,7 +70,7 @@ import io.realm.RealmResults;
  */
 
 public class StagesFragment extends BaseFragment implements StagesContract.View {
-    private static final int MY_LOCATION_REQUEST_CODE = 1234;
+    private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
     private final String TAG = StagesFragment.class.getName();
     private StagesContract.Presenter mPresenter;
     private StagesAdapter adapter;
@@ -139,14 +141,19 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
                 return;
             }
         }
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
-                String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, departmentId, times, typeScan == 2);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == BARCODE_READER_ACTIVITY_REQUEST && data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeScannerActivity.KEY_CAPTURED_BARCODE);
+
+                String contents = barcode.rawValue;
+                String barcode2 = contents.replace("DEMO", "");
+                Log.d(TAG, barcode2);
+                mPresenter.checkBarcode(barcode2, departmentId, times, typeScan == 2);
             }
         }
+
     }
 
     @Override
@@ -844,25 +851,9 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
             showError(getString(R.string.text_type_scan_null));
             return;
         }
+        Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
+        getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
 
-        final BarcodeScanner barcodeScanner = new BarcodeScannerBuilder()
-                .withActivity(getActivity())
-                .withEnableAutoFocus(true)
-                .withBleepEnabled(true)
-                .withBackfacingCamera()
-                .withCenterTracker()
-                .withText("Scanning...")
-                .withResultListener(new BarcodeScanner.OnResultListener() {
-                    @Override
-                    public void onResult(Barcode barcode) {
-                        //  barcodeResult = barcode;
-                        String contents = barcode.rawValue;
-                        String barcode2 = contents.replace("DEMO", "");
-                        mPresenter.checkBarcode(barcode2, departmentId, times, typeScan == 2);
-                    }
-                })
-                .build();
-        barcodeScanner.startScan();
     }
 
     @OnClick(R.id.tv_type_product)

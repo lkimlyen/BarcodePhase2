@@ -16,6 +16,7 @@
 package com.demo.barcode.widgets.barcodereader;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.demo.barcode.widgets.barcodereader.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.MultiProcessor;
@@ -35,12 +36,15 @@ public class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
         mDetectionListener = listener;
     }
 
+    private int count = 0;
 
     @Override
     public Tracker<Barcode> create(Barcode barcode) {
+        count++;
+        Log.d("bambi1",count+"");
         BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay);
         BarcodeGraphicTracker tracker = new BarcodeGraphicTracker(mGraphicOverlay, graphic);
-        if (mDetectionListener != null){
+        if (mDetectionListener != null) {
             tracker.setListener(mDetectionListener);
         }
         return tracker;
