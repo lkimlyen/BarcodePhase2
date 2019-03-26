@@ -352,7 +352,8 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
                             tvDeliveryCode.setText(getString(R.string.text_choose_delivery_code));
                             maPhieuId = 0;
                             tvTimes.setText(getString(R.string.text_choose_times_scan));
-                            times = 0;lvConfirm.setAdapter(null);
+                            times = 0;
+                            lvConfirm.setAdapter(null);
                             mPresenter.getListDeliveryCode(orderId, departmentId);
 
                         }
@@ -544,38 +545,38 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_back)
     public void back() {
-            if (adapter != null && adapter.getDataEdit() > 0) {
-                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(getString(R.string.text_title_noti))
-                        .setContentText(getString(R.string.text_back_have_detail_waiting))
-                        .setConfirmText(getString(R.string.text_yes))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                // mPresenter.deleteAllItemLog();
+        if (adapter != null && adapter.getDataEdit() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_back_have_detail_waiting))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            // mPresenter.deleteAllItemLog();
 
-                                sweetAlertDialog.dismiss();
-                                if (!printed) {
-                                    showDialogPrint();
-                                } else {
-                                    mPresenter.uploadData(maPhieuId, orderId, departmentId, times);
-                                }
+                            sweetAlertDialog.dismiss();
+                            if (!printed) {
+                                showDialogPrint();
+                            } else {
+                                mPresenter.uploadData(maPhieuId, orderId, departmentId, times);
                             }
-                        })
-                        .setCancelText(getString(R.string.text_no))
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                getActivity().finish();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            getActivity().finish();
 
-                            }
-                        })
-                        .show();
+                        }
+                    })
+                    .show();
 
-            } else {
-                getActivity().finish();
-            }
+        } else {
+            getActivity().finish();
+        }
 
 
     }

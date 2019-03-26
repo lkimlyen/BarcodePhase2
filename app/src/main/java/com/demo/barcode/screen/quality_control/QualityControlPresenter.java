@@ -10,6 +10,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.ImageModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
+import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
 import com.demo.architect.domain.BaseUseCase;
@@ -154,8 +155,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
                 @Override
                 public void call(Boolean exist) {
                     if (!exist) {
-                            saveBarcode(orderId, userEntity.getRole(), machineName, violator, qcCode, model);
-
+                        saveBarcode(orderId, userEntity.getRole(), machineName, violator, qcCode, model);
                     } else {
                         showError(CoreApplication.getInstance().getString(R.string.text_product_in_qc));
                     }
@@ -178,6 +178,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
                     @Override
                     public void call(RealmResults<QualityControlModel> qualityControlModels) {
                         view.showListQualityControl(qualityControlModels);
+
                     }
                 });
             }
@@ -187,10 +188,11 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
     @Override
     public void removeItemQualityControl(long id) {
-        localRepository.deleteQC(id,UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
+        localRepository.deleteQC(id, UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                view.refreshLayout();
             }
         });
     }
@@ -218,6 +220,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
                                         @Override
                                         public void call(String s) {
                                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
+                                            view.refreshLayout();
                                         }
                                     });
                                 }
@@ -240,7 +243,12 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
     @Override
     public void deleteAllQC() {
-        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe();
+        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.refreshLayout();
+            }
+        });
     }
 
     public void showError(String error) {
@@ -256,50 +264,62 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();
+                view.refreshLayout();
+
             }
         });
     }
 
     public void uploadImage(List<QualityControlModel> qualityControlModels) {
         QualityControlModel qualityControlModel = qualityControlModels.get(positionList);
-        ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
-        //    File file = new File(imageModel.getPathFile());
-        Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
-        bitmap = getResizedBitmap(bitmap, 800);
-        File file = bitmapToFile(bitmap, imageModel.getPathFile());
-        UserEntity userEntity = UserManager.getInstance().getUser();
-        uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),
-                        qualityControlModel.getDepartmentId(), file.getName(), userEntity.getId()),
-                new BaseUseCase.UseCaseCallback<UploadImageUsecase.ResponseValue, UploadImageUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(UploadImageUsecase.ResponseValue successResponse) {
-                        localRepository.updateImageIdAndStatus(qualityControlModel.getId(), imageModel.getId(), successResponse.getImageId(),
-                                UserManager.getInstance().getUser().getOrderType())
-                                .subscribe(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
-                                        if (positionImage < qualityControlModel.getImageList().size() - 1) {
-                                            positionImage++;
-                                            uploadImage(qualityControlModels);
-                                        } else {
-                                            positionImage = 0;
-                                            positionList++;
-                                            if (positionList <= qualityControlModels.size() - 1) {
+        if (qualityControlModel.getImageList().size() > 0) {
+            ImageModel imageModel = qualityControlModel.getImageList().get(positionImage);
+            //    File file = new File(imageModel.getPathFile());
+            Bitmap bitmap = BitmapFactory.decodeFile(imageModel.getPathFile());
+            bitmap = getResizedBitmap(bitmap, 800);
+            File file = bitmapToFile(bitmap, imageModel.getPathFile());
+            UserEntity userEntity = UserManager.getInstance().getUser();
+            uploadImageUsecase.executeIO(new UploadImageUsecase.RequestValue(file, qualityControlModel.getOrderId(),
+                            qualityControlModel.getDepartmentId(), file.getName(), userEntity.getId()),
+                    new BaseUseCase.UseCaseCallback<UploadImageUsecase.ResponseValue, UploadImageUsecase.ErrorValue>() {
+                        @Override
+                        public void onSuccess(UploadImageUsecase.ResponseValue successResponse) {
+                            localRepository.updateImageIdAndStatus(qualityControlModel.getId(), imageModel.getId(), successResponse.getImageId(),
+                                    UserManager.getInstance().getUser().getOrderType())
+                                    .subscribe(new Action1<String>() {
+                                        @Override
+                                        public void call(String s) {
+                                            if (positionImage < qualityControlModel.getImageList().size() - 1) {
+                                                positionImage++;
                                                 uploadImage(qualityControlModels);
                                             } else {
-                                                uploadData();
+                                                positionImage = 0;
+                                                positionList++;
+                                                if (positionList <= qualityControlModels.size() - 1) {
+                                                    uploadImage(qualityControlModels);
+                                                } else {
+                                                    uploadData();
+                                                }
                                             }
                                         }
-                                    }
-                                });
-                    }
+                                    });
+                        }
 
-                    @Override
-                    public void onError(UploadImageUsecase.ErrorValue errorResponse) {
-                        view.showError(errorResponse.getDescription());
-                        view.hideProgressBar();
-                    }
-                });
+                        @Override
+                        public void onError(UploadImageUsecase.ErrorValue errorResponse) {
+                            view.showError(errorResponse.getDescription());
+                            view.hideProgressBar();
+                        }
+                    });
+        } else {
+            positionImage = 0;
+            positionList++;
+            if (positionList <= qualityControlModels.size() - 1) {
+                uploadImage(qualityControlModels);
+            } else {
+                uploadData();
+            }
+        }
     }
 
     public File bitmapToFile(Bitmap bmp, String filePath) {

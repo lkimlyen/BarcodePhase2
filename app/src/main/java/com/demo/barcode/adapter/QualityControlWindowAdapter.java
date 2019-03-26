@@ -16,19 +16,23 @@ import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
+import io.realm.RealmRecyclerViewAdapter;
 
-public class QualityControlWindowAdapter extends RealmBaseAdapter<QualityControlWindowModel> implements ListAdapter {
+public class QualityControlWindowAdapter extends RealmRecyclerViewAdapter<QualityControlWindowModel, QualityControlWindowAdapter.HistoryHolder> {
+
     private OnItemClearListener listener;
+    private OnItemClickListener onItemClickListener;
 
-    public QualityControlWindowAdapter(OrderedRealmCollection<QualityControlWindowModel> realmResults, OnItemClearListener listener) {
-        super(realmResults);
+    public QualityControlWindowAdapter(OrderedRealmCollection<QualityControlWindowModel> realmResults, OnItemClearListener listener, OnItemClickListener onItemClickListener) {
+        super(realmResults, true);
         this.listener = listener;
+        this.onItemClickListener = onItemClickListener;
+        setHasStableIds(true);
     }
-
     public int countDataEdit() {
         int count = 0;
-        if (adapterData != null) {
-            for (QualityControlWindowModel model : adapterData){
+        if (getData() != null) {
+            for (QualityControlWindowModel model : getData()){
                 if(model.isEdit()){
                     count++;
                 }
@@ -38,23 +42,23 @@ public class QualityControlWindowAdapter extends RealmBaseAdapter<QualityControl
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_quality_control, parent, false);
-            viewHolder = new HistoryHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
-        }
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_quality_control, parent, false);
+        return new HistoryHolder(itemView);
+    }
 
-        if (adapterData != null) {
-            final QualityControlWindowModel item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
+    @Override
+    public void onBindViewHolder(HistoryHolder holder, int position) {
+        final QualityControlWindowModel obj = getItem(position);
+        setDataToViews(holder, obj);
+        holder.bind(obj.getId(),onItemClickListener);
 
-        }
-        return convertView;
+    }
+
+    @Override
+    public long getItemId(int index) {
+        //noinspection ConstantConditions
+        return getItem(index).getId();
     }
 
     private void setDataToViews(HistoryHolder holder, QualityControlWindowModel item) {
@@ -78,6 +82,7 @@ public class QualityControlWindowAdapter extends RealmBaseAdapter<QualityControl
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
+
         TextView txtBarcode;
         TextView txtNameDetail;
         TextView txtModule;
@@ -97,9 +102,21 @@ public class QualityControlWindowAdapter extends RealmBaseAdapter<QualityControl
             layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
         }
 
+        private void bind(long id, OnItemClickListener onItemClickListener){
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onItemClick(id);
+                }
+            });
+        }
     }
 
     public interface OnItemClearListener {
+        void onItemClick(long id);
+    }
+
+    public interface OnItemClickListener {
         void onItemClick(long id);
     }
 

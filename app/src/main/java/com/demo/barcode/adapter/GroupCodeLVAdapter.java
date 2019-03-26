@@ -1,5 +1,6 @@
 package com.demo.barcode.adapter;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,10 +11,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.GroupCode;
+import com.demo.architect.data.model.offline.LogScanStages;
+import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListGroupManager;
@@ -23,8 +28,10 @@ import java.util.Set;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
+import io.realm.RealmRecyclerViewAdapter;
 
-public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements ListAdapter {
+public class GroupCodeLVAdapter extends RealmRecyclerViewAdapter<GroupCode, GroupCodeLVAdapter.HistoryHolder> {
+
     private boolean inChooseMode = false;
     private Set<GroupCode> countersToSelect = new HashSet<GroupCode>();
     private OnRemoveListener onRemoveListener;
@@ -46,34 +53,33 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     private onErrorListener onErrorListener;
 
     public GroupCodeLVAdapter(OrderedRealmCollection<GroupCode> realmResults, OnRemoveListener onRemoveListener, GroupCodeLVAdapter.onClickEditTextListener onClickEditTextListener, OnEditTextChangeListener onEditTextChangeListener, GroupCodeLVAdapter.onErrorListener onErrorListener) {
-        super(realmResults);
+        super(realmResults, true);
         this.onRemoveListener = onRemoveListener;
         this.onClickEditTextListener = onClickEditTextListener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
+        setHasStableIds(true);
     }
-
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_group_code, parent, false);
-            viewHolder = new HistoryHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
-        }
-
-        if (adapterData != null) {
-            final GroupCode item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
-
-        }
-        return convertView;
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_code, parent, false);
+        return new HistoryHolder(itemView);
     }
-    boolean edit = false;
+
+    @Override
+    public void onBindViewHolder(HistoryHolder holder, int position) {
+        final GroupCode obj = getItem(position);
+        setDataToViews(holder, obj);
+
+    }
+
+    @Override
+    public long getItemId(int index) {
+        //noinspection ConstantConditions
+        return getItem(index).getId();
+    }
+
 
     private void setDataToViews(HistoryHolder holder, GroupCode item) {
         TextWatcher textWatcher = new TextWatcher() {
@@ -98,7 +104,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
 
                     }
 
-                    if (numberInput+ ListGroupManager.getInstance().totalNumberProductGroup(item.getProductDetailId()) > item.getNumberTotal()) {
+                    if (numberInput + ListGroupManager.getInstance().totalNumberProductGroup(item.getProductDetailId()) > item.getNumberTotal()) {
                         holder.edtNumberGroup.setText((int) item.getNumber() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
                         return;
@@ -106,21 +112,8 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
                     if (numberInput == item.getNumber()) {
                         return;
                     }
-                    edit = false;
-//                    final Timer timer = new Timer();
-//                    if (!edit) {
-//                        edit = true;
-//                        timer.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                edit = false;
-//                                timer.cancel();
-//                            }
-//                        }, 1000);
-//                    } else {
-//                        timer.cancel();
-                        onEditTextChangeListener.onEditTextChange(item, numberInput);
-//                    }
+                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+
 
                 } catch (Exception e) {
 
@@ -129,7 +122,7 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
         };
         holder.txtNameDetail.setText(item.getProductDetailName());
         holder.edtNumberGroup.setText(String.valueOf((int) item.getNumber()));
-        holder.edtNumberGroup.setSelection( holder.edtNumberGroup.getText().length());
+        holder.edtNumberGroup.setSelection(holder.edtNumberGroup.getText().length());
         holder.txtNumberTotal.setText(String.valueOf((int) item.getNumberTotal()));
         holder.txtModule.setText(item.getModule());
         holder.edtNumberGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -200,9 +193,11 @@ public class GroupCodeLVAdapter extends RealmBaseAdapter<GroupCode> implements L
     public interface onErrorListener {
         void errorListener(String message);
     }
+
     public interface OnRemoveListener {
         void onRemove(long id);
     }
+
     public interface onClickEditTextListener {
         void onClick();
     }

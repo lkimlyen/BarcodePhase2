@@ -221,7 +221,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
         localRepository.deleteQC(id, UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));view.refreshLayout();
             }
         });
     }
@@ -251,6 +251,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                                         @Override
                                         public void call(String s) {
                                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
+                                            view.refreshLayout();
                                         }
                                     });
                                 }
@@ -273,7 +274,12 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void deleteAllQC() {
-        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe();
+        localRepository.deleteAlLQC(UserManager.getInstance().getUser().getOrderType()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.refreshLayout();
+            }
+        });
     }
 
     public void showError(String error) {
@@ -287,6 +293,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
             @Override
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.refreshLayout();
                 view.startMusicSuccess();
                 view.turnOnVibrator();
             }

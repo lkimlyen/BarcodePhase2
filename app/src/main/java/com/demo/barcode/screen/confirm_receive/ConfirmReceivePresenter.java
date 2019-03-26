@@ -53,7 +53,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     private final String TAG = ConfirmReceivePresenter.class.getName();
     private final ConfirmReceiveContract.View view;
     private final GetListSOUsecase getListSOUsecase;
-    private final GetInputUnConfirmedUsecase getInputUnConfirmedUsecase;
     private final ConfirmInputUsecase confirmInputUsecase;
     private final GetListProductDetailGroupUsecase getListProductDetailGroupUsecase;
     private final GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase;
@@ -65,10 +64,11 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
     @Inject
     ConfirmReceivePresenter(@NonNull ConfirmReceiveContract.View view, GetListSOUsecase getListSOUsecase,
-                            GetInputUnConfirmedUsecase getInputUnConfirmedUsecase, ConfirmInputUsecase confirmInputUsecase, GetListProductDetailGroupUsecase getListProductDetailGroupUsecase, GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase, AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase, GetListMaPhieuGiaoUsecase getListMaPhieuGiaoUsecase, GetListInputUnConfirmByMaPhieuUsecase getListInputUnConfirmByMaPhieuUsecase) {
+                            ConfirmInputUsecase confirmInputUsecase,
+                            GetListProductDetailGroupUsecase getListProductDetailGroupUsecase,
+                            GetTimesInputAndOutputByDepartmentUsecase getTimesInputAndOutputByDepartmentUsecase, AddPhieuGiaoNhanUsecase addPhieuGiaoNhanUsecase, GetListMaPhieuGiaoUsecase getListMaPhieuGiaoUsecase, GetListInputUnConfirmByMaPhieuUsecase getListInputUnConfirmByMaPhieuUsecase) {
         this.view = view;
         this.getListSOUsecase = getListSOUsecase;
-        this.getInputUnConfirmedUsecase = getInputUnConfirmedUsecase;
         this.confirmInputUsecase = confirmInputUsecase;
         this.getListProductDetailGroupUsecase = getListProductDetailGroupUsecase;
         this.getTimesInputAndOutputByDepartmentUsecase = getTimesInputAndOutputByDepartmentUsecase;
@@ -120,8 +120,8 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
     }
 
     @Override
-    public void getListTimes(long orderId, int departmentId) {
-        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, departmentId),
+    public void getListTimes(long orderId) {
+        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetTimesInputAndOutputByDepartmentUsecase.ResponseValue successResponse) {
@@ -180,7 +180,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                     public void onSuccess(GetListMaPhieuGiaoUsecase.ResponseValue successResponse) {
                         view.showListDeliveryCode(successResponse.getEntity());
                         ListDeliveryNoteManager.getInstance().setListDeliveryNote(successResponse.getEntity());
-                        getListTimes(orderId, departmentIdOut);
+                        getListTimes(orderId);
                     }
 
                     @Override

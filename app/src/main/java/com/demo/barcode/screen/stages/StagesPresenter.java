@@ -244,8 +244,8 @@ public class StagesPresenter implements StagesContract.Presenter {
 
 
     @Override
-    public void getListTimes(long orderId, int departmentId) {
-        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, departmentId),
+    public void getListTimes(long orderId) {
+        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId,  UserManager.getInstance().getUser().getRole()),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetTimesInputAndOutputByDepartmentUsecase.ResponseValue successResponse) {
@@ -290,6 +290,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                                                 public void call(String s) {
                                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                                                     view.showPrintDeliveryNote(successResponse.getId());
+                                                                    view.refreshLayout();
                                                                     getListProduct(orderId, true);
                                                                 }
                                                             });
@@ -330,6 +331,7 @@ public class StagesPresenter implements StagesContract.Presenter {
                                             localRepository.updateStatusLogStages().subscribe(new Action1<String>() {
                                                 @Override
                                                 public void call(String s) {
+                                                    view.refreshLayout();
                                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                                     view.showPrintDeliveryNote(successResponse.getId());
                                                     getListProduct(orderId, true);
@@ -395,14 +397,14 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                         ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
                         localRepository.addGroupScan(successResponse.getEntity()).subscribe();
-                        getListTimes(orderId, user.getRole());
+                        getListTimes(orderId);
                     }
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
 
                         ListGroupManager.getInstance().setListGroup(new ArrayList<>());
-                        getListTimes(orderId, user.getRole());
+                        getListTimes(orderId);
                         //  view.showError(errorResponse.getDescription());
                     }
                 });

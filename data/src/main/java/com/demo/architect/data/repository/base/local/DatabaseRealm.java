@@ -43,6 +43,8 @@ import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.util.Collection;
@@ -57,6 +59,7 @@ import io.realm.RealmMigration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;
+import io.realm.annotations.PrimaryKey;
 
 public class DatabaseRealm {
     private Context context;
@@ -74,7 +77,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(3)
+                        .schemaVersion(4)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
@@ -83,7 +86,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(3)
+                        .schemaVersion(4)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
@@ -939,9 +942,9 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if (type == 4){
+                if (type == 4) {
                     QualityControlWindowModel.deleteAlLQC(realm);
-                }else {
+                } else {
 
                     QualityControlModel.deleteAlLQC(realm);
                 }
@@ -1075,6 +1078,45 @@ public class DatabaseRealm {
                         .removeField("list").addField("numberUsedInTimes", int.class)
                         .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteModel"));
 
+
+                oldVersion++;
+            }
+
+
+            if (oldVersion == 3) {
+
+
+                schema.create("DeliveryNoteWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("outputId", long.class)
+                        .addField("productSetId", long.class)
+                        .addField("outputId", long.class)
+                        .addField("productSetName", String.class)
+                        .addField("productSetDetailId", long.class)
+                        .addField("productSetDetailName", String.class)
+                        .addField("numberOut", int.class)
+                        .addField("numberRest", int.class)
+                        .addField("numberUsed", int.class)
+                        .addField("numberConfirm", int.class)
+                        .addField("status", int.class);
+
+                schema.create("LogScanConfirmWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("outputId", long.class)
+                        .addField("departmentIDIn", int.class)
+                        .addField("departmentIDOut", int.class)
+                        .addField("productSetDetailId", long.class)
+                        .addField("barcode", String.class)
+                        .addField("numberTotalOrder", int.class)
+                        .addField("numberOut", int.class)
+                        .addField("numberConfirmed", int.class)
+                        .addField("userId", long.class)
+                        .addField("isPrint", boolean.class)
+                        .addField("status", int.class)
+                        .addField("statusConfirm", int.class)
+                        .addField("dateConfirm", String.class)
+                        .addField("state", boolean.class)
+                        .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteWindowModel"));
 
                 oldVersion++;
             }

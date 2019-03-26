@@ -284,7 +284,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
                                     public void call(String s) {
                                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_detached_code_success));
                                         getListProductDetailInGroupCode(orderId);
-                                        view.setHeightListView();
+                                        view.refeshLayout();
                                     }
                                 });
                     }
@@ -478,7 +478,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
         localRepository.addGroupCode(productEntity).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
-                view.setHeightListView();
+                view.refeshLayout();
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.startMusicSuccess();
                 view.turnOnVibrator();

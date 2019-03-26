@@ -30,6 +30,8 @@ public interface QualityControlWindowContract {
 
         void showListMachine(List<MachineEntity> list);
 
+        void refreshLayout();
+
         void showListQC(List<QCEntity> list);
 
         void showListQualityControl(RealmResults<QualityControlWindowModel> results);

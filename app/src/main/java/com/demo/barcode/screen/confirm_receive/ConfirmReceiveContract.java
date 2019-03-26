@@ -50,7 +50,7 @@ public interface ConfirmReceiveContract {
     interface Presenter extends BasePresenter {
         void getListSO(int orderType);
 
-        void getListTimes(long orderId, int departmentId);
+        void getListTimes(long orderId);
 
         void getListConfirm(long maPhieuId, int times, boolean refresh);
 
@@ -59,7 +59,6 @@ public interface ConfirmReceiveContract {
         void getListDepartment();
 
         void getListConfirm(int times);
-
 
         void checkBarcode(String barcode, boolean groupCode);
 

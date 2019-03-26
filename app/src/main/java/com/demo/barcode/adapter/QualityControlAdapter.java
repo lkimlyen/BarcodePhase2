@@ -1,38 +1,37 @@
 package com.demo.barcode.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
-import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
+import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmBaseAdapter;
+import io.realm.RealmRecyclerViewAdapter;
 
-public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel> implements ListAdapter {
+public class QualityControlAdapter extends RealmRecyclerViewAdapter<QualityControlModel, QualityControlAdapter.HistoryHolder> {
+
     private OnItemClearListener listener;
+    private OnItemClickListener onItemClickListener;
 
-    public QualityControlAdapter(OrderedRealmCollection<QualityControlModel> realmResults, OnItemClearListener listener) {
-        super(realmResults);
+    public QualityControlAdapter(OrderedRealmCollection<QualityControlModel> realmResults, OnItemClearListener listener, OnItemClickListener onItemClickListener) {
+        super(realmResults, true);
         this.listener = listener;
+        this.onItemClickListener = onItemClickListener;
+        setHasStableIds(true);
     }
     public int countDataEdit() {
         int count = 0;
-        if (adapterData != null) {
-            for (QualityControlModel model : adapterData){
+        if (getData() != null) {
+            for (QualityControlModel model : getData()){
                 if(model.isEdit()){
                     count++;
                 }
@@ -41,25 +40,24 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
         return count;
     }
 
+    @Override
+    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_quality_control, parent, false);
+        return new HistoryHolder(itemView);
+    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_quality_control, parent, false);
-            viewHolder = new HistoryHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (HistoryHolder) convertView.getTag();
-        }
+    public void onBindViewHolder(HistoryHolder holder, int position) {
+        final QualityControlModel obj = getItem(position);
+        setDataToViews(holder, obj);
+        holder.bind(obj.getId(),onItemClickListener);
 
-        if (adapterData != null) {
-            final QualityControlModel item = adapterData.get(position);
-            setDataToViews(viewHolder, item);
+    }
 
-        }
-        return convertView;
+    @Override
+    public long getItemId(int index) {
+        //noinspection ConstantConditions
+        return getItem(index).getId();
     }
 
     private void setDataToViews(HistoryHolder holder, QualityControlModel item) {
@@ -77,7 +75,7 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
         });
 
         holder.layoutMain.setBackgroundColor(item.isEdit() ? CoreApplication.getInstance().getResources().getColor(R.color.colorGreen)
-        : CoreApplication.getInstance().getResources().getColor(android.R.color.white));
+                : CoreApplication.getInstance().getResources().getColor(android.R.color.white));
 
     }
 
@@ -100,11 +98,21 @@ public class QualityControlAdapter extends RealmBaseAdapter<QualityControlModel>
             layoutMain = (LinearLayout) v.findViewById(R.id.layout_main);
         }
 
+        private void bind(long id, OnItemClickListener onItemClickListener){
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   onItemClickListener.onItemClick(id);
+                }
+            });
+        }
     }
 
     public interface OnItemClearListener {
         void onItemClick(QualityControlModel item);
     }
 
-
+    public interface OnItemClickListener {
+        void onItemClick(long id);
+    }
 }

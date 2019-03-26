@@ -30,6 +30,8 @@ public interface QualityControlContract {
         void showListQualityControl(RealmResults<QualityControlModel> results);
         void showListSO(List<SOEntity> list);
 
+        void refreshLayout();
+
     }
 
     interface Presenter extends BasePresenter {

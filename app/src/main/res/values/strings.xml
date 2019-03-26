@@ -324,5 +324,8 @@
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="text_save_info_qc">Bạn chưa lưu thông tin QC</string>
+    <string name="text_input_machine_name_null">Bạn chưa nhập tên máy!</string>
+    <string name="text_input_qc_code_null">Bạn chưa nhập mã QC</string>
 
 </resources>

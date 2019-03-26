@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -105,15 +107,13 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     TextView tvTypeProduct;
 
     @Bind(R.id.lv_code)
-    ListView lvCode;
+    RecyclerView lvCode;
     @Bind(R.id.cb_all)
     CheckBox cbAll;
 
     @Bind(R.id.layoutContent)
     LinearLayout layoutContent;
 
-    @Bind(R.id.ll_root)
-    LinearLayout llRoot;
     @Bind(R.id.btn_scan)
     Button btnScan;
     private Vibrator vibrate;
@@ -313,10 +313,7 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
         }, new GroupCodeLVAdapter.onClickEditTextListener() {
             @Override
             public void onClick() {
-                if (llRoot.getVisibility() == View.VISIBLE) {
-                    btnScan.setVisibility(View.GONE);
-                    llRoot.setVisibility(View.GONE);
-                }
+
             }
         }, new GroupCodeLVAdapter.OnEditTextChangeListener() {
             @Override
@@ -329,13 +326,12 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
                 showSuccess(message);
             }
         });
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setAutoMeasureEnabled(true);
+        lvCode.setLayoutManager(linearLayoutManager);
+        lvCode.setHasFixedSize(true);
         lvCode.setAdapter(lvAdapter);
-        lvCode.post(new Runnable() {
-            @Override
-            public void run() {
-                setListViewHeightBasedOnItems(lvCode);
-            }
-        });
+        lvCode.setAdapter(lvAdapter);
     }
 
     private void setLayoutGroup(String groupCode, List<ProductGroupEntity> list) {
@@ -656,8 +652,8 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
     }
 
     @Override
-    public void setHeightListView() {
-        setListViewHeightBasedOnItems(lvCode);
+    public void refeshLayout() {
+        lvCode.requestLayout();
     }
 
 
@@ -670,11 +666,6 @@ public class GroupCodeFragment extends BaseFragment implements GroupCodeContract
 
     @OnClick(R.id.img_back)
     public void back() {
-        if(llRoot.getVisibility() == View.GONE){
-            llRoot.setVisibility(View.VISIBLE);
-            btnScan.setVisibility(View.VISIBLE);
-            return;
-        }
         getActivity().finish();
     }
 

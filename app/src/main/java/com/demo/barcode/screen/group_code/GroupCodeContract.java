@@ -37,7 +37,7 @@ public interface GroupCodeContract {
 
         void turnOnVibrator();
 
-        void setHeightListView();
+        void refeshLayout();
 
     }
 

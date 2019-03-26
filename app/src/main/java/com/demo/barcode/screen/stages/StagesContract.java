@@ -70,7 +70,7 @@ public interface StagesContract {
 
         void updateNumberScanInGroup(LogScanStages logScanStages, int numberInput);
 
-        void getListTimes(long orderId, int departmentId);
+        void getListTimes(long orderId);
 
         void uploadData(long orderId);
 
