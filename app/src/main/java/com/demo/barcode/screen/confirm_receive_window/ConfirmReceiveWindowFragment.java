@@ -35,9 +35,7 @@ import com.demo.barcode.adapter.ConfirmInputWindowAdapter;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
-import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
 

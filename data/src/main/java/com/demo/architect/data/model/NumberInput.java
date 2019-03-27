@@ -6,29 +6,29 @@ import com.google.gson.annotations.SerializedName;
 public class NumberInput {
     @SerializedName("NumberTotalInput")
     @Expose
-    private double numberTotalInput;
+    private int numberTotalInput;
 
     @SerializedName("NumberSuccess")
     @Expose
-    private double numberSuccess;
+    private int numberSuccess;
 
     @SerializedName("NumberWaitting")
     @Expose
-    private double numberWaitting;
+    private int numberWaitting;
 
     @SerializedName("TimesInput")
     @Expose
     private int timesInput;
 
-    public double getNumberTotalInput() {
+    public int getNumberTotalInput() {
         return numberTotalInput;
     }
 
-    public double getNumberSuccess() {
+    public int getNumberSuccess() {
         return numberSuccess;
     }
 
-    public double getNumberWaitting() {
+    public int getNumberWaitting() {
         return numberWaitting;
     }
 

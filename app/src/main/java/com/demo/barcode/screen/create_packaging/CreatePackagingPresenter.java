@@ -228,16 +228,11 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
             return;
         }
-
-
         resultFind = null;
-
-        Log.d("bambi", "1");
         if (resultList.size() == 1) {
             resultFind = resultList.get(0);
             checkBarcode(orderId,apartmentId);
         } else {
-            Log.d("bambi", "2");
             for (Result result : resultList) {
                 numberLoop++;
                 localRepository.findProductPackaging(result.getProductPackagingEntity().getId(), result.getPackageEntity().getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {

@@ -91,7 +91,6 @@ public interface StagesContract {
 
         void saveIPAddress(String ipAddress, int port, int idPrint);
 
-
         void deleteAllData();
 
         void getAllListStages();

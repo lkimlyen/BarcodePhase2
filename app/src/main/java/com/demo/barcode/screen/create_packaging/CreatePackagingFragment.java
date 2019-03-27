@@ -1,57 +1,43 @@
 package com.demo.barcode.screen.create_packaging;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.ModuleAdapter;
 import com.demo.barcode.adapter.SerialPackAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.manager.TypeSOManager;
-import com.demo.barcode.screen.capture.ScanActivity;
 import com.demo.barcode.screen.print_stamp.PrintStempActivity;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
-import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
-import com.demo.barcode.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
 
@@ -60,8 +46,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.RealmResults;
-
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.

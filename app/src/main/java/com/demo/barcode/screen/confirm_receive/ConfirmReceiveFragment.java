@@ -30,24 +30,19 @@ import android.widget.Toast;
 import com.demo.architect.data.model.DeliveryNoteEntity;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.ConfirmInputAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.constants.Constants;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.dialogs.ChooseGroupDialog;
 import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
-import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
 

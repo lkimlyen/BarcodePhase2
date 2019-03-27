@@ -20,36 +20,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.MachineEntity;
 import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.QualityControlAdapter;
 import com.demo.barcode.adapter.QualityControlWindowAdapter;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.manager.TypeSOManager;
 import com.demo.barcode.screen.detail_error.DetailErrorActivity;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.barcodereader.BarcodeScanner;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
-import com.demo.barcode.widgets.barcodereader.BarcodeScannerBuilder;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
 import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.List;
-
-import javax.crypto.Mac;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

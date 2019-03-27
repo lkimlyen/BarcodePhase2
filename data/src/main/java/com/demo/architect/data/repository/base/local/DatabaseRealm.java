@@ -1084,13 +1084,10 @@ public class DatabaseRealm {
 
 
             if (oldVersion == 3) {
-
-
                 schema.create("DeliveryNoteWindowModel")
                         .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
                         .addField("outputId", long.class)
                         .addField("productSetId", long.class)
-                        .addField("outputId", long.class)
                         .addField("productSetName", String.class)
                         .addField("productSetDetailId", long.class)
                         .addField("productSetDetailName", String.class)
@@ -1103,6 +1100,7 @@ public class DatabaseRealm {
                 schema.create("LogScanConfirmWindowModel")
                         .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
                         .addField("outputId", long.class)
+                        .addField("orderId", long.class)
                         .addField("departmentIDIn", int.class)
                         .addField("departmentIDOut", int.class)
                         .addField("productSetDetailId", long.class)
@@ -1118,6 +1116,125 @@ public class DatabaseRealm {
                         .addField("state", boolean.class)
                         .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteWindowModel"));
 
+                schema.remove("LogScanConfirm");
+
+                schema.create("LogScanConfirmModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("outputId", long.class)
+                        .addField("orderId", long.class)
+                        .addField("departmentIDIn", int.class)
+                        .addField("departmentIDOut", int.class)
+                        .addField("productDetailId", long.class)
+                        .addField("barcode", String.class)
+                        .addField("numberTotalOrder", int.class)
+                        .addField("numberOut", int.class)
+                        .addField("numberConfirmed", int.class)
+                        .addField("numberRestInTimes", int.class)
+                        .addField("numberUsedInTimes", int.class)
+                        .addField("userId", long.class)
+                        .addField("timesInput", int.class)
+                        .addField("status", int.class)
+                        .addField("statusConfirm", int.class)
+                        .addField("dateConfirm", String.class)
+                        .addField("state", boolean.class)
+                        .addRealmObjectField("deliveryNoteModel", schema.get("DeliveryNoteModel"));
+
+                schema.create("ProductDetailWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("productSetDetailID", long.class)
+                        .addField("productSetDetailName", String.class)
+                        .addField("productSetDetailCode", String.class)
+                        .addField("barcode", String.class)
+                        .addField("productSetName", String.class)
+                        .addField("numberTotal", int.class)
+                        .addField("numberSuccess", int.class)
+                        .addField("numberScanned", int.class)
+                        .addField("numberRest", int.class)
+                        .addField("userId", long.class)
+                        .addField("status", int.class)
+                        .addRealmListField("listStages", Integer.class);
+
+
+                schema.create("LogScanStagesWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("departmentIdIn", int.class)
+                        .addField("departmentIdOut", int.class)
+                        .addField("staffId", int.class)
+                        .addField("productSetDetailID", long.class)
+                        .addField("barcode", String.class)
+                        .addField("numberInput", int.class)
+                        .addField("dateScan", String.class)
+                        .addField("status", int.class)
+                        .addField("userId", long.class)
+                        .addRealmObjectField("productDetail", schema.get("ProductDetailWindowModel"));
+
+                schema.create("QualityControlWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("departmentId", int.class)
+                        .addField("machineId", int.class)
+                        .addField("violator", String.class)
+                        .addField("qcId", int.class)
+                        .addField("productSetDetailId", long.class)
+                        .addField("productSetDetailName", String.class)
+                        .addField("productSetName", String.class)
+                        .addField("barcode", String.class)
+                        .addField("totalNumber", int.class)
+                        .addField("listReason", String.class)
+                        .addField("description", String.class)
+                        .addRealmListField("idReasonList", Integer.class)
+                        .addRealmListField("imageList", schema.get("ImageModel"))
+                        .addField("listImage", String.class)
+                        .addField("numberRest", int.class)
+                        .addField("number", int.class)
+                        .addField("status", int.class)
+                        .addField("userId", long.class)
+                        .addField("edit", boolean.class);
+                schema.get("DeliveryNoteModel")
+                        .addField("status", int.class)
+                        .removeField("numberOut")
+                        .addField("numberOut", int.class)
+                        .removeField("numberRest")
+                        .addField("numberRest", int.class)
+                        .removeField("numberUsed")
+                        .addField("numberUsed", int.class)
+                        .removeField("numberConfirm")
+                        .addField("numberConfirm", int.class)
+                        .addField("productId", long.class)
+                        .addField("module", String.class)
+                        .addField("productDetailName", String.class)
+                        .removeField("deliveryNoteId");
+                schema.get("GroupCode")
+                        .removeField("numberTotal")
+                        .addField("numberTotal", int.class)
+                        .removeField("number")
+                        .addField("number", int.class);
+                schema.get("LogScanStages")
+                        .addField("status", int.class)
+                        .removeField("numberInput")
+                        .addField("numberInput", int.class)
+                        .removeField("numberGroup")
+                        .addField("numberGroup", int.class);
+                schema.get("ProductDetail")
+                        .addField("status", int.class)
+                        .addField("numberRest", int.class)
+                        .addField("numberScanned", int.class)
+                        .addField("orderId", long.class)
+                        .addField("productDetailId", long.class)
+                        .addField("barcode", String.class)
+                        .addField("module", String.class)
+                        .addField("times", int.class)
+                        .addField("numberTotal", int.class)
+                        .addField("numberSuccess", int.class)
+                        .removeField("productId")
+                        .removeField("listInput");
+
+                schema.get("QualityControlModel")
+                        .addField("qcCode", String.class)
+                        .addField("violator", String.class)
+                        .addField("machineName", String.class);
                 oldVersion++;
             }
 

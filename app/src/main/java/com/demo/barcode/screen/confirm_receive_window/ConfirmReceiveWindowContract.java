@@ -37,6 +37,7 @@ public interface ConfirmReceiveWindowContract {
 
         void showDialogCreateIPAddress(boolean refresh);
 
+        void showErrorByType(String message, int type);
 
         void showWarningPrint();
 

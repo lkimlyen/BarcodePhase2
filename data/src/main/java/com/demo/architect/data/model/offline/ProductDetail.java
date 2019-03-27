@@ -21,10 +21,10 @@ public class ProductDetail extends RealmObject {
     private String barcode;
     private String module;
     private int times;
-    private double numberTotal;
-    private double numberSuccess;
-    private double numberScanned;
-    private double numberRest;
+    private int numberTotal;
+    private int numberSuccess;
+    private int numberScanned;
+    private int numberRest;
     private long userId;
     private RealmList<Integer> listStages;
 
@@ -33,7 +33,7 @@ public class ProductDetail extends RealmObject {
     public ProductDetail() {
     }
 
-    public ProductDetail(long id, long orderId, long productDetailId, String productName, String productDetailCode, String barcode, String module, int times, double numberTotal, double numberSuccess, double numberScanned, double numberRest, long userId, int status) {
+    public ProductDetail(long id, long orderId, long productDetailId, String productName, String productDetailCode, String barcode, String module, int times, int numberTotal, int numberSuccess, int numberScanned, int numberRest, long userId, int status) {
         this.id = id;
         this.orderId = orderId;
         this.productDetailId = productDetailId;
@@ -131,7 +131,7 @@ public class ProductDetail extends RealmObject {
 //                    if (numberInputModel == null) {
 //                        listNumberInput.add(NumberInputModel.create(realm, numberInput));
 //                    } else {
-//                        double numberTotal = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
+//                        int numberTotal = numberInput.getNumberTotalInput() - numberInputModel.getNumberTotal();
 //                        numberInputModel.setNumberRest(numberInputModel.getNumberRest() + numberTotal);
 //                        numberInputModel.setNumberTotal(numberInput.getNumberTotalInput());
 //                        numberInputModel.setNumberSuccess(numberInput.getNumberSuccess());
@@ -152,19 +152,19 @@ public class ProductDetail extends RealmObject {
         return times;
     }
 
-    public double getNumberTotal() {
+    public int getNumberTotal() {
         return numberTotal;
     }
 
-    public double getNumberSuccess() {
+    public int getNumberSuccess() {
         return numberSuccess;
     }
 
-    public double getNumberScanned() {
+    public int getNumberScanned() {
         return numberScanned;
     }
 
-    public double getNumberRest() {
+    public int getNumberRest() {
         return numberRest;
     }
 
@@ -184,15 +184,15 @@ public class ProductDetail extends RealmObject {
         return module;
     }
 
-    public void setNumberSuccess(double numberSuccess) {
+    public void setNumberSuccess(int numberSuccess) {
         this.numberSuccess = numberSuccess;
     }
 
-    public void setNumberScanned(double numberScanned) {
+    public void setNumberScanned(int numberScanned) {
         this.numberScanned = numberScanned;
     }
 
-    public void setNumberRest(double numberRest) {
+    public void setNumberRest(int numberRest) {
         this.numberRest = numberRest;
     }
 
