@@ -25,12 +25,14 @@ public class ListSOManager {
     }
 
     public SOEntity getSOById(long id) {
+        SOEntity soEntity = null;
         for (SOEntity so : listSO) {
             if (so.getOrderId() == id) {
-                return so;
+                soEntity = so;
+                break;
             }
         }
-        return null;
+        return soEntity;
     }
 
 }

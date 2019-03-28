@@ -157,6 +157,7 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
 
+        lvConfirm.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         mPresenter.getListDepartment();
         mPresenter.getListSO();
 
@@ -641,6 +642,40 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
                 dialog.dismiss();
             }
         });
+    }
+
+    @Override
+    public void showErrorByType(String message, int type) {
+        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.text_title_noti))
+                .setContentText(message)
+                .setConfirmText(getString(R.string.text_ok))
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .setCancelText(getString(R.string.text_try))
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        switch (type) {
+                            case 1:
+                                mPresenter.getListSO();
+                                break;
+                            case 2:
+                                mPresenter.getListDeliveryCode(orderId,departmentId);
+                                break;
+                            case 3:
+                                mPresenter.getListConfirm(maPhieuId, false);
+                                break;
+                        }
+                    }
+                })
+                .show();
     }
 
 

@@ -169,6 +169,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
         mPresenter.getListDepartment();
         mPresenter.getListSO();
 
+
     }
 
     @Override
@@ -383,7 +384,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                 }
 
             }
-        });
+        }, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setAutoMeasureEnabled(true);
         rvCode.setLayoutManager(linearLayoutManager);

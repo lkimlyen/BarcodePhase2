@@ -19,7 +19,7 @@ import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListModulePackagingManager;
-import com.demo.barcode.manager.ListPositionScanManager;
+import com.demo.barcode.manager.PositionScanManager;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -30,14 +30,17 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
     private OnEditTextChangeListener onEditTextChangeListener;
     private onErrorListener onErrorListener;
     private onClickEditTextListener onClickEditTextListener;
+    private long productId;
 
     public ScanPackagingAdapter(OrderedRealmCollection<LogScanPackaging> realmResults, OnItemClearListener listener,
-                                OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener, ScanPackagingAdapter.onClickEditTextListener onClickEditTextListener) {
+                                OnEditTextChangeListener onEditTextChangeListener, onErrorListener onErrorListener,
+                                ScanPackagingAdapter.onClickEditTextListener onClickEditTextListener, long productId) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
         this.onErrorListener = onErrorListener;
         this.onClickEditTextListener = onClickEditTextListener;
+        this.productId = productId;
     }
 
     @Override
@@ -88,8 +91,9 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                     if (numberInput == item.getNumberInput()) {
                         return;
                     }
-                    PositionScan positionScan = ListPositionScanManager.getInstance().getPositionScanByOrderId(item.getOrderId(), item.getApartmentId());
-                    String module = ListModulePackagingManager.getInstance().getModuleByModule(item.getModule()).getModule();
+                    PositionScan positionScan = PositionScanManager.getInstance()
+                            .getPositionScan();
+                    String module = ListModulePackagingManager.getInstance().getModuleByModule(productId).getModule();
                     if (positionScan != null) {
                         if (!positionScan.getCodePack().equals(item.getCodePack())) {
                             if (!module.equals(positionScan.getModule()) || !item.getSttPack().equals(positionScan.getSerialPack())) {
@@ -106,7 +110,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
                         return;
                     }
 
-                    onEditTextChangeListener.onEditTextChange(item, Integer.parseInt(holder.edtNumberScan.getText().toString()));
+                    onEditTextChangeListener.onEditTextChange(item.getId(), Integer.parseInt(holder.edtNumberScan.getText().toString()));
 
                 } catch (Exception e) {
 
@@ -137,7 +141,7 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onItemClick(item);
+                listener.onItemClick(item.getId());
             }
         });
         if (item.getStatusScan() == Constants.FULL) {
@@ -182,16 +186,17 @@ public class ScanPackagingAdapter extends RealmBaseAdapter<LogScanPackaging> imp
     }
 
     public interface OnItemClearListener {
-        void onItemClick(LogScanPackaging item);
+        void onItemClick(long logId);
     }
 
     public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanPackaging item, int number);
+        void onEditTextChange(long logId, int number);
     }
 
     public interface onErrorListener {
         void errorListener(String message);
     }
+
     public interface onClickEditTextListener {
         void onClick();
     }

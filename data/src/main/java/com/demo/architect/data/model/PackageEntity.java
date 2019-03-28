@@ -22,11 +22,11 @@ public class PackageEntity implements Serializable {
 
     @SerializedName("Current")
     @Expose
-    private double numberScan;
+    private int numberScan;
 
     @SerializedName("Total")
     @Expose
-    private double total;
+    private int total;
 
     @SerializedName("DetailDataList")
     @Expose
@@ -44,7 +44,7 @@ public class PackageEntity implements Serializable {
         return serialPack;
     }
 
-    public double getTotal() {
+    public int getTotal() {
         return total;
     }
 
@@ -52,7 +52,7 @@ public class PackageEntity implements Serializable {
         return productPackagingEntityList;
     }
 
-    public double getNumberScan() {
+    public int getNumberScan() {
         return numberScan;
     }
 }

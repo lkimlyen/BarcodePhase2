@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 
@@ -20,28 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PrintStampAdapter extends BaseAdapter {
-    private Context mContext;
-    private List<LogScanPackaging> list;
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmBaseAdapter;
 
-    public PrintStampAdapter(Context c, List<LogScanPackaging> list) {
-        mContext = c;
-        this.list = list;
-    }
+public class PrintStampAdapter extends RealmBaseAdapter<LogScanPackaging> implements ListAdapter {
+    public PrintStampAdapter(OrderedRealmCollection<LogScanPackaging> realmResults) {
+        super(realmResults);
 
-    @Override
-    public int getCount() {
-        return list.size();
-    }
-
-    @Override
-    public LogScanPackaging getItem(int i) {
-        return list.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
     }
 
     @NonNull
@@ -56,7 +43,7 @@ public class PrintStampAdapter extends BaseAdapter {
         } else {
             viewHolder = (HistoryHolder) convertView.getTag();
         }
-            final LogScanPackaging item = getItem(position);
+            final LogScanPackaging item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         return convertView;

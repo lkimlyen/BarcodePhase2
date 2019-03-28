@@ -136,7 +136,7 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
                     public void onError(GetDetailInByDeliveryWindowUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         if (!refresh) {
-                            view.showErrorByType(errorResponse.getDescription(),2);
+                            view.showErrorByType(errorResponse.getDescription(),3);
                             ListOrderConfirmWindowManager.getInstance().setListOrder(new ArrayList<>());
 
                         }
@@ -162,10 +162,9 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
 
                     @Override
                     public void onError(GetListMaPhieuGiaoUsecase.ErrorValue errorResponse) {
-
+                        view.showErrorByType(errorResponse.getDescription(),3);
                         ListDeliveryNoteManager.getInstance().setListDeliveryNote(new ArrayList<>());
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
                     }
                 });
     }

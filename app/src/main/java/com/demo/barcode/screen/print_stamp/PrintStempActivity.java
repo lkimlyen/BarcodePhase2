@@ -22,20 +22,21 @@ public class PrintStempActivity extends BaseActivity {
     public static final String MODULE_ID = "module_id";
     public static final String SERIAL_PACK_ID = "serial_pack_id";
     public static final String ORDER_TYPE = "order_type";
-
+    public static final String LOG_SERIAL_ID = "LOG_SERIAL_ID";
     public static final int REQUEST_CODE = 117;
     @Inject
     PrintStempPresenter PrintStempPresenter;
 
     PrintStempFragment fragment;
 
-    public static void start(Activity context, long orderId, long apartmentId, long moduleId,String serialPackId, int orderType) {
+    public static void start(Activity context, long orderId, long apartmentId, long moduleId,String serialPackId, int orderType, long logSerialId) {
         Intent intent = new Intent(context, PrintStempActivity.class);
         intent.putExtra(ORDER_ID, orderId);
         intent.putExtra(APARTMENT_ID, apartmentId);
         intent.putExtra(MODULE_ID, moduleId);
         intent.putExtra(SERIAL_PACK_ID,serialPackId);
         intent.putExtra(ORDER_TYPE,orderType);
+        intent.putExtra(LOG_SERIAL_ID,logSerialId);
         context.startActivityForResult(intent,REQUEST_CODE);
     }
 
@@ -51,11 +52,6 @@ public class PrintStempActivity extends BaseActivity {
                 .plus(new PrintStempModule(fragment))
                 .inject(this);
 
-//        Window w = getWindow(); // in Activity's onCreate() for instance
-//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-//        }
     }
 
     private void initFragment() {

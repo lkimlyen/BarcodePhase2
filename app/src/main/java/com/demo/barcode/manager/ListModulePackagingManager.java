@@ -34,10 +34,32 @@ public class ListModulePackagingManager {
             for (PackageEntity packageEntity : requestEntity.getPackageList()) {
                 for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
                     if (productPackagingEntity.getBarcode().equals(barcode)) {
-                        results.add(new  Result(requestEntity, packageEntity, productPackagingEntity));
+                        results.add(new Result(requestEntity, packageEntity, productPackagingEntity));
                     }
                 }
             }
+        }
+        return results;
+    }
+
+    public List<Result> getListProductByBarcodeAndModuleAndSttPack(String barcode, String module, String sttPack) {
+        List<Result> results = new ArrayList<>();
+        for (ListModuleEntity requestEntity : list) {
+            if (requestEntity.getModule().equals(module)) {
+                for (PackageEntity packageEntity : requestEntity.getPackageList()) {
+                    if (packageEntity.getSerialPack().equals(sttPack)) {
+                        for (ProductPackagingEntity productPackagingEntity : packageEntity.getProductPackagingEntityList()) {
+                            if (productPackagingEntity.getBarcode().equals(barcode)) {
+                                results.add(new Result(requestEntity, packageEntity, productPackagingEntity));
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+
         }
         return results;
     }
@@ -76,6 +98,7 @@ public class ListModulePackagingManager {
         }
         return null;
     }
+
     public PackageEntity getPackingBySerialPack(long moduleId, String serialPack) {
         for (ListModuleEntity requestEntity : list) {
 
@@ -89,7 +112,6 @@ public class ListModulePackagingManager {
         }
         return null;
     }
-
 
 
     public ListModuleEntity getModuleById(long moduleId) {

@@ -45,11 +45,11 @@ public interface CreatePackagingContract {
 
         void getListApartment(long orderId);
 
-        void getListScan(long orderId, long apartmentId);
+        void getListScan();
 
-        void deleteLogScan(LogScanPackaging log);
+        void deleteLogScan(long productId, long logId, String sttPack,String codePack);
 
-        void updateNumberScan(LogScanPackaging logScanPackaging, int number);
+        void updateNumberScan(long productId,long logId, int number,String sttPack, String codePack,int numberTotal);
 
         void checkBarcode(String barcode, long orderId, long apartmentId);
 

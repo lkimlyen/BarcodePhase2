@@ -122,7 +122,6 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 showSuccess(getString(R.string.text_print_success));
-                mPresenter.getListScan(orderId, apartmentId);
                 mPresenter.getListProduct(orderId, apartmentId);
             } else {
                 isClick = false;
@@ -144,6 +143,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     private void initView() {
+        mPresenter.getListScan();
         txtDateScan.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
@@ -256,7 +256,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         adapter = new SerialPackAdapter(log,
                 new SerialPackAdapter.OnItemClearListener() {
                     @Override
-                    public void onItemClick(LogScanPackaging item) {
+                    public void onItemClick(long productId, long logId, String sttPack, String codePack) {
                         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText(getString(R.string.text_title_noti))
                                 .setContentText(getString(R.string.text_delete_code))
@@ -265,7 +265,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.deleteLogScan(item);
+                                        mPresenter.deleteLogScan(productId, logId, sttPack, codePack);
                                     }
                                 })
                                 .setCancelText(getString(R.string.text_no))
@@ -279,9 +279,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
                     }
                 }, new SerialPackAdapter.OnEditTextChangeListener() {
             @Override
-            public void onEditTextChange(LogScanPackaging item, int number) {
-
-                mPresenter.updateNumberScan(item, number);
+            public void onEditTextChange(long productId, long logId, int number, String sttPack, String codePack, int numberTotal) {
+                mPresenter.updateNumberScan(productId, logId, number, sttPack, codePack, numberTotal);
             }
         }, new SerialPackAdapter.onErrorListener() {
             @Override
@@ -293,8 +292,8 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
         },
                 new SerialPackAdapter.onPrintListener() {
                     @Override
-                    public void onPrint(long moduleId, String serialPack) {
-                        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, orderType);
+                    public void onPrint(long moduleId, String serialPack, long logSerialId) {
+                        PrintStempActivity.start(getActivity(), orderId, apartmentId, moduleId, serialPack, orderType, logSerialId);
 
                     }
                 }, new SerialPackAdapter.onClickEditTextListener() {
@@ -312,21 +311,61 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             tvCodeSO.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                            (list);
-                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                        @Override
-                        public void onSearchableItemClicked(Object item, int position) {
-                            SOEntity soItem = (SOEntity) item;
-                            tvCodeSO.setText(soItem.getCodeSO());
-                            txtCustomerName.setText(soItem.getCustomerName());
-                            orderId = soItem.getOrderId();
-                            tvApartment.setText(getString(R.string.text_choose_floor));
-                            apartmentId = 0;
-                            mPresenter.getListApartment(orderId);
-                        }
-                    });
-                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    if (adapter.getCount() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.text_title_noti))
+                                .setContentText(getString(R.string.text_upload_data))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.deleteAllItemLog();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                SOEntity soItem = (SOEntity) item;
+                                                tvCodeSO.setText(soItem.getCodeSO());
+                                                txtCustomerName.setText(soItem.getCustomerName());
+                                                orderId = soItem.getOrderId();
+                                                tvApartment.setText(getString(R.string.text_choose_floor));
+                                                apartmentId = 0;
+                                                mPresenter.getListApartment(orderId);
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                                    }
+                                })
+                                .show();
+                    } else {
+
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                SOEntity soItem = (SOEntity) item;
+                                tvCodeSO.setText(soItem.getCodeSO());
+                                txtCustomerName.setText(soItem.getCustomerName());
+                                orderId = soItem.getOrderId();
+                                tvApartment.setText(getString(R.string.text_choose_floor));
+                                apartmentId = 0;
+                                mPresenter.getListApartment(orderId);
+                            }
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                    }
+
                 }
             });
         } else {
@@ -341,23 +380,63 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
             tvApartment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                            (list);
-                    searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                        @Override
-                        public void onSearchableItemClicked(Object item, int position) {
-                            ApartmentEntity apartmentEntity = (ApartmentEntity) item;
-                            tvApartment.setText(apartmentEntity.getApartmentName());
-                            apartmentId = apartmentEntity.getApartmentID();
-                            if (orderId > 0) {
-                                mPresenter.getListScan(orderId, apartmentId);
-                                mPresenter.getListProduct(orderId, apartmentId);
+                    if (adapter.getCount() > 0) {
+                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText(getString(R.string.text_title_noti))
+                                .setContentText(getString(R.string.text_upload_data))
+                                .setConfirmText(getString(R.string.text_yes))
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+
+                                    }
+                                })
+                                .setCancelText(getString(R.string.text_no))
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+                                        mPresenter.deleteAllItemLog();
+                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                                (list);
+                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                            @Override
+                                            public void onSearchableItemClicked(Object item, int position) {
+                                                ApartmentEntity apartmentEntity = (ApartmentEntity) item;
+                                                tvApartment.setText(apartmentEntity.getApartmentName());
+                                                apartmentId = apartmentEntity.getApartmentID();
+                                                if (orderId > 0) {
+                                                    mPresenter.getListScan();
+                                                    mPresenter.getListProduct(orderId, apartmentId);
+                                                }
+                                            }
+                                        });
+                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                                    }
+                                })
+                                .show();
+                    } else {
+
+                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                (list);
+                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                            @Override
+                            public void onSearchableItemClicked(Object item, int position) {
+                                ApartmentEntity apartmentEntity = (ApartmentEntity) item;
+                                tvApartment.setText(apartmentEntity.getApartmentName());
+                                apartmentId = apartmentEntity.getApartmentID();
+                                if (orderId > 0) {
+                                    mPresenter.getListProduct(orderId, apartmentId);
+                                }
                             }
-                        }
-                    });
-                    searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                        });
+                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+
+                    }
                 }
             });
+
         } else {
             tvApartment.setOnClickListener(null);
         }
@@ -415,11 +494,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (llRoot.getVisibility() == View.GONE) {
-            llRoot.setVisibility(View.VISIBLE);
-            btnScan.setVisibility(View.VISIBLE);
-            return;
-        }
+
         if (adapter != null && adapter.getCount() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
@@ -464,24 +539,64 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
 
-
     @OnClick(R.id.tv_type_product)
     public void chooseProduct() {
-        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                (TypeSOManager.getInstance().getListType());
-        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-            @Override
-            public void onSearchableItemClicked(Object item, int position) {
-                TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
-                tvTypeProduct.setText(typeSO.getName());
-                tvCodeSO.setText(getString(R.string.text_choose_code_so));
-                orderId = 0;
-                tvApartment.setText(getString(R.string.text_choose_floor));
-                apartmentId = 0;
-                txtCustomerName.setText("");
-                mPresenter.getListSO(typeSO.getValue());
-            }
-        });
-        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+        if (adapter.getCount() > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_upload_data))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            mPresenter.deleteAllItemLog();
+                            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                                    (TypeSOManager.getInstance().getListType());
+                            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                                @Override
+                                public void onSearchableItemClicked(Object item, int position) {
+                                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                                    tvTypeProduct.setText(typeSO.getName());
+                                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                                    orderId = 0;
+                                    tvApartment.setText(getString(R.string.text_choose_floor));
+                                    apartmentId = 0;
+                                    txtCustomerName.setText("");
+                                    mPresenter.getListSO(typeSO.getValue());
+                                }
+                            });
+                            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+                        }
+                    })
+                    .show();
+        } else {
+
+            SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
+                    (TypeSOManager.getInstance().getListType());
+            searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
+                @Override
+                public void onSearchableItemClicked(Object item, int position) {
+                    TypeSOManager.TypeSO typeSO = (TypeSOManager.TypeSO) item;
+                    tvTypeProduct.setText(typeSO.getName());
+                    tvCodeSO.setText(getString(R.string.text_choose_code_so));
+                    orderId = 0;
+                    tvApartment.setText(getString(R.string.text_choose_floor));
+                    apartmentId = 0;
+                    txtCustomerName.setText("");
+                    mPresenter.getListSO(typeSO.getValue());
+                }
+            });
+            searchableListDialog.show(getActivity().getFragmentManager(), TAG);
+        }
+
     }
 }

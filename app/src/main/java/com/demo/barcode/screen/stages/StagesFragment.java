@@ -160,6 +160,8 @@ public class StagesFragment extends BaseFragment implements StagesContract.View 
 
 
     private void initView() {
+
+        rvCode.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL);
         rvCode.addItemDecoration(dividerItemDecoration);

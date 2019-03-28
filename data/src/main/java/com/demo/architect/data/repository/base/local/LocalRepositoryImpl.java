@@ -13,6 +13,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
+import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
@@ -410,12 +411,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<RealmResults<LogListSerialPackPagkaging>> getListScanPackaging(final SOEntity soEntity, final ApartmentEntity apartment) {
+    public Observable<RealmResults<LogListSerialPackPagkaging>> getListScanPackaging() {
         return Observable.create(new Observable.OnSubscribe<RealmResults<LogListSerialPackPagkaging>>() {
             @Override
             public void call(Subscriber<? super RealmResults<LogListSerialPackPagkaging>> subscriber) {
                 try {
-                    RealmResults<LogListSerialPackPagkaging> listScanPackaging = databaseRealm.getListScanPackaging(soEntity, apartment);
+                    RealmResults<LogListSerialPackPagkaging> listScanPackaging = databaseRealm.getListScanPackaging();
                     subscriber.onNext(listScanPackaging);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -444,13 +445,13 @@ public class LocalRepositoryImpl implements LocalRepository {
 
 
     @Override
-    public Observable<String> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+    public Observable<Integer> saveBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    databaseRealm.addBarcodeScanPackaging(module, packageEntity, productPackagingEntity, orderId, apartmentId);
-                    subscriber.onNext("Success");
+                   int number =  databaseRealm.addBarcodeScanPackaging(module, packageEntity, productPackagingEntity, orderId, apartmentId);
+                    subscriber.onNext(number);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -460,12 +461,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteScanPackaging(final long logId) {
+    public Observable<String> deleteScanPackaging(final long productId, final String sttPack, final String codePack, final long logId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.deleteScanPackaging(logId);
+                    databaseRealm.deleteScanPackaging(productId,sttPack,codePack,logId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -492,12 +493,28 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ProductPackagingModel> findProductPackaging(final long productId, final String serialPack) {
+    public Observable<ProductPackagingModel> findProductPackaging(final long productId, final long productDetailId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<ProductPackagingModel>() {
             @Override
             public void call(Subscriber<? super ProductPackagingModel> subscriber) {
                 try {
-                    ProductPackagingModel model = databaseRealm.findProductPackaging(productId, serialPack);
+                    ProductPackagingModel model = databaseRealm.findProductPackaging(productId, productDetailId,serialPack);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Result> findProductPackagingByList(final List<Result> list) {
+        return Observable.create(new Observable.OnSubscribe<Result>() {
+            @Override
+            public void call(Subscriber<? super Result> subscriber) {
+                try {
+                    Result model = databaseRealm.findProductPackagingByList(list);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -524,12 +541,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> getTotalScanBySerialPack(final long orderId, final long apartmentId, final long moduleId, final String serialPack) {
+    public Observable<Integer> getTotalScanBySerialPack(final long productId, final String serialPack) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-                    int total = databaseRealm.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
+                    int total = databaseRealm.getTotalScanBySerialPack(productId, serialPack);
                     subscriber.onNext(total);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -636,12 +653,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateStatusScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack, final long serverId) {
+    public Observable<String> updateStatusScanPackaging(final long logSerialId, final long serverId) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    databaseRealm.updateStatusScanPackaging(orderId, apartmentId, moduleId, serialPack, serverId);
+                    databaseRealm.updateStatusScanPackaging(logSerialId, serverId);
                     subscriber.onNext("Success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -1529,6 +1546,38 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     databaseRealm.updateStatusLogStages ();
                     subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<LogListSerialPackPagkaging> getListDetailPackageById(final long logSerialId) {
+        return Observable.create(new Observable.OnSubscribe<LogListSerialPackPagkaging>() {
+            @Override
+            public void call(Subscriber<? super LogListSerialPackPagkaging> subscriber) {
+                try {
+                    LogListSerialPackPagkaging log =  databaseRealm.getListDetailPackageById (logSerialId);
+                    subscriber.onNext(log);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> getListDetailUploadPackageById(final long logSerialId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                  String json =  databaseRealm.getListDetailUploadPackageById (logSerialId);
+                    subscriber.onNext(json);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

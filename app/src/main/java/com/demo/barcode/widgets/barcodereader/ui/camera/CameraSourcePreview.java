@@ -87,6 +87,8 @@ public class CameraSourcePreview extends ViewGroup {
     private void startIfReady() throws IOException, SecurityException {
         if (mStartRequested && mSurfaceAvailable) {
             mCameraSource.start(mSurfaceView.getHolder());
+            int zoom = mCameraSource.doZoom(5);
+            Log.d(TAG, "zoom: " + zoom);
             if (mOverlay != null) {
                 Size size = mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());

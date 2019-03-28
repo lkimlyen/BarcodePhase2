@@ -477,7 +477,7 @@ public class CameraSource {
             } else if (currentZoom > maxZoom) {
                 currentZoom = maxZoom;
             }
-            parameters.setZoom(currentZoom);
+            parameters.setZoom(4);
             mCamera.setParameters(parameters);
             return currentZoom;
         }

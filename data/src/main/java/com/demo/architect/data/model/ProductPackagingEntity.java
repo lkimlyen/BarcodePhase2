@@ -36,7 +36,7 @@ public class ProductPackagingEntity  implements Serializable{
 
     @SerializedName("Quantity")
     @Expose
-    private double number;
+    private int number;
 
     public String getProductName() {
         return productName;
@@ -54,7 +54,7 @@ public class ProductPackagingEntity  implements Serializable{
         return width;
     }
 
-    public double getNumber() {
+    public int getNumber() {
         return number;
     }
 

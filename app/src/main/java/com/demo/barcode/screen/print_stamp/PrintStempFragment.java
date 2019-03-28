@@ -3,32 +3,25 @@ package com.demo.barcode.screen.print_stamp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.adapter.PrintStampAdapter;
-import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
 import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.ConvertUtils;
 import com.demo.barcode.util.Precondition;
-import com.demo.barcode.widgets.spinner.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +40,16 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public static final String APARTMENT_ID = "apartment_id";
     public static final String MODULE_ID = "module_id";
     public static final String ORDER_TYPE = "order_type";
+    public static final String LOG_SERIAL_ID = "LOG_SERIAL_ID";
     private final String TAG = PrintStempFragment.class.getName();
+    private boolean isEnough = false;
     private PrintStempContract.Presenter mPresenter;
     private PrintStampAdapter adapter;
     private long orderId;
     private long apartmentId;
     private long moduleId;
     private int orderType;
+    private long logSerialId;
     private String serialPack;
     @Bind(R.id.lv_codes)
     ListView lvCode;
@@ -114,6 +110,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         apartmentId = getActivity().getIntent().getLongExtra(APARTMENT_ID, 0);
         serialPack = getActivity().getIntent().getStringExtra(PrintStempActivity.SERIAL_PACK_ID);
         orderType = getActivity().getIntent().getIntExtra(ORDER_TYPE, 0);
+        logSerialId = getActivity().getIntent().getLongExtra(LOG_SERIAL_ID, 0);
         initView();
         return view;
     }
@@ -122,10 +119,10 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         mPresenter.getOrderPackaging(orderId);
         mPresenter.getApartment(apartmentId);
-        mPresenter.getModule(moduleId,serialPack);
-        mPresenter.getListScanStages(orderId,apartmentId,moduleId,serialPack);
+        mPresenter.getModule(moduleId, serialPack);
+        mPresenter.getListDetailPackageById(logSerialId);
         mPresenter.getListCodePack(orderId, orderType, moduleId);
-        mPresenter.getTotalScanBySerialPack(orderId,apartmentId,moduleId,serialPack);
+        mPresenter.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack);
 
     }
 
@@ -184,9 +181,9 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
 
     @Override
-    public void showOrderPackaging(LogListOrderPackaging log) {
-        txtCodeSO.setText(log.getCodeSO());
-        txtCustomerName.setText(log.getCustomerName());
+    public void showOrderPackaging(SOEntity soEntity) {
+        txtCodeSO.setText(soEntity.getCodeSO());
+        txtCustomerName.setText(soEntity.getCustomerName());
     }
 
     @Override
@@ -195,16 +192,12 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     }
 
     @Override
-    public void showListScanPackaging(List<LogScanPackaging> list) {
-        if (list.size() == 0) {
-            adapter = new PrintStampAdapter(getContext(), new ArrayList<>());
-            lvCode.setAdapter(adapter);
-            showError(getString(R.string.text_no_data));
-            return;
-        }
-        adapter = new PrintStampAdapter(getContext(), list);
+    public void showListScanPackaging(LogListSerialPackPagkaging list, boolean enough) {
+        isEnough = enough;
+        adapter = new PrintStampAdapter(list.getList());
         lvCode.setAdapter(adapter);
     }
+
 
     @Override
     public void showDialogCreateIPAddress() {
@@ -213,7 +206,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
             @Override
             public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port,orderId,apartmentId,moduleId,serialPack, 0);
+                mPresenter.saveIPAddress(ipAddress, port, orderId, apartmentId, moduleId, serialPack, 0,logSerialId);
                 dialog.dismiss();
             }
         });
@@ -261,11 +254,11 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
-        if (!mPresenter.checkNumberProduct(orderId, moduleId, apartmentId, serialPack)) {
+        if (!isEnough) {
             showError(getString(R.string.text_quality_product_not_enough_in_package));
             return;
         }
-        mPresenter.printTemp(orderId,apartmentId,moduleId,serialPack,0);
+        mPresenter.printTemp(orderId, apartmentId, moduleId, serialPack, 0,logSerialId);
     }
 
     @Override

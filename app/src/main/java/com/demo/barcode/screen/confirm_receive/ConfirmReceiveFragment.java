@@ -154,7 +154,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
     private void initView() {
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-
+        lvConfirm.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         mPresenter.getListDepartment();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

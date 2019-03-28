@@ -7,10 +7,12 @@ import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
+import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
@@ -22,6 +24,7 @@ import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
 import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListModulePackagingManager;
+import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
 import com.google.gson.Gson;
@@ -75,17 +78,13 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     @Override
     public void getOrderPackaging(long orderId) {
-        localRepository.findOrderPackaging(orderId).subscribe(new Action1<LogListOrderPackaging>() {
-            @Override
-            public void call(LogListOrderPackaging logListOrderPackaging) {
-                view.showOrderPackaging(logListOrderPackaging);
-            }
-        });
+        SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
+        view.showOrderPackaging(soEntity);
     }
 
     @Override
-    public void getTotalScanBySerialPack(long orderId, long apartmentId, long moduleId, String serialPack) {
-        localRepository.getTotalScanBySerialPack(orderId, apartmentId, moduleId, serialPack).subscribe(new Action1<Integer>() {
+    public void getTotalScanBySerialPack(long orderId, long apartmentId, long productId, String serialPack) {
+        localRepository.getTotalScanBySerialPack( productId, serialPack).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 view.showTotalNumberScan(integer);
@@ -94,22 +93,24 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void getListScanStages(long orderId, long apartmentId, long moduleId, String serialPackId) {
-        localRepository.getListScanPackaging(orderId, apartmentId, moduleId, serialPackId)
-                .subscribe(new Action1<List<LogScanPackaging>>() {
+    public void getListDetailPackageById(long logSerialId) {
+        localRepository.getListDetailPackageById(logSerialId)
+                .subscribe(new Action1<LogListSerialPackPagkaging>() {
                     @Override
-                    public void call(List<LogScanPackaging> logScanPackagings) {
-                        view.showListScanPackaging(logScanPackagings);
-                        GsonBuilder builder = new GsonBuilder();
-                        builder.excludeFieldsWithoutExposeAnnotation();
-                        Gson gson = builder.create();
-                        jsonUpload = gson.toJson(logScanPackagings);
+                    public void call(LogListSerialPackPagkaging logScanPackagings) {
+                        localRepository.getTotalScanBySerialPack( logScanPackagings.getProductId(), logScanPackagings.getSerialPack()).subscribe(new Action1<Integer>() {
+                            @Override
+                            public void call(Integer integer) {
+                                view.showListScanPackaging(logScanPackagings, logScanPackagings.getNumberTotal() == integer);
+
+                            }
+                        });
                     }
                 });
     }
 
     @Override
-    public void printTemp(long orderId, long apartmentId, long moduleId, String serialPack, long serverId) {
+    public void printTemp(long orderId, long apartmentId, long moduleId, String serialPack, long serverId,long logSerialId) {
         UserEntity user = UserManager.getInstance().getUser();
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
@@ -126,24 +127,31 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
-                                postListCodeProductDetailUsecase.executeIO(new PostListCodeProductDetailUsecase.RequestValue(jsonUpload, user.getId(),
-                                        null), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
-                                        PostListCodeProductDetailUsecase.ErrorValue>() {
+                                localRepository.getListDetailUploadPackageById(logSerialId).subscribe(new Action1<String>() {
                                     @Override
-                                    public void onSuccess(PostListCodeProductDetailUsecase.ResponseValue successResponse) {
+                                    public void call(String json) {
+                                        postListCodeProductDetailUsecase.executeIO(new PostListCodeProductDetailUsecase.RequestValue(json, user.getId(),
+                                                null), new BaseUseCase.UseCaseCallback<PostListCodeProductDetailUsecase.ResponseValue,
+                                                PostListCodeProductDetailUsecase.ErrorValue>() {
+                                            @Override
+                                            public void onSuccess(PostListCodeProductDetailUsecase.ResponseValue successResponse) {
 
-                                        printTemp(orderId, apartmentId, moduleId, serialPack, successResponse.getId());
-                                    }
+                                                printTemp(orderId, apartmentId, moduleId, serialPack, successResponse.getId(),logSerialId);
+                                            }
 
-                                    @Override
-                                    public void onError(PostListCodeProductDetailUsecase.ErrorValue errorResponse) {
-                                        view.showError(errorResponse.getDescription());
-                                        view.hideProgressBar();
+                                            @Override
+                                            public void onError(PostListCodeProductDetailUsecase.ErrorValue errorResponse) {
+                                                view.showError(errorResponse.getDescription());
+                                                view.hideProgressBar();
+                                            }
+                                        });
                                     }
                                 });
 
+
+
                             } else {
-                                localRepository.updateStatusScanPackaging(orderId, apartmentId, moduleId, serialPack, serverId).subscribe(new Action1<String>() {
+                                localRepository.updateStatusScanPackaging(logSerialId, serverId).subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
                                         view.hideProgressBar();
@@ -184,14 +192,14 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void saveIPAddress(String ipAddress, int port, long orderId, long apartmentId, long moduleId, String serialPack, long serverId) {
+    public void saveIPAddress(String ipAddress, int port, long orderId, long apartmentId, long moduleId, String serialPack, long serverId,long logSerialId) {
         long userId = UserManager.getInstance().getUser().getId();
         IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
                 //  view.showIPAddress(address);
-                printTemp(orderId, apartmentId, moduleId, serialPack, serverId);
+                printTemp(orderId, apartmentId, moduleId, serialPack, serverId,logSerialId);
             }
         });
     }
@@ -219,9 +227,9 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     private int numberProduct = 0;
 
     @Override
-    public boolean checkNumberProduct(long orderId, long productId, long apartmentId, String sttPack) {
+    public boolean checkNumberProduct( long productId,String sttPack) {
         numberProduct = 0;
-        localRepository.getTotalScanBySerialPack(orderId, apartmentId, productId, sttPack).subscribe(new Action1<Integer>() {
+        localRepository.getTotalScanBySerialPack( productId, sttPack).subscribe(new Action1<Integer>() {
             @Override
             public void call(Integer integer) {
                 numberProduct = integer;

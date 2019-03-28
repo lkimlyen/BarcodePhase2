@@ -55,15 +55,12 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
     private static final String KEY_SCAN_OVERLAY_VISIBILITY = "key_scan_overlay_visibility";
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
-
     // constants used to pass extra data in the intent
     public static final String BarcodeObject = "Barcode";
     private boolean isPaused = false;
-
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
@@ -73,7 +70,6 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
     private static final int REQUEST_PERMISSION_SETTING = 102;
     private boolean sentToSettings = false;
     private int scanOverlayVisibility;
-
     private boolean mFlashOn = false;
 
     public BarcodeReaderFragment() {
@@ -87,7 +83,6 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
 
 
     public static BarcodeReaderFragment newInstance(boolean autoFocus, boolean useFlash, int scanOverlayVisibleStatus) {
-
         Bundle args = new Bundle();
         args.putBoolean(KEY_AUTO_FOCUS, autoFocus);
         args.putBoolean(KEY_USE_FLASH, useFlash);
@@ -257,7 +252,6 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
         createCameraSource();
     }
 
-
     /**
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
      * to other detection examples to enable the barcode detector to detect small barcodes
@@ -313,13 +307,13 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
                 .setRequestedFps(1.0f);
 
         // make sure that auto focus is an available option
-        builder = builder.setFocusMode( Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        builder = builder.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
         mCameraSource = builder
                 .setFlashMode(null)
                 .build();
-    }
 
+    }
 
     public boolean deviceSupportsFlash() {
         if (getActivity().getPackageManager() == null)
@@ -577,7 +571,6 @@ public class BarcodeReaderFragment extends Fragment implements View.OnTouchListe
             mCameraSource.doZoom(detector.getScaleFactor());
         }
     }
-
 
 
     public interface BarcodeReaderListener {

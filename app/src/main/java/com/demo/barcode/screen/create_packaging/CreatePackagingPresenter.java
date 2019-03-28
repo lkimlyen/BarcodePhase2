@@ -3,13 +3,11 @@ package com.demo.barcode.screen.create_packaging;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.Result;
-import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
@@ -18,12 +16,11 @@ import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetApartmentUsecase;
 import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
-import com.demo.architect.domain.PostCheckBarCodeUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
 import com.demo.barcode.manager.ListModulePackagingManager;
-import com.demo.barcode.manager.ListPositionScanManager;
+import com.demo.barcode.manager.PositionScanManager;
 import com.demo.barcode.manager.ListSOManager;
 
 import java.util.ArrayList;
@@ -44,18 +41,18 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     private final CreatePackagingContract.View view;
     private final GetListSOUsecase getListSOUsecase;
     private final GetApartmentUsecase getApartmentUsecase;
-    private final PostCheckBarCodeUsecase postCheckBarCodeUsecase;
     private final GetListProductInPackageUsecase getListProductInPackageUsecase;
     private PositionScan positionScan;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    CreatePackagingPresenter(@NonNull CreatePackagingContract.View view, GetListSOUsecase getListSOUsecase, GetApartmentUsecase getApartmentUsecase, PostCheckBarCodeUsecase postCheckBarCodeUsecase, GetListProductInPackageUsecase getListProductInPackageUsecase) {
+    CreatePackagingPresenter(@NonNull CreatePackagingContract.View view,
+                             GetListSOUsecase getListSOUsecase, GetApartmentUsecase getApartmentUsecase,
+                             GetListProductInPackageUsecase getListProductInPackageUsecase) {
         this.view = view;
         this.getListSOUsecase = getListSOUsecase;
         this.getApartmentUsecase = getApartmentUsecase;
-        this.postCheckBarCodeUsecase = postCheckBarCodeUsecase;
         this.getListProductInPackageUsecase = getListProductInPackageUsecase;
     }
 
@@ -127,50 +124,53 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
 
     @Override
-    public void getListScan(long orderId, long apartmentId) {
-        positionScan = ListPositionScanManager.getInstance().getPositionScanByOrderId(orderId, apartmentId);
-        SOEntity soEntity = ListSOManager.getInstance().getSOById(orderId);
-        ApartmentEntity apartmentEntity = ListApartmentManager.getInstance().getApartmentById(apartmentId);
-        localRepository.getListScanPackaging(soEntity, apartmentEntity)
-                .subscribe(new Action1<RealmResults<LogListSerialPackPagkaging>>() {
-                    @Override
-                    public void call(RealmResults<LogListSerialPackPagkaging> logListModulePagkagings) {
-                        view.showListScan(logListModulePagkagings);
-                    }
-                });
+    public void getListScan() {
+        localRepository.deleteAllItemLogScanPackaging().subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                localRepository.getListScanPackaging()
+                        .subscribe(new Action1<RealmResults<LogListSerialPackPagkaging>>() {
+                            @Override
+                            public void call(RealmResults<LogListSerialPackPagkaging> logListModulePagkagings) {
+                                view.showListScan(logListModulePagkagings);
+                            }
+                        });
+            }
+        });
+
     }
 
 
     @Override
-    public void deleteLogScan(LogScanPackaging log) {
+    public void deleteLogScan(long productId, long logId, String sttPack, String codePack) {
+        String module = ListModulePackagingManager.getInstance().getModuleByModule(productId).getModule();
         if (positionScan != null) {
-            ListModuleEntity listModuleEntity = ListModulePackagingManager.getInstance().getModuleById(log.getModule());
-            if (!positionScan.getModule().equals(listModuleEntity.getModule()) || !positionScan.getSerialPack().equals(log.getSttPack())) {
+
+            if (!positionScan.getModule().equals(module) || !positionScan.getSerialPack().equals(sttPack)) {
                 showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
                 return;
             }
         }
-        localRepository.deleteScanPackaging(log.getId()).subscribe(new Action1<String>() {
+        localRepository.deleteScanPackaging(productId, sttPack, codePack, logId).subscribe(new Action1<String>() {
             @Override
             public void call(String total) {
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
-                view.turnOnVibrator();
-                view.startMusicSuccess();
-                localRepository.getTotalScanBySerialPack(log.getOrderId(), log.getApartmentId(), log.getModule(), log.getSttPack()).subscribe(new Action1<Integer>() {
+                localRepository.getTotalScanBySerialPack(productId, sttPack).subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
                         if (integer == 0) {
                             if (positionScan != null) {
-                                ListPositionScanManager.getInstance().removeList(log.getOrderId(), log.getApartmentId());
                                 positionScan = null;
                             }
                         } else {
-                            ListModuleEntity listModuleEntity = ListModulePackagingManager.getInstance().getModuleById(log.getModule());
                             if (positionScan == null) {
-                                positionScan = new PositionScan(log.getOrderId(), log.getApartmentId(), listModuleEntity.getModule(), log.getSttPack(), log.getCodePack());
-                                ListPositionScanManager.getInstance().addPositionScan(log.getOrderId(), log.getApartmentId(), positionScan);
+                                positionScan = new PositionScan(module, sttPack, codePack);
                             }
                         }
+
+                        PositionScanManager.getInstance().setPositionScan(positionScan);
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                        view.turnOnVibrator();
+                        view.startMusicSuccess();
                     }
                 });
             }
@@ -178,29 +178,25 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
     @Override
-    public void updateNumberScan(LogScanPackaging logScanPackaging, int number) {
-        String module = ListModulePackagingManager.getInstance().getModuleByModule(logScanPackaging.getModule()).getModule();
-
-        localRepository.updateNumberScanPackaging(logScanPackaging.getId(), number).subscribe(new Action1<String>() {
+    public void updateNumberScan(long productId, long logId, int number, String sttPack, String codePack, int numberTotal) {
+        String module = ListModulePackagingManager.getInstance().getModuleByModule(productId).getModule();
+        localRepository.updateNumberScanPackaging(logId, number).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
 
-                localRepository.getTotalScanBySerialPack(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId(), logScanPackaging.getModule(),
-                        logScanPackaging.getSttPack()).subscribe(new Action1<Integer>() {
+                localRepository.getTotalScanBySerialPack(productId,
+                        sttPack).subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
-                        if (logScanPackaging.getProductPackagingModel().getNumberTotal() == integer) {
-
+                        if (numberTotal == integer) {
                             positionScan = null;
-                            ListPositionScanManager.getInstance().removeList(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId());
                         } else {
-                            positionScan = new PositionScan(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId(), module,
-                                    logScanPackaging.getSttPack(), logScanPackaging.getCodePack()
+                            positionScan = new PositionScan(module,
+                                    sttPack, codePack
                             );
-
-                            ListPositionScanManager.getInstance().addPositionScan(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId(), positionScan);
+                            // PositionScanManager.getInstance().addPositionScan(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId(), positionScan);
                         }
-
+                        PositionScanManager.getInstance().setPositionScan(positionScan);
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));
                         view.turnOnVibrator();
                         view.startMusicSuccess();
@@ -212,114 +208,60 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
     private Result resultFind;
 
-    private int numberLoop = 0;
-    PackageEntity packageEntity;
-    ListModuleEntity listModuleEntity;
-    ProductPackagingEntity productPackagingEntity;
     @Override
     public void checkBarcode(String barcode, long orderId, long apartmentId) {
-        numberLoop = 0;
+
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
         }
-        List<Result> resultList = ListModulePackagingManager.getInstance().getListProductByBarcode(barcode);
+        List<Result> resultList = new ArrayList<>();
+        if (positionScan != null) {
+            resultList = ListModulePackagingManager.getInstance().getListProductByBarcodeAndModuleAndSttPack(barcode, positionScan.getModule(), positionScan.getSerialPack());
+        } else {
+            resultList = ListModulePackagingManager.getInstance().getListProductByBarcode(barcode);
+        }
+
         if (resultList.size() == 0) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+            resultList = ListModulePackagingManager.getInstance().getListProductByBarcode(barcode);
+            if (resultList.size() == 0) {
+                showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+            } else {
+                showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
+            }
             return;
         }
         resultFind = null;
         if (resultList.size() == 1) {
             resultFind = resultList.get(0);
-            checkBarcode(orderId,apartmentId);
+            checkBarcode(orderId, apartmentId);
         } else {
-            for (Result result : resultList) {
-                numberLoop++;
-                localRepository.findProductPackaging(result.getProductPackagingEntity().getId(), result.getPackageEntity().getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
-                    @Override
-                    public void call(ProductPackagingModel productPackagingModel) {
-                        Log.d("bambi", "loop");
-                        if ((productPackagingModel == null || productPackagingModel.getNumberRest() > 0) && result.getPackageEntity().getNumberScan() < result.getListModuleEntity().getNumberRequired()) {
-                            if (resultFind == null){
-                                resultFind = result;
-                            }
-                        } else {
-                            if (positionScan != null && resultFind == null) {
-                                if (!positionScan.getCodePack().equals(result.getPackageEntity().getPackCode())) {
-                                    if (!result.getListModuleEntity().getModule().equals(positionScan.getModule()) || !result.getPackageEntity().getSerialPack().equals(positionScan.getSerialPack())) {
-                                        resultFind = new Result();
-                                        // return;
-                                    }
-                                }
-
-                            }
-                        }
-
-                        if (numberLoop == resultList.size()){
-                            if (resultFind == null) {
-                                showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-                                //return;
-                            }else {
-                                if (resultFind.getListModuleEntity() == null) {
-                                    showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
-                                    //return;
-                                }else {
-                                    checkBarcode(orderId,apartmentId);
-                                }
-
-                            }
-                        }
-
+            localRepository.findProductPackagingByList(resultList).subscribe(new Action1<Result>() {
+                @Override
+                public void call(Result result) {
+                    resultFind = result;
+                    if (resultFind == null) {
+                        showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
+                    } else {
+                        checkBarcode(orderId, apartmentId);
                     }
-                });
+                }
+            });
 
-            }
 
         }
         Log.d("bambi", "3");
     }
 
-    private void checkBarcode(long orderId, long apartmentId){
-        packageEntity = resultFind.getPackageEntity();
-        listModuleEntity = resultFind.getListModuleEntity();
-        productPackagingEntity = resultFind.getProductPackagingEntity();
-        if (positionScan != null) {
-            ListModuleEntity moduleEntity = ListModulePackagingManager.getInstance().getModuleByModule(positionScan.getModule());
-            PackageEntity packageEntity1 = ListModulePackagingManager.getInstance().getPackingBySerialPack(positionScan.getModule(), positionScan.getSerialPack());
-            localRepository.getTotalScanBySerialPack(orderId, apartmentId, moduleEntity.getProductId(), positionScan.getSerialPack()).subscribe(new Action1<Integer>() {
-                @Override
-                public void call(Integer integer) {
-                    if (packageEntity1.getTotal() == integer) {
-                        if (packageEntity.getSerialPack().equals(positionScan.getSerialPack()) && listModuleEntity.getModule().equals(positionScan.getModule())) {
-                            showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
-                            // return;
-                        } else {
-                            if (packageEntity.getNumberScan() == listModuleEntity.getNumberRequired()) {
-                                showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-                                //  return;
-                            } else {
-                                saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
-                            }
-                        }
-                    } else {
-                        if (!listModuleEntity.getModule().equals(positionScan.getModule()) || !packageEntity.getSerialPack().equals(positionScan.getSerialPack())) {
-                            showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
-                            //  return;
-                        } else {
-                            saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
-                        }
-
-                    }
-                }
-            });
+    private void checkBarcode(long orderId, long apartmentId) {
+        PackageEntity packageEntity = resultFind.getPackageEntity();
+        ListModuleEntity listModuleEntity = resultFind.getListModuleEntity();
+        ProductPackagingEntity productPackagingEntity = resultFind.getProductPackagingEntity();
+        if (packageEntity.getNumberScan() == listModuleEntity.getNumberRequired()) {
+            showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
+            //  return;
         } else {
-            if (packageEntity.getNumberScan() == listModuleEntity.getNumberRequired()) {
-                showError(CoreApplication.getInstance().getString(R.string.text_pack_scan_enough));
-                //  return;
-            }else {
-
-                saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
-            }
+            saveBarcode(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId);
         }
     }
 
@@ -367,29 +309,21 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
     }
 
     public void saveBarcode(ListModuleEntity listModuleEntity, PackageEntity packageEntity, ProductPackagingEntity productPackagingEntity, long orderId, long apartmentId) {
-        localRepository.findProductPackaging(productPackagingEntity.getId(), packageEntity.getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
+        localRepository.findProductPackaging(listModuleEntity.getProductId(), productPackagingEntity.getId(), packageEntity.getSerialPack()).subscribe(new Action1<ProductPackagingModel>() {
             @Override
             public void call(ProductPackagingModel productPackagingModel) {
                 if (productPackagingModel == null || productPackagingModel.getNumberRest() > 0) {
                     localRepository.saveBarcodeScanPackaging(listModuleEntity, packageEntity, productPackagingEntity, orderId, apartmentId)
-                            .subscribe(new Action1<String>() {
+                            .subscribe(new Action1<Integer>() {
                                 @Override
-                                public void call(String s) {
+                                public void call(Integer integer) {
 
-                                    localRepository.getTotalScanBySerialPack(orderId, apartmentId, listModuleEntity.getProductId(), packageEntity.getSerialPack()).subscribe(new Action1<Integer>() {
-                                        @Override
-                                        public void call(Integer integer) {
-                                            if (packageEntity.getTotal() == integer) {
-
-                                                positionScan = null;
-                                                ListPositionScanManager.getInstance().removeList(orderId, apartmentId);
-                                            } else {
-                                                positionScan = new PositionScan(orderId, apartmentId, listModuleEntity.getModule(), packageEntity.getSerialPack(), packageEntity.getPackCode());
-
-                                                ListPositionScanManager.getInstance().addPositionScan(orderId, apartmentId, positionScan);
-                                            }
-                                        }
-                                    });
+                                    if (packageEntity.getTotal() == integer) {
+                                        positionScan = null;
+                                    } else {
+                                        positionScan = new PositionScan(listModuleEntity.getModule(), packageEntity.getSerialPack(), packageEntity.getPackCode());
+                                    }
+                                    PositionScanManager.getInstance().setPositionScan(positionScan);
 
                                     view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                                     view.startMusicSuccess();

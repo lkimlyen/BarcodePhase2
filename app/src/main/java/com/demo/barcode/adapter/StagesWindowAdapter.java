@@ -1,5 +1,7 @@
 package com.demo.barcode.adapter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,13 +26,15 @@ public class StagesWindowAdapter extends RealmRecyclerViewAdapter<LogScanStagesW
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
     private OnErrorListener onErrorListener;
+    private Context mContext;
 
     public StagesWindowAdapter(OrderedRealmCollection<LogScanStagesWindowModel> realmResults, OnItemClearListener listener,
-                               OnEditTextChangeListener onEditTextChangeListener, OnErrorListener onErrorListener) {
+                               OnEditTextChangeListener onEditTextChangeListener, OnErrorListener onErrorListener, Context mContext) {
         super(realmResults, true);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
-        this.onErrorListener = onErrorListener;;
+        this.onErrorListener = onErrorListener;
+        this.mContext = mContext;
 
         setHasStableIds(true);
     }
@@ -39,7 +43,7 @@ public class StagesWindowAdapter extends RealmRecyclerViewAdapter<LogScanStagesW
 
     @Override
     public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stages_window, parent, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_stages_window, parent, false);
         return new HistoryHolder(itemView);
     }
 

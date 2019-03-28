@@ -15,6 +15,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
+import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.DeliveryNoteModel;
@@ -43,6 +44,8 @@ import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -77,7 +80,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(4)
+                        .schemaVersion(5)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
@@ -86,7 +89,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(4)
+                        .schemaVersion(5)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
@@ -357,20 +360,19 @@ public class DatabaseRealm {
         });
     }
 
-    public RealmResults<LogListSerialPackPagkaging> getListScanPackaging(SOEntity soEntity, ApartmentEntity apartment) {
+    public RealmResults<LogListSerialPackPagkaging> getListScanPackaging() {
         Realm realm = getRealmInstance();
-        RealmResults<LogListSerialPackPagkaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm,
-                soEntity, apartment);
+        RealmResults<LogListSerialPackPagkaging> listScanPackaging = LogScanPackaging.getListScanPackaging(realm);
         return listScanPackaging;
     }
 
 
-    public void deleteScanPackaging(final long logId) {
+    public void deleteScanPackaging(final long productId, final String sttPack, final String codePack, final long logId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.deleteLogScanPackaging(realm, logId);
+                LogScanPackaging.deleteLogScanPackaging(realm, productId, sttPack, codePack, logId);
             }
         });
 
@@ -387,9 +389,9 @@ public class DatabaseRealm {
 
     }
 
-    public ProductPackagingModel findProductPackaging(final long productId, final String serialPack) {
+    public ProductPackagingModel findProductPackaging(final long productId, long productDetailId, final String serialPack) {
         Realm realm = getRealmInstance();
-        ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId, serialPack);
+        ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId, productDetailId, serialPack);
         return productPackagingModel;
     }
 
@@ -399,9 +401,9 @@ public class DatabaseRealm {
         return listOrderPackaging;
     }
 
-    public int getTotalScanBySerialPack(long orderId, long apartmentId, long moduleId, String serialPack) {
+    public int getTotalScanBySerialPack(long productId, String serialPack) {
         Realm realm = getRealmInstance();
-        int total = LogScanPackaging.getTotalScan(realm, orderId, apartmentId, moduleId, serialPack);
+        int total = LogScanPackaging.getTotalScan(realm, productId, serialPack);
         return total;
     }
 
@@ -446,7 +448,8 @@ public class DatabaseRealm {
         });
     }
 
-    public void addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
+    public int addBarcodeScanPackaging(final ListModuleEntity module, final PackageEntity packageEntity, final ProductPackagingEntity productPackagingEntity, final long orderId, final long apartmentId) {
+
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -455,6 +458,8 @@ public class DatabaseRealm {
             }
         });
 
+        final int total = LogScanPackaging.getTotalScan(realm, module.getProductId(), packageEntity.getSerialPack());
+        return total;
     }
 
     public List<LogScanPackaging> getListScanPackaging(long orderId, long apartmentId, long moduleId, String serialPackId) {
@@ -464,12 +469,12 @@ public class DatabaseRealm {
         return result;
     }
 
-    public void updateStatusScanPackaging(final long orderId, final long apartmentId, final long moduleId, final String serialPack, final long serverId) {
+    public void updateStatusScanPackaging(final long logSerialId, final long serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackaging.updateStatusScanPackaging(realm, orderId, apartmentId, moduleId, serialPack, serverId);
+                LogScanPackaging.updateStatusScanPackaging(realm, logSerialId, serverId);
 
             }
         });
@@ -1036,6 +1041,30 @@ public class DatabaseRealm {
         });
     }
 
+    public Result findProductPackagingByList(List<Result> list) {
+        Realm realm = getRealmInstance();
+        Result productPackagingModel = ProductPackagingModel.findProductPackagingByList(realm, list);
+        return productPackagingModel;
+    }
+
+    public LogListSerialPackPagkaging getListDetailPackageById(long logSerialId) {
+        Realm realm = getRealmInstance();
+        LogListSerialPackPagkaging logListSerialPackPagkaging = LogListSerialPackPagkaging.getListDetailPackageById(realm, logSerialId);
+        return logListSerialPackPagkaging;
+    }
+
+    public String getListDetailUploadPackageById(long logSerialId) {
+        Realm realm = getRealmInstance();
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        LogListSerialPackPagkaging logListSerialPackPagkaging = LogListSerialPackPagkaging.getListDetailPackageById(realm, logSerialId);
+        RealmList<LogScanPackaging> list = logListSerialPackPagkaging.getList();
+        List<LogScanPackaging> logScanPackagings = realm.copyFromRealm(list);
+
+        return gson.toJson(logScanPackagings);
+    }
+
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
@@ -1235,6 +1264,32 @@ public class DatabaseRealm {
                         .addField("qcCode", String.class)
                         .addField("violator", String.class)
                         .addField("machineName", String.class);
+                oldVersion++;
+            }
+
+            if (oldVersion == 4) {
+                schema.get("LogListSerialPackPagkaging")
+                        .removeField("numberTotal")
+                        .addField("numberTotal", int.class)
+                        .addField("orderId", long.class)
+                        .addField("apartmentId", long.class)
+                        .addField("status", int.class)
+                        .addField("serverId", long.class);
+                schema.get("ProductPackagingModel")
+                        .removeField("numberRest")
+                        .addField("numberRest", int.class)
+                        .removeField("numberScan")
+                        .addField("numberScan", int.class)
+                        .removeField("numberTotal")
+                        .addField("numberTotal", int.class)
+                .addField("productId",long.class);
+                schema.get("LogScanPackaging")
+                        .removeField("numberInput")
+                        .addField("numberInput", int.class)
+                        .removeField("serverId")
+                        .removeField("orderId")
+                        .removeField("module");
+
                 oldVersion++;
             }
 

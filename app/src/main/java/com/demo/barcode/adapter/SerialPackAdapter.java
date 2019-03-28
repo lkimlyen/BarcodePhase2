@@ -9,13 +9,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.model.PositionScan;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.manager.ListPositionScanManager;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -67,14 +64,13 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
         ScanPackagingAdapter adapter = new ScanPackagingAdapter(item.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll(),
                 new ScanPackagingAdapter.OnItemClearListener() {
                     @Override
-                    public void onItemClick(LogScanPackaging item) {
-                        listener.onItemClick(item);
+                    public void onItemClick(long logId) {
+                        listener.onItemClick(item.getProductId(), logId, item.getSerialPack(), item.getCodeProduct());
                     }
                 }, new ScanPackagingAdapter.OnEditTextChangeListener() {
             @Override
-            public void onEditTextChange(LogScanPackaging item, int number) {
-
-                onEditTextChangeListener.onEditTextChange(item, number);
+            public void onEditTextChange(long logId, int number) {
+                onEditTextChangeListener.onEditTextChange(item.getProductId(), logId, number, item.getSerialPack(), item.getCodeProduct(), item.getNumberTotal());
             }
         }, new ScanPackagingAdapter.onErrorListener() {
             @Override
@@ -86,7 +82,7 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
             public void onClick() {
                 onClickEditTextListener.onClick();
             }
-        });
+        }, item.getProductId());
 
         holder.lvCode.setAdapter(adapter);
 
@@ -105,7 +101,7 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
         holder.btnPrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPrintListener.onPrint(item.getProductId(), item.getSerialPack());
+                onPrintListener.onPrint(item.getProductId(), item.getSerialPack(),item.getId());
             }
         });
 
@@ -135,11 +131,11 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
     }
 
     public interface OnItemClearListener {
-        void onItemClick(LogScanPackaging item);
+        void onItemClick(long productId, long logId, String sttPack, String codePack);
     }
 
     public interface OnEditTextChangeListener {
-        void onEditTextChange(LogScanPackaging item, int number);
+        void onEditTextChange(long productId, long logId, int number, String sttPack, String codePack, int numberTotal);
     }
 
     public interface onErrorListener {
@@ -147,7 +143,7 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
     }
 
     public interface onPrintListener {
-        void onPrint(long moduleId, String serialPack);
+        void onPrint(long moduleId, String serialPack, long logSerialId);
     }
 
 

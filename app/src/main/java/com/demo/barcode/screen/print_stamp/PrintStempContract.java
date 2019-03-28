@@ -2,6 +2,7 @@ package com.demo.barcode.screen.print_stamp;
 
 import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
@@ -21,11 +22,11 @@ public interface PrintStempContract {
 
         void showSuccess(String message);
 
-        void showOrderPackaging(LogListOrderPackaging log);
+        void showOrderPackaging(SOEntity soEntity);
 
         void showTotalNumberScan(int sum);
 
-        void showListScanPackaging(List<LogScanPackaging> list);
+        void showListScanPackaging(LogListSerialPackPagkaging list, boolean enough);
 
         void showDialogCreateIPAddress();
 
@@ -46,18 +47,18 @@ public interface PrintStempContract {
 
         void getTotalScanBySerialPack(long orderId, long apartmentId, long moduleId, String serialPack);
 
-        void getListScanStages(long orderId, long apartmentId, long moduleId, String serialPack);
+        void getListDetailPackageById(long logSerialId);
 
-        void printTemp(long orderId, long apartmentId, long moduleId, String serialPack, long serverId);
+        void printTemp(long orderId, long apartmentId, long moduleId, String serialPack, long serverId,long logSerialId);
 
         void getApartment(long apartmentId);
 
         void getModule(long moduleId, String serialPack);
 
-        void saveIPAddress(String ipAddress, int port, long orderId, long apartmentId, long moduleId, String serialPack, long serverId);
+        void saveIPAddress(String ipAddress, int port, long orderId, long apartmentId, long moduleId, String serialPack, long serverId,long logSerialId);
 
         void getListCodePack(long orderId, int orderType, long productId);
 
-        boolean checkNumberProduct(long orderId, long productId, long apartmentId, String sttPack);
+        boolean checkNumberProduct( long productId, String sttPack);
     }
 }
