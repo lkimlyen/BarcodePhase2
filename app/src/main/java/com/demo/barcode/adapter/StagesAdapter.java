@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;

@@ -10,6 +10,7 @@ import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogQCUsecase;
 import com.demo.architect.domain.AddLogQCWindowUsecase;
 import com.demo.architect.domain.AddPhieuGiaoNhanUsecase;
+import com.demo.architect.domain.AddScanTemHangCuaUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.CheckUpdateForGroupUsecase;
 import com.demo.architect.domain.ConfirmInputUsecase;
@@ -35,6 +36,8 @@ import com.demo.architect.domain.GetListQCUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetModuleUsecase;
+import com.demo.architect.domain.GetProductSetDetailBySetAndDirecUsecase;
+import com.demo.architect.domain.GetProductSetUsecase;
 import com.demo.architect.domain.GetTimesInputAndOutputByDepartmentUsecase;
 import com.demo.architect.domain.GroupProductDetailUsecase;
 import com.demo.architect.domain.LoginUsecase;
@@ -170,10 +173,12 @@ public class UseCaseModule {
     GetListPrintPackageHistoryUsecase provideGetListPrintPackageHistoryUsecase(OrderRepository orderRepository) {
         return new GetListPrintPackageHistoryUsecase(orderRepository);
     }
+
     @Provides
     UploadImageUsecase provideUploadImageUsecase(OtherRepository otherRepository) {
         return new UploadImageUsecase(otherRepository);
     }
+
     @Provides
     AddLogQCUsecase provideAddLogQCUsecase(OtherRepository otherRepository) {
         return new AddLogQCUsecase(otherRepository);
@@ -195,61 +200,77 @@ public class UseCaseModule {
     }
 
     @Provides
-    AddPhieuGiaoNhanUsecase provideAddPhieuGiaoNhanUsecase(ProductRepository productRepository){
+    AddPhieuGiaoNhanUsecase provideAddPhieuGiaoNhanUsecase(ProductRepository productRepository) {
         return new AddPhieuGiaoNhanUsecase(productRepository);
     }
 
     @Provides
-    GetListMaPhieuGiaoUsecase provideAddGetListMaPhieuGiaoUsecase(OrderRepository productRepository){
+    GetListMaPhieuGiaoUsecase provideAddGetListMaPhieuGiaoUsecase(OrderRepository productRepository) {
         return new GetListMaPhieuGiaoUsecase(productRepository);
     }
 
     @Provides
-    GetListInputUnConfirmByMaPhieuUsecase provideGetListInputUnConfirmByMaPhieuUsecase(OrderRepository productRepository){
+    GetListInputUnConfirmByMaPhieuUsecase provideGetListInputUnConfirmByMaPhieuUsecase(OrderRepository productRepository) {
         return new GetListInputUnConfirmByMaPhieuUsecase(productRepository);
     }
 
     @Provides
-    GetInputForProductDetailWindowUsecase provideGetInputForProductDetailWindowUsecase(ProductRepository productRepository){
+    GetInputForProductDetailWindowUsecase provideGetInputForProductDetailWindowUsecase(ProductRepository productRepository) {
         return new GetInputForProductDetailWindowUsecase(productRepository);
     }
 
     @Provides
-    ScanProductDetailOutWindowUsecase provideScanProductDetailOutWindowUsecase(OrderRepository productRepository){
+    ScanProductDetailOutWindowUsecase provideScanProductDetailOutWindowUsecase(OrderRepository productRepository) {
         return new ScanProductDetailOutWindowUsecase(productRepository);
     }
+
     @Provides
-    ConfirmInputWindowUsecase provideConfirmInputWindowUsecase(OrderRepository orderRepository){
+    ConfirmInputWindowUsecase provideConfirmInputWindowUsecase(OrderRepository orderRepository) {
         return new ConfirmInputWindowUsecase(orderRepository);
     }
 
     @Provides
-    GetDetailInByDeliveryWindowUsecase provideGetDetailInByDeliveryWindowUsecase(OrderRepository orderRepository){
+    GetDetailInByDeliveryWindowUsecase provideGetDetailInByDeliveryWindowUsecase(OrderRepository orderRepository) {
         return new GetDetailInByDeliveryWindowUsecase(orderRepository);
     }
 
     @Provides
-    AddLogQCWindowUsecase provideAddLogQCWindowUsecase(OtherRepository otherRepository){
+    AddLogQCWindowUsecase provideAddLogQCWindowUsecase(OtherRepository otherRepository) {
         return new AddLogQCWindowUsecase(otherRepository);
     }
 
 
     @Provides
-    GetAllStaffUsecase provideGetAllStaffUsecase(OtherRepository otherRepository){
+    GetAllStaffUsecase provideGetAllStaffUsecase(OtherRepository otherRepository) {
         return new GetAllStaffUsecase(otherRepository);
     }
 
 
     @Provides
-    GetListQCUsecase provideGetListQCUsecase(OtherRepository otherRepository){
+    GetListQCUsecase provideGetListQCUsecase(OtherRepository otherRepository) {
         return new GetListQCUsecase(otherRepository);
     }
 
 
     @Provides
-    GetListMachineUsecase provideGetListMachineUsecase(OtherRepository otherRepository){
+    GetListMachineUsecase provideGetListMachineUsecase(OtherRepository otherRepository) {
         return new GetListMachineUsecase(otherRepository);
     }
 
+
+    @Provides
+    AddScanTemHangCuaUsecase provideGetListMachineUsecase(ProductRepository otherRepository) {
+        return new AddScanTemHangCuaUsecase(otherRepository);
+    }
+
+    @Provides
+    GetProductSetDetailBySetAndDirecUsecase provideGetProductSetDetailBySetAndDirecUsecase(ProductRepository otherRepository) {
+        return new GetProductSetDetailBySetAndDirecUsecase(otherRepository);
+    }
+
+    @Provides
+    GetProductSetUsecase provideGetProductSetUsecase(OtherRepository otherRepository) {
+        return new GetProductSetUsecase(otherRepository);
+    }
 }
 

@@ -1,7 +1,7 @@
 package com.demo.architect.data.repository.base.local;
 
-import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.GroupSetEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
@@ -10,14 +10,13 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
-import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
-import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.ListPackCodeWindowModel;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
@@ -26,6 +25,7 @@ import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
+import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
@@ -44,12 +44,9 @@ public interface LocalRepository {
 
     Observable<List<MessageModel>> findAll();
 
-    Observable<Integer> countAllDetailWaitingUpload(final long orderId);
 
     Observable<List<LogScanStages>> getListLogScanStagesUpload();
 
-
-    Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module);
 
     Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId);
 
@@ -62,8 +59,6 @@ public interface LocalRepository {
 
     Observable<String> deleteScanStages(final long stagesId);
 
-    Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, int departmentId, long userId, int times);
-
     Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final int times);
 
     Observable<RealmResults<LogScanConfirmModel>> getListConfirm();
@@ -75,10 +70,6 @@ public interface LocalRepository {
     Observable<String> updateNumnberLogConfirm(long outputId, final int numberScan, final boolean scan);
 
     Observable<String> updateStatusLogConfirm();
-
-    Observable<String> updateStatusScanStagesByOrder(long orderId);
-
-    Observable<String> updateStatusScanStages(long orderId, int departmentId, int times);
 
     Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, long serverId);
 
@@ -101,7 +92,6 @@ public interface LocalRepository {
 
     Observable<Result> findProductPackagingByList(List<Result> list);
 
-    Observable<LogListOrderPackaging> findOrderPackaging(long orderId);
 
     Observable<Integer> getTotalScanBySerialPack(final long productId, final String serialPack);
 
@@ -235,4 +225,24 @@ public interface LocalRepository {
     Observable<LogListSerialPackPagkaging>  getListDetailPackageById(long logSerialId);
 
     Observable<String> getListDetailUploadPackageById(long logSerialId);
+
+    Observable<ProductPackWindowModel> getProductPackingWindow(ProductPackagingWindowEntity entity);
+
+    Observable<Boolean> saveBarcodeScanPackagingWindow(long id, int direction, final GroupSetEntity groupSetEntity);
+
+    Observable<Integer> getTotalNumberDetaiLInPackWindow(String packCode, int numberPack);
+
+    Observable<String> updateNumberScanPackagingWindow(String packCode, int numberOnPack,long logId, int number);
+
+    Observable<String> deleteScanPackagingWindow( long logId, String packCode, int numberOnPack);
+
+    Observable<String> deleteAllItemLogScanPackagingWindow();
+
+    Observable<RealmResults<ListPackCodeWindowModel>> getListScanPackagingWindow();
+
+    Observable<ListPackCodeWindowModel> getListDetailPackWindowById(long mainId);
+
+    Observable<String> getListDetailUploadPackWindowById(long mainId);
+
+    Observable<String> updateStatusScanPackagingWindow(long mainId, long serverId);
 }

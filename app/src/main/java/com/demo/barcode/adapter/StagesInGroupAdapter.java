@@ -1,21 +1,16 @@
 package com.demo.barcode.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.LogScanStages;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.R;
-import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;

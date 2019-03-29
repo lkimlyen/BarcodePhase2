@@ -146,6 +146,7 @@
     <string name="text_package">Kiện</string>
     <string name="text_date_print">Ngày in:</string>
     <string name="text_code_pack">Mã gói/ SP:</string>
+    <string name="text_pack_code" formatted="true">Mã gói: %s</string>
     <string name="text_choose_code_so">Chọn mã SO</string>
     <string name="text_choose_floor">Chọn căn/tầng</string>
     <string name="text_choose_serial_module">Chọn STT Module</string>
@@ -254,6 +255,7 @@
     <string name="text_cancle_confirm_all_success">Hủy xác nhận tất cả thành công</string>
     <string name="text_module" formatted="true">Module: %s</string>
     <string name="text_serial" formatted="true">STT Kiện: %s</string>
+    <string name="text_number_pack" formatted="true">SL/ Gói: %d</string>
     <string name="text_code_package" formatted="true">Mã gói: %s</string>
     <string name="text_number_scanned">Số lượng:</string>
     <string name="text_no_data_print">Không có dữ liệu để in</string>
@@ -309,6 +311,14 @@
         <item>@string/text_main_address</item>
         <item>@string/text_test_address</item>
     </string-array>
+
+    <string-array name="direction">
+        <item>@string/text_no</item>
+        <item>@string/text_left</item>
+        <item>@string/text_right</item>
+    </string-array>
+    <string name="text_left">Left</string>
+    <string name="text_right">Right</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="permission_camera">This app needs camera permission to scan barcode</string>
      <string name="title_activity_main">Barcode Reader Sample</string>
@@ -327,5 +337,16 @@
     <string name="text_save_info_qc">Bạn chưa lưu thông tin QC</string>
     <string name="text_input_machine_name_null">Bạn chưa nhập tên máy!</string>
     <string name="text_input_qc_code_null">Bạn chưa nhập mã QC</string>
+    <string name="text_set_window">Bộ cửa</string>
+    <string name="text_choose_set_window">Chọn bộ cửa</string>
+    <string name="text_direction">Hướng</string>
+    <string name="text_choose_direction">Chọn hướng</string>
+    <string name="text_get_set_window_success">Lấy danh sách bộ cửa thành công!</string>
+    <string name="text_get_detail_in_set_success">Lấy danh sách chi tiết thành công!</string>
+    <string name="text_set_null">Bạn chưa chọn bộ cửa</string>
+    <string name="text_direction_null">Bạn chưa chọn hướng!</string>
+    <string name="text_choose_group_set_widow">Chọn mã gói đang quét</string>
+    <string name="text_detail_scan_enough">Chi tiết đã được quét đủ!</string>
+    <string name="text_scan_enough_detail_in_pack">Bạn đã quét đủ số lượng chi tiết này!</string>
 
 </resources>

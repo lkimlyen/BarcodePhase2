@@ -92,7 +92,8 @@ public class SerialPackAdapter extends RealmBaseAdapter<LogListSerialPackPagkagi
                 setListViewHeightBasedOnItems(holder.lvCode);
             }
         });
-        double sum = item.getList().where().equalTo("status", Constants.WAITING_UPLOAD).findAll().sum("numberInput").doubleValue();
+        int sum = item.getList().where()
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll().sum("numberInput").intValue();
         if (item.getNumberTotal() == sum) {
             holder.btnPrint.setVisibility(View.VISIBLE);
         } else {

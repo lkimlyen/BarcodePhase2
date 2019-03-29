@@ -1,12 +1,8 @@
 package com.demo.barcode.screen.create_packaging;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 

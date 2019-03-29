@@ -431,14 +431,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void countListAllData(long orderId) {
-        localRepository.countAllDetailWaitingUpload(orderId).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                if (integer > 0) {
-                    view.showDialogUpload();
-                }
-            }
-        });
+
     }
 
     @Override

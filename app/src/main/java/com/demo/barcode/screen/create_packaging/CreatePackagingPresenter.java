@@ -194,7 +194,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                             positionScan = new PositionScan(module,
                                     sttPack, codePack
                             );
-                            // PositionScanManager.getInstance().addPositionScan(logScanPackaging.getOrderId(), logScanPackaging.getApartmentId(), positionScan);
+                            // PositionScanManager.getInstance().addPositionScan(logScanPackaging.getOrderId(), logScanPackaging.getProductSetId(), positionScan);
                         }
                         PositionScanManager.getInstance().setPositionScan(positionScan);
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_update_barcode_success));

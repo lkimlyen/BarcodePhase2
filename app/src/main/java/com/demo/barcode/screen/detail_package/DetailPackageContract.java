@@ -1,16 +1,8 @@
 package com.demo.barcode.screen.detail_package;
 
-import com.demo.architect.data.model.CodePackEntity;
-import com.demo.architect.data.model.HistoryEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
-
-import java.util.List;
 
 /**
  * Created by MSI on 26/11/2017.

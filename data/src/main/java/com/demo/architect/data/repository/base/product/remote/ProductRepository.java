@@ -7,6 +7,7 @@ import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 
 import retrofit2.Call;
@@ -43,6 +44,11 @@ public interface ProductRepository {
     Observable<BaseResponse<Integer>> postListCodeProductDetail(String key, String json,
                                                                 long userId, String note);
 
+
+    Observable<BaseResponse<Integer>> addScanTemHangCua(String key,long orderId,long productSetId,
+                                                        int direction, String packCode, int numberOnPack,
+                                                        long userId, String json);
+
     Observable<BaseListResponse<ListModuleEntity>> getListProductInPackage(long orderId,
                                                                            long apartmentId);
 
@@ -51,5 +57,7 @@ public interface ProductRepository {
                                                        int departmentOutID, int number, String data,
                                                        long userId);
 
+    Observable<BaseListResponse<ProductPackagingWindowEntity>> getProductSetDetailBySetAndDirec(long productSetId,
+                                                                                                int direction);
 
 }

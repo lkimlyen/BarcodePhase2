@@ -5,12 +5,9 @@ package com.demo.barcode.enums;
  */
 
 public enum MainViewType {
-    COUPON(0),
-    PROMOTION(1),
-    INFORMATION(2),
-    ALERT(3),
-    PRODUCT(4),
-    HEADER(5);
+    Không(0),
+    Trái(1),
+    Phải(2);
 
     private int type;
 

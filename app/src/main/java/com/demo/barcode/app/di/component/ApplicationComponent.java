@@ -14,6 +14,8 @@ import com.demo.barcode.screen.confirm_receive.ConfirmReceiveComponent;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveModule;
 import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowComponent;
 import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowModule;
+import com.demo.barcode.screen.create_pack_window.CreatePackagingWindowComponent;
+import com.demo.barcode.screen.create_pack_window.CreatePackagingWindowModule;
 import com.demo.barcode.screen.create_packaging.CreatePackagingComponent;
 import com.demo.barcode.screen.create_packaging.CreatePackagingModule;
 import com.demo.barcode.screen.dashboard.DashboardComponent;
@@ -30,6 +32,8 @@ import com.demo.barcode.screen.login.LoginComponent;
 import com.demo.barcode.screen.login.LoginModule;
 import com.demo.barcode.screen.print_stamp.PrintStempComponent;
 import com.demo.barcode.screen.print_stamp.PrintStempModule;
+import com.demo.barcode.screen.print_stamp_window.PrintStempWindowComponent;
+import com.demo.barcode.screen.print_stamp_window.PrintStempWindowModule;
 import com.demo.barcode.screen.qc_window.QualityControlWindowComponent;
 import com.demo.barcode.screen.qc_window.QualityControlWindowModule;
 import com.demo.barcode.screen.quality_control.QualityControlComponent;
@@ -93,4 +97,8 @@ public interface ApplicationComponent {
     ConfirmReceiveWindowComponent plus(ConfirmReceiveWindowModule module);
 
     QualityControlWindowComponent plus(QualityControlWindowModule module);
+
+    CreatePackagingWindowComponent plus(CreatePackagingWindowModule module);
+
+    PrintStempWindowComponent plus(PrintStempWindowModule module);
 }

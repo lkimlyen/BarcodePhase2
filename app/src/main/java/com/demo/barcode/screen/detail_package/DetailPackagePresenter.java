@@ -4,29 +4,18 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
-import com.demo.architect.data.model.CodePackEntity;
-import com.demo.architect.data.model.HistoryEntity;
-import com.demo.architect.data.model.ModuleEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
-import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
-import com.demo.barcode.manager.ListCodePackManager;
-import com.demo.barcode.manager.ListHistoryManager;
-import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -88,7 +77,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocket connectSocket = new ConnectSocket(address.getIpAddress(), address.getPortNumber(),
-                        serverId, new ConnectSocket.onPostExecuteResult() {
+                        serverId, type, new ConnectSocket.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {

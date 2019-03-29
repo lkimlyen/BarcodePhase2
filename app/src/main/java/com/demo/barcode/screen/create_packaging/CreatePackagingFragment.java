@@ -143,6 +143,7 @@ public class CreatePackagingFragment extends BaseFragment implements CreatePacka
     }
 
     private void initView() {
+
         mPresenter.getListScan();
         txtDateScan.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);

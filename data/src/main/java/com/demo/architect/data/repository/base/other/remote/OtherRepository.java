@@ -6,8 +6,10 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.SetWindowEntity;
 import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
@@ -44,4 +46,8 @@ public interface OtherRepository {
 
     Observable<BaseListResponse<MachineEntity>> getListMachine();
     Observable<BaseListResponse<QCEntity>> getListQC();
+
+    Observable<BaseListResponse<SetWindowEntity>> getProductSet(long orderId);
+
+
 }

@@ -10,8 +10,10 @@ import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.ListReasonsEntity;
 import com.demo.architect.data.model.MachineEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.QCEntity;
 import com.demo.architect.data.model.ReasonsEntity;
+import com.demo.architect.data.model.SetWindowEntity;
 import com.demo.architect.data.model.StaffEntity;
 import com.demo.architect.data.model.TimesEntity;
 import com.demo.architect.data.model.UploadEntity;
@@ -153,6 +155,27 @@ public class OtherRepositoryImpl implements OtherRepository {
             }
         }
     }
+    private void handleSetWindowResponse(Call<BaseListResponse<SetWindowEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<SetWindowEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+
+
 
     private void handleTimesResponse(Call<BaseResponse<TimesEntity>> call, Subscriber subscriber) {
         try {
@@ -339,4 +362,18 @@ public class OtherRepositoryImpl implements OtherRepository {
             }
         });
     }
+
+    @Override
+    public Observable<BaseListResponse<SetWindowEntity>> getProductSet(final long orderId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<SetWindowEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<SetWindowEntity>> subscriber) {
+                handleSetWindowResponse(mRemoteApiInterface.getProductSet(
+                        server + "/WS/api/GD2GetProductSet",orderId), subscriber);
+            }
+        });
+    }
+
+
 }

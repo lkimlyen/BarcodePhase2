@@ -8,6 +8,7 @@ import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 
 import retrofit2.Call;
@@ -82,4 +83,20 @@ public interface ProductApiInterface {
     Call<BaseListResponse<ProductWindowEntity>> getInputForProductDetailWindow(@Url String url,
                                                                                @Field("pOrderID") long orderId,
                                                                                @Field("pDepartmentID") int departmentId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<ProductPackagingWindowEntity>> getProductSetDetailBySetAndDirec(@Url String url,
+                                                                                          @Field("pProductSetID") long productSetId,
+                                                                                          @Field("pDirec") int direction);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse<Integer>> addScanTemHangCua(@Url String url, String key,  @Field("pOrderID") long orderId,
+                                                  @Field("pProductSetID") long productSetId,
+                                                  @Field("pDirec") int direction,
+                                                  @Field("pPackCode") String packCode,
+                                                  @Field("pNumberSetOnPack") int numberOnPack,
+                                                  @Field("pUserID") long userId,
+                                                  @Field("pJson")String json);
 }

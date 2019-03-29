@@ -2,11 +2,7 @@ package com.demo.barcode.screen.stages;
 
 import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
-import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.GroupCode;
-import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.barcode.app.base.BasePresenter;

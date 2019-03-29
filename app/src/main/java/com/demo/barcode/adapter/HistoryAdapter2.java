@@ -1,35 +1,23 @@
 package com.demo.barcode.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.model.HistoryEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.widgets.AnimatedExpandableListView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HistoryAdapter2 extends BaseAdapter {
     private Context context;

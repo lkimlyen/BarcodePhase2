@@ -5,15 +5,12 @@ import android.util.Log;
 
 import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.ListModuleEntity;
-import com.demo.architect.data.model.ModuleEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
 import com.demo.architect.domain.BaseUseCase;
@@ -22,14 +19,10 @@ import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.manager.ListApartmentManager;
-import com.demo.barcode.manager.ListModuleManager;
 import com.demo.barcode.manager.ListModulePackagingManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.util.ConvertUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.thefinestartist.utils.log.L;
 
 import java.util.List;
 
@@ -122,7 +115,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocket connectSocket = new ConnectSocket(address.getIpAddress(), address.getPortNumber(),
-                        serverId, new ConnectSocket.onPostExecuteResult() {
+                        serverId, type, new ConnectSocket.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {

@@ -1,8 +1,6 @@
 package com.demo.barcode.screen.quality_control;
 
-import com.demo.architect.data.model.DepartmentEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogListScanStages;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;

@@ -156,7 +156,6 @@ public class ConfirmReceiveWindowFragment extends BaseFragment implements Confir
         llTypeScan.setVisibility(View.GONE);
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-
         lvConfirm.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         mPresenter.getListDepartment();
         mPresenter.getListSO();

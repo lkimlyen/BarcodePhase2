@@ -2,8 +2,8 @@ package com.demo.architect.data.repository.base.local;
 
 import android.content.Context;
 
-import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.GroupSetEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.OrderConfirmEntity;
@@ -12,14 +12,13 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
-import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
-import com.demo.architect.data.model.offline.LogListScanStages;
+import com.demo.architect.data.model.offline.ListPackCodeWindowModel;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
@@ -28,6 +27,7 @@ import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
+import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
@@ -83,22 +83,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-    @Override
-    public Observable<Integer> countAllDetailWaitingUpload(final long orderId) {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                try {
-                    int count = databaseRealm.countAllDetailWaitingUpload(orderId);
 
-                    subscriber.onNext(count);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<List<LogScanStages>> getListLogScanStagesUpload() {
@@ -117,22 +102,6 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
 
-    @Override
-    public Observable<RealmResults<LogScanStages>> getListScanStages(final long orderId, final int departmentIdOut, final int times, final String module) {
-        return Observable.create(new Observable.OnSubscribe<RealmResults<LogScanStages>>() {
-            @Override
-            public void call(Subscriber<? super RealmResults<LogScanStages>> subscriber) {
-                try {
-                    RealmResults<LogScanStages> list = databaseRealm.getListScanStagesByModule(orderId,
-                            departmentIdOut, times, module);
-                    subscriber.onNext(list);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<RealmResults<GroupCode>> getListGroupCodeScan(final long orderId) {
@@ -215,22 +184,6 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<LogListScanStages> getListScanStagseByDepartment(final long orderId, final int departmentId,
-                                                                       final long userId, final int times) {
-        return Observable.create(new Observable.OnSubscribe<LogListScanStages>() {
-            @Override
-            public void call(Subscriber<? super LogListScanStages> subscriber) {
-                try {
-                    LogListScanStages logListScanStages = databaseRealm.getListScanStages(orderId, departmentId, userId, times);
-                    subscriber.onNext(logListScanStages);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<String> addOrderConfirm(final List<OrderConfirmEntity> list, final int times) {
@@ -330,37 +283,7 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<String> updateStatusScanStagesByOrder(final long orderId) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    databaseRealm.updateStatusScanStagesByOrder(orderId);
-                    subscriber.onNext("Success");
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
-    @Override
-    public Observable<String> updateStatusScanStages(final long orderId, final int departmentId, final int times) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    databaseRealm.updateStatusScanStages(orderId,departmentId,times);
-                    subscriber.onNext("Success");
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
 
     @Override
     public Observable<String> updateStatusAndServerIdImage(final long id, final long imageId, final long serverId) {
@@ -524,21 +447,7 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
-    @Override
-    public Observable<LogListOrderPackaging> findOrderPackaging(final long orderId) {
-        return Observable.create(new Observable.OnSubscribe<LogListOrderPackaging>() {
-            @Override
-            public void call(Subscriber<? super LogListOrderPackaging> subscriber) {
-                try {
-                    LogListOrderPackaging model = databaseRealm.findOrderPackaging(orderId);
-                    subscriber.onNext(model);
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
+
 
     @Override
     public Observable<Integer> getTotalScanBySerialPack(final long productId, final String serialPack) {
@@ -1048,8 +957,8 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super List<GroupScan>> subscriber) {
                 try {
-                    List<GroupScan> result = databaseRealm.getListGroupScanVersion();
-                    subscriber.onNext(result);
+                 //   List<GroupScan> result = databaseRealm.getListGroupScanVersion();
+                    subscriber.onNext(null);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -1578,6 +1487,166 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                   String json =  databaseRealm.getListDetailUploadPackageById (logSerialId);
                     subscriber.onNext(json);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ProductPackWindowModel> getProductPackingWindow(final ProductPackagingWindowEntity entity) {
+        return Observable.create(new Observable.OnSubscribe<ProductPackWindowModel>() {
+            @Override
+            public void call(Subscriber<? super ProductPackWindowModel> subscriber) {
+                try {
+                    ProductPackWindowModel model =  databaseRealm.getProductPackingWindow (entity);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> saveBarcodeScanPackagingWindow(final long productId, final int direction, final GroupSetEntity groupSetEntity) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean aBoolean =  databaseRealm.saveBarcodeScanPackagingWindow (productId,direction,groupSetEntity);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Integer> getTotalNumberDetaiLInPackWindow(final String packCode, final int numberPack) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                    int total =  databaseRealm.getTotalNumberDetaiLInPackWindow (packCode,numberPack);
+                    subscriber.onNext(total);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateNumberScanPackagingWindow(final String packCode, final int numberOnPack, final long logId, final int number) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateNumberScanPackagingWindow (packCode,numberOnPack,logId,number);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteScanPackagingWindow( final long logId, final String packCode, final int numberOnPack) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteScanPackagingWindow (logId,packCode,numberOnPack);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAllItemLogScanPackagingWindow() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAllItemLogScanPackagingWindow ();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<ListPackCodeWindowModel>> getListScanPackagingWindow() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<ListPackCodeWindowModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<ListPackCodeWindowModel>> subscriber) {
+                try {
+                    RealmResults<ListPackCodeWindowModel> results =  databaseRealm.getListScanPackagingWindow ();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ListPackCodeWindowModel> getListDetailPackWindowById(final long mainId) {
+        return Observable.create(new Observable.OnSubscribe<ListPackCodeWindowModel>() {
+            @Override
+            public void call(Subscriber<? super ListPackCodeWindowModel> subscriber) {
+                try {
+                    ListPackCodeWindowModel main =  databaseRealm.getListDetailPackWindowById (mainId);
+                    subscriber.onNext(main);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> getListDetailUploadPackWindowById(final long mainId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    String json =  databaseRealm.getListDetailUploadPackWindowById (mainId);
+                    subscriber.onNext(json);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusScanPackagingWindow(final long mainId, final long serverId) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusScanPackagingWindow (mainId,serverId);
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

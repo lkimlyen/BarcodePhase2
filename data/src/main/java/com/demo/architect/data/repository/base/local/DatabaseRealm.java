@@ -5,8 +5,8 @@ import android.content.Context;
 import com.demo.architect.data.helper.Constants;
 import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.helper.SharedPreferenceHelper;
-import com.demo.architect.data.model.ApartmentEntity;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.GroupSetEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.OrderConfirmWindowEntity;
@@ -14,9 +14,9 @@ import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
+import com.demo.architect.data.model.ProductPackagingWindowEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
-import com.demo.architect.data.model.SOEntity;
 import com.demo.architect.data.model.TimesConfirm;
 import com.demo.architect.data.model.offline.DeliveryNoteModel;
 import com.demo.architect.data.model.offline.DeliveryNoteWindowModel;
@@ -24,30 +24,22 @@ import com.demo.architect.data.model.offline.DetailError;
 import com.demo.architect.data.model.offline.GroupCode;
 import com.demo.architect.data.model.offline.GroupScan;
 import com.demo.architect.data.model.offline.ImageModel;
-import com.demo.architect.data.model.offline.ListDepartmentQualityControl;
-import com.demo.architect.data.model.offline.ListOrderQualityControl;
-import com.demo.architect.data.model.offline.LogListFloorPagkaging;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
-import com.demo.architect.data.model.offline.LogListScanStages;
-import com.demo.architect.data.model.offline.LogListScanStagesMain;
+import com.demo.architect.data.model.offline.ListPackCodeWindowModel;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
 import com.demo.architect.data.model.offline.LogScanConfirmModel;
 import com.demo.architect.data.model.offline.LogScanConfirmWindowModel;
+import com.demo.architect.data.model.offline.LogScanPackWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.architect.data.model.offline.LogScanStages;
 import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
-import com.demo.architect.data.model.offline.NumberInputConfirmModel;
-import com.demo.architect.data.model.offline.NumberInputModel;
 import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
+import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.util.Collection;
@@ -62,7 +54,6 @@ import io.realm.RealmMigration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;
-import io.realm.annotations.PrimaryKey;
 
 public class DatabaseRealm {
     private Context context;
@@ -160,17 +151,6 @@ public class DatabaseRealm {
         });
     }
 
-    public int countLogScanStagesWatingUpload(long orderId, int departmentId, int times) {
-        Realm realm = getRealmInstance();
-        final int count = LogListScanStages.countDetailWaitingUpload(realm, orderId, departmentId, userId, times);
-        return count;
-    }
-
-    public int countAllDetailWaitingUpload(long orderId) {
-        Realm realm = getRealmInstance();
-        final int count = LogListScanStages.countAllDetailWaitingUpload(realm, orderId, userId);
-        return count;
-    }
 
     public List<LogScanStages> getListLogScanStagesUpload() {
         Realm realm = getRealmInstance();
@@ -220,17 +200,6 @@ public class DatabaseRealm {
         });
     }
 
-    public LogListScanStages getListScanStages(long orderId, int departmentId, long userId, int times) {
-        Realm realm = getRealmInstance();
-        LogListScanStages logListScanStages = LogListScanStages.getListScanStagesByDepartment(realm, orderId, departmentId, userId, times);
-        return logListScanStages;
-    }
-
-    public RealmResults<LogScanStages> getListScanStagesByModule(long orderId, int departmentId, int times, String module) {
-        Realm realm = getRealmInstance();
-        RealmResults<LogScanStages> logListScanStages = LogListScanStages.getListScanStagesByModule(realm, orderId, departmentId, userId, times, module);
-        return logListScanStages;
-    }
 
     public RealmResults<GroupCode> getListGroupCode(long orderId) {
         Realm realm = getRealmInstance();
@@ -300,25 +269,6 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateStatusScanStagesByOrder(final long orderId) {
-        Realm realm = getRealmInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                LogListScanStages.updateStatusScanStagesByOrder(realm, orderId, userId);
-            }
-        });
-    }
-
-    public void updateStatusScanStages(final long orderId, final int departmentId, final int times) {
-        Realm realm = getRealmInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                LogListScanStages.updateStatusScanStages(realm, orderId, departmentId, times, userId);
-            }
-        });
-    }
 
     public LogScanConfirmModel findConfirmByBarcode(String barcode) {
         Realm realm = getRealmInstance();
@@ -393,12 +343,6 @@ public class DatabaseRealm {
         Realm realm = getRealmInstance();
         ProductPackagingModel productPackagingModel = ProductPackagingModel.findProductPackaging(realm, productId, productDetailId, serialPack);
         return productPackagingModel;
-    }
-
-    public LogListOrderPackaging findOrderPackaging(final long orderId) {
-        Realm realm = getRealmInstance();
-        LogListOrderPackaging listOrderPackaging = LogListOrderPackaging.findOrderPackaging(realm, orderId);
-        return listOrderPackaging;
     }
 
     public int getTotalScanBySerialPack(long productId, String serialPack) {
@@ -700,21 +644,6 @@ public class DatabaseRealm {
                 }
 
                 imageModels.deleteAllFromRealm();
-                RealmResults<ListDepartmentQualityControl> listDepartmentQualityControls = realm.where(ListDepartmentQualityControl.class).findAll();
-                listDepartmentQualityControls.deleteAllFromRealm();
-                RealmResults<ListOrderQualityControl> listOrderQualityControls = realm.where(ListOrderQualityControl.class).findAll();
-                listOrderQualityControls.deleteAllFromRealm();
-
-                RealmResults<LogListModulePagkaging> logListModulePagkagings = realm.where(LogListModulePagkaging.class).findAll();
-                logListModulePagkagings.deleteAllFromRealm();
-                RealmResults<LogListFloorPagkaging> logListFloorPagkagings = realm.where(LogListFloorPagkaging.class).findAll();
-                logListFloorPagkagings.deleteAllFromRealm();
-                RealmResults<LogListOrderPackaging> logListOrderPackagings = realm.where(LogListOrderPackaging.class).findAll();
-                logListOrderPackagings.deleteAllFromRealm();
-                RealmResults<LogListScanStages> logListScanStages = realm.where(LogListScanStages.class).findAll();
-                logListScanStages.deleteAllFromRealm();
-                RealmResults<LogListScanStagesMain> logListScanStagesMains = realm.where(LogListScanStagesMain.class).findAll();
-                logListScanStagesMains.deleteAllFromRealm();
                 RealmResults<LogListSerialPackPagkaging> logListSerialPackPagkagings = realm.where(LogListSerialPackPagkaging.class).findAll();
                 logListSerialPackPagkagings.deleteAllFromRealm();
 
@@ -724,10 +653,6 @@ public class DatabaseRealm {
                 logScanPackagings.deleteAllFromRealm();
                 RealmResults<LogScanStages> logScanStages = realm.where(LogScanStages.class).findAll();
                 logScanStages.deleteAllFromRealm();
-                RealmResults<NumberInputConfirmModel> numberInputConfirmModels = realm.where(NumberInputConfirmModel.class).findAll();
-                numberInputConfirmModels.deleteAllFromRealm();
-                RealmResults<NumberInputModel> numberInputModels = realm.where(NumberInputModel.class).findAll();
-                numberInputModels.deleteAllFromRealm();
                 RealmResults<ProductDetail> productDetails = realm.where(ProductDetail.class).findAll();
                 productDetails.deleteAllFromRealm();
                 RealmResults<ProductPackagingModel> productPackagingModels = realm.where(ProductPackagingModel.class).findAll();
@@ -739,11 +664,6 @@ public class DatabaseRealm {
         });
     }
 
-    public List<GroupScan> getListGroupScanVersion() {
-        Realm realm = getRealmInstance();
-        List<GroupScan> list = LogListScanStages.getListGroupScanVersion(realm);
-        return list;
-    }
 
     public void saveListProductDetail(final List<ProductEntity> entity) {
         Realm realm = getRealmInstance();
@@ -1065,6 +985,101 @@ public class DatabaseRealm {
         return gson.toJson(logScanPackagings);
     }
 
+    public ProductPackWindowModel getProductPackingWindow(ProductPackagingWindowEntity entity) {
+
+        Realm realm = getRealmInstance();
+        ProductPackWindowModel productDetail = ProductPackWindowModel.findProductPackaging(realm, entity.getProductSetDetailId(), entity.getProductSetId());
+        if (productDetail == null) {
+            productDetail = ProductPackWindowModel.create(realm, entity);
+        }
+        return productDetail;
+    }
+
+    public boolean saveBarcodeScanPackagingWindow(final long productId, final int direction, final GroupSetEntity groupSetEntity) {
+        Realm realm = getRealmInstance();
+
+        boolean satisfy = LogScanPackWindowModel.checkCondition(realm, productId, direction, groupSetEntity);
+        if (satisfy) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    LogScanPackWindowModel.createOrUpdateLogScanPackaging(realm, productId, direction, groupSetEntity, userId);
+                }
+            });
+        }
+        return satisfy;
+    }
+
+    public int getTotalNumberDetaiLInPackWindow(String packCode, int numberPack) {
+        Realm realm = getRealmInstance();
+        int total = LogScanPackWindowModel.getTotalScan(realm, packCode, numberPack);
+        return total;
+    }
+
+    public void updateNumberScanPackagingWindow(final String packCode, final int numberOnPack, final long logId, final int number) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackWindowModel.updateNumberScanPackaging(realm, packCode, numberOnPack, logId, number);
+            }
+        });
+    }
+
+    public void deleteScanPackagingWindow(final long logId, final String packCode, final int numberOnPack) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackWindowModel.deleteLogScanPackaging(realm, logId, packCode, numberOnPack);
+            }
+        });
+    }
+
+    public void deleteAllItemLogScanPackagingWindow() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackWindowModel.deleteAllItemLogScanPackaging(realm);
+            }
+        });
+    }
+
+    public RealmResults<ListPackCodeWindowModel> getListScanPackagingWindow() {
+        Realm realm = getRealmInstance();
+        RealmResults<ListPackCodeWindowModel> results = LogScanPackWindowModel.getListScanPackaging(realm);
+        return results;
+    }
+
+    public ListPackCodeWindowModel getListDetailPackWindowById(long mainId) {
+        Realm realm = getRealmInstance();
+        ListPackCodeWindowModel results = ListPackCodeWindowModel.getListDetailPackageById(realm,mainId);
+        return results;
+    }
+
+    public String getListDetailUploadPackWindowById(long mainId) {
+        Realm realm = getRealmInstance();
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        ListPackCodeWindowModel main = ListPackCodeWindowModel.getListDetailPackageById(realm, mainId);
+        RealmList<LogScanPackWindowModel> list = main.getList();
+        List<LogScanPackWindowModel> result = realm.copyFromRealm(list);
+
+        return gson.toJson(result);
+    }
+
+    public void updateStatusScanPackagingWindow(final long mainId, final long serverId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanPackWindowModel.updateStatusScanPackaging(realm, mainId,serverId);
+            }
+        });
+    }
+
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
@@ -1282,7 +1297,7 @@ public class DatabaseRealm {
                         .addField("numberScan", int.class)
                         .removeField("numberTotal")
                         .addField("numberTotal", int.class)
-                .addField("productId",long.class);
+                        .addField("productId", long.class);
                 schema.get("LogScanPackaging")
                         .removeField("numberInput")
                         .addField("numberInput", int.class)

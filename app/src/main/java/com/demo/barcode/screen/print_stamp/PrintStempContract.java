@@ -3,10 +3,7 @@ package com.demo.barcode.screen.print_stamp;
 import com.demo.architect.data.model.CodePackEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.offline.LogListModulePagkaging;
-import com.demo.architect.data.model.offline.LogListOrderPackaging;
 import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.app.base.BasePresenter;
 import com.demo.barcode.app.base.BaseView;
 

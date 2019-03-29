@@ -154,6 +154,8 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
 
 
     private void initView() {
+
+        rvCode.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         llTypeProduct.setVisibility(View.GONE);
         llTypeScan.setVisibility(View.GONE);
         llTimes.setVisibility(View.GONE);
