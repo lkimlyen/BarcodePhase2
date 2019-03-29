@@ -76,6 +76,17 @@ public class PrintStempWindowFragment extends BaseFragment implements PrintStemp
     @Bind(R.id.txt_floor)
     TextView txtFloor;
 
+    @Bind(R.id.tv_title_stt_module)
+    TextView tvTitleSttModule;
+
+    @Bind(R.id.tv_title_floor)
+    TextView tvTitleFloor;
+
+    @Bind(R.id.tv_title_stt_pack)
+    TextView tvTitleSttPack;
+
+    @Bind(R.id.tv_title_code_pack)
+    TextView tvTitleCodePack;
     public PrintStempWindowFragment() {
         // Required empty public constructor
     }
@@ -115,12 +126,19 @@ public class PrintStempWindowFragment extends BaseFragment implements PrintStemp
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         mPresenter.getOrderPackaging(orderId);
         mPresenter.getSetWindow(productSetId);
+        tvTitleSttModule.setText(getString(R.string.text_direction)+":");
+        tvTitleFloor.setText(getString(R.string.text_set_window));
+        tvTitleCodePack.setText(getString(R.string.text_number_pack));
+        tvTitleSttPack.setText(getString(R.string.text_pack_code).replace(": %s","" ));
         switch (direction) {
             case 0:
+                txtSerialModule.setText(getString(R.string.text_no));
                 break;
             case 1:
+                txtSerialModule.setText(getString(R.string.text_left));
                 break;
             case 2:
+                txtSerialModule.setText(getString(R.string.text_right));
                 break;
         }
         mPresenter.getListDetailPackageById(mainId);

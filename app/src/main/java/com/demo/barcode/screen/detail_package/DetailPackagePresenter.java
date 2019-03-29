@@ -64,7 +64,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
 
-
     @Override
     public void printTemp(long serverId, long packageId) {
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
@@ -77,7 +76,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocket connectSocket = new ConnectSocket(address.getIpAddress(), address.getPortNumber(),
-                        serverId, type, new ConnectSocket.onPostExecuteResult() {
+                        serverId, 1, new ConnectSocket.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {

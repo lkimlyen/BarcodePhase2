@@ -4,6 +4,7 @@ package com.demo.architect.data.repository.base.product.remote;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.HistoryPackWindowEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -92,7 +93,13 @@ public interface ProductApiInterface {
 
     @FormUrlEncoded
     @POST
-    Call<BaseResponse<Integer>> addScanTemHangCua(@Url String url, String key,  @Field("pOrderID") long orderId,
+    Call<BaseListResponse<HistoryPackWindowEntity>> getHistoryIntemCua(@Url String url,
+                                                                       @Field("pProductSetID") long productSetId,
+                                                                       @Field("pDirec") int direction);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse<Integer>> addScanTemHangCua(@Url String url, @Field("pKey") String key, @Field("pOrderID")  long orderId,
                                                   @Field("pProductSetID") long productSetId,
                                                   @Field("pDirec") int direction,
                                                   @Field("pPackCode") String packCode,

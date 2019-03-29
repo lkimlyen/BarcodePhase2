@@ -7,6 +7,7 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.HistoryPackWindowEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -76,6 +77,25 @@ public class ProductRepositoryImpl implements ProductRepository {
     private void handleProductPackingWindowResponse(Call<BaseListResponse<ProductPackagingWindowEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<ProductPackagingWindowEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+    private void handleHistoryPackWindowResponse(Call<BaseListResponse<HistoryPackWindowEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<HistoryPackWindowEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -354,7 +374,19 @@ public class ProductRepositoryImpl implements ProductRepository {
             @Override
             public void call(Subscriber<? super BaseListResponse<ProductPackagingWindowEntity>> subscriber) {
                 handleProductPackingWindowResponse(mRemoteApiInterface.getProductSetDetailBySetAndDirec(
-                        server + "/WS/api/GD2GetProductSet",productSetId,direction), subscriber);
+                        server + "/WS/api/GD2GetProductSetDetailBySetAndDirec",productSetId,direction), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<HistoryPackWindowEntity>> getHistoryIntemCua(final long productSetId, final int direction) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<HistoryPackWindowEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<HistoryPackWindowEntity>> subscriber) {
+                handleHistoryPackWindowResponse(mRemoteApiInterface.getHistoryIntemCua(
+                        server + "/WS/api/GD2GetHistoryIntemCua",productSetId,direction), subscriber);
             }
         });
     }

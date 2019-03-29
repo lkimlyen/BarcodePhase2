@@ -1655,4 +1655,20 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<Integer> getNumberScanWindowByBarcode(final String packCode, final int numberSetOnPack, final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                   int numberScan = databaseRealm.getNumberScanWindowByBarcode (packCode,numberSetOnPack,barcode);
+                    subscriber.onNext(numberScan);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 }

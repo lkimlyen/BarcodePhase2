@@ -245,4 +245,6 @@ public interface LocalRepository {
     Observable<String> getListDetailUploadPackWindowById(long mainId);
 
     Observable<String> updateStatusScanPackagingWindow(long mainId, long serverId);
+
+    Observable<Integer> getNumberScanWindowByBarcode(String packCode, int numberSetOnPack, String barcode);
 }

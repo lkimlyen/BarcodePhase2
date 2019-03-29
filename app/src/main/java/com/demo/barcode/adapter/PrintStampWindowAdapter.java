@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.demo.architect.data.model.offline.LogScanPackWindowModel;
 import com.demo.architect.data.model.offline.LogScanPackaging;
 import com.demo.barcode.R;
+import com.demo.barcode.app.CoreApplication;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
@@ -42,11 +43,12 @@ public class PrintStampWindowAdapter extends RealmBaseAdapter<LogScanPackWindowM
 
     private void setDataToViews(HistoryHolder holder, LogScanPackWindowModel item) {
         holder.txtCodeColor.setText(item.getProductPackWindowModel().getProductSetDetailCode());
-        holder.txtHeight.setText((int)item.getProductPackWindowModel().getHeight() + "");
-        holder.txtLength.setText((int)item.getProductPackWindowModel().getLength() + "");
-        holder.txtWidth.setText((int)item.getProductPackWindowModel().getWidth() + "");
+        holder.txtHeight.setText(item.getProductPackWindowModel().getHeight() + "");
+        holder.txtLength.setText(item.getProductPackWindowModel().getLength() + "");
+        holder.txtWidth.setText(item.getProductPackWindowModel().getWidth() + "");
         holder.txtNumber.setText((int)item.getNumberScan() + "");
         holder.txtNameProduct.setText(item.getProductPackWindowModel().getProductSetDetailName());
+        holder.tvTitleColorCode.setText(CoreApplication.getInstance().getString(R.string.text_code_detail));
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
@@ -57,6 +59,7 @@ public class PrintStampWindowAdapter extends RealmBaseAdapter<LogScanPackWindowM
         TextView txtLength;
         TextView txtCodeColor;
         TextView txtNumber;
+        TextView tvTitleColorCode;
 
         private HistoryHolder(View v) {
             super(v);
@@ -66,6 +69,7 @@ public class PrintStampWindowAdapter extends RealmBaseAdapter<LogScanPackWindowM
             txtLength = (TextView) v.findViewById(R.id.txt_lenght);
             txtCodeColor = (TextView) v.findViewById(R.id.txt_code_color);
             txtNumber = (TextView) v.findViewById(R.id.txt_number);
+            tvTitleColorCode = (TextView) v.findViewById(R.id.tv_title_color_code);
         }
     }
 

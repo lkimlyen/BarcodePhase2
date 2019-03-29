@@ -71,7 +71,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(5)
+                        .schemaVersion(6)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
@@ -80,7 +80,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(5)
+                        .schemaVersion(6)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
@@ -998,7 +998,7 @@ public class DatabaseRealm {
     public boolean saveBarcodeScanPackagingWindow(final long productId, final int direction, final GroupSetEntity groupSetEntity) {
         Realm realm = getRealmInstance();
 
-        boolean satisfy = LogScanPackWindowModel.checkCondition(realm, productId, direction, groupSetEntity);
+        boolean satisfy = LogScanPackWindowModel.checkCondition(realm, productId, groupSetEntity);
         if (satisfy) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
@@ -1054,7 +1054,7 @@ public class DatabaseRealm {
 
     public ListPackCodeWindowModel getListDetailPackWindowById(long mainId) {
         Realm realm = getRealmInstance();
-        ListPackCodeWindowModel results = ListPackCodeWindowModel.getListDetailPackageById(realm,mainId);
+        ListPackCodeWindowModel results = ListPackCodeWindowModel.getListDetailPackageById(realm, mainId);
         return results;
     }
 
@@ -1075,9 +1075,16 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogScanPackWindowModel.updateStatusScanPackaging(realm, mainId,serverId);
+                LogScanPackWindowModel.updateStatusScanPackaging(realm, mainId, serverId);
             }
         });
+    }
+
+    public int getNumberScanWindowByBarcode(String packCode, int numberSetOnPack, String barcode) {
+        Realm realm = getRealmInstance();
+        int numberScan = LogScanPackWindowModel.getNumberScanWindowByBarcode(realm, packCode, numberSetOnPack, barcode);
+        return numberScan;
+
     }
 
     public class MyMigration implements RealmMigration {
@@ -1307,7 +1314,53 @@ public class DatabaseRealm {
 
                 oldVersion++;
             }
+            if (oldVersion == 5) {
+                schema.create("ProductPackWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("productSetId", long.class)
+                        .addField("productSetDetailId", long.class)
+                        .addField("productSetDetailName", String.class)
+                        .addField("productSetDetailCode", String.class)
+                        .addField("barcode", String.class)
+                        .addField("codeOrigin", String.class)
+                        .addField("width", double.class)
+                        .addField("length", double.class)
+                        .addField("height", double.class)
+                        .addField("numberTotal", int.class)
+                        .addField("numberScan", int.class)
+                        .addField("numberScaned", int.class)
+                        .addField("numberRest", int.class);
 
+                schema.create("LogScanPackWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("productSetDetailId", long.class)
+                        .addField("numberOnSet", int.class)
+                        .addField("barcode", String.class)
+                        .addField("numberScan", int.class)
+                        .addField("dateScan", String.class)
+                        .addField("statusScan", int.class)
+                        .addField("status", int.class)
+                        .addField("userId", int.class)
+                        .addRealmObjectField("productPackWindowModel", schema.get("ProductPackWindowModel"));
+
+                schema.create("ListPackCodeWindowModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("productSetId",long.class )
+                        .addField("direction", int.class)
+                        .addField("numberSetOnPack", int.class)
+                        .addField("packCode", String.class)
+                        .addField("totalNumber", int.class)
+                        .addField("serverId", long.class)
+                        .addField("status", int.class)
+                        .addField("userId", int.class)
+                        .addRealmListField("list", schema.get("LogScanPackWindowModel"));
+
+
+
+                oldVersion++;
+            }
 
         }
 

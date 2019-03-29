@@ -72,7 +72,7 @@ public class CreatePackagingWindowFragment extends BaseFragment implements Creat
     @Bind(R.id.tv_direction)
     TextView tvDirection;
 
-    @Bind(R.id.tv_apartment)
+    @Bind(R.id.tv_set_window)
     TextView tvSetWindow;
 
     @Bind(R.id.txt_customer_name)
@@ -94,10 +94,8 @@ public class CreatePackagingWindowFragment extends BaseFragment implements Creat
     private Vibrator vibrate;
     private long orderId = 0;
     private long productSetId = 0;
-    private int orderType = 0;
     private int direction = -1;
 
-    private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
     public CreatePackagingWindowFragment() {
         // Required empty public constructor
@@ -417,9 +415,9 @@ public class CreatePackagingWindowFragment extends BaseFragment implements Creat
                                         searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
                                             @Override
                                             public void onSearchableItemClicked(Object item, int position) {
-                                                SetWindowEntity setWindowEntity = (SetWindowEntity) item;
-                                                tvSetWindow.setText(setWindowEntity.getProductSetName());
-                                                productSetId = setWindowEntity.getProductSetId();
+                                                SetWindowEntity apartmentEntity = (SetWindowEntity) item;
+                                                tvSetWindow.setText(apartmentEntity.getProductSetName());
+                                                productSetId = apartmentEntity.getProductSetId();
                                                 tvDirection.setText(getString(R.string.text_choose_direction));
                                                 direction = -1;
                                             }
@@ -435,9 +433,9 @@ public class CreatePackagingWindowFragment extends BaseFragment implements Creat
                         searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
                             @Override
                             public void onSearchableItemClicked(Object item, int position) {
-                                ApartmentEntity apartmentEntity = (ApartmentEntity) item;
-                                tvSetWindow.setText(apartmentEntity.getApartmentName());
-                                productSetId = apartmentEntity.getApartmentID();
+                                SetWindowEntity apartmentEntity = (SetWindowEntity) item;
+                                tvSetWindow.setText(apartmentEntity.getProductSetName());
+                                productSetId = apartmentEntity.getProductSetId();
                                 tvDirection.setText(getString(R.string.text_choose_direction));
                                 direction = -1;
                             }
@@ -604,7 +602,6 @@ public class CreatePackagingWindowFragment extends BaseFragment implements Creat
                     })
                     .show();
         } else {
-
             SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
                     (DirectionManager.getInstance().getListType());
             searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {

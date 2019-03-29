@@ -28,6 +28,8 @@ import com.demo.barcode.screen.group_code.GroupCodeComponent;
 import com.demo.barcode.screen.group_code.GroupCodeModule;
 import com.demo.barcode.screen.history_pack.HistoryPackageComponent;
 import com.demo.barcode.screen.history_pack.HistoryPackageModule;
+import com.demo.barcode.screen.history_pack_window.HistoryPackWindowComponent;
+import com.demo.barcode.screen.history_pack_window.HistoryPackWindowModule;
 import com.demo.barcode.screen.login.LoginComponent;
 import com.demo.barcode.screen.login.LoginModule;
 import com.demo.barcode.screen.print_stamp.PrintStempComponent;
@@ -101,4 +103,6 @@ public interface ApplicationComponent {
     CreatePackagingWindowComponent plus(CreatePackagingWindowModule module);
 
     PrintStempWindowComponent plus(PrintStempWindowModule module);
+
+    HistoryPackWindowComponent plus(HistoryPackWindowModule module);
 }

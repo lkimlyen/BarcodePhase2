@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.product.remote;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.HistoryPackWindowEntity;
 import com.demo.architect.data.model.ListModuleEntity;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
@@ -59,5 +60,8 @@ public interface ProductRepository {
 
     Observable<BaseListResponse<ProductPackagingWindowEntity>> getProductSetDetailBySetAndDirec(long productSetId,
                                                                                                 int direction);
+
+    Observable<BaseListResponse<HistoryPackWindowEntity>> getHistoryIntemCua(long productSetId,
+                                                                                           int direction);
 
 }

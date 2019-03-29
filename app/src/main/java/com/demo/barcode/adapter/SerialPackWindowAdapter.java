@@ -92,7 +92,7 @@ public class SerialPackWindowAdapter extends RealmBaseAdapter<ListPackCodeWindow
             }
         });
         int sum = item.getList().where()
-                .equalTo("status", Constants.WAITING_UPLOAD).findAll().sum("numberInput").intValue();
+                .equalTo("status", Constants.WAITING_UPLOAD).findAll().sum("numberScan").intValue();
         if (item.getTotalNumber() == sum) {
             holder.btnPrint.setVisibility(View.VISIBLE);
         } else {

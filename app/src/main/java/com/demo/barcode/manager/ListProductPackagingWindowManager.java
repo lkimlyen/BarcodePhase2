@@ -32,7 +32,7 @@ public class ListProductPackagingWindowManager {
     public ProductPackagingWindowEntity getDetailByBarcode(String barcode) {
         ProductPackagingWindowEntity entity = null;
         for (ProductPackagingWindowEntity item : list) {
-            if (item.equals(barcode)) {
+            if (item.getBarcode().equals(barcode)) {
                 entity = item;
                 break;
             }

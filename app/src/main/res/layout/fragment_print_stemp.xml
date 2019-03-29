@@ -126,6 +126,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
+                    android:id ="@+id/tv_title_floor"
                     android:text="@string/text_floor_or_apartment"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/text_16sp"
@@ -151,6 +152,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
+                    android:id="@+id/tv_title_stt_pack"
                     android:text="@string/text_serial_package"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/text_16sp"
@@ -363,6 +365,7 @@
                 <TextView
                     android:ellipsize="none"
                     android:scrollHorizontally="false"
+                    android:id="@+id/tv_title_code_pack"
                     android:text="@string/text_code_pack"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
@@ -382,6 +385,7 @@
 
                 <TextView
                     android:ellipsize="none"
+                    android:id="@+id/tv_title_stt_module"
                     android:scrollHorizontally="false"
                     android:text="@string/text_serial_module_print"
                     android:textColor="@android:color/black"

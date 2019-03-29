@@ -88,7 +88,8 @@ public class LogScanPackWindowModel extends RealmObject {
         logScanPackaging.setNumberScan(number);
         ProductPackWindowModel productPackagingModel = logScanPackaging.getProductPackWindowModel();
         productPackagingModel.setNumberScan(productPackagingModel.getNumberScan() + numberCurrent);
-        productPackagingModel.setNumberRest(productPackagingModel.getNumberTotal() - productPackagingModel.getNumberScan());
+        productPackagingModel.setNumberRest(productPackagingModel.getNumberRest() - numberCurrent);
+
         if (logScanPackaging.getNumberScan() < main.getNumberSetOnPack() * logScanPackaging.getNumberOnSet()) {
             logScanPackaging.setStatusScan(Constants.INCOMPLETE);
         } else {
@@ -105,28 +106,37 @@ public class LogScanPackWindowModel extends RealmObject {
         return nextId;
     }
 
-    public static boolean checkCondition(Realm realm, long productId, int direction, GroupSetEntity groupSetEntity) {
+    public static boolean checkCondition(Realm realm, long productId, GroupSetEntity groupSetEntity) {
         ProductPackWindowModel productPackWindowModel = realm.where(ProductPackWindowModel.class)
                 .equalTo("id", productId).findFirst();
-        ListPackCodeWindowModel main = realm.where(ListPackCodeWindowModel.class)
-                .equalTo("packCode", groupSetEntity.getPackCode())
-                .equalTo("numberSetOnPack", groupSetEntity.getNumberSetOnPack())
-                .equalTo("direction", direction)
-                .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-
-        RealmList<LogScanPackWindowModel> parentList = main.getList();
-        LogScanPackWindowModel logScanPackaging = parentList.where()
-                .equalTo("barcode", productPackWindowModel.getBarcode())
-                .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
         boolean satisfy;
-        if (logScanPackaging == null) {
-            satisfy = true;
-        } else {
-            if (logScanPackaging.getNumberScan() < (groupSetEntity.getNumberOnSet() * groupSetEntity.getNumberSetOnPack())) {
-                satisfy = true;
+        if (productPackWindowModel != null) {
+
+            ListPackCodeWindowModel main = realm.where(ListPackCodeWindowModel.class)
+                    .equalTo("packCode", groupSetEntity.getPackCode())
+                    .equalTo("numberSetOnPack", groupSetEntity.getNumberSetOnPack())
+                    .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+            if (main != null) {
+                RealmList<LogScanPackWindowModel> parentList = main.getList();
+                LogScanPackWindowModel logScanPackaging = parentList.where()
+                        .equalTo("barcode", productPackWindowModel.getBarcode())
+                        .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+
+                if (logScanPackaging == null) {
+                    satisfy = true;
+                } else {
+                    if (logScanPackaging.getNumberScan() < (groupSetEntity.getNumberOnSet() * groupSetEntity.getNumberSetOnPack())) {
+                        satisfy = true;
+                    } else {
+                        satisfy = false;
+                    }
+                }
             } else {
-                satisfy = false;
+                satisfy = true;
             }
+        } else {
+            satisfy = true;
         }
         return satisfy;
     }
@@ -179,7 +189,7 @@ public class LogScanPackWindowModel extends RealmObject {
             logScanPackaging.setNumberScan(logScanPackaging.getNumberScan() + 1);
         }
         productPackWindowModel.setNumberScan(productPackWindowModel.getNumberScan() + 1);
-        productPackWindowModel.setNumberRest(productPackWindowModel.getNumberTotal() - productPackWindowModel.getNumberScan());
+        productPackWindowModel.setNumberRest(productPackWindowModel.getNumberRest() - 1);
         if (logScanPackaging.getNumberScan() < main.getNumberSetOnPack() * logScanPackaging.getNumberOnSet()) {
             logScanPackaging.setStatusScan(Constants.INCOMPLETE);
         } else {
@@ -187,7 +197,7 @@ public class LogScanPackWindowModel extends RealmObject {
         }
     }
 
-    public static List<LogScanPackWindowModel> getListScanPackaging(Realm realm,String packCode, int numberOnPack) {
+    public static List<LogScanPackWindowModel> getListScanPackaging(Realm realm, String packCode, int numberOnPack) {
 
         ListPackCodeWindowModel listPackCodeWindowModel = realm.where(ListPackCodeWindowModel.class)
                 .equalTo("packCode", packCode)
@@ -232,7 +242,7 @@ public class LogScanPackWindowModel extends RealmObject {
         RealmResults<LogScanPackWindowModel> logScanPackagings = realm.where(LogScanPackWindowModel.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
         logScanPackagings.deleteAllFromRealm();
         RealmResults<ProductPackWindowModel> productPackagingModels = realm.where(ProductPackWindowModel.class)
-             .findAll();
+                .findAll();
         productPackagingModels.deleteAllFromRealm();
     }
 
@@ -298,5 +308,21 @@ public class LogScanPackWindowModel extends RealmObject {
 
     public void setProductPackWindowModel(ProductPackWindowModel productPackWindowModel) {
         this.productPackWindowModel = productPackWindowModel;
+    }
+
+    public static int getNumberScanWindowByBarcode(Realm realm, String packCode, int numberSetOnPack, String barcode) {
+        ListPackCodeWindowModel main = realm.where(ListPackCodeWindowModel.class)
+                .equalTo("packCode", packCode)
+                .equalTo("numberSetOnPack", numberSetOnPack)
+                .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+        int numberScan = 0;
+        if (main != null) {
+            RealmList<LogScanPackWindowModel> parentList = main.getList();
+            LogScanPackWindowModel results = parentList.where().equalTo("barcode", barcode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+            if (results != null) {
+                numberScan = results.getNumberScan();
+            }
+        }
+        return numberScan;
     }
 }

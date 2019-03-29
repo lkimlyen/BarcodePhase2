@@ -51,7 +51,7 @@ public class ProductPackWindowModel extends RealmObject {
     public static ProductPackWindowModel findProductPackaging(Realm realm, long productSetDetailId, long productSetId) {
         ProductPackWindowModel productPackagingModel = realm.where(ProductPackWindowModel.class)
                 .equalTo("productSetDetailId", productSetDetailId)
-                .equalTo("productSetId", productSetId).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+                .equalTo("productSetId", productSetId).findFirst();
         return productPackagingModel;
 
     }

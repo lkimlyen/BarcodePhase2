@@ -115,7 +115,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                 }
                 view.showProgressBar();
                 ConnectSocket connectSocket = new ConnectSocket(address.getIpAddress(), address.getPortNumber(),
-                        serverId, type, new ConnectSocket.onPostExecuteResult() {
+                        serverId, 1, new ConnectSocket.onPostExecuteResult() {
                     @Override
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {

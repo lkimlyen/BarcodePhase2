@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -128,6 +129,7 @@ public class ScanPackWindowAdapter extends RealmBaseAdapter<LogScanPackWindowMod
         holder.txtQuantityRest.setText((int) productPackagingModel.getNumberRest() + "");
         holder.txtQuantityScan.setText((int) productPackagingModel.getNumberScan() + "");
         holder.edtNumberScan.setText(String.valueOf((int) item.getNumberScan()));
+        holder.tvNumberOnSet.setText(String.valueOf((int) item.getNumberOnSet()));
         holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -170,6 +172,8 @@ public class ScanPackWindowAdapter extends RealmBaseAdapter<LogScanPackWindowMod
         TextView txtQuantityScan;
         EditText edtNumberScan;
         RelativeLayout layoutMain;
+        LinearLayout llNumberOnSet;
+        TextView tvNumberOnSet;
 
 
         private HistoryHolder(View v) {
@@ -184,6 +188,9 @@ public class ScanPackWindowAdapter extends RealmBaseAdapter<LogScanPackWindowMod
             txtQuantityScan = (TextView) v.findViewById(R.id.txt_quantity_scan);
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
             layoutMain = (RelativeLayout) v.findViewById(R.id.layout_main);
+            tvNumberOnSet = v.findViewById(R.id.txt_number_on_set);
+            llNumberOnSet = v.findViewById(R.id.ll_number_on_set);
+            llNumberOnSet.setVisibility(View.VISIBLE);
             txtPackCode.setVisibility(View.GONE);
             txtSerialPack.setVisibility(View.GONE);
         }

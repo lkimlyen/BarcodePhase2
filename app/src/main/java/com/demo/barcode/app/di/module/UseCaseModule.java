@@ -21,6 +21,7 @@ import com.demo.architect.domain.GetApartmentUsecase;
 import com.demo.architect.domain.GetCodePackUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetDetailInByDeliveryWindowUsecase;
+import com.demo.architect.domain.GetHistoryIntemCuaUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
@@ -259,7 +260,7 @@ public class UseCaseModule {
 
 
     @Provides
-    AddScanTemHangCuaUsecase provideGetListMachineUsecase(ProductRepository otherRepository) {
+    AddScanTemHangCuaUsecase provideAddScanTemHangCuaUsecase(ProductRepository otherRepository) {
         return new AddScanTemHangCuaUsecase(otherRepository);
     }
 
@@ -271,6 +272,11 @@ public class UseCaseModule {
     @Provides
     GetProductSetUsecase provideGetProductSetUsecase(OtherRepository otherRepository) {
         return new GetProductSetUsecase(otherRepository);
+    }
+
+    @Provides
+    GetHistoryIntemCuaUsecase provideGetHistoryIntemCuaUsecase(ProductRepository otherRepository) {
+        return new GetHistoryIntemCuaUsecase(otherRepository);
     }
 }
 

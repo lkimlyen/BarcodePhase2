@@ -18,9 +18,11 @@ import com.demo.barcode.manager.ServerManager;
 import com.demo.barcode.manager.UserManager;
 import com.demo.barcode.screen.confirm_receive.ConfirmReceiveActivity;
 import com.demo.barcode.screen.confirm_receive_window.ConfirmReceiveWindowActivity;
+import com.demo.barcode.screen.create_pack_window.CreatePackagingWindowActivity;
 import com.demo.barcode.screen.create_packaging.CreatePackagingActivity;
 import com.demo.barcode.screen.group_code.GroupCodeActivity;
 import com.demo.barcode.screen.history_pack.HistoryPackageActivity;
+import com.demo.barcode.screen.history_pack_window.HistoryPackWindowActivity;
 import com.demo.barcode.screen.login.LoginActivity;
 import com.demo.barcode.screen.qc_window.QualityControlWindowActivity;
 import com.demo.barcode.screen.quality_control.QualityControlActivity;
@@ -145,7 +147,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                 txtPosition.setText("Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
                 btnScanPackaging.setVisibility(View.GONE);
                 btnHistory.setVisibility(View.GONE);
-                if (user.getRole() == 9) {
+                if (user.getRole() == 9 || user.getRole() == 20) {
                     btnScanPackaging.setVisibility(View.VISIBLE);
                     btnHistory.setVisibility(View.VISIBLE);
                 }
@@ -203,7 +205,6 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         if (UserManager.getInstance().getUser().getOrderType() == 4) {
             StagesWindowActivity.start(getContext());
         } else {
-
             StagesActivity.start(getContext());
         }
     }
@@ -219,7 +220,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_scan_packaging)
     public void scanPackaging() {
-        CreatePackagingActivity.start(getContext());
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            CreatePackagingWindowActivity.start(getContext());
+        }else {
+        CreatePackagingActivity.start(getContext());}
     }
 
     @OnClick(R.id.btn_link)
@@ -230,7 +234,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @OnClick(R.id.btn_history)
     public void history() {
-        HistoryPackageActivity.start(getContext());
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            HistoryPackWindowActivity.start(getContext());
+        }else {
+            HistoryPackageActivity.start(getContext());
+        }
     }
 
     @OnClick(R.id.btn_quality_control)

@@ -46,13 +46,13 @@ public class ChooseSetDialog extends DialogFragment {
         Dialog dialog = new Dialog(getActivity(), android.R.style.Theme_Translucent_NoTitleBar);
         dialog.setContentView(R.layout.dialog_choose_group);
         dialog.setCanceledOnTouchOutside(false);
-
+        TextView tvTitle = (TextView) dialog.findViewById(R.id.tv_title);
+        tvTitle.setText(getString(R.string.text_choose_group_set_widow));
         LinearLayout layoutContent  =  (LinearLayout) dialog.findViewById(R.id.layoutContent);
         for (GroupSetEntity item : list){
             LayoutInflater inf = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = inf.inflate(R.layout.item_content_group, null);
-            TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
-            tvTitle.setText(getString(R.string.text_choose_group_set_widow));
+
             TextView tvNameSet = (TextView) v.findViewById(R.id.txt_name_detail);
             RadioButton rbSelect = (RadioButton) v.findViewById(R.id.rb_select);
             LinearLayout layoutMain = (LinearLayout) v.findViewById(R.id.layoutMain);

@@ -4,39 +4,24 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.GroupSetEntity;
-import com.demo.architect.data.model.ListModuleEntity;
-import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.PositionScan;
 import com.demo.architect.data.model.PositionScanWindow;
-import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
-import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.offline.ListPackCodeWindowModel;
-import com.demo.architect.data.model.offline.LogListSerialPackPagkaging;
-import com.demo.architect.data.model.offline.LogScanPackWindowModel;
-import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackWindowModel;
-import com.demo.architect.data.model.offline.ProductPackagingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
-import com.demo.architect.domain.GetApartmentUsecase;
-import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
 import com.demo.architect.domain.GetProductSetDetailBySetAndDirecUsecase;
 import com.demo.architect.domain.GetProductSetUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
-import com.demo.barcode.manager.ListApartmentManager;
-import com.demo.barcode.manager.ListModulePackagingManager;
 import com.demo.barcode.manager.ListProductPackagingWindowManager;
 import com.demo.barcode.manager.ListSOManager;
 import com.demo.barcode.manager.ListSetWindowManager;
-import com.demo.barcode.manager.PositionScanManager;
 import com.demo.barcode.manager.PositionScanWindowManager;
 import com.demo.barcode.manager.UserManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -252,17 +237,17 @@ public class CreatePackagingWindowPresenter implements CreatePackagingWindowCont
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
             return;
         }
-        boolean exist = false;
 
         if (positionScan != null) {
+            GroupSetEntity groupSetEntity = null;
             for (GroupSetEntity item : entity.getListGroup()) {
                 if (item.getPackCode().equals(positionScan.getPackCode()) && item.getNumberSetOnPack() == positionScan.getNumberPack()) {
-                    exist = true;
+                    groupSetEntity = item;
                     break;
                 }
             }
 
-            if (!exist) {
+            if (groupSetEntity == null) {
                 showError(CoreApplication.getInstance().getString(R.string.text_incomplete_pack));
                 return;
             }
@@ -271,6 +256,8 @@ public class CreatePackagingWindowPresenter implements CreatePackagingWindowCont
                 showError(CoreApplication.getInstance().getString(R.string.text_detail_scan_enough));
                 return;
             }
+            saveBarcode(entity, direction, groupSetEntity);
+
         } else {
             if (entity.getNumberTotal() == entity.getNumberScaned()) {
                 showError(CoreApplication.getInstance().getString(R.string.text_detail_scan_enough));
@@ -295,35 +282,45 @@ public class CreatePackagingWindowPresenter implements CreatePackagingWindowCont
             public void call(ProductPackWindowModel product) {
                 if (product != null) {
                     if (product.getNumberRest() > 0) {
-                        localRepository.saveBarcodeScanPackagingWindow(product.getId(), direction, groupSetEntity)
-                                .subscribe(new Action1<Boolean>() {
-                                    @Override
-                                    public void call(Boolean satisfy) {
+                        localRepository.getNumberScanWindowByBarcode(groupSetEntity.getPackCode(), groupSetEntity.getNumberSetOnPack(), entity.getBarcode()).subscribe(new Action1<Integer>() {
+                            @Override
+                            public void call(Integer integer) {
+                                if (integer + product.getNumberRest() >= groupSetEntity.getNumberOnSet() * groupSetEntity.getNumberSetOnPack()) {
+                                    localRepository.saveBarcodeScanPackagingWindow(product.getId(), direction, groupSetEntity)
+                                            .subscribe(new Action1<Boolean>() {
+                                                @Override
+                                                public void call(Boolean satisfy) {
 
-                                        if (satisfy) {
-                                            localRepository.getTotalNumberDetaiLInPackWindow(groupSetEntity.getPackCode(), groupSetEntity.getNumberSetOnPack())
-                                                    .subscribe(new Action1<Integer>() {
-                                                        @Override
-                                                        public void call(Integer integer) {
-                                                            if (groupSetEntity.getNumberTotal() == integer) {
-                                                                positionScan = null;
-                                                            } else {
-                                                                positionScan = new PositionScanWindow(groupSetEntity.getPackCode(),
-                                                                        groupSetEntity.getNumberSetOnPack());
-                                                            }
-                                                            PositionScanWindowManager.getInstance().setPositionScan(positionScan);
-                                                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                                            view.startMusicSuccess();
-                                                            view.turnOnVibrator();
-                                                            view.setHeightListView();
-                                                        }
-                                                    });
-                                        } else {
-                                            showError(CoreApplication.getInstance().getString(R.string.text_scan_enough_detail_in_pack));
-                                        }
+                                                    if (satisfy) {
+                                                        localRepository.getTotalNumberDetaiLInPackWindow(groupSetEntity.getPackCode(), groupSetEntity.getNumberSetOnPack())
+                                                                .subscribe(new Action1<Integer>() {
+                                                                    @Override
+                                                                    public void call(Integer integer) {
+                                                                        if (groupSetEntity.getNumberTotal() == integer) {
+                                                                            positionScan = null;
+                                                                        } else {
+                                                                            positionScan = new PositionScanWindow(groupSetEntity.getPackCode(),
+                                                                                    groupSetEntity.getNumberSetOnPack());
+                                                                        }
+                                                                        PositionScanWindowManager.getInstance().setPositionScan(positionScan);
+                                                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                                                                        view.startMusicSuccess();
+                                                                        view.turnOnVibrator();
+                                                                        view.setHeightListView();
+                                                                    }
+                                                                });
+                                                    } else {
+                                                        showError(CoreApplication.getInstance().getString(R.string.text_scan_enough_detail_in_pack));
+                                                    }
 
-                                    }
-                                });
+                                                }
+                                            });
+                                } else {
+                                    showError(CoreApplication.getInstance().getString(R.string.text_detail_not_enough));
+                                }
+                            }
+                        });
+
                     } else {
                         showError(CoreApplication.getInstance().getString(R.string.text_detail_scan_enough));
                     }
@@ -338,7 +335,7 @@ public class CreatePackagingWindowPresenter implements CreatePackagingWindowCont
         localRepository.deleteAllItemLogScanPackagingWindow().subscribe(new Action1<String>() {
             @Override
             public void call(String integer) {
-
+                positionScan = null;
             }
         });
     }
