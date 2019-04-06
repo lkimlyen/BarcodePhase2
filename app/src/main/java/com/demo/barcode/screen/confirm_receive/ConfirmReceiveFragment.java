@@ -578,7 +578,7 @@ public class ConfirmReceiveFragment extends BaseFragment implements ConfirmRecei
 
     @OnClick(R.id.img_upload)
     public void upload() {
-        if (adapter.getDataEdit() > 0) {
+        if (adapter != null && adapter.getDataEdit() > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_upload_data))

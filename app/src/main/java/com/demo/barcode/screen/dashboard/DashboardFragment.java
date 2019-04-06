@@ -147,7 +147,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                 txtPosition.setText("Công đoạn: " + ListDepartmentManager.getInstance().getDepartmentByRole(user.getRole()));
                 btnScanPackaging.setVisibility(View.GONE);
                 btnHistory.setVisibility(View.GONE);
-                if (user.getRole() == 9 || user.getRole() == 20) {
+                if (user.getRole() == 9 || user.getRole() == 20 || user.getRole() == 17) {
                     btnScanPackaging.setVisibility(View.VISIBLE);
                     btnHistory.setVisibility(View.VISIBLE);
                 }

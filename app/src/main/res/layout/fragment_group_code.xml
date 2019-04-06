@@ -347,7 +347,6 @@
                         android:textSize="@dimen/text_12sp"
                         android:textStyle="bold" />
 
-
                     <TextView
                         android:id="@+id/position"
                         android:layout_width="@dimen/size_70dp"

@@ -396,8 +396,13 @@ public class StagesPresenter implements StagesContract.Presenter {
                     public void onSuccess(GetListProductDetailGroupUsecase.ResponseValue successResponse) {
 
                         ListGroupManager.getInstance().setListGroup(successResponse.getEntity());
-                        localRepository.addGroupScan(successResponse.getEntity()).subscribe();
-                        getListTimes(orderId);
+                        localRepository.addGroupScan(successResponse.getEntity()).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String s) {
+
+                                getListTimes(orderId);
+                            }
+                        });
                     }
 
                     @Override

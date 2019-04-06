@@ -252,6 +252,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
                                         public void call(String s) {
                                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
                                             view.refreshLayout();
+                                            view.updateStateEditText(true);
                                         }
                                     });
                                 }
@@ -278,6 +279,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
             @Override
             public void call(String s) {
                 view.refreshLayout();
+                view.updateStateEditText(true);
             }
         });
     }
@@ -294,6 +296,7 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
             public void call(String s) {
                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                 view.refreshLayout();
+                view.updateStateEditText(false);
                 view.startMusicSuccess();
                 view.turnOnVibrator();
             }

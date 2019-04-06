@@ -5,10 +5,12 @@ import com.demo.architect.data.model.GroupEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class GroupScan extends RealmObject {
@@ -42,11 +44,28 @@ public class GroupScan extends RealmObject {
     }
 
     public static void create(Realm realm, List<GroupEntity> list) {
+        RealmResults<GroupScan> results = realm.where(GroupScan.class).findAll();
+        results.deleteAllFromRealm();
         for (GroupEntity groupEntity : list){
             GroupScan groupScan = new GroupScan( groupEntity.getMasterGroupId(), groupEntity.getRowVersion(), groupEntity.getOrderId());
             realm.insertOrUpdate(groupScan);
         }
 
+    }
+
+    public static List<GroupScan> getListGroupScanVersion(Realm realm) {
+        List<GroupScan> list = new ArrayList<>();
+
+        RealmResults<LogScanStages> results = realm.where(LogScanStages.class).equalTo("status",Constants.WAITING_UPLOAD).findAll();
+
+        for (LogScanStages logScanStages : results) {
+            GroupScan groupScan = realm.where(GroupScan.class).equalTo("masterGroupId", logScanStages.getMasterGroupId()).findFirst();
+            if (groupScan != null){
+                list.add(realm.copyFromRealm(groupScan));
+            }
+        }
+
+        return list;
     }
 
     public long getMasterGroupId() {

@@ -37,11 +37,11 @@ public class ProductPackagingWindowEntity implements Serializable{
     @Expose
     private double length;
 
-    @SerializedName("ProductSetDetailWide")
+    @SerializedName("ProductSetDetailDeep")
     @Expose
     private double height;
 
-    @SerializedName("ProductSetDetailDeep")
+    @SerializedName("ProductSetDetailWide")
     @Expose
     private double width;
 

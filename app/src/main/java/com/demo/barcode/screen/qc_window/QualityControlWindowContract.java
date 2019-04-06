@@ -38,6 +38,8 @@ public interface QualityControlWindowContract {
 
         void showListSO(List<SOEntity> list);
 
+        void updateStateEditText(boolean edit);
+
     }
 
     interface Presenter extends BasePresenter {

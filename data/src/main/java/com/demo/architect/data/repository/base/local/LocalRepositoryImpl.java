@@ -957,8 +957,8 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super List<GroupScan>> subscriber) {
                 try {
-                 //   List<GroupScan> result = databaseRealm.getListGroupScanVersion();
-                    subscriber.onNext(null);
+                    List<GroupScan> result = databaseRealm.getListGroupScanVersion();
+                    subscriber.onNext(result);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

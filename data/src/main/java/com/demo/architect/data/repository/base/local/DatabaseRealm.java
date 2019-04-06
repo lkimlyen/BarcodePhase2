@@ -1087,6 +1087,13 @@ public class DatabaseRealm {
 
     }
 
+    public List<GroupScan> getListGroupScanVersion() {
+        Realm realm = getRealmInstance();
+        List<GroupScan> list = GroupScan.getListGroupScanVersion(realm);
+        return list;
+
+    }
+
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {

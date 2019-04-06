@@ -32,9 +32,9 @@ public class Constants {
 
     public static final String CREATE_PACK = "CREATE_PACK";
 
-    public static final String SERVER_MAIN = "http://acc.imark.com.vn";
+    public static final String SERVER_MAIN = "https://barcode.ancuong.com";
 
-    public static final String SERVER_TEST = "http://acctest.imark.com.vn";
+    public static final String SERVER_TEST = "https://barcodetest.ancuong.com";
 
     public static final int VALUE_SERVER_MAIN = 2;
 

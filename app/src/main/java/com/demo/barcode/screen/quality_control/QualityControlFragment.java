@@ -91,8 +91,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
     @Bind(R.id.iv_save)
     ImageView ivSave;
 
-    @Bind(R.id.iv_save_violator)
-    ImageView ivSaveViolator;
 
     private Vibrator vibrate;
     @Bind(R.id.tv_machine_name)
@@ -163,8 +161,8 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         tvQCCode.setVisibility(View.GONE);
         etMachineName.setVisibility(View.VISIBLE);
         etQCCode.setVisibility(View.VISIBLE);
-        ivSaveViolator.setVisibility(View.GONE);
         ivSave.setVisibility(View.VISIBLE);
+        mPresenter.getListQualityControl();
     }
 
 
@@ -346,7 +344,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                                                 txtCustomerName.setText(soItem.getCustomerName());
                                                 orderId = soItem.getOrderId();
                                                 mPresenter.getListProduct(orderId);
-                                                mPresenter.getListQualityControl();
                                             }
                                         });
                                         searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -364,7 +361,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                                 txtCustomerName.setText(soItem.getCustomerName());
                                 orderId = soItem.getOrderId();
                                 mPresenter.getListProduct(orderId);
-                                mPresenter.getListQualityControl();
                             }
                         });
                         searchableListDialog.show(getActivity().getFragmentManager(), TAG);
@@ -399,15 +395,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             return;
         }
 
-        if (TextUtils.isEmpty(etMachineName.getText().toString())) {
-            showError(getString(R.string.text_machine_name_null));
-            return;
-        }
-
-        if (TextUtils.isEmpty(etViolator.getText().toString())) {
-            showError(getString(R.string.text_violator_null));
-            return;
-        }
 
         if (TextUtils.isEmpty(etQCCode.getText().toString())) {
             showError(getString(R.string.text_qc_code_null));
@@ -467,7 +454,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                     .show();
         } else {
 
-            if (adapter.getItemCount() > 0) {
+            if (adapter != null  && adapter.getItemCount() > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.dialog_default_title))
                         .setContentText(getString(R.string.text_do_you_want_exit))
@@ -502,16 +489,6 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             return;
         }
 
-        if (TextUtils.isEmpty(etMachineName.getText().toString())) {
-            showError(getString(R.string.text_input_machine_name_null));
-            return;
-        }
-
-        if (TextUtils.isEmpty(etViolator.getText().toString())) {
-            showError(getString(R.string.text_violator_null));
-            return;
-        }
-
         if (TextUtils.isEmpty(etQCCode.getText().toString())) {
             showError(getString(R.string.text_input_qc_code_null));
             return;
@@ -530,7 +507,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
         if (adapter != null && adapter.countDataEdit() > 0) {
             mPresenter.uploadData();
         } else {
-            if (adapter.getItemCount() > 0) {
+            if (adapter != null && adapter.getItemCount() > 0) {
                 showError(getString(R.string.text_edit_data_before_upload));
             } else {
                 showError(getString(R.string.text_no_data_upload));
@@ -598,8 +575,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
 
     @OnClick(R.id.iv_save)
     public void saveViolator() {
-
-        if (TextUtils.isEmpty(etViolator.getText().toString())) {
+        if (TextUtils.isEmpty(etQCCode.getText().toString())) {
             return;
         }
 
@@ -610,7 +586,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
             etMachineName.setEnabled(false);
             editSave = false;
         } else {
-            if (adapter.getItemCount() > 0) {
+            if (adapter != null && adapter.getItemCount() > 0) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.dialog_default_title))
                         .setContentText(getString(R.string.text_upload_data))
@@ -621,7 +597,7 @@ public class QualityControlFragment extends BaseFragment implements QualityContr
                                 if (adapter != null && adapter.countDataEdit() > 0) {
                                     mPresenter.uploadData();
                                 } else {
-                                    if (adapter.getItemCount() > 0) {
+                                    if (adapter != null && adapter.getItemCount() > 0) {
                                         showError(getString(R.string.text_edit_data_before_upload));
                                     } else {
                                         showError(getString(R.string.text_no_data_upload));

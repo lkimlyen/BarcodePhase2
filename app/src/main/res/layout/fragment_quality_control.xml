@@ -248,13 +248,6 @@
                             android:layout_weight="3.5"
                             android:textSize="@dimen/text_14sp" />
 
-                        <ImageView
-
-                            android:id="@+id/iv_save_violator"
-                            android:layout_width="@dimen/size_32dp"
-                            android:layout_height="@dimen/size_32dp"
-                            android:padding="@dimen/distance_8dp"
-                            android:src="@drawable/ic_save" />
                     </LinearLayout>
                 </LinearLayout>
 

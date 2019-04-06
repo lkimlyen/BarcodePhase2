@@ -128,7 +128,7 @@ public class PrintStempWindowFragment extends BaseFragment implements PrintStemp
         mPresenter.getSetWindow(productSetId);
         tvTitleSttModule.setText(getString(R.string.text_direction)+":");
         tvTitleFloor.setText(getString(R.string.text_set_window));
-        tvTitleCodePack.setText(getString(R.string.text_number_pack));
+        tvTitleCodePack.setText(getString(R.string.text_number_pack).replace(" %d",""));
         tvTitleSttPack.setText(getString(R.string.text_pack_code).replace(": %s","" ));
         switch (direction) {
             case 0:
@@ -264,7 +264,7 @@ public class PrintStempWindowFragment extends BaseFragment implements PrintStemp
     @OnClick(R.id.btn_save)
     public void save() {
 
-        mPresenter.printTemp(orderId, productSetId, direction, txtCodePack.getText().toString(), numberOnPack, 0, mainId);
+        mPresenter.printTemp(orderId, productSetId, direction, txtSerialPack.getText().toString(), numberOnPack, 0, mainId);
     }
 
     @Override

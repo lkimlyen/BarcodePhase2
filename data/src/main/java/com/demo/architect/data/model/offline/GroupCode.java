@@ -134,20 +134,17 @@ public class GroupCode extends RealmObject {
     }
 
     public static void create(Realm realm, ProductEntity productEntity, long userId) {
-
-//        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", productEntity.getOrderId()).findFirst();
-//
-//        RealmList<GroupCode> parentList = mainParent.getGroupCodeRealmList();
-//        GroupCode groupCode = parentList.where().equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
-//        if (groupCode == null) {
-//            groupCode = new GroupCode(id(realm) + 1, null, productEntity.getOrderId(),
-//                    productEntity.getProductDetailID(), productEntity.getProductDetailName(), productEntity.getNumberTotalOrder(), 1, productEntity.getModule(), userId,
-//                    DateUtils.getDateTimeCurrent());
-//            groupCode = realm.copyToRealm(groupCode);
-//            parentList.add(groupCode);
-//        } else {
-//            groupCode.setNumber(groupCode.getNumber() + 1);
-//        }
+        GroupCode groupCode = realm.where(GroupCode.class)
+                .equalTo("orderId",productEntity.getOrderId())
+                .equalTo("productDetailId", productEntity.getProductDetailID()).findFirst();
+        if (groupCode == null) {
+            groupCode = new GroupCode(id(realm) + 1, null, productEntity.getOrderId(),
+                    productEntity.getProductDetailID(), productEntity.getProductDetailName(), productEntity.getNumberTotalOrder(), 1, productEntity.getModule(), userId,
+                    DateUtils.getDateTimeCurrent());
+            groupCode = realm.copyToRealm(groupCode);
+        } else {
+            groupCode.setNumber(groupCode.getNumber() + 1);
+        }
     }
 
     public String getProductDetailName() {
@@ -160,18 +157,10 @@ public class GroupCode extends RealmObject {
 
 
     public static RealmResults<GroupCode> getListGroupCodeByModule(Realm realm, long orderId, long userId) {
-//        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-//
-//        if (mainParent == null) {
-//            realm.beginTransaction();
-//            mainParent = new LogListScanStagesMain(orderId);
-//            mainParent = realm.copyToRealm(mainParent);
-//            realm.commitTransaction();
-//
-//        }
-//        RealmResults<GroupCode> parentList = mainParent.getGroupCodeRealmList().where().equalTo("userId", userId)
-//                .isNull("groupCode").findAll();
-        return null;
+
+        RealmResults<GroupCode> parentList = realm.where(GroupCode.class).equalTo("orderId", orderId).equalTo("userId", userId)
+                .isNull("groupCode").findAll();
+        return parentList;
     }
 
     public static boolean checkNumberProductInGroupCode(Realm realm, ProductEntity productEntity, long userId) {
@@ -193,57 +182,48 @@ public class GroupCode extends RealmObject {
     }
 
     public static void addGroupCode(Realm realm, String groupCode, long orderId, GroupCode[] listSelect, long userId) {
-//        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-//
-//
-//        RealmList<GroupCode> groupCodeRealmList = mainParent.getGroupCodeRealmList();
-//        for (GroupCode item : listSelect) {
-//            GroupCode gv = realm.where(GroupCode.class).equalTo("id", item.getId()).findFirst();
-//            gv.setGroupCode(groupCode);
-//            groupCodeRealmList.remove(gv);
-//        }
+
+          for (GroupCode item : listSelect) {
+            GroupCode gv = realm.where(GroupCode.class).equalTo("id", item.getId()).findFirst();
+            gv.setGroupCode(groupCode);
+        }
     }
 
     public static void updateGroupCode(Realm realm, String groupCode, long orderId, GroupCode[] listSelect, long userId) {
-//        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
-//
-//        RealmList<GroupCode> groupCodeRealmList = mainParent.getGroupCodeRealmList();
-//        for (GroupCode item : listSelect) {
-//            GroupCode outGroup = groupCodeRealmList.where().equalTo("productDetailId", item.getProductDetailId()).findFirst();
-//            outGroup.setGroupCode(groupCode);
-//            groupCodeRealmList.remove(outGroup);
-//        }
+
+        for (GroupCode item : listSelect) {
+            GroupCode outGroup = realm.where(GroupCode.class).equalTo("productDetailId", item.getProductDetailId()).findFirst();
+            outGroup.setGroupCode(groupCode);
+        }
     }
 
     public static void detachedCode(Realm realm, List<ProductGroupEntity> list, long orderId, long userId) {
 //        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 //        RealmList<GroupCode> listGroupCodes = mainParent.getGroupCodeRealmList();
-//        for (ProductGroupEntity productGroupEntity : list) {
-//            GroupCode groupCode = listGroupCodes.where().equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
-//            if (groupCode != null){
-//                groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
-//            }else {
-//                groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
-//                        productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
-//                groupCode = realm.copyToRealm(groupCode);
-//                listGroupCodes.add(groupCode);
-//            }
-//        }
+        for (ProductGroupEntity productGroupEntity : list) {
+            GroupCode groupCode = realm.where(GroupCode.class).equalTo("orderId",orderId).equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
+            if (groupCode != null){
+                groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
+            }else {
+                groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
+                        productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
+                groupCode = realm.copyToRealm(groupCode);
+            }
+        }
     }
 
     public static void removeItemInGroup(Realm realm, ProductGroupEntity productGroupEntity, long orderId, long userId) {
 //        LogListScanStagesMain mainParent = realm.where(LogListScanStagesMain.class).equalTo("orderId", orderId).findFirst();
 //
 //        RealmList<GroupCode> outGroupList = mainParent.getGroupCodeRealmList();
-//        GroupCode groupCode = outGroupList.where().equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
-//        if (groupCode != null){
-//           groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
-//        }else {
-//             groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
-//                    productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
-//            groupCode = realm.copyToRealm(groupCode);
-//            outGroupList.add(groupCode);
-//        }
+        GroupCode groupCode = realm.where(GroupCode.class).equalTo("orderId",orderId).equalTo("productDetailId", productGroupEntity.getProductDetailID()).isNull("groupCode").findFirst();
+        if (groupCode != null){
+           groupCode.setNumber(groupCode.getNumber()+ productGroupEntity.getNumber());
+        }else {
+             groupCode = new GroupCode(id(realm) + 1, null, orderId, productGroupEntity.getProductDetailID(),
+                    productGroupEntity.getProductDetailName(), productGroupEntity.getNumberTotal(),productGroupEntity.getNumber(), productGroupEntity.getModule(), userId, DateUtils.getDateTimeCurrent());
+            groupCode = realm.copyToRealm(groupCode);
+        }
 
 
     }
