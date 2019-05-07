@@ -130,6 +130,7 @@ public class QualityControlPresenter implements QualityControlContract.Presenter
 
     @Override
     public void checkBarcode(String barcode, long orderId, String machineName, String violator, String qcCode) {
+        barcode = barcode.toUpperCase();
         UserEntity userEntity = UserManager.getInstance().getUser();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));

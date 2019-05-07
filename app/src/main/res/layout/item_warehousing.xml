@@ -24,32 +24,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/distance_35dp"
-                    android:id="@+id/layout_group"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/text_code_group"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_12sp" />
-
-                    <TextView
-                        android:id="@+id/txt_group_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/distance_5dp"
-                        android:text="vbvbvb"
-                        android:gravity="center_vertical"
-                        android:textColor="#ffbb52"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,28 +32,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1.5"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/text_serial_module_print"
-                            android:textColor="@android:color/black"
-                            android:textSize="@dimen/text_12sp" />
-
-                        <TextView
-                            android:id="@+id/txt_module"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/distance_5dp"
-                            android:text="100"
-                            android:textColor="@android:color/black"
-                            android:textSize="@dimen/text_14sp" />
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -95,7 +49,7 @@
                             android:textSize="@dimen/text_12sp" />
 
                         <TextView
-                            android:id="@+id/txt_barcode"
+                            android:id="@+id/tv_barcode"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/distance_5dp"
@@ -122,7 +76,7 @@
                         android:textSize="@dimen/text_12sp" />
 
                     <TextView
-                        android:id="@+id/txt_name_detail"
+                        android:id="@+id/tv_name_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/distance_5dp"
@@ -149,12 +103,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SL SP SX: "
+                            android:text="Tổng SL: "
                             android:textColor="@android:color/black"
                             android:textSize="@dimen/text_12sp" />
 
                         <TextView
-                            android:id="@+id/txt_quantity_product"
+                            android:id="@+id/tv_quantity_product"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/distance_5dp"
@@ -176,7 +130,7 @@
                             android:textSize="@dimen/text_12sp" />
 
                         <TextView
-                            android:id="@+id/txt_quantity_rest"
+                            android:id="@+id/tv_quantity_rest"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/distance_5dp"
@@ -199,7 +153,7 @@
                             android:textSize="@dimen/text_12sp" />
 
                         <TextView
-                            android:id="@+id/txt_quantity_scan"
+                            android:id="@+id/tv_quantity_scan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@android:color/black"
@@ -223,7 +177,7 @@
                         android:textSize="@dimen/text_12sp" />
 
                     <EditText
-                        android:id="@+id/edt_number"
+                        android:id="@+id/et_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="SL mã vừa mới quét..."

@@ -13,6 +13,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
+import com.demo.architect.data.model.ProductWarehouseEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.SetWindowEntity;
 
@@ -59,6 +60,25 @@ public class ProductRepositoryImpl implements ProductRepository {
     private void handleProductWindowResponse(Call<BaseListResponse<ProductWindowEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<ProductWindowEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+    private void handleProductWarehouseResponse(Call<BaseListResponse<ProductWarehouseEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<ProductWarehouseEntity> response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -247,6 +267,18 @@ public class ProductRepositoryImpl implements ProductRepository {
             public void call(Subscriber<? super BaseListResponse<ProductWindowEntity>> subscriber) {
                 handleProductWindowResponse(mRemoteApiInterface.getInputForProductDetailWindow(
                         server + "/WS/api/GD2GetInputForDetailCua", orderId, departmentId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<ProductWarehouseEntity>> getInputForProductWarehouse(final String key,final long orderId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductWarehouseEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<ProductWarehouseEntity>> subscriber) {
+                handleProductWarehouseResponse(mRemoteApiInterface.getInputForProductWarehouse(
+                        server + "/WS/api/GD1GetProductInStore",key, orderId), subscriber);
             }
         });
     }

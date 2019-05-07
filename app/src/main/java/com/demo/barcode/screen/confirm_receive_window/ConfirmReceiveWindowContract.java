@@ -55,7 +55,6 @@ public interface ConfirmReceiveWindowContract {
 
         void getListConfirm();
 
-
         void checkBarcode(String barcode);
 
         void updateNumberConfirm(long outputId, int numberScan);

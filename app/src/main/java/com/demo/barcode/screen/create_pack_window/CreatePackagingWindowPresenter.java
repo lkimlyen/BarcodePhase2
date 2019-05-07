@@ -227,10 +227,8 @@ public class CreatePackagingWindowPresenter implements CreatePackagingWindowCont
 
     @Override
     public void checkBarcode(String barcode, int direction) {
-        if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            return;
-        }
+        barcode = barcode.toUpperCase();
+
         ProductPackagingWindowEntity entity = ListProductPackagingWindowManager.getInstance()
                 .getDetailByBarcode(barcode);
         if (entity == null) {

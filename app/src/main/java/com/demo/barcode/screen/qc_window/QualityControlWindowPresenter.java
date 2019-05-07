@@ -162,10 +162,8 @@ public class QualityControlWindowPresenter implements QualityControlWindowContra
 
     @Override
     public void checkBarcode(String barcode, long orderId, int machineId, String violator, int qcId) {
-        if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            return;
-        }
+        barcode = barcode.toUpperCase();
+
 
         List<ProductWindowEntity> list = ListProductWindowManager.getInstance().getListProduct();
 

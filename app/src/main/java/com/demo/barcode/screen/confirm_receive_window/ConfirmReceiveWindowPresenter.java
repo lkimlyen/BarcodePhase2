@@ -104,7 +104,6 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
                         view.showErrorByType(errorResponse.getDescription(),1);
                         ListSOManager.getInstance().setListSO(new ArrayList<>());
 
-
                     }
                 });
     }
@@ -191,10 +190,8 @@ public class ConfirmReceiveWindowPresenter implements ConfirmReceiveWindowContra
 
     @Override
     public void checkBarcode(String barcode) {
-        if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            return;
-        }
+        barcode = barcode.toUpperCase();
+
         localRepository.findConfirmByBarcodeInWindow(barcode).subscribe(new Action1<LogScanConfirmWindowModel>() {
             @Override
             public void call(LogScanConfirmWindowModel logScanConfirm) {

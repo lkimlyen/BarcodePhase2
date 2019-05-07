@@ -103,15 +103,15 @@ public class GroupCodeLVAdapter extends RealmRecyclerViewAdapter<GroupCode, Grou
                         return;
 
                     }
-
+                    if (numberInput == item.getNumber()) {
+                        return;
+                    }
                     if (numberInput + ListGroupManager.getInstance().totalNumberProductGroup(item.getProductDetailId()) > item.getNumberTotal()) {
                         holder.edtNumberGroup.setText((int) item.getNumber() + "");
                         onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_group_bigger_number_total).toString());
                         return;
                     }
-                    if (numberInput == item.getNumber()) {
-                        return;
-                    }
+
                     onEditTextChangeListener.onEditTextChange(item, numberInput);
 
 

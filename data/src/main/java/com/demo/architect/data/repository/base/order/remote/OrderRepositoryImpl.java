@@ -14,6 +14,7 @@ import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.SOWarehouseEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -53,7 +54,24 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         }
     }
-
+    private void handleSOWarehouseResponse(Call<BaseListResponse<SOWarehouseEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<SOWarehouseEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
 
     private void handleOrderConfirmResponse(Call<BaseListResponse<OrderConfirmEntity>> call, Subscriber subscriber) {
         try {
@@ -110,9 +128,27 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
-    private void handleBaseResponse(Call<BaseListResponse> call, Subscriber subscriber) {
+    private void handleBaseListResponse(Call<BaseListResponse> call, Subscriber subscriber) {
         try {
             BaseListResponse response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+    private void handleBaseResponse(Call<BaseResponse> call, Subscriber subscriber) {
+        try {
+            BaseResponse response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -258,6 +294,18 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<BaseListResponse<SOWarehouseEntity>> getListSOWarehouse(final String key, final int orderType) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<SOWarehouseEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<SOWarehouseEntity>> subscriber) {
+                handleSOWarehouseResponse(mRemoteApiInterface.getListSOWarehouse(
+                        server + "/WS/api/GD1GetListSO", key,orderType), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(final long orderId, final int departmentIDIn, final int departmentIDOut) {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderConfirmEntity>>() {
@@ -300,7 +348,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override
             public void call(Subscriber<? super BaseListResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.confirmInput(
+                handleBaseListResponse(mRemoteApiInterface.confirmInput(
                         server + "/WS/api/GD2ComfirmInputByMaPhieu", key, departmentId, json), subscriber);
             }
         });
@@ -313,7 +361,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse>() {
             @Override
             public void call(Subscriber<? super BaseListResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.confirmInputWindow(
+                handleBaseListResponse(mRemoteApiInterface.confirmInputWindow(
                         server + "/WS/api/GD2ConfirmDetailInByMaPhieuCua", key, departmentId,userId, json), subscriber);
             }
         });
@@ -413,6 +461,18 @@ public class OrderRepositoryImpl implements OrderRepository {
             public void call(Subscriber<? super BaseListResponse<OrderConfirmWindowEntity>> subscriber) {
                 handleOrderConfirmWindowResponse(mRemoteApiInterface.getDetailInByDeliveryWindow(
                         server + "/WS/api/GD2GetDetailInByMaPhieuCua", maPhieu), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseResponse> scanWarehousing(final String key, final long userId, final long orderId, final String phone, final String date, final String json) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.scanWarehousing(
+                        server + "/WS/api/GD1ScanProductInStore",key, userId,orderId,phone,date,json), subscriber);
             }
         });
     }

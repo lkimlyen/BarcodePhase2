@@ -224,6 +224,7 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
 
     @Override
     public void checkBarcode(String barcode, boolean groupCode) {
+        barcode = barcode.toUpperCase();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -536,11 +537,9 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
                                 view.setValuePrint(true);
                                 view.hideProgressBar();
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
-
                                 if (upload) {
                                     uploadData(maPhieuId, orderId, departmentIdOut, times);
                                 }
-
 
                             }
                         } else {
@@ -555,7 +554,6 @@ public class ConfirmReceivePresenter implements ConfirmReceiveContract.Presenter
             }
         });
     }
-
 
     public void saveConfirm(long outputId, int number) {
         localRepository.updateNumnberLogConfirm(outputId, number, true).subscribe(new Action1<String>() {

@@ -24,6 +24,7 @@ import com.demo.architect.domain.GetDetailInByDeliveryWindowUsecase;
 import com.demo.architect.domain.GetHistoryIntemCuaUsecase;
 import com.demo.architect.domain.GetInputForProductDetailUsecase;
 import com.demo.architect.domain.GetInputForProductDetailWindowUsecase;
+import com.demo.architect.domain.GetInputForProductWarehouseUsecase;
 import com.demo.architect.domain.GetInputUnConfirmedUsecase;
 import com.demo.architect.domain.GetListDepartmentUsecase;
 import com.demo.architect.domain.GetListInputUnConfirmByMaPhieuUsecase;
@@ -36,6 +37,7 @@ import com.demo.architect.domain.GetListProductInPackageUsecase;
 import com.demo.architect.domain.GetListQCUsecase;
 import com.demo.architect.domain.GetListReasonUsecase;
 import com.demo.architect.domain.GetListSOUsecase;
+import com.demo.architect.domain.GetListSOWarehouseUsecase;
 import com.demo.architect.domain.GetModuleUsecase;
 import com.demo.architect.domain.GetProductSetDetailBySetAndDirecUsecase;
 import com.demo.architect.domain.GetProductSetUsecase;
@@ -46,6 +48,7 @@ import com.demo.architect.domain.PostCheckBarCodeUsecase;
 import com.demo.architect.domain.PostListCodeProductDetailUsecase;
 import com.demo.architect.domain.ScanProductDetailOutUsecase;
 import com.demo.architect.domain.ScanProductDetailOutWindowUsecase;
+import com.demo.architect.domain.ScanWarehousingUsecase;
 import com.demo.architect.domain.UpdateProductDetailGroupUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
@@ -103,7 +106,10 @@ public class UseCaseModule {
     GetListSOUsecase provideGetListSOUsecase(OrderRepository orderRepository) {
         return new GetListSOUsecase(orderRepository);
     }
-
+    @Provides
+    GetListSOWarehouseUsecase provideGetListSOWarehouseUsecase(OrderRepository orderRepository) {
+        return new GetListSOWarehouseUsecase(orderRepository);
+    }
     @Provides
     ScanProductDetailOutUsecase provideScanProductDetailOutUsecase(OrderRepository orderRepository) {
         return new ScanProductDetailOutUsecase(orderRepository);
@@ -114,6 +120,11 @@ public class UseCaseModule {
     GetInputForProductDetailUsecase provideGetInputForProductDetailUsecase(ProductRepository productRepository) {
         return new GetInputForProductDetailUsecase(productRepository);
     }
+    @Provides
+    GetInputForProductWarehouseUsecase provideGetInputForProductWarehouseUsecase(ProductRepository productRepository) {
+        return new GetInputForProductWarehouseUsecase(productRepository);
+    }
+
 
     @Provides
     GroupProductDetailUsecase provideGroupProductDetailUsecase(ProductRepository productRepository) {
@@ -278,5 +289,10 @@ public class UseCaseModule {
     GetHistoryIntemCuaUsecase provideGetHistoryIntemCuaUsecase(ProductRepository otherRepository) {
         return new GetHistoryIntemCuaUsecase(otherRepository);
     }
+    @Provides
+    ScanWarehousingUsecase provideScanWarehousingUsecase(OrderRepository orderRepository) {
+        return new ScanWarehousingUsecase(orderRepository);
+    }
+
 }
 

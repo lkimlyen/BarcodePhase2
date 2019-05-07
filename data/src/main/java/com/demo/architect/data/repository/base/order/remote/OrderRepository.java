@@ -10,6 +10,7 @@ import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.SOWarehouseEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -22,6 +23,8 @@ import rx.Observable;
 
 public interface OrderRepository {
     Observable<BaseListResponse<SOEntity>> getListSO(int orderType);
+
+    Observable<BaseListResponse<SOWarehouseEntity>> getListSOWarehouse(String key,int orderType);
 
     Observable<BaseListResponse<OrderConfirmEntity>> getInputUnConfirmed(long orderId, int departmentIDIn, int departmentIDOut);
 
@@ -56,4 +59,5 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<OrderConfirmWindowEntity>> getDetailInByDeliveryWindow(long maPhieu);
 
+    Observable<BaseResponse>  scanWarehousing(String key, long userId, long orderId, String phone, String date,String json);
 }

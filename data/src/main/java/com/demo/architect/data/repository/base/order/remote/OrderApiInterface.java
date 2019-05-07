@@ -12,6 +12,7 @@ import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ReasonsEntity;
 import com.demo.architect.data.model.SOEntity;
+import com.demo.architect.data.model.SOWarehouseEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -28,6 +29,9 @@ public interface OrderApiInterface {
     @FormUrlEncoded
     @POST
     Call<BaseListResponse<SOEntity>> getListSO(@Url String url, @Field("pOrderType") int orderType);
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<SOWarehouseEntity>> getListSOWarehouse(@Url String url, @Field("pKey") String key,@Field("pOrderType") int orderType);
 
     @FormUrlEncoded
     @POST
@@ -99,4 +103,10 @@ public interface OrderApiInterface {
     @POST
     Call<BaseListResponse> confirmInputWindow(@Url String url, @Field("pKey") String key, @Field("pDepartmentID")int departmentId,
                                               @Field("pUserID") long userId,@Field("pJson") String json);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> scanWarehousing(@Url String url, @Field("pKey") String key, @Field("pUserID") long userId,
+                                       @Field("pOrderID") long orderId,
+                                       @Field("pPhone") String phone, @Field("pDate") String date, @Field("pJson") String json);
 }

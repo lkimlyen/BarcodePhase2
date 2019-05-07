@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -39,7 +40,7 @@
                 android:layout_marginStart="@dimen/distance_8dp"
                 android:layout_toRightOf="@+id/img_back"
                 android:gravity="center"
-                android:text="@string/text_scan_stages"
+                android:text="@string/text_warehousing"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
@@ -69,15 +70,11 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:fillViewport="true"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
@@ -88,45 +85,7 @@
                 android:orientation="vertical"
                 android:padding="@dimen/distance_8dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:id="@+id/ll_type_product"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="@string/text_type_product"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-
-                    <!--<com.demo.barcode.widgets.spinner.SearchableSpinner-->
-                        <!--android:id="@+id/ss_type_product"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_weight="3.5"-->
-                        <!--android:spinnerMode="dialog"-->
-                        <!--app:hintText="@string/text_choose_type_product" />-->
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
-                        android:textColor="@android:color/black"
-                        android:paddingTop="@dimen/distance_5dp"
-                        android:paddingBottom="@dimen/distance_5dp"
-                        android:id="@+id/tv_type_product"
-                        android:textSize="@dimen/text_14sp"
-                        android:drawableRight="@drawable/ic_short_down"
-                        android:text="@string/text_choose_type_product"
-                        />
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -158,7 +117,6 @@
 
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -171,108 +129,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.5"
-                        android:text="@string/text_customer_name"
+                        android:text="@string/text_percent"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/txt_customer_name"
+                        android:id="@+id/tv_percent"
                         android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:paddingTop="@dimen/distance_5dp"
                         android:paddingBottom="@dimen/distance_5dp"
-                        android:layout_height="wrap_content"
                         android:layout_weight="3.5"
-                        android:textSize="@dimen/text_14sp" />
+                        android:textSize="@dimen/text_16sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:visibility="gone"
-                    android:id="@+id/ll_staff"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="@string/text_staff"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
-                        android:textColor="@android:color/black"
-                        android:id="@+id/tv_staff"
-                        android:textSize="@dimen/text_14sp"
-                        android:drawableRight="@drawable/ic_short_down"
-                        android:text="@string/text_choose_staff" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="@string/text_receiving_department"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
-                        android:paddingTop="@dimen/distance_5dp"
-                        android:paddingBottom="@dimen/distance_5dp"
-                        android:textColor="@android:color/black"
-                        android:id="@+id/tv_receiving_department"
-                        android:textSize="@dimen/text_14sp"
-                        android:drawableRight="@drawable/ic_short_down"
-                        android:text="@string/text_choose_receiving_department" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-
-                    android:id="@+id/ll_times"
-                    android:weightSum="5">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="@string/text_times"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
-                        android:paddingTop="@dimen/distance_5dp"
-                        android:paddingBottom="@dimen/distance_5dp"
-                        android:textColor="@android:color/black"
-                        android:id="@+id/tv_times"
-                        android:textSize="@dimen/text_14sp"
-                        android:drawableRight="@drawable/ic_short_down"
-                        android:text="@string/text_choose_times_scan" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -301,47 +172,7 @@
                         android:textSize="@dimen/text_16sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:id="@+id/ll_type_scan"
-                    android:weightSum="5">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="@string/text_type_scan"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rb_default"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/text_default"
-                            android:textSize="@dimen/text_14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rb_group"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/distance_5dp"
-                            android:text="@string/text_group_code"
-                            android:textSize="@dimen/text_14sp" />
-                    </RadioGroup>
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -382,13 +213,10 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/lv_code"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="always"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_height="match_parent"
                 android:background="#E6E6FA" />
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

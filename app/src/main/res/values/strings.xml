@@ -357,5 +357,7 @@
     <string name="text_barcode_name">Tên barcode:</string>
     <string name="text_pack_name">Tên gói:</string>
     <string name="text_detail_not_enough">Chi tiết không đủ để tạo thành gói</string>
+    <string name="text_warehousing">Nhập kho</string>
+    <string name="text_percent">Phần trăm</string>
 
 </resources>

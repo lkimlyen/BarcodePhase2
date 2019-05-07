@@ -8,6 +8,7 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.GroupEntity;
 import com.demo.architect.data.model.GroupSetEntity;
 import com.demo.architect.data.model.ListModuleEntity;
+import com.demo.architect.data.model.NumberInputConfirm;
 import com.demo.architect.data.model.OrderConfirmEntity;
 import com.demo.architect.data.model.OrderConfirmWindowEntity;
 import com.demo.architect.data.model.PackageEntity;
@@ -15,6 +16,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
+import com.demo.architect.data.model.ProductWarehouseEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.TimesConfirm;
@@ -36,8 +38,10 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.ProductWarehouseModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
+import com.demo.architect.data.model.offline.WarehousingModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -229,7 +233,12 @@ public class DatabaseRealm {
                         .equalTo("status", Constants.WAITING_UPLOAD).findAll();
                 results.deleteAllFromRealm();
                 for (OrderConfirmEntity orderConfirmEntity : list) {
-                    LogScanConfirmModel.createOrUpdate(realm, orderConfirmEntity, times, userId);
+                    for (NumberInputConfirm numberInput : orderConfirmEntity.getListInputConfirmed()) {
+                        if (numberInput.getTimesInput() == times) {
+                            LogScanConfirmModel.createOrUpdate(realm, orderConfirmEntity, times, numberInput.getNumberConfirmed(), userId);
+                            break;
+                        }
+                    }
                 }
             }
         });
@@ -1094,6 +1103,83 @@ public class DatabaseRealm {
 
     }
 
+    public ProductWarehouseModel getProductWarehouse(ProductWarehouseEntity entity) {
+        Realm realm = getRealmInstance();
+        ProductWarehouseModel productDetail = ProductWarehouseModel.getProductDetail(realm, entity, userId);
+        if (productDetail == null) {
+            productDetail = ProductWarehouseModel.create(realm, entity, userId);
+        }
+        return productDetail;
+    }
+
+    public void warehousing(final WarehousingModel model) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                WarehousingModel.add(realm, model);
+            }
+        });
+    }
+
+    public void deleteWarehousing(final long id) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                WarehousingModel.delete(realm, id);
+            }
+        });
+    }
+
+    public void updateNumberWarehousing(final long id, final int number) {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                WarehousingModel.updateNumberInput(realm, id, number);
+            }
+        });
+    }
+
+    public void deleteAllWarehousing() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<WarehousingModel> warehousingModels = realm.where(WarehousingModel.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+                warehousingModels.deleteAllFromRealm();
+
+                RealmResults<ProductWarehouseModel> productWarehouseModels = realm.where(ProductWarehouseModel.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+                warehousingModels.deleteAllFromRealm();
+
+            }
+        });
+    }
+
+    public RealmResults<WarehousingModel> getAllListWarehousing() {
+        Realm realm = getRealmInstance();
+        RealmResults<WarehousingModel> results = WarehousingModel.getAllList(realm);
+        return results;
+    }
+
+    public List<WarehousingModel> getListWarehousingWindowUpload() {
+        Realm realm = getRealmInstance();
+        RealmResults<WarehousingModel> results = WarehousingModel.getAllList(realm);
+        return realm.copyFromRealm(results);
+    }
+
+    public void updateStatusWarehousing() {
+        Realm realm = getRealmInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                WarehousingModel.updateStatus(realm);
+
+            }
+        });
+    }
+
     public class MyMigration implements RealmMigration {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
@@ -1354,7 +1440,7 @@ public class DatabaseRealm {
                 schema.create("ListPackCodeWindowModel")
                         .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
                         .addField("orderId", long.class)
-                        .addField("productSetId",long.class )
+                        .addField("productSetId", long.class)
                         .addField("direction", int.class)
                         .addField("numberSetOnPack", int.class)
                         .addField("packCode", String.class)
@@ -1363,7 +1449,6 @@ public class DatabaseRealm {
                         .addField("status", int.class)
                         .addField("userId", int.class)
                         .addRealmListField("list", schema.get("LogScanPackWindowModel"));
-
 
 
                 oldVersion++;

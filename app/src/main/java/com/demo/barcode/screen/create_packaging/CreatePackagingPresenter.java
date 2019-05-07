@@ -210,7 +210,7 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
 
     @Override
     public void checkBarcode(String barcode, long orderId, long apartmentId) {
-
+        barcode = barcode.toUpperCase();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -285,12 +285,6 @@ public class CreatePackagingPresenter implements CreatePackagingContract.Present
                     }
                 });
     }
-
-    @Override
-    public boolean countListScanInPack(int sizeList) {
-        return ListModulePackagingManager.getInstance().getList().size() == sizeList;
-    }
-
 
     @Override
     public void deleteAllItemLog() {

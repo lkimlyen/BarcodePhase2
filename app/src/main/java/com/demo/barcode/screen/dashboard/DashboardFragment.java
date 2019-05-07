@@ -29,6 +29,7 @@ import com.demo.barcode.screen.quality_control.QualityControlActivity;
 import com.demo.barcode.screen.setting.SettingActivity;
 import com.demo.barcode.screen.stages.StagesActivity;
 import com.demo.barcode.screen.stages_window.StagesWindowActivity;
+import com.demo.barcode.screen.warehousing_wd.WarehousingWDActivity;
 import com.demo.barcode.util.Precondition;
 
 import butterknife.Bind;
@@ -245,6 +246,15 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     public void qualityControl() {
         if (UserManager.getInstance().getUser().getOrderType() == 4) {
             QualityControlWindowActivity.start(getContext());
+        } else {
+            QualityControlActivity.start(getContext());
+        }
+    }
+
+    @OnClick(R.id.bt_warehousing)
+    public void warehousing() {
+        if (UserManager.getInstance().getUser().getOrderType() == 4) {
+            WarehousingWDActivity.start(getContext());
         } else {
             QualityControlActivity.start(getContext());
         }

@@ -35,7 +35,7 @@ public class ListMachineManager {
 
         List<MachineEntity> machineList = new ArrayList<>();
         for (MachineEntity entity : list) {
-            if (entity.getId() == role) {
+            if (entity.getDepartmentId() == role) {
                 machineList.add(entity);
             }
         }

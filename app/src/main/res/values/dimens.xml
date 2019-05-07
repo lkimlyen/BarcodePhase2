@@ -36,4 +36,6 @@
     <dimen name="distance_32dp">32dp</dimen>
     <dimen name="distance_40dp">40dp</dimen>
     <dimen name="size_32dp">32dp</dimen>
+    <dimen name="text_20sp">20sp</dimen>
+    <dimen name="text_18sp">18sp</dimen>
 </resources>

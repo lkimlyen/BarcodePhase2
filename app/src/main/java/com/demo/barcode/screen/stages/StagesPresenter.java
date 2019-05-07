@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.GroupEntity;
+import com.demo.architect.data.model.NumberInput;
 import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.SocketRespone;
@@ -91,6 +92,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void checkBarcode(String barcode, int departmentId, int times, boolean groupCode) {
+        barcode = barcode.toUpperCase();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;
@@ -245,7 +247,7 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void getListTimes(long orderId) {
-        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId,  UserManager.getInstance().getUser().getRole()),
+        getTimesInputAndOutputByDepartmentUsecase.executeIO(new GetTimesInputAndOutputByDepartmentUsecase.RequestValue(orderId, UserManager.getInstance().getUser().getRole()),
                 new BaseUseCase.UseCaseCallback<GetTimesInputAndOutputByDepartmentUsecase.ResponseValue, GetTimesInputAndOutputByDepartmentUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetTimesInputAndOutputByDepartmentUsecase.ResponseValue successResponse) {
@@ -407,7 +409,6 @@ public class StagesPresenter implements StagesContract.Presenter {
 
                     @Override
                     public void onError(GetListProductDetailGroupUsecase.ErrorValue errorResponse) {
-
                         ListGroupManager.getInstance().setListGroup(new ArrayList<>());
                         getListTimes(orderId);
                         //  view.showError(errorResponse.getDescription());
@@ -417,20 +418,46 @@ public class StagesPresenter implements StagesContract.Presenter {
 
     @Override
     public void saveListWithGroupCode(int times, GroupEntity groupEntity, int departmentId) {
+
+        boolean condition = true;
         for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
             final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
-            if (productEntity != null) {
-                localRepository.getProductDetail(productEntity, times).subscribe(new Action1<ProductDetail>() {
-                    @Override
-                    public void call(ProductDetail productDetail) {
-                        saveBarcodeToDataBase(times, productDetail, item.getNumber(), departmentId, groupEntity, false, false);
+            if (productEntity == null) {
+                condition = false;
+                break;
+            } else {
+                boolean exist = false;
+                for (NumberInput numberInput : productEntity.getListInput()) {
+                    if (numberInput.getTimesInput() == times) {
+                        exist = true;
                     }
+                }
 
-                });
+                if (!exist){
+                    condition = false;
+                    break;
+                }
+            }
+        }
+
+        if (condition){
+            for (ProductGroupEntity item : groupEntity.getProducGroupList()) {
+                final ProductEntity productEntity = ListProductManager.getInstance().getProductById(item.getProductDetailID());
+                if (productEntity != null) {
+                    localRepository.getProductDetail(productEntity, times).subscribe(new Action1<ProductDetail>() {
+                        @Override
+                        public void call(ProductDetail productDetail) {
+                            saveBarcodeToDataBase(times, productDetail, item.getNumber(), departmentId, groupEntity, false, false);
+                        }
+                    });
+
+                }
 
             }
-
+        }else {
+            showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_times));
         }
+
     }
 
 

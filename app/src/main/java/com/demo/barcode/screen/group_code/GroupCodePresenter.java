@@ -391,6 +391,7 @@ public class GroupCodePresenter implements GroupCodeContract.Presenter {
 
     @Override
     public void checkBarcode(String barcode) {
+        barcode = barcode.toUpperCase();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             return;

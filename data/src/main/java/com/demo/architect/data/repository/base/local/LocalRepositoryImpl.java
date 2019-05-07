@@ -13,6 +13,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
+import com.demo.architect.data.model.ProductWarehouseEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.offline.GroupCode;
@@ -29,8 +30,10 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.ProductWarehouseModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
+import com.demo.architect.data.model.offline.WarehousingModel;
 
 import java.util.Collection;
 import java.util.List;
@@ -1663,6 +1666,134 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                    int numberScan = databaseRealm.getNumberScanWindowByBarcode (packCode,numberSetOnPack,barcode);
                     subscriber.onNext(numberScan);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ProductWarehouseModel> getProductWarehouse(final ProductWarehouseEntity entity) {
+        return Observable.create(new Observable.OnSubscribe<ProductWarehouseModel>() {
+            @Override
+            public void call(Subscriber<? super ProductWarehouseModel> subscriber) {
+                try {
+                    ProductWarehouseModel model = databaseRealm.getProductWarehouse (entity);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> warehousing(final WarehousingModel model) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.warehousing (model);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteWarehousing(final long id) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteWarehousing (id);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateNumberWarehousing(final long id, final int number) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateNumberWarehousing (id,number);
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> deleteAllWarehousing() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteAllWarehousing ();
+                    subscriber.onNext("success");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<RealmResults<WarehousingModel>> getAllListWarehousing() {
+        return Observable.create(new Observable.OnSubscribe<RealmResults<WarehousingModel>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<WarehousingModel>> subscriber) {
+                try {
+                    RealmResults<WarehousingModel> results = databaseRealm.getAllListWarehousing ();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<WarehousingModel>> getListWarehousingWindowUpload() {
+        return Observable.create(new Observable.OnSubscribe<List<WarehousingModel>>() {
+            @Override
+            public void call(Subscriber<? super List<WarehousingModel>> subscriber) {
+                try {
+                    List<WarehousingModel> results = databaseRealm.getListWarehousingWindowUpload ();
+                    subscriber.onNext(results);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> updateStatusWarehousing() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.updateStatusWarehousing ();
+                    subscriber.onNext("success");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

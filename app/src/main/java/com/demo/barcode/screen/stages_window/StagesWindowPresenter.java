@@ -1,6 +1,7 @@
 package com.demo.barcode.screen.stages_window;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.demo.architect.data.model.ProductWindowEntity;
@@ -83,10 +84,8 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
 
     @Override
     public void checkBarcode(String barcode, int departmentId,int staffId) {
-        if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
-            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
-            return;
-        }
+        barcode = barcode.toUpperCase();
+
         List<ProductWindowEntity> list = ListProductWindowManager.getInstance().getListProduct();
 
         if (list.size() == 0) {
@@ -96,18 +95,32 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
 
         ProductWindowEntity model = ListProductWindowManager.getInstance().getProductByBarcode(barcode);
         if (model != null) {
-            localRepository.getProductDetailWindow(model).subscribe(new Action1<ProductDetailWindowModel>() {
-                @Override
-                public void call(ProductDetailWindowModel productDetail) {
-                    if (productDetail != null) {
-                        if (productDetail.getNumberRest() > 0) {
-                            saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,false);
-                        } else {
-                            saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,true);
+
+            boolean condition = false;
+            for (int stageId : model.getListDepartmentID()){
+                if (departmentId == stageId){
+                    condition = true;
+                    break;
+                }
+            }
+            if (condition){
+                localRepository.getProductDetailWindow(model).subscribe(new Action1<ProductDetailWindowModel>() {
+                    @Override
+                    public void call(ProductDetailWindowModel productDetail) {
+                        if (productDetail != null) {
+
+                            if (productDetail.getNumberRest() > 0) {
+                                saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,false);
+                            } else {
+                                saveBarcodeToDataBase(productDetail, 1, departmentId, staffId,true);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }else {
+                showError(CoreApplication.getInstance().getString(R.string.text_product_not_in_stages));
+            }
+
         } else {
             showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
         }
@@ -375,7 +388,6 @@ public class StagesWindowPresenter implements StagesWindowContract.Presenter {
                     @Override
                     public void onError(GetInputForProductDetailWindowUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
                         ListProductWindowManager.getInstance().setListProduct(new ArrayList<>());
                         view.showErrorByType(errorResponse.getDescription(),3);
                     }

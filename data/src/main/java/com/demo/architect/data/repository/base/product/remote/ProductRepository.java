@@ -9,6 +9,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
+import com.demo.architect.data.model.ProductWarehouseEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 
 import retrofit2.Call;
@@ -29,6 +30,7 @@ public interface ProductRepository {
 
     Observable<BaseListResponse<ProductWindowEntity>> getInputForProductDetailWindow(long orderId,
                                                                                int departmentId);
+    Observable<BaseListResponse<ProductWarehouseEntity>> getInputForProductWarehouse(String key,long orderId);
 
     Observable<BaseResponse<String>> groupProductDetail(String key, String json);
 

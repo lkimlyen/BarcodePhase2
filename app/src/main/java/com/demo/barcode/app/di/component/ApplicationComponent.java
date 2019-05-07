@@ -46,6 +46,8 @@ import com.demo.barcode.screen.stages.StagesComponent;
 import com.demo.barcode.screen.stages.StagesModule;
 import com.demo.barcode.screen.stages_window.StagesWindowComponent;
 import com.demo.barcode.screen.stages_window.StagesWindowModule;
+import com.demo.barcode.screen.warehousing_wd.WarehousingWDComponent;
+import com.demo.barcode.screen.warehousing_wd.WarehousingWDModule;
 
 import javax.inject.Singleton;
 
@@ -105,4 +107,6 @@ public interface ApplicationComponent {
     PrintStempWindowComponent plus(PrintStempWindowModule module);
 
     HistoryPackWindowComponent plus(HistoryPackWindowModule module);
+
+    WarehousingWDComponent plus(WarehousingWDModule module);
 }

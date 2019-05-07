@@ -1,4 +1,4 @@
-package com.demo.barcode.screen.stages_window;
+package com.demo.barcode.screen.warehousing_wd;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,20 +23,16 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.DepartmentEntity;
-import com.demo.architect.data.model.SOEntity;
-import com.demo.architect.data.model.StaffEntity;
-import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
+import com.demo.architect.data.model.SOWarehouseEntity;
+import com.demo.architect.data.model.offline.WarehousingModel;
 import com.demo.architect.utils.view.DateUtils;
 import com.demo.barcode.R;
-import com.demo.barcode.adapter.StagesWindowAdapter;
+import com.demo.barcode.adapter.WarehousingAdapter;
 import com.demo.barcode.app.CoreApplication;
 import com.demo.barcode.app.base.BaseFragment;
-import com.demo.barcode.dialogs.ChangeIPAddressDialog;
 import com.demo.barcode.util.Precondition;
 import com.demo.barcode.widgets.barcodereader.BarcodeScannerActivity;
 import com.demo.barcode.widgets.spinner.SearchableListDialog;
@@ -54,20 +50,14 @@ import io.realm.RealmResults;
  * Created by MSI on 26/11/2017.
  */
 
-public class StagesWindowFragment extends BaseFragment implements StagesWindowContract.View {
+public class WarehousingWDFragment extends BaseFragment implements WarehousingWDContract.View {
     private static final int BARCODE_READER_ACTIVITY_REQUEST = 332;
-    private final String TAG = StagesWindowFragment.class.getName();
-    private StagesWindowContract.Presenter mPresenter;
-    private StagesWindowAdapter adapter;
+    private final String TAG = WarehousingWDFragment.class.getName();
+    private WarehousingWDContract.Presenter mPresenter;
+    private WarehousingAdapter adapter;
     public MediaPlayer mp1, mp2, mp3;
     @Bind(R.id.tv_code_so)
     TextView tvCodeSO;
-
-    @Bind(R.id.ll_times)
-    LinearLayout llTimes;
-
-    @Bind(R.id.txt_customer_name)
-    TextView txtCustomerName;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
@@ -75,41 +65,23 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     @Bind(R.id.lv_code)
     RecyclerView rvCode;
 
-    @Bind(R.id.ll_type_product)
-    LinearLayout llTypeProduct;
-
-    @Bind(R.id.tv_receiving_department)
-    TextView tvDepartment;
-
     @Bind(R.id.txt_delivery_date)
     TextView txtDateScan;
 
-    @Bind(R.id.ll_type_scan)
-    LinearLayout llTypeScan;
-
-    @Bind(R.id.ll_root)
-    LinearLayout llRoot;
-
-    @Bind(R.id.ll_staff)
-    LinearLayout llStaff;
-
-    @Bind(R.id.tv_staff)
-    TextView tvStaff;
-
+    @Bind(R.id.tv_percent)
+    TextView tvPercent;
     @Bind(R.id.btn_scan)
     Button btnScan;
     private Vibrator vibrate;
     private long orderId = 0;
-    private int departmentId = 0;
-    private int staffId = 0;
 
-    public StagesWindowFragment() {
+    public WarehousingWDFragment() {
         // Required empty public constructor
     }
 
 
-    public static StagesWindowFragment newInstance() {
-        StagesWindowFragment fragment = new StagesWindowFragment();
+    public static WarehousingWDFragment newInstance() {
+        WarehousingWDFragment fragment = new WarehousingWDFragment();
         return fragment;
     }
 
@@ -129,7 +101,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                 String contents = barcode.rawValue;
                 String barcode2 = contents.replace("DEMO", "");
                 Log.d(TAG, barcode2);
-                mPresenter.checkBarcode(barcode2, departmentId, staffId);
+                mPresenter.checkBarcode(orderId,barcode2 );
             }
         }
     }
@@ -143,7 +115,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_stages, container, false);
+        View view = inflater.inflate(R.layout.fragment_warehousing_wd, container, false);
         ButterKnife.bind(this, view);
         mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
         mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
@@ -155,28 +127,21 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
 
     private void initView() {
 
-        rvCode.setNestedScrollingEnabled(false);
-        rvCode.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
-        llTypeProduct.setVisibility(View.GONE);
-        llTypeScan.setVisibility(View.GONE);
-        llTimes.setVisibility(View.GONE);
-        llStaff.setVisibility(View.VISIBLE);
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL);
         rvCode.addItemDecoration(dividerItemDecoration);
         txtDateScan.setText(DateUtils.getShortDateCurrent());
         vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-        mPresenter.getListStaff();
         mPresenter.getAllListStages();
-        mPresenter.getListDepartment();
         mPresenter.getListSO();
 
 
     }
 
     @Override
-    public void setPresenter(StagesWindowContract.Presenter presenter) {
+    public void setPresenter(WarehousingWDContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 
@@ -254,76 +219,13 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
 
     }
 
-    @Override
-    public void showListDepartment(List<DepartmentEntity> list) {
-        if (list.size() > 0) {
-            tvDepartment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (adapter.getItemCount() > 0) {
-                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
-                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
-                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-
-                                        sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId, staffId);
-                                    }
-                                })
-                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
-                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        mPresenter.deleteAllData();
-                                        sweetAlertDialog.dismiss();
-                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                                                (list);
-                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                                            @Override
-                                            public void onSearchableItemClicked(Object item, int position) {
-                                                DepartmentEntity departmentEntity = (DepartmentEntity) item;
-                                                tvDepartment.setText(departmentEntity.getName());
-                                                departmentId = departmentEntity.getId();
-
-                                            }
-                                        });
-                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
-
-                                    }
-                                })
-                                .show();
-                    } else {
-                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                                (list);
-                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                            @Override
-                            public void onSearchableItemClicked(Object item, int position) {
-                                DepartmentEntity departmentEntity = (DepartmentEntity) item;
-                                tvDepartment.setText(departmentEntity.getName());
-                                departmentId = departmentEntity.getId();
-
-                            }
-                        });
-                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
-                    }
-
-                }
-            });
-        } else {
-            tvDepartment.setOnClickListener(null);
-        }
-    }
-
 
     @Override
-    public void showListLogScanStages(RealmResults<LogScanStagesWindowModel> parent) {
+    public void showListWarehousing(RealmResults<WarehousingModel> parent) {
 
-        adapter = new StagesWindowAdapter(parent, new StagesWindowAdapter.OnItemClearListener() {
+        adapter = new WarehousingAdapter(parent, new WarehousingAdapter.OnItemClearListener() {
             @Override
-            public void onItemClick(LogScanStagesWindowModel item) {
+            public void onItemClick(WarehousingModel item) {
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.text_title_noti))
                         .setContentText(getString(R.string.text_delete_code))
@@ -332,7 +234,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.deleteScanStages(item.getId());
+                                mPresenter.deleteItem(item.getId());
 
 
                             }
@@ -348,14 +250,14 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                         .show();
 
             }
-        }, new StagesWindowAdapter.OnEditTextChangeListener() {
+        }, new WarehousingAdapter.OnEditTextChangeListener() {
             @Override
-            public void onEditTextChange(LogScanStagesWindowModel item, int number) {
+            public void onEditTextChange(WarehousingModel item, int number) {
                 mPresenter.updateNumberScan(item.getId(), number, true);
             }
-        }, new StagesWindowAdapter.OnErrorListener() {
+        }, new WarehousingAdapter.OnErrorListener() {
             @Override
-            public void onError(LogScanStagesWindowModel item, int numberInput, String message) {
+            public void onError(WarehousingModel item, int numberInput, String message) {
                 if (!TextUtils.isEmpty(message)) {
                     showToast(message);
                     turnOnVibrator();
@@ -398,7 +300,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     }
 
     @Override
-    public void showListSO(List<SOEntity> list) {
+    public void showListSO(List<SOWarehouseEntity> list) {
         if (list.size() > 0) {
             tvCodeSO.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -413,7 +315,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
                                         sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId, staffId);
+                                        mPresenter.uploadData(orderId);
                                     }
                                 })
                                 .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
@@ -427,12 +329,10 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                                         searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
                                             @Override
                                             public void onSearchableItemClicked(Object item, int position) {
-                                                SOEntity soItem = (SOEntity) item;
+                                                SOWarehouseEntity soItem = (SOWarehouseEntity) item;
                                                 tvCodeSO.setText(soItem.getCodeSO());
-                                                txtCustomerName.setText(soItem.getCustomerName());
                                                 orderId = soItem.getOrderId();
-                                                tvDepartment.setText(getString(R.string.text_choose_receiving_department));
-                                                departmentId = 0;
+                                                tvPercent.setText(String.valueOf(soItem.getPercent()));
                                                 mPresenter.getListProduct(orderId, false);
                                             }
                                         });
@@ -447,12 +347,10 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                         searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
                             @Override
                             public void onSearchableItemClicked(Object item, int position) {
-                                SOEntity soItem = (SOEntity) item;
+                                SOWarehouseEntity soItem = (SOWarehouseEntity) item;
                                 tvCodeSO.setText(soItem.getCodeSO());
-                                txtCustomerName.setText(soItem.getCustomerName());
+                                tvPercent.setText(String.valueOf(soItem.getPercent()));
                                 orderId = soItem.getOrderId();
-                                tvDepartment.setText(getString(R.string.text_choose_receiving_department));
-                                departmentId = 0;
                                 mPresenter.getListProduct(orderId, false);
                             }
                         });
@@ -509,7 +407,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.uploadData(orderId, departmentId, staffId);
+                        mPresenter.uploadData(orderId);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))
@@ -523,140 +421,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
     }
 
 
-    @Override
-    public void refreshLayout() {
-        rvCode.requestLayout();
-    }
 
-    @Override
-    public void showListStaff(List<StaffEntity> list) {
-        if (list.size() > 0) {
-            tvStaff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (adapter.getItemCount() > 0) {
-                        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText(CoreApplication.getInstance().getString(R.string.text_title_noti))
-                                .setContentText(CoreApplication.getInstance().getString(R.string.text_back_have_detail_waiting))
-                                .setConfirmText(CoreApplication.getInstance().getString(R.string.text_yes))
-                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        sweetAlertDialog.dismiss();
-                                        mPresenter.uploadData(orderId, departmentId, staffId);
-                                    }
-                                })
-                                .setCancelText(CoreApplication.getInstance().getString(R.string.text_no))
-                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        mPresenter.deleteAllData();
-                                        sweetAlertDialog.dismiss();
-                                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                                                (list);
-                                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                                            @Override
-                                            public void onSearchableItemClicked(Object item, int position) {
-                                                StaffEntity staff = (StaffEntity) item;
-                                                tvStaff.setText(staff.getName());
-                                                staffId = staff.getStaffId();
-                                            }
-                                        });
-                                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
-                                    }
-                                })
-                                .show();
-                    } else {
-                        SearchableListDialog searchableListDialog = SearchableListDialog.newInstance
-                                (list);
-                        searchableListDialog.setOnSearchableItemClickListener(new SearchableListDialog.SearchableItem() {
-                            @Override
-                            public void onSearchableItemClicked(Object item, int position) {
-                                StaffEntity staff = (StaffEntity) item;
-                                tvStaff.setText(staff.getName());
-                                staffId = staff.getStaffId();
-
-                            }
-                        });
-                        searchableListDialog.show(getActivity().getFragmentManager(), TAG);
-                    }
-                }
-            });
-        } else {
-            tvStaff.setOnClickListener(null);
-        }
-    }
-
-    @Override
-    public void showPrintDeliveryNote(int id) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(getString(R.string.text_do_you_want_print_delivery_note))
-                .setConfirmText(getString(R.string.text_yes))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        mPresenter.print(-1, id);
-
-                    }
-                })
-                .setCancelText(getString(R.string.text_no))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                })
-                .show();
-    }
-
-    @Override
-    public void showDialogCreateIPAddress(int idPrint) {
-        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
-        dialog.show(getActivity().getFragmentManager(), TAG);
-        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
-            @Override
-            public void onSave(String ipAddress, int port) {
-                mPresenter.saveIPAddress(ipAddress, port, idPrint);
-                dialog.dismiss();
-            }
-        });
-    }
-
-    @Override
-    public void showErrorByType(String message, int type) {
-        new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(getString(R.string.text_title_noti))
-                .setContentText(message)
-                .setConfirmText(getString(R.string.text_ok))
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-
-                    }
-                })
-                .setCancelText(getString(R.string.text_try))
-                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        switch (type) {
-                            case 1:
-                                mPresenter.getListSO();
-                                break;
-                            case 2:
-                                mPresenter.getListStaff();
-                                break;
-                            case 3:
-                                mPresenter.getListProduct(orderId, false);
-                                break;
-                        }
-                    }
-                })
-                .show();
-    }
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -671,16 +436,6 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
             return;
         }
 
-        if (departmentId == 0) {
-            showError(getString(R.string.text_department_id_null));
-            return;
-        }
-
-        if (staffId == 0) {
-            showError(getString(R.string.text_staff_id_null));
-            return;
-        }
-
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -688,7 +443,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), departmentId, staffId);
+                        mPresenter.checkBarcode(orderId,edtBarcode.getText().toString().trim());
                         sweetAlertDialog.dismiss();
                     }
                 })
@@ -714,7 +469,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.uploadData(orderId, departmentId, staffId);
+                            mPresenter.uploadData(orderId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -743,7 +498,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.uploadData(orderId, departmentId, staffId);
+                            mPresenter.uploadData(orderId);
                             sweetAlertDialog.dismiss();
                         }
                     })
@@ -769,16 +524,7 @@ public class StagesWindowFragment extends BaseFragment implements StagesWindowCo
             return;
         }
 
-        if (departmentId == 0) {
-            showError(getString(R.string.text_department_id_null));
-            return;
-        }
-        if (staffId == 0) {
-            showError(getString(R.string.text_staff_id_null));
-            return;
-        }
-
-        Intent launchIntent = new Intent(getActivity(),BarcodeScannerActivity.class);
+        Intent launchIntent = new Intent(getActivity(), BarcodeScannerActivity.class);
         getActivity().startActivityForResult(launchIntent, BARCODE_READER_ACTIVITY_REQUEST);
     }
 

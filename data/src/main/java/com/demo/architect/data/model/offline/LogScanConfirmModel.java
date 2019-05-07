@@ -80,29 +80,23 @@ public class LogScanConfirmModel extends RealmObject {
         return nextId;
     }
 
-    public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, int times, long userId) {
+    public static void createOrUpdate(Realm realm, OrderConfirmEntity orderConfirmEntity, int times,int numberConfirmed, long userId) {
 
-        List<NumberInputConfirm> confirmList = orderConfirmEntity.getListInputConfirmed();
-        DeliveryNoteModel
-                deliveryNoteModel = new DeliveryNoteModel(DeliveryNoteModel.id(realm) + 1, orderConfirmEntity.getOrderId(),
+        DeliveryNoteModel deliveryNoteModel = new DeliveryNoteModel(DeliveryNoteModel.id(realm) + 1, orderConfirmEntity.getOrderId(),
                 orderConfirmEntity.getOutputID(), orderConfirmEntity.getProductId(),
                 orderConfirmEntity.getModule(), orderConfirmEntity.getProductDetailID(),
                 orderConfirmEntity.getProductDetailName(), orderConfirmEntity.getNumberOut(),
                 orderConfirmEntity.getNumberOut() - orderConfirmEntity.getNumberConfirmed(),
                 orderConfirmEntity.getNumberConfirmed(), 0, Constants.WAITING_UPLOAD);
         deliveryNoteModel = realm.copyToRealm(deliveryNoteModel);
-        int numberConfirmedInTimes = 0;
-        for (NumberInputConfirm input : confirmList) {
-            if (input.getTimesInput() == times) {
-                numberConfirmedInTimes = input.getNumberConfirmed();
-            }
-        }
-        int numberRestInTimes = Math.min(orderConfirmEntity.getNumberOut() - orderConfirmEntity.getNumberConfirmed(), orderConfirmEntity.getNumberTotalOrder() - numberConfirmedInTimes);
+
+        int numberRestInTimes = Math.min(orderConfirmEntity.getNumberOut() - orderConfirmEntity.getNumberConfirmed(),
+                orderConfirmEntity.getNumberTotalOrder() - numberConfirmed);
         LogScanConfirmModel logScanConfirmModel = new LogScanConfirmModel(id(realm) + 1, orderConfirmEntity.getOutputID(),
                 orderConfirmEntity.getOrderId(), orderConfirmEntity.getDepartmentIDIn(),
                 orderConfirmEntity.getDepartmentIDOut(), orderConfirmEntity.getProductDetailID(),
                 orderConfirmEntity.getBarcode(), orderConfirmEntity.getNumberTotalOrder(),
-                0, numberRestInTimes, numberConfirmedInTimes, userId, times, orderConfirmEntity.getNumberOut(),
+                0, numberRestInTimes, numberConfirmed, userId, times, orderConfirmEntity.getNumberOut(),
                 Constants.WAITING_UPLOAD, orderConfirmEntity.isState());
         logScanConfirmModel = realm.copyToRealm(logScanConfirmModel);
         logScanConfirmModel.setDeliveryNoteModel(deliveryNoteModel);

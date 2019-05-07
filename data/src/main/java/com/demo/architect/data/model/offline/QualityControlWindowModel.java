@@ -27,8 +27,6 @@ public class QualityControlWindowModel extends RealmObject {
 
     private int machineId;
 
-    @SerializedName("pNguoiViPham")
-    @Expose
     private String violator;
 
     private int qcId;

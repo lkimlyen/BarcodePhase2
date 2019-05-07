@@ -51,8 +51,6 @@ public interface CreatePackagingContract {
 
         void getListProduct(long orderId, long apartmentId);
 
-        boolean countListScanInPack(int sizeList);
-
         void deleteAllItemLog();
     }
 }

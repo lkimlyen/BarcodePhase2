@@ -11,6 +11,7 @@ import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.ProductGroupEntity;
 import com.demo.architect.data.model.ProductPackagingEntity;
 import com.demo.architect.data.model.ProductPackagingWindowEntity;
+import com.demo.architect.data.model.ProductWarehouseEntity;
 import com.demo.architect.data.model.ProductWindowEntity;
 import com.demo.architect.data.model.Result;
 import com.demo.architect.data.model.offline.GroupCode;
@@ -27,8 +28,10 @@ import com.demo.architect.data.model.offline.ProductDetail;
 import com.demo.architect.data.model.offline.ProductDetailWindowModel;
 import com.demo.architect.data.model.offline.ProductPackWindowModel;
 import com.demo.architect.data.model.offline.ProductPackagingModel;
+import com.demo.architect.data.model.offline.ProductWarehouseModel;
 import com.demo.architect.data.model.offline.QualityControlModel;
 import com.demo.architect.data.model.offline.QualityControlWindowModel;
+import com.demo.architect.data.model.offline.WarehousingModel;
 
 import java.util.Collection;
 import java.util.List;
@@ -247,4 +250,20 @@ public interface LocalRepository {
     Observable<String> updateStatusScanPackagingWindow(long mainId, long serverId);
 
     Observable<Integer> getNumberScanWindowByBarcode(String packCode, int numberSetOnPack, String barcode);
+
+    Observable<ProductWarehouseModel> getProductWarehouse(ProductWarehouseEntity model);
+
+    Observable<String> warehousing(WarehousingModel model);
+
+    Observable<String>  deleteWarehousing(long id);
+
+    Observable<String> updateNumberWarehousing(long id, int number);
+
+    Observable<String> deleteAllWarehousing();
+
+    Observable<RealmResults<WarehousingModel>> getAllListWarehousing();
+
+    Observable<List<WarehousingModel>> getListWarehousingWindowUpload();
+
+    Observable<String> updateStatusWarehousing();
 }
