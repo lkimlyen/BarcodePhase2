@@ -44,6 +44,8 @@ import com.demo.architect.data.model.offline.QualityControlWindowModel;
 import com.demo.architect.data.model.offline.WarehousingModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.util.Collection;
@@ -75,7 +77,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
                 RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_MAIN)
-                        .schemaVersion(6)
+                        .schemaVersion(7)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationMain);
@@ -84,7 +86,7 @@ public class DatabaseRealm {
             if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
                 RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
                         .name(Constants.DATABASE_TEST)
-                        .schemaVersion(6)
+                        .schemaVersion(7)
                         .migration(new MyMigration())
                         .build();
                 Realm.setDefaultConfiguration(realmConfigurationTest);
@@ -1151,7 +1153,7 @@ public class DatabaseRealm {
                 warehousingModels.deleteAllFromRealm();
 
                 RealmResults<ProductWarehouseModel> productWarehouseModels = realm.where(ProductWarehouseModel.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
-                warehousingModels.deleteAllFromRealm();
+                productWarehouseModels.deleteAllFromRealm();
 
             }
         });
@@ -1451,6 +1453,36 @@ public class DatabaseRealm {
                         .addRealmListField("list", schema.get("LogScanPackWindowModel"));
 
 
+                oldVersion++;
+            }
+            if (oldVersion == 6) {
+                schema.create("ProductWarehouseModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("productId", long.class)
+                        .addField("productName", String.class)
+                        .addField("productCode", String.class)
+                        .addField("pack", String.class)
+                        .addField("numberTotal", int.class)
+                        .addField("numberSuccess", int.class)
+                        .addField("numberScanned", int.class)
+                        .addField("numberRest", int.class)
+                        .addField("userId", long.class)
+                        .addField("status", int.class);
+                schema.create("WarehousingModel")
+                        .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                        .addField("orderId", long.class)
+                        .addField("productId", long.class)
+                        .addField("barcode", String.class)
+                        .addField("pack", String.class)
+                        .addField("number", int.class)
+                        .addField("numberInput", int.class)
+                        .addField("numberPack", int.class)
+                        .addField("longitude", double.class)
+                        .addField("latitude", double.class)
+                        .addField("dateScan", String.class)
+                        .addField("status", int.class)
+                        .addField("userId", long.class)
+                        .addRealmObjectField("productModel", schema.get("ProductWarehouseModel"));
                 oldVersion++;
             }
 

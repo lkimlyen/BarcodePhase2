@@ -70,6 +70,8 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @Bind(R.id.btn_group_code)
     Button btnGroupCode;
+    @Bind(R.id.bt_warehousing)
+    Button btWarehousing;
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -139,6 +141,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     public void showUser(UserEntity user) {
         txtName.setText(user.getName());
 
+        btWarehousing.setVisibility(View.GONE);
         if (user.getUserType().equals("SP")) {
             btnQC.setVisibility(View.GONE);
             if (user.getRole() > 0) {
@@ -151,6 +154,11 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                 if (user.getRole() == 9 || user.getRole() == 20 || user.getRole() == 17) {
                     btnScanPackaging.setVisibility(View.VISIBLE);
                     btnHistory.setVisibility(View.VISIBLE);
+                }
+
+                if (user.getRole() == 20){
+
+                    btWarehousing.setVisibility(View.VISIBLE);
                 }
 
             } else {

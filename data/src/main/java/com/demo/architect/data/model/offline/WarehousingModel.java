@@ -31,6 +31,7 @@ public class WarehousingModel extends RealmObject {
 
     @Expose
     @SerializedName("pNumber")
+    private int number;
     private int numberInput;
 
     private int numberPack;
@@ -52,11 +53,12 @@ public class WarehousingModel extends RealmObject {
     public WarehousingModel() {
     }
 
-    public WarehousingModel(long orderId, long productId, String barcode, String pack, int numberInput, int numberPack, String dateScan, double longitude, double latitude, int status, long userId) {
+    public WarehousingModel(long orderId, long productId, String barcode, String pack, int number, int numberInput, int numberPack, String dateScan, double longitude, double latitude, int status, long userId) {
         this.orderId = orderId;
         this.productId = productId;
         this.barcode = barcode;
         this.pack = pack;
+        this.number = number;
         this.numberInput = numberInput;
         this.numberPack = numberPack;
         this.dateScan = dateScan;
@@ -92,6 +94,7 @@ public class WarehousingModel extends RealmObject {
             warehousingModel.setProductModel(productDetail);
         } else {
             warehousingModel.setNumberInput(warehousingModel.getNumberInput() + model.getNumberInput());
+            warehousingModel.setNumber(warehousingModel.getNumberInput() * warehousingModel.getNumberPack());
         }
 
         productDetail.setNumberScanned(productDetail.getNumberScanned() + (model.getNumberInput() * model.getNumberPack()));
@@ -100,8 +103,9 @@ public class WarehousingModel extends RealmObject {
 
     public static void updateNumberInput(Realm realm, long id, int numberInput) {
         WarehousingModel warehousingModel = realm.where(WarehousingModel.class).equalTo("id", id).findFirst();
-        int number = numberInput*warehousingModel.getNumberPack() - warehousingModel.getNumberInput()*warehousingModel.getNumberPack();
+        int number = numberInput * warehousingModel.getNumberPack() - warehousingModel.getNumberInput() * warehousingModel.getNumberPack();
         warehousingModel.setNumberInput(numberInput);
+        warehousingModel.setNumber(warehousingModel.getNumberInput() * warehousingModel.getNumberPack());
         ProductWarehouseModel productDetail = warehousingModel.getProductModel();
         productDetail.setNumberScanned(productDetail.getNumberScanned() + number);
         productDetail.setNumberRest(productDetail.getNumberTotal() - productDetail.getNumberScanned());
@@ -237,5 +241,13 @@ public class WarehousingModel extends RealmObject {
 
     public long getUserId() {
         return userId;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

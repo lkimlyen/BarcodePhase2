@@ -5,18 +5,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.ProductWarehouseEntity;
-import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.UserEntity;
-import com.demo.architect.data.model.offline.IPAddress;
-import com.demo.architect.data.model.offline.LogScanStagesWindowModel;
 import com.demo.architect.data.model.offline.ProductWarehouseModel;
 import com.demo.architect.data.model.offline.WarehousingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
-import com.demo.architect.data.repository.base.socket.ConnectSocketDelivery;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetInputForProductWarehouseUsecase;
 import com.demo.architect.domain.GetListSOWarehouseUsecase;
-import com.demo.architect.domain.ScanProductDetailOutWindowUsecase;
 import com.demo.architect.domain.ScanWarehousingUsecase;
 import com.demo.barcode.R;
 import com.demo.barcode.app.CoreApplication;
@@ -82,9 +77,12 @@ public class WarehousingWDPresenter implements WarehousingWDContract.Presenter {
     @Override
     public void checkBarcode(long orderId, String barcode) {
         barcode = barcode.toUpperCase();
-
+        if (!barcode.contains("-")) {
+            showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            return;
+        }
         String barcodeSplit = barcode.substring(0, barcode.lastIndexOf("-"));
-        int numberPack = Integer.parseInt(barcode.substring(barcode.lastIndexOf("-")+1));
+        int numberPack = Integer.parseInt(barcode.substring(barcode.lastIndexOf("-") + 1).trim());
         List<ProductWarehouseEntity> list = ListProductWarehouseManager.getInstance().getListProduct();
         if (list.size() == 0) {
             showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
@@ -100,7 +98,7 @@ public class WarehousingWDPresenter implements WarehousingWDContract.Presenter {
                         if (productDetail.getNumberRest() > 0) {
                             saveBarcodeToDataBase(orderId, finalBarcode, productDetail, 1, numberPack, false);
                         } else {
-                            //   saveBarcodeToDataBase(productDetail, 1, departmentId, staffId, true);
+                            saveBarcodeToDataBase(orderId, finalBarcode, productDetail, 1, numberPack, true);
                         }
                     }
                 }
@@ -176,7 +174,7 @@ public class WarehousingWDPresenter implements WarehousingWDContract.Presenter {
         view.showProgressBar();
         UserEntity user = UserManager.getInstance().getUser();
         WarehousingModel model = new WarehousingModel(orderId, productDetail.getProductId(), barcode, productDetail.getPack(),
-                number, numberPack, ConvertUtils.getDateTimeCurrent(), 0, 0, Constants.WAITING_UPLOAD, user.getId());
+                number * numberPack, number, numberPack, ConvertUtils.getDateTimeCurrent(), 0, 0, Constants.WAITING_UPLOAD, user.getId());
         localRepository.warehousing(model).subscribe(new Action1<String>() {
             @Override
             public void call(String s) {

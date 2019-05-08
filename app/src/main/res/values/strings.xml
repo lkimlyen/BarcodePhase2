@@ -359,5 +359,6 @@
     <string name="text_detail_not_enough">Chi tiết không đủ để tạo thành gói</string>
     <string name="text_warehousing">Nhập kho</string>
     <string name="text_percent">Phần trăm</string>
+    <string name="text_name_product">Tên sản phẩm:</string>
 
 </resources>

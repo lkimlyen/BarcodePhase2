@@ -44,7 +44,7 @@ public class WarehousingAdapter extends RealmRecyclerViewAdapter<WarehousingMode
 
     @Override
     public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_stages_window, parent, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_warehousing, parent, false);
         return new HistoryHolder(itemView);
     }
 
@@ -82,7 +82,7 @@ public class WarehousingAdapter extends RealmRecyclerViewAdapter<WarehousingMode
                     if (numberInput == item.getNumberInput()) {
                         return;
                     }
-                    if (numberInput - item.getNumberInput() > productDetail.getNumberRest()) {
+                    if (numberInput*item.getNumberPack() - item.getNumberInput()*item.getNumberPack() > productDetail.getNumberRest()) {
                         onErrorListener.onError(item, numberInput, null);
                         return;
                     }
@@ -98,7 +98,7 @@ public class WarehousingAdapter extends RealmRecyclerViewAdapter<WarehousingMode
         holder.tvNameDetail.setText(productDetail.getProductName());
         holder.tvQuantityProduct.setText( productDetail.getNumberTotal() + "");
         holder.tvQuantityRest.setText( productDetail.getNumberRest() + "");
-        holder.tvQuantityScan.setText(productDetail.getNumberSuccess() + "");
+        holder.tvQuantityScan.setText(productDetail.getNumberScanned() + "");
         holder.etNumberScan.setText(String.valueOf((int) item.getNumberInput()));
         holder.etNumberScan.setSelection(holder.etNumberScan.getText().length());
         holder.etNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
