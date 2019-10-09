@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_toolbar"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_back" />
+
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/distance_8dp"
+                android:layout_toRightOf="@+id/img_back"
+                android:gravity="center"
+                android:text="@string/text_confirm_receive"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ic_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/distance_5dp"
+                android:layout_toStartOf="@+id/img_upload"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_refresh"
+                android:visibility="gone" />
+
+
+            <ImageView
+                android:id="@+id/img_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_upload" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/distance_5dp"
+                android:paddingRight="@dimen/distance_5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="@dimen/distance_5dp"
+                    android:gravity="center_vertical"
+                    android:id="@+id/ll_type_product"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_type_product"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_type_product"
+                        android:textSize="@dimen/text_14sp"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_type_product"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_code_so"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_code_so"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_code_so" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_customer_name"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_customer_name"
+                        android:layout_width="0dp"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textSize="@dimen/text_14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_delivery_department"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_delivery_department"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_delivery_department" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_delivery_code"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <!--<com.demo.barcode.widgets.spinner.SearchableSpinner-->
+                        <!--android:id="@+id/ss_delivery_code"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="3.5"-->
+                        <!--app:hintText="@string/text_choose_delivery_code" />-->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textColor="@android:color/black"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:id="@+id/tv_delivery_code"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_delivery_code" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center_vertical"
+                    android:id="@+id/ll_times"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_times"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:textColor="@android:color/black"
+                        android:id="@+id/tv_times"
+                        android:paddingTop="@dimen/distance_5dp"
+                        android:paddingBottom="@dimen/distance_5dp"
+                        android:textSize="@dimen/text_14sp"
+                        android:drawableRight="@drawable/ic_short_down"
+                        android:text="@string/text_choose_times_scan" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:id="@+id/ll_type_scan"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:text="@string/text_type_scan"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_default"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/text_default"
+                            android:textSize="@dimen/text_14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rb_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/distance_8dp"
+                            android:text="@string/text_group_code"
+                            android:textSize="@dimen/text_14sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <CheckBox
+                        android:id="@+id/cb_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:text="@string/text_confirm_all" />
+
+                    <Button
+                        android:id="@+id/bt_print"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="In phiếu" />
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/btn_confirm_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_40dp"
+                    android:layout_marginTop="@dimen/distance_5dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_button_blue_small"
+                    android:gravity="center"
+                    android:text="@string/text_confirm_all"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="@dimen/distance_5dp"
+                android:layout_marginRight="@dimen/distance_5dp"
+                android:layout_marginTop="@dimen/distance_5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <EditText
+                    android:id="@+id/edt_barcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_40dp"
+                    android:layout_marginEnd="@dimen/distance_5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_stroke_white"
+                    android:hint="Nhập mã barcode"
+                    android:inputType="textMultiLine"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_button_blue_small"
+                    android:gravity="center"
+                    android:text="@string/text_add"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!--<com.demo.barcode.widgets.legacytableview.LegacyTableView-->
+            <!--android:id="@+id/tb_product"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--/>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TableLayout
+                    android:id="@+id/table_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableRow
+                        android:id="@+id/table_row1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_column"
+                            android:layout_width="@dimen/size_60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:fontFamily="serif"
+                            android:gravity="center"
+                            android:text="@string/text_serial_module_break"
+                            android:textColor="#000"
+                            android:textSize="@dimen/text_12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/age"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="serif"
+                            android:gravity="center"
+
+                            android:text="@string/text_name_detail_break"
+                            android:textColor="#000"
+                            android:textSize="@dimen/text_12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/position"
+                            android:layout_width="@dimen/size_50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:fontFamily="serif"
+
+                            android:gravity="center"
+                            android:text="@string/text_number_delivery"
+                            android:textColor="#000"
+                            android:textSize="@dimen/text_12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="@dimen/size_50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:fontFamily="serif"
+                            android:gravity="center"
+                            android:text="@string/text_number_receive"
+
+                            android:textColor="#000"
+                            android:textSize="@dimen/text_12sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="@dimen/size_80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="serif"
+                                android:gravity="center"
+                                android:text="@string/text_confirm"
+                                android:textColor="#000"
+                                android:textSize="@dimen/text_12sp"
+                                android:textStyle="bold" />
+
+                            <CheckBox
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:scaleX="0.7"
+                                android:scaleY="0.7"
+                                android:text="@string/text_choose_all"
+                                android:textSize="@dimen/text_12sp"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+                    </TableRow>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dip"
+                        android:background="#ff0000" />
+                </TableLayout>
+
+                <androidx.cardview.widget.RecyclerView
+                    android:id="@+id/lv_confirm"
+                    android:layout_width="match_parent"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="0"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="@dimen/distance_5dp">
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_button_blue"
+            android:text="Quét QR CODE"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>

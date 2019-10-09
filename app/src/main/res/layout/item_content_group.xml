@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/table_row1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/distance_5dp"
+        android:orientation="horizontal">
+
+
+        <RadioButton
+            android:id="@+id/rb_select"
+            android:layout_width="@dimen/size_70dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="@dimen/text_12sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/txt_name_detail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="serif"
+            android:gravity="left"
+
+            android:padding="@dimen/distance_5dp"
+            android:text="@string/text_name_detail_break"
+            android:textColor="#000"
+            android:textSize="@dimen/text_12sp" />
+
+        <EditText
+            android:id="@+id/edt_number_group"
+            android:layout_width="@dimen/size_80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:visibility="gone"
+            android:inputType="number"
+            android:text="@string/text_number_group"
+            android:textColor="#000"
+            android:textSize="@dimen/text_12sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_edit" />
+
+        <ImageButton
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_save" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_code"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

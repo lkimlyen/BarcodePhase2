@@ -1,0 +1,100 @@
+apply plugin: 'com.android.application'
+android {
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+    compileSdkVersion globalConfiguration.androidCompileSdkVersion
+    defaultConfig {
+        applicationId "com.demo.compass.phongthuy"
+        minSdkVersion globalConfiguration.androidMinSdkVersion
+        targetSdkVersion globalConfiguration.androidTargetSdkVersion
+        versionCode globalConfiguration.androidVersionCode
+        versionName globalConfiguration.androidVersionName
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions "default"
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    publishNonDefault true
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        dev {
+
+        }
+
+        prod {
+
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                exclude 'io/realm/ValidationList.java'
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    implementation 'android.arch.work:work-runtime:1.0.0'
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+    implementation 'com.amitshekhar.android:android-networking:1.0.1'
+    implementation 'cn.pedant.sweetalert:library:1.3'
+    implementation 'com.google.android.gms:play-services-vision:16.2.0'
+    implementation 'com.thefinestartist:finestwebview:1.2.7'
+    implementation appDependencies.androidAppcombat
+    implementation appDependencies.androidRecyclerview
+    implementation appDependencies.androidCardview
+    implementation appDependencies.androidDesign
+    implementation appDependencies.androidMultidex
+    annotationProcessor appDependencies.daggerCompiler
+    compile  appDependencies.dagger
+    implementation appDependencies.butterKnife
+    annotationProcessor appDependencies.butterKnifeCompiler
+    implementation(appDependencies.okHttp) {
+        transitive = true
+    }
+    implementation(appDependencies.okHttplog) {
+        transitive = true
+    }
+    compileOnly appDependencies.javaxAnnotation
+    implementation appDependencies.androidTimeSquare
+    implementation  appDependencies.picasso
+    implementation  appDependencies.ottoBus
+    implementation(appDependencies.crashlytics) {
+        transitive = true
+    }
+    implementation appDependencies.realmAdapter
+    implementation appDependencies.materialDialog
+    implementation appDependencies.firebaseMessaging
+    implementation appDependencies.firebaseAuth
+    implementation appDependencies.firebaseStorage
+    implementation appDependencies.googleMapServices
+    implementation appDependencies.googleLocationServices
+    implementation project(':domain')
+}
